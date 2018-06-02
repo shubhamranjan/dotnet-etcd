@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>
+      netstandard2.0;netcoreapp2.0;netcoreapp2.1;net45;net451;net452;net46;net461;net462;net47;net471;net472
+    </TargetFrameworks>
+    <RootNamespace>dotnet_etcd</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <RepositoryUrl>https://github.com/shubhamranjan/dotnet-etcd</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/shubhamranjan/dotnet-etcd</PackageProjectUrl>
+    <PackageReleaseNotes>Etcd client with basic CRUD functionalities.</PackageReleaseNotes>
+    <Authors>Shubham Ranjan</Authors>
+    <Company />
+    <Product />
+    <PackageLicenseUrl>https://raw.githubusercontent.com/shubhamranjan/dotnet-etcd/master/LICENSE</PackageLicenseUrl>
+    <Description>A C# .NET (dotnet) GRPC client for etcd v3+.
+
+etcd is a distributed key value store that provides a reliable way to store data across a cluster of machines. It’s open-source and available on GitHub. etcd gracefully handles leader elections during network partitions and will tolerate machine failure, including the leader.
+
+Your applications can read and write data into etcd. A simple use-case is to store database connection details or feature flags in etcd as key value pairs. These values can be watched, allowing your app to reconfigure itself when they change.
+
+Advanced uses take advantage of the consistency guarantees to implement database leader elections or do distributed locking across a cluster of workers.</Description>
+    <PackageTags>etcd grpc etcdv3 etcd3</PackageTags>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.5.1" />
+    <PackageReference Include="Grpc.Core" Version="1.12.0" />
+    <PackageReference Include="Grpc.Tools" Version="1.12.0" />
+  </ItemGroup>
+
+</Project>
