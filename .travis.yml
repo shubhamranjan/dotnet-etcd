@@ -5,4 +5,7 @@ matrix:
   include:
     - dotnet: 2.1
       mono: none
+      script:
+        - dotnet restore
+        - dotnet build
     - mono: latest
