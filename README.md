@@ -1,6 +1,7 @@
 # dotnet-etcd
 A C# .NET (dotnet) GRPC client for etcd v3+
 
+[![Build Status](https://travis-ci.org/shubhamranjan/dotnet-etcd.svg?branch=master)](https://travis-ci.org/shubhamranjan/dotnet-etcd)
 ![Nuget Version Info](https://img.shields.io/nuget/v/dotnet-etcd.svg)
 ![Nuget Download Info](https://img.shields.io/nuget/dt/dotnet-etcd.svg)
 
