@@ -1,11 +1,7 @@
 language: csharp
-solution: dotnet-etcd.sln
-
-matrix:
-  include:
-    - dotnet: 2.1
-      mono: none
-      script:
-        - dotnet restore
-        - dotnet build
-    - mono: latest
+mono: none
+dotnet: 2.1
+script:
+ - dotnet build -f netstandard2.0
+ - dotnet build -f netcoreapp2.0
+ - dotnet build -f netcoreapp2.1
