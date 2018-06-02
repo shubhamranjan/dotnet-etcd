@@ -1,0 +1,8 @@
+language: csharp
+solution: dotnet-etcd.sln
+
+matrix:
+  include:
+    - dotnet: 2.1
+      mono: none
+    - mono: latest
