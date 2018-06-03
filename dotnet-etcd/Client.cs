@@ -11,7 +11,7 @@ namespace dotnet_etcd
 {
 
     #region Public Classes
-    public class EtcdClient
+    public class EtcdClient : IDisposable
     {
         #region Variables
 
@@ -31,6 +31,11 @@ namespace dotnet_etcd
         private readonly string _host;
 
         /// <summary>
+        /// Port on which etcd server is listening
+        /// </summary>
+        private readonly int _port;
+
+        /// <summary>
         /// The username for etcd server for basic auth
         /// </summary>
         private readonly string _username;
@@ -39,6 +44,11 @@ namespace dotnet_etcd
         /// The password for etcd server for basic auth
         /// </summary>
         private readonly string _password;
+
+        /// <summary>
+        /// Certificate contents to be used to connect to etcd.
+        /// </summary>
+        private readonly string _cert;
 
         /// <summary>
         /// The token generated and recieved from etcd server post basic auth call
@@ -55,11 +65,8 @@ namespace dotnet_etcd
         /// </summary>
         private Auth.AuthClient _authClient;
 
-        /// <summary>
-        /// The host connection map for reusing etcd connections
-        /// </summary>
-        private static ConcurrentDictionary<string, Client> _hostConnectionMap = new ConcurrentDictionary<string, Client>();
-
+        private AuthType _authType;
+        enum AuthType { None, SSL, Basic, BasicSSL };
         #endregion
 
         #region Initializers
@@ -73,16 +80,10 @@ namespace dotnet_etcd
         public EtcdClient(string host, int port)
         {
             _host = host;
+            _port = port;
+            _authType = AuthType.None;
 
-            if (UsingOldConnection()) return;
-
-            _channel = new Channel(_host, port, ChannelCredentials.Insecure);
-            _kvClient = new KV.KVClient(_channel);
-            _hostConnectionMap.TryAdd(_host, new Client
-            {
-                Channel = _channel,
-                KvClient = _kvClient
-            });
+            Init();
         }
 
         /// <summary>
@@ -94,17 +95,11 @@ namespace dotnet_etcd
         public EtcdClient(string host, int port, string cert)
         {
             _host = host;
+            _port = port;
+            _cert = cert;
+            _authType = AuthType.SSL;
 
-            if (UsingOldConnection()) return;
-
-            var credentials = new SslCredentials(cert);
-            _channel = new Channel(_host, port, credentials);
-            _kvClient = new KV.KVClient(_channel);
-            _hostConnectionMap.TryAdd(_host, new Client
-            {
-                Channel = _channel,
-                KvClient = _kvClient
-            });
+            Init();
         }
 
         /// <summary>
@@ -117,20 +112,10 @@ namespace dotnet_etcd
         public EtcdClient(string host, int port, string username, string password)
         {
             _host = host;
+            _port = port;
             _username = username;
             _password = password;
-
-            if (UsingOldConnection()) return;
-
-            Authenticate();
-
-            _channel = new Channel(_host, port, ChannelCredentials.Insecure);
-            _kvClient = new KV.KVClient(_channel);
-            _hostConnectionMap.TryAdd(_host, new Client
-            {
-                Channel = _channel,
-                KvClient = _kvClient
-            });
+            _authType = AuthType.Basic;
         }
 
         /// <summary>
@@ -144,76 +129,66 @@ namespace dotnet_etcd
         public EtcdClient(string host, int port, string username, string password, string cert)
         {
             _host = host;
+            _port = port;
+            _cert = cert;
             _username = username;
             _password = password;
+            _authType = AuthType.BasicSSL;
+        }
 
-            if (UsingOldConnection()) return;
-
-            Authenticate();
-
-            var credentials = new SslCredentials(cert);
-            _channel = new Channel(_host, port, credentials);
-            _kvClient = new KV.KVClient(_channel);
-            _hostConnectionMap.TryAdd(_host, new Client
+        private void Init()
+        {
+            try
             {
-                Channel = _channel,
-                KvClient = _kvClient
-            });
+                switch (_authType)
+                {
+                    case AuthType.None:
+
+                        _channel = new Channel(_host, _port, ChannelCredentials.Insecure);
+                        _kvClient = new KV.KVClient(_channel);
+
+                        break;
+                    case AuthType.SSL:
+
+                        _channel = new Channel(_host, _port, new SslCredentials(_cert));
+                        _kvClient = new KV.KVClient(_channel);
+
+                        break;
+                    case AuthType.Basic:
+
+                        Authenticate();
+
+                        _channel = new Channel(_host, _port, ChannelCredentials.Insecure);
+                        _kvClient = new KV.KVClient(_channel);
+
+                        break;
+                    case AuthType.BasicSSL:
+                    default:
+
+                        Authenticate();
+
+                        _channel = new Channel(_host, _port, new SslCredentials(_cert));
+                        _kvClient = new KV.KVClient(_channel);
+
+                        break;
+                }
+            }
+            catch
+            {
+                // ignore
+            }
+            _disposed = false;
+        }
+
+        ~EtcdClient()
+        {
+            Dispose(true);
         }
 
 
         #endregion
 
         #region Private Methods
-        /// <summary>
-        /// Checks if an connection exists for the host and the connection can be reused
-        /// </summary>
-        /// <returns><c>true</c>, if an old connection can be reused, <c>false</c> otherwise</returns>
-        private bool UsingOldConnection()
-        {
-            try
-            {
-                if (!_hostConnectionMap.ContainsKey(_host)) return false;
-
-                _channel = _hostConnectionMap[_host].Channel;
-                _kvClient = _hostConnectionMap[_host].KvClient;
-
-
-                if (HealthCheck()) return true;
-
-                _hostConnectionMap.TryRemove(_host, out _);
-
-
-            }
-            catch
-            {
-                // ignored
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Pings etcd server for connection check
-        /// </summary>
-        /// <returns><c>true</c>, if health check was successfull, <c>false</c> otherwise</returns>
-        public bool HealthCheck()
-        {
-            try
-            {
-                Maintenance.MaintenanceClient maintenanceClient = new Maintenance.MaintenanceClient(_channel);
-                var res = maintenanceClient.Status(new StatusRequest(), _headers);
-                if (String.IsNullOrWhiteSpace(res.Version))
-                {
-                    return false;
-                }
-            }
-            catch
-            {
-                return false;
-            }
-            return true;
-        }
 
         /// <summary>
         /// Converts RangeResponse to Dictionary
@@ -256,11 +231,19 @@ namespace dotnet_etcd
             });
             var shutdownAsync = authChannel.ShutdownAsync();
             shutdownAsync.Dispose();
+
             _authToken = authRes.Token;
             _headers = new Metadata
             {
                 { "Authorization", _authToken }
             };
+        }
+
+        private void ResetConnection()
+        {
+
+            Dispose(true);
+            Init();
         }
         #endregion
 
@@ -272,11 +255,22 @@ namespace dotnet_etcd
         /// <param name="key">Key for which value need to be fetched</param>
         public string Get(string key)
         {
-            var rangeResponse = _kvClient.Range(new RangeRequest
+
+            try
             {
-                Key = ByteString.CopyFromUtf8(key)
-            }, _headers);
-            return rangeResponse.Count != 0 ? rangeResponse.Kvs[0].Value.ToStringUtf8().Trim() : string.Empty;
+                var rangeResponse = _kvClient.Range(new RangeRequest
+                {
+                    Key = ByteString.CopyFromUtf8(key)
+                }, _headers);
+
+                return rangeResponse.Count != 0 ? rangeResponse.Kvs[0].Value.ToStringUtf8().Trim() : string.Empty;
+            }
+            catch
+            {
+                ResetConnection();
+            }
+
+            return String.Empty;
         }
 
         /// <summary>
@@ -286,12 +280,22 @@ namespace dotnet_etcd
         /// <param name="key">Key for which value need to be fetched</param>
         public async Task<string> GetAsync(string key)
         {
-            var rangeResponse = await _kvClient.RangeAsync(new RangeRequest
+            try
             {
-                Key = ByteString.CopyFromUtf8(key)
+                var rangeResponse = await _kvClient.RangeAsync(new RangeRequest
+                {
+                    Key = ByteString.CopyFromUtf8(key)
+                }
+                , _headers);
+
+                return rangeResponse.Count != 0 ? rangeResponse.Kvs[0].Value.ToStringUtf8().Trim() : string.Empty;
             }
-            , _headers);
-            return rangeResponse.Count != 0 ? rangeResponse.Kvs[0].Value.ToStringUtf8().Trim() : string.Empty;
+            catch
+            {
+                ResetConnection();
+            }
+
+            return String.Empty;
         }
 
         /// <summary>
@@ -301,14 +305,24 @@ namespace dotnet_etcd
         /// <param name="prefixKey">Prefix key</param>
         public IDictionary<string, string> GetRange(string prefixKey)
         {
-            var rangeEnd = GetRangeEnd(prefixKey);
-
-            var response = _kvClient.Range(new RangeRequest
+            try
             {
-                Key = ByteString.CopyFromUtf8(prefixKey),
-                RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
-            }, _headers);
-            return RangeRespondToDictionary(response);
+                var rangeEnd = GetRangeEnd(prefixKey);
+
+                var response = _kvClient.Range(new RangeRequest
+                {
+                    Key = ByteString.CopyFromUtf8(prefixKey),
+                    RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
+                }, _headers);
+
+                return RangeRespondToDictionary(response);
+            }
+            catch
+            {
+                ResetConnection();
+            }
+
+            return RangeRespondToDictionary(new RangeResponse());
         }
 
         /// <summary>
@@ -318,14 +332,23 @@ namespace dotnet_etcd
         /// <param name="prefixKey">Prefix key</param>
         public async Task<IDictionary<string, string>> GetRangeAsync(string prefixKey)
         {
-            var rangeEnd = GetRangeEnd(prefixKey);
-
-            var response = await _kvClient.RangeAsync(new RangeRequest
+            try
             {
-                Key = ByteString.CopyFromUtf8(prefixKey),
-                RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
-            }, _headers);
-            return RangeRespondToDictionary(response);
+                var rangeEnd = GetRangeEnd(prefixKey);
+
+                var response = await _kvClient.RangeAsync(new RangeRequest
+                {
+                    Key = ByteString.CopyFromUtf8(prefixKey),
+                    RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
+                }, _headers);
+                return RangeRespondToDictionary(response);
+            }
+            catch
+            {
+                ResetConnection();
+            }
+
+            return RangeRespondToDictionary(new RangeResponse());
         }
 
         /// <summary>
@@ -336,11 +359,18 @@ namespace dotnet_etcd
         /// <returns></returns>
         public void Put(string key, string val)
         {
-            var putResponse = _kvClient.Put(new PutRequest
+            try
             {
-                Key = ByteString.CopyFromUtf8(key),
-                Value = ByteString.CopyFromUtf8(val)
-            }, _headers);
+                var putResponse = _kvClient.Put(new PutRequest
+                {
+                    Key = ByteString.CopyFromUtf8(key),
+                    Value = ByteString.CopyFromUtf8(val)
+                }, _headers);
+            }
+            catch
+            {
+                ResetConnection();
+            }
         }
 
         /// <summary>
@@ -351,12 +381,18 @@ namespace dotnet_etcd
         /// <returns></returns>
         public async void PutAsync(string key, string val)
         {
-            await _kvClient.PutAsync(new PutRequest
+            try
             {
-                Key = ByteString.CopyFromUtf8(key),
-                Value = ByteString.CopyFromUtf8(val)
-            }, _headers);
-
+                await _kvClient.PutAsync(new PutRequest
+                {
+                    Key = ByteString.CopyFromUtf8(key),
+                    Value = ByteString.CopyFromUtf8(val)
+                }, _headers);
+            }
+            catch
+            {
+                ResetConnection();
+            }
         }
 
         /// <summary>
@@ -365,10 +401,17 @@ namespace dotnet_etcd
         /// <param name="key">Key which needs to be deleted</param>
         public void Delete(string key)
         {
-            _kvClient.DeleteRange(new DeleteRangeRequest
+            try
             {
-                Key = ByteString.CopyFromUtf8(key)
-            }, _headers);
+                _kvClient.DeleteRange(new DeleteRangeRequest
+                {
+                    Key = ByteString.CopyFromUtf8(key)
+                }, _headers);
+            }
+            catch
+            {
+                ResetConnection();
+            }
         }
 
         /// <summary>
@@ -377,11 +420,17 @@ namespace dotnet_etcd
         /// <param name="key">Key which needs to be deleted</param>
         public async void DeleteAsync(string key)
         {
-            var deleteRequest =
-            await _kvClient.DeleteRangeAsync(new DeleteRangeRequest
+            try
             {
-                Key = ByteString.CopyFromUtf8(key)
-            }, _headers);
+                await _kvClient.DeleteRangeAsync(new DeleteRangeRequest
+                {
+                    Key = ByteString.CopyFromUtf8(key)
+                }, _headers);
+            }
+            catch
+            {
+                ResetConnection();
+            }
         }
 
         /// <summary>
@@ -390,12 +439,19 @@ namespace dotnet_etcd
         /// <param name="prefixKey">Commin prefix of all keys that need to be deleted</param>
         public void DeleteRange(string prefixKey)
         {
-            var rangeEnd = GetRangeEnd(prefixKey);
-            _kvClient.DeleteRange(new DeleteRangeRequest
+            try
             {
-                Key = ByteString.CopyFromUtf8(prefixKey),
-                RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
-            }, _headers);
+                var rangeEnd = GetRangeEnd(prefixKey);
+                _kvClient.DeleteRange(new DeleteRangeRequest
+                {
+                    Key = ByteString.CopyFromUtf8(prefixKey),
+                    RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
+                }, _headers);
+            }
+            catch
+            {
+                ResetConnection();
+            }
         }
 
         /// <summary>
@@ -404,34 +460,55 @@ namespace dotnet_etcd
         /// <param name="prefixKey">Commin prefix of all keys that need to be deleted</param>
         public async void DeleteRangeAsync(string prefixKey)
         {
-            var rangeEnd = GetRangeEnd(prefixKey);
-            await _kvClient.DeleteRangeAsync(new DeleteRangeRequest
+            try
             {
-                Key = ByteString.CopyFromUtf8(prefixKey),
-                RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
-            }, _headers);
+                var rangeEnd = GetRangeEnd(prefixKey);
+                await _kvClient.DeleteRangeAsync(new DeleteRangeRequest
+                {
+                    Key = ByteString.CopyFromUtf8(prefixKey),
+                    RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
+                }, _headers);
+            }
+            catch
+            {
+                ResetConnection();
+            }
         }
-
         #endregion
 
+        #region IDisposable Support
+        private bool _disposed = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing && _channel.State != ChannelState.Shutdown)
+                {
+                    // TODO: dispose managed state (managed objects).
+                    _channel.ShutdownAsync();
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // TODO: set large fields to null.
+
+                _disposed = true;
+            }
+        }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            GC.SuppressFinalize(this);
+        }
+        #endregion
+
+
+
     }
     #endregion
 
-    #region private Classes
-    /// <summary>
-    /// Class containing all etcd communication channels and clients
-    /// </summary>
-    internal class Client
-    {
-        /// <summary>
-        /// GRPC channel through which client will communicate
-        /// </summary>
-        public Channel Channel;
-
-        /// <summary>
-        /// Key-value client
-        /// </summary>
-        public KV.KVClient KvClient;
-    }
-    #endregion
 }
