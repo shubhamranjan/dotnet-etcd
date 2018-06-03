@@ -5,6 +5,22 @@ A C# .NET (dotnet) GRPC client for etcd v3+
 ![Nuget Version Info](https://img.shields.io/nuget/v/dotnet-etcd.svg)
 ![Nuget Download Info](https://img.shields.io/nuget/dt/dotnet-etcd.svg)
 
+## Supported .NET Versions
+
+* .NETCoreApp 2.1
+* .NETCoreApp 2.0
+* .NETStandard 2.0
+* .NETFramework 4.7.2
+* .NETFramework 4.7.1
+* .NETFramework 4.7
+* .NETFramework 4.6.2
+* .NETFramework 4.6.1
+* .NETFramework 4.6
+* .NETFramework 4.5.2
+* .NETFramework 4.5.1
+* .NETFramework 4.5
+
+
 ## Installing Package
 Nuget package is published on [nuget.org](https://www.nuget.org/packages/dotnet-etcd/) and can be installed in the following ways :
     
