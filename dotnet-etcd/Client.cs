@@ -46,9 +46,19 @@ namespace dotnet_etcd
         private readonly string _password;
 
         /// <summary>
-        /// Certificate contents to be used to connect to etcd.
+        /// CA Certificate contents to be used to connect to etcd.
         /// </summary>
-        private readonly string _cert;
+        private readonly string _caCert;
+
+        /// <summary>
+        /// Client Certificate contents to be used to connect to etcd.
+        /// </summary>
+        private readonly string _clientCert;
+
+        /// <summary>
+        /// Client key contents to be used to connect to etcd.
+        /// </summary>
+        private readonly string _clientKey;
 
         /// <summary>
         /// The token generated and recieved from etcd server post basic auth call
@@ -66,14 +76,18 @@ namespace dotnet_etcd
         private Auth.AuthClient _authClient;
 
         private AuthType _authType;
-        enum AuthType { None, SSL, Basic, BasicSSL };
+        enum AuthType { None, SSL, ClientSSL, BasicAuth, BasicAuthSSL, BasicAuthClientSSL };
         #endregion
 
         #region Initializers
 
+        EtcdClient()
+        {
 
+
+        }
         /// <summary>
-        /// Initializes etcd client with no auth over an insecure channel
+        /// Initializes etcd client with no etcd auth over an insecure channel
         /// </summary>
         /// <param name="host">etcd server hostname</param>
         /// <param name="port">etcd server port</param>
@@ -87,17 +101,36 @@ namespace dotnet_etcd
         }
 
         /// <summary>
-        /// Initializes etcd client with no auth over an secure channel
+        /// Initializes etcd client with no etcd auth over an secure channel
         /// </summary>
         /// <param name="host">etcd server hostname</param>
         /// <param name="port">etcd server port</param>
-        /// <param name="cert">Certificate contents to connect to etcd server</param>
-        public EtcdClient(string host, int port, string cert)
+        /// <param name="caCert">Certificate contents to connect to etcd server</param>
+        public EtcdClient(string host, int port, string caCert)
         {
             _host = host;
             _port = port;
-            _cert = cert;
+            _caCert = caCert;
             _authType = AuthType.SSL;
+
+            Init();
+        }
+
+        /// <summary>
+        /// Initializes etcd client with no etcd auth over an secure channel with client ssl auth.
+        /// <param name="host">etcd server hostname</param>
+        /// <param name="port">etcd server port</param>
+        /// <param name="caCert">Certificate contents to connect to etcd server</param>
+        /// <param name="clientCert"></param>
+        /// <param name="clientKey"></param>
+        public EtcdClient(string host, int port, string caCert, string clientCert, string clientKey)
+        {
+            _host = host;
+            _port = port;
+            _caCert = caCert;
+            _clientCert = clientCert;
+            _clientKey = clientKey;
+            _authType = AuthType.ClientSSL;
 
             Init();
         }
@@ -115,25 +148,40 @@ namespace dotnet_etcd
             _port = port;
             _username = username;
             _password = password;
-            _authType = AuthType.Basic;
+            _authType = AuthType.BasicAuth;
+
+            Init();
         }
 
         /// <summary>
-        /// Initializes etcd client with basic auth over a isecure channel
+        /// 
         /// </summary>
         /// <param name="host">etcd server hostname</param>
         /// <param name="port">etcd server port</param>
         /// <param name="username">Username for basic auth on etcd</param>
         /// <param name="password">Password for basic auth on etcd</param>
-        /// <param name="cert">Certificate contents to connect to etcd server</param>
-        public EtcdClient(string host, int port, string username, string password, string cert)
+        /// <param name="caCert">Certificate contents to connect to etcd server</param>
+        /// <param name="clientCert"></param>
+        /// <param name="clientKey"></param>
+        public EtcdClient(string host, int port, string username, string password, string caCert, string clientCert="", string clientKey="")
         {
             _host = host;
             _port = port;
-            _cert = cert;
+            _caCert = caCert;
+            _clientCert = clientCert;
+            _clientKey = clientKey;
             _username = username;
             _password = password;
-            _authType = AuthType.BasicSSL;
+            if (String.IsNullOrWhiteSpace(clientCert) || String.IsNullOrWhiteSpace(clientKey))
+            {
+                _authType = AuthType.BasicAuthSSL;
+            }
+            else
+            {
+                _authType = AuthType.BasicAuthClientSSL;
+            }
+
+            Init();
         }
 
         private void Init()
@@ -150,24 +198,55 @@ namespace dotnet_etcd
                         break;
                     case AuthType.SSL:
 
-                        _channel = new Channel(_host, _port, new SslCredentials(_cert));
+
+
+                        _channel = new Channel(_host, _port, new SslCredentials(_caCert));
                         _kvClient = new KV.KVClient(_channel);
 
                         break;
-                    case AuthType.Basic:
+                    case AuthType.ClientSSL:
 
-                        Authenticate();
+                        _channel = new Channel(
+                            _host,
+                            _port,
+                            new SslCredentials(
+                                _caCert,
+                                new KeyCertificatePair(_clientCert, _clientKey)
+                                )
+                            );
+                        _kvClient = new KV.KVClient(_channel);
+                        break;
+                    case AuthType.BasicAuth:
 
                         _channel = new Channel(_host, _port, ChannelCredentials.Insecure);
+                        Authenticate();
                         _kvClient = new KV.KVClient(_channel);
 
                         break;
-                    case AuthType.BasicSSL:
+                    case AuthType.BasicAuthSSL:
+                        _channel = new Channel(
+                            _host,
+                            _port,
+                            new SslCredentials(
+                                _caCert
+                                )
+                            );
+                        Authenticate();
+                        _kvClient = new KV.KVClient(_channel);
+                        break;
+                    case AuthType.BasicAuthClientSSL:
                     default:
 
-                        Authenticate();
+                        _channel = new Channel(
+                            _host,
+                            _port,
+                            new SslCredentials(
+                                _caCert,
+                                new KeyCertificatePair(_clientCert, _clientKey)
+                                )
+                            );
 
-                        _channel = new Channel(_host, _port, new SslCredentials(_cert));
+                        Authenticate();
                         _kvClient = new KV.KVClient(_channel);
 
                         break;
@@ -222,15 +301,13 @@ namespace dotnet_etcd
         /// </summary>
         private void Authenticate()
         {
-            var authChannel = new Channel(_host, ChannelCredentials.Insecure);
-            _authClient = new Auth.AuthClient(authChannel);
+
+            _authClient = new Auth.AuthClient(_channel);
             var authRes = _authClient.Authenticate(new AuthenticateRequest
             {
                 Name = _username,
                 Password = _password
             });
-            var shutdownAsync = authChannel.ShutdownAsync();
-            shutdownAsync.Dispose();
 
             _authToken = authRes.Token;
             _headers = new Metadata
