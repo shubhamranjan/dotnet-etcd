@@ -28,15 +28,15 @@ Nuget package is published on [nuget.org](https://www.nuget.org/packages/dotnet-
     
 ### Nuget Package Manager
     
-    Install-Package dotnet-etcd -Version 1.0.0	
+    Install-Package dotnet-etcd
 
 ### .NET CLI
     
-    dotnet add package dotnet-etcd --version 1.0.0	
+    dotnet add package dotnet-etcd
 
 ### Paket CLI
     
-    paket add dotnet-etcd --version 1.0.0	
+    paket add dotnet-etcd
 ` The NuGet Team does not provide support for this client. Please contact its maintainers for support.`
 
 ## Usage :
