@@ -55,21 +55,21 @@ Add using statement at the top of your class file
 
 #### SSL but no basic auth
     
-    EtcdClient client = new EtcdClient(<HOSTNAME_STRING>, <PORTNO_INT>,<CERTIFCATE_STRING>);
+    EtcdClient client = new EtcdClient(<HOSTNAME_STRING>, <PORTNO_INT>, "", "", <CERTIFCATE_STRING>);
     // E.g.
-    EtcdClient client = new EtcdClient("127.0.0.1", 2379,File.ReadAllText("/path/to/cert"));
+    EtcdClient client = new EtcdClient("127.0.0.1", 2379, "", "", File.ReadAllText("/path/to/cert"));
 
 #### Basic auth but no SSL
 
-    EtcdClient client = new EtcdClient(<HOSTNAME_STRING>, <PORTNO_INT>,<USERNAME_STRING>,<PASSWORD_STRING>);
+    EtcdClient client = new EtcdClient(<HOSTNAME_STRING>, <PORTNO_INT>, <USERNAME_STRING>, <PASSWORD_STRING>);
     // E.g.
-    EtcdClient client = new EtcdClient("127.0.0.1", 2379,"sr","@hV:%f%xU+2m4~?K");
+    EtcdClient client = new EtcdClient("127.0.0.1", 2379, "sr", "@hV:%f%xU+2m4~?K");
 
 #### Basic auth and SSL
     
-    EtcdClient client = new EtcdClient(<HOSTNAME_STRING>, <PORTNO_INT>,<USERNAME_STRING>,<PASSWORD_STRING>,<CERT_STRING>);
+    EtcdClient client = new EtcdClient(<HOSTNAME_STRING>, <PORTNO_INT>, <USERNAME_STRING>, <PASSWORD_STRING>, <CERT_STRING>);
     // E.g.
-    EtcdClient client = new EtcdClient("127.0.0.1", 2379,"sr","@hV:%f%xU+2m4~?K",File.ReadAllText("/path/to/cert"));
+    EtcdClient client = new EtcdClient("127.0.0.1", 2379, "sr", "@hV:%f%xU+2m4~?K", File.ReadAllText("/path/to/cert"));
 
 ### Operations
 #### Put a key
