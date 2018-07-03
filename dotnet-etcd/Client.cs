@@ -88,6 +88,11 @@ namespace dotnet_etcd
         /// Depicts whether ssl auth is enabled or not
         /// </summary>
         private bool _clientSSL;
+
+        /// <summary>
+        /// Depicts whether to connect using publicly trusted roots.
+        /// </summary>
+        private bool _publicRootCa;
         #endregion
 
         #region Initializers
@@ -103,7 +108,7 @@ namespace dotnet_etcd
         /// <param name="caCert">Certificate contents to connect to etcd server</param>
         /// <param name="clientCert"></param>
         /// <param name="clientKey"></param>
-        public EtcdClient(string host, int port, string username = "", string password = "", string caCert = "", string clientCert = "", string clientKey = "")
+        public EtcdClient(string host, int port, string username = "", string password = "", string caCert = "", string clientCert = "", string clientKey = "",bool publicRootCa=false)
         {
             _host = host;
             _port = port;
@@ -112,9 +117,10 @@ namespace dotnet_etcd
             _clientKey = clientKey;
             _username = username;
             _password = password;
+            _publicRootCa = publicRootCa;
 
             _basicAuth = (!String.IsNullOrWhiteSpace(username) && !(String.IsNullOrWhiteSpace(password)));
-            _ssl = !String.IsNullOrWhiteSpace(caCert);
+            _ssl = !_publicRootCa && !String.IsNullOrWhiteSpace(caCert);
             _clientSSL = _ssl && (!String.IsNullOrWhiteSpace(clientCert) && !(String.IsNullOrWhiteSpace(clientKey)));
 
 
@@ -125,7 +131,11 @@ namespace dotnet_etcd
         {
             try
             {
-                if (_clientSSL)
+                if (_publicRootCa)
+                {
+                    _channel = new Channel(_host, _port, new SslCredentials());
+                }
+                else if (_clientSSL)
                 {
                     _channel = new Channel(
                         _host,
@@ -231,7 +241,6 @@ namespace dotnet_etcd
         /// <param name="key">Key for which value need to be fetched</param>
         public string Get(string key)
         {
-
             try
             {
                 var rangeResponse = _kvClient.Range(new RangeRequest
