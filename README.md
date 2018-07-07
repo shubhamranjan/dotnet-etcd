@@ -53,23 +53,15 @@ Add using statement at the top of your class file
     // E.g.
     EtcdClient client = new EtcdClient("127.0.0.1", 2379);
 
-#### SSL but no basic auth
+#### Available Constructor Parameters
+
+* username - String containing username for etcd basic auth. Default : Empty String 
+* password - String containing password for etcd basic auth. Default : Empty String 
+* caCert - String containing ca cert when using self signed certificates with etcd. Default : EmptyString 
+* clientCert - String containing client cert when using self signed certificates with client auth enabled in etcd. Default : EmptyString 
+* clientKey - String containing client key when using self signed certificates with client auth enabled in etcd. Default : EmptyString 
+* publicRootCa - Bool depicting whether to use publicy trusted roots to connect to etcd. Default : false.
     
-    EtcdClient client = new EtcdClient(<HOSTNAME_STRING>, <PORTNO_INT>, "", "", <CERTIFCATE_STRING>);
-    // E.g.
-    EtcdClient client = new EtcdClient("127.0.0.1", 2379, "", "", File.ReadAllText("/path/to/cert"));
-
-#### Basic auth but no SSL
-
-    EtcdClient client = new EtcdClient(<HOSTNAME_STRING>, <PORTNO_INT>, <USERNAME_STRING>, <PASSWORD_STRING>);
-    // E.g.
-    EtcdClient client = new EtcdClient("127.0.0.1", 2379, "sr", "@hV:%f%xU+2m4~?K");
-
-#### Basic auth and SSL
-    
-    EtcdClient client = new EtcdClient(<HOSTNAME_STRING>, <PORTNO_INT>, <USERNAME_STRING>, <PASSWORD_STRING>, <CERT_STRING>);
-    // E.g.
-    EtcdClient client = new EtcdClient("127.0.0.1", 2379, "sr", "@hV:%f%xU+2m4~?K", File.ReadAllText("/path/to/cert"));
 
 ### Operations
 #### Put a key
