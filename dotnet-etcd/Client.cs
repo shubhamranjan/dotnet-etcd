@@ -163,7 +163,7 @@ namespace dotnet_etcd
             }
             catch
             {
-                // ignore
+                throw;
             }
             _disposed = false;
         }
@@ -241,21 +241,21 @@ namespace dotnet_etcd
         /// <param name="key">Key for which value need to be fetched</param>
         public string Get(string key)
         {
+            RangeResponse rangeResponse = new RangeResponse();
             try
             {
-                var rangeResponse = _kvClient.Range(new RangeRequest
+                rangeResponse = _kvClient.Range(new RangeRequest
                 {
                     Key = ByteString.CopyFromUtf8(key)
                 }, _headers);
-
-                return rangeResponse.Count != 0 ? rangeResponse.Kvs[0].Value.ToStringUtf8().Trim() : string.Empty;
             }
             catch
             {
                 ResetConnection();
+                throw;
             }
 
-            return String.Empty;
+            return rangeResponse.Count != 0 ? rangeResponse.Kvs[0].Value.ToStringUtf8().Trim() : string.Empty;
         }
 
         /// <summary>
@@ -265,22 +265,22 @@ namespace dotnet_etcd
         /// <param name="key">Key for which value need to be fetched</param>
         public async Task<string> GetAsync(string key)
         {
+            RangeResponse rangeResponse = new RangeResponse();
             try
             {
-                var rangeResponse = await _kvClient.RangeAsync(new RangeRequest
+                rangeResponse = await _kvClient.RangeAsync(new RangeRequest
                 {
                     Key = ByteString.CopyFromUtf8(key)
                 }
                 , _headers);
-
-                return rangeResponse.Count != 0 ? rangeResponse.Kvs[0].Value.ToStringUtf8().Trim() : string.Empty;
             }
             catch
             {
                 ResetConnection();
+                throw;
             }
 
-            return String.Empty;
+            return rangeResponse.Count != 0 ? rangeResponse.Kvs[0].Value.ToStringUtf8().Trim() : string.Empty;
         }
 
         /// <summary>
@@ -290,24 +290,25 @@ namespace dotnet_etcd
         /// <param name="prefixKey">Prefix key</param>
         public IDictionary<string, string> GetRange(string prefixKey)
         {
+            RangeResponse rangeResponse = new RangeResponse();
             try
             {
                 var rangeEnd = GetRangeEnd(prefixKey);
 
-                var response = _kvClient.Range(new RangeRequest
+                rangeResponse = _kvClient.Range(new RangeRequest
                 {
                     Key = ByteString.CopyFromUtf8(prefixKey),
                     RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
                 }, _headers);
 
-                return RangeRespondToDictionary(response);
             }
             catch
             {
                 ResetConnection();
+                throw;
             }
 
-            return RangeRespondToDictionary(new RangeResponse());
+            return RangeRespondToDictionary(rangeResponse);
         }
 
         /// <summary>
@@ -317,23 +318,24 @@ namespace dotnet_etcd
         /// <param name="prefixKey">Prefix key</param>
         public async Task<IDictionary<string, string>> GetRangeAsync(string prefixKey)
         {
+            RangeResponse rangeResponse = new RangeResponse();
             try
             {
                 var rangeEnd = GetRangeEnd(prefixKey);
 
-                var response = await _kvClient.RangeAsync(new RangeRequest
+                rangeResponse = await _kvClient.RangeAsync(new RangeRequest
                 {
                     Key = ByteString.CopyFromUtf8(prefixKey),
                     RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
                 }, _headers);
-                return RangeRespondToDictionary(response);
             }
             catch
             {
                 ResetConnection();
+                throw;
             }
 
-            return RangeRespondToDictionary(new RangeResponse());
+            return RangeRespondToDictionary(rangeResponse);
         }
 
         /// <summary>
@@ -355,6 +357,7 @@ namespace dotnet_etcd
             catch
             {
                 ResetConnection();
+                throw;
             }
         }
 
@@ -377,6 +380,7 @@ namespace dotnet_etcd
             catch
             {
                 ResetConnection();
+                throw;
             }
         }
 
@@ -396,6 +400,7 @@ namespace dotnet_etcd
             catch
             {
                 ResetConnection();
+                throw;
             }
         }
 
@@ -415,6 +420,7 @@ namespace dotnet_etcd
             catch
             {
                 ResetConnection();
+                throw;
             }
         }
 
@@ -436,6 +442,7 @@ namespace dotnet_etcd
             catch
             {
                 ResetConnection();
+                throw;
             }
         }
 
@@ -457,6 +464,7 @@ namespace dotnet_etcd
             catch
             {
                 ResetConnection();
+                throw;
             }
         }
         #endregion
