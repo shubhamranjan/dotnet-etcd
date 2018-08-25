@@ -77,22 +77,22 @@ namespace dotnet_etcd
         /// <summary>
         /// Depicts whether basic auth is enabled or not
         /// </summary>
-        private bool _basicAuth;
+        private readonly bool _basicAuth;
 
         /// <summary>
         /// Depicts whether ssl is enabled or not
         /// </summary>
-        private bool _ssl;
+        private readonly bool _ssl;
 
         /// <summary>
         /// Depicts whether ssl auth is enabled or not
         /// </summary>
-        private bool _clientSSL;
+        private readonly bool _clientSSL;
 
         /// <summary>
         /// Depicts whether to connect using publicly trusted roots.
         /// </summary>
-        private bool _publicRootCa;
+        private readonly bool _publicRootCa;
         #endregion
 
         #region Initializers
