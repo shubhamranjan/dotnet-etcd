@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>
-      netstandard2.0;netcoreapp2.0;netcoreapp2.1;net45;net451;net452;net46;net461;net462;net47;net471;net472
+    <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">
+      netcoreapp2.1;netcoreapp2.0;netstandard2.0;net45;net451;net452;net46;net461;net462;net47;net471;net472
     </TargetFrameworks>
+    <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
     <RootNamespace>dotnet_etcd</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -26,6 +27,7 @@ Advanced uses take advantage of the consistency guarantees to implement database
     <SignAssembly>false</SignAssembly>
     <PackageIconUrl>https://drive.google.com/uc?id=1MfMnMPh5nOl8W71X9COjD9ifWFBn1PuX</PackageIconUrl>
     <Version>1.0.5</Version>
+    <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
   <ItemGroup>
