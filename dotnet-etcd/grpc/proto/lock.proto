@@ -5,7 +5,6 @@ import "rpc.proto";
 package v3lockpb;
 
 
-
 // The lock service exposes client-side locking facilities as a gRPC interface.
 service Lock {
     // Lock acquires a distributed shared lock on a given named lock.

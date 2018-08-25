@@ -6,7 +6,6 @@ import "auth.proto";
 package etcdserverpb;
 
 
-
 service KV {
   // Range gets the keys in the range from the key-value store.
   rpc Range(RangeRequest) returns (RangeResponse) {}
