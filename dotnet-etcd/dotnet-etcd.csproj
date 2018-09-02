@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">
-     netstandard2.0;net45;net451;net452;net46;net461;net462;net47;net471;net472
+      netcoreapp2.0;netcoreapp2.1;netstandard2.0;net45;net451;net452;net46;net461;net462;net47;net471;net472
     </TargetFrameworks>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
     <RootNamespace>dotnet_etcd</RootNamespace>
@@ -10,7 +10,8 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryUrl>https://github.com/shubhamranjan/dotnet-etcd</RepositoryUrl>
     <PackageProjectUrl>https://github.com/shubhamranjan/dotnet-etcd</PackageProjectUrl>
-    <PackageReleaseNotes>Update grpc stub and remove dotnet core sdks.</PackageReleaseNotes>
+    <PackageReleaseNotes>1.Add publicly trusted root support.
+2.Throw all exceptions to caller for better debugging.</PackageReleaseNotes>
     <Authors>Shubham Ranjan</Authors>
     <Company />
     <Product />
@@ -25,8 +26,8 @@ Advanced uses take advantage of the consistency guarantees to implement database
     <PackageTags>etcd grpc etcdv3 etcd3</PackageTags>
     <SignAssembly>false</SignAssembly>
     <PackageIconUrl>https://drive.google.com/uc?id=1MfMnMPh5nOl8W71X9COjD9ifWFBn1PuX</PackageIconUrl>
-    <Version>1.0.6-pre</Version>
-    <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
+    <Version>1.0.5</Version>
+    <AutoGenerateBindingRedirects>False</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
   <ItemGroup>

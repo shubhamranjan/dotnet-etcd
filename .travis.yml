@@ -3,3 +3,5 @@ mono: none
 dotnet: 2.1
 script:
  - dotnet build -f netstandard2.0
+ - dotnet build -f netcoreapp2.0
+ - dotnet build -f netcoreapp2.1
