@@ -344,11 +344,11 @@ namespace dotnet_etcd
         /// <param name="key">Key for which value need to be set</param>
         /// <param name="val">Value corresponding the key</param>
         /// <returns></returns>
-        public void Put(string key, string val)
+        public PutResponse Put(string key, string val)
         {
             try
             {
-                var putResponse = _kvClient.Put(new PutRequest
+                return _kvClient.Put(new PutRequest
                 {
                     Key = ByteString.CopyFromUtf8(key),
                     Value = ByteString.CopyFromUtf8(val)
@@ -367,11 +367,11 @@ namespace dotnet_etcd
         /// <param name="key">Key for which value need to be set</param>
         /// <param name="val">Value corresponding the key</param>
         /// <returns></returns>
-        public async void PutAsync(string key, string val)
+        public async Task<PutResponse> PutAsync(string key, string val)
         {
             try
             {
-                await _kvClient.PutAsync(new PutRequest
+                return await _kvClient.PutAsync(new PutRequest
                 {
                     Key = ByteString.CopyFromUtf8(key),
                     Value = ByteString.CopyFromUtf8(val)
@@ -388,11 +388,11 @@ namespace dotnet_etcd
         /// Delete the specified key in etcd
         /// </summary>
         /// <param name="key">Key which needs to be deleted</param>
-        public void Delete(string key)
+        public DeleteRangeResponse Delete(string key)
         {
             try
             {
-                _kvClient.DeleteRange(new DeleteRangeRequest
+                return _kvClient.DeleteRange(new DeleteRangeRequest
                 {
                     Key = ByteString.CopyFromUtf8(key)
                 }, _headers);
@@ -408,11 +408,11 @@ namespace dotnet_etcd
         /// Delete the specified key in etcd in async
         /// </summary>
         /// <param name="key">Key which needs to be deleted</param>
-        public async void DeleteAsync(string key)
+        public async Task<DeleteRangeResponse> DeleteAsync(string key)
         {
             try
             {
-                await _kvClient.DeleteRangeAsync(new DeleteRangeRequest
+                return await _kvClient.DeleteRangeAsync(new DeleteRangeRequest
                 {
                     Key = ByteString.CopyFromUtf8(key)
                 }, _headers);
@@ -428,12 +428,12 @@ namespace dotnet_etcd
         /// Deletes all keys with the specified prefix
         /// </summary>
         /// <param name="prefixKey">Commin prefix of all keys that need to be deleted</param>
-        public void DeleteRange(string prefixKey)
+        public DeleteRangeResponse DeleteRange(string prefixKey)
         {
             try
             {
                 var rangeEnd = GetRangeEnd(prefixKey);
-                _kvClient.DeleteRange(new DeleteRangeRequest
+                return _kvClient.DeleteRange(new DeleteRangeRequest
                 {
                     Key = ByteString.CopyFromUtf8(prefixKey),
                     RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
@@ -450,12 +450,12 @@ namespace dotnet_etcd
         /// Deletes all keys with the specified prefix in async
         /// </summary>
         /// <param name="prefixKey">Commin prefix of all keys that need to be deleted</param>
-        public async void DeleteRangeAsync(string prefixKey)
+        public async Task<DeleteRangeResponse> DeleteRangeAsync(string prefixKey)
         {
             try
             {
                 var rangeEnd = GetRangeEnd(prefixKey);
-                await _kvClient.DeleteRangeAsync(new DeleteRangeRequest
+                return await _kvClient.DeleteRangeAsync(new DeleteRangeRequest
                 {
                     Key = ByteString.CopyFromUtf8(prefixKey),
                     RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
