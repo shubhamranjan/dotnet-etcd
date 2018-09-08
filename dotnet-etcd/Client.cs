@@ -234,12 +234,13 @@ namespace dotnet_etcd
         #endregion
 
         #region Public Methods
+
         /// <summary>
-        /// Get the value for a specified key
+        /// Get the etcd response for a specified key
         /// </summary>
-        /// <returns>The value for the specified key</returns>
+        /// <returns>The etcd response for the specified key</returns>
         /// <param name="key">Key for which value need to be fetched</param>
-        public string Get(string key)
+        public RangeResponse Get(string key)
         {
             RangeResponse rangeResponse = new RangeResponse();
             try
@@ -255,15 +256,15 @@ namespace dotnet_etcd
                 throw;
             }
 
-            return rangeResponse.Count != 0 ? rangeResponse.Kvs[0].Value.ToStringUtf8().Trim() : string.Empty;
+            return rangeResponse;
         }
 
         /// <summary>
-        /// Get the value for a specified key in async
+        /// Get the etcd response for a specified key in async
         /// </summary>
-        /// <returns>The value for the specified key</returns>
+        /// <returns>The etcd response for the specified key</returns>
         /// <param name="key">Key for which value need to be fetched</param>
-        public async Task<string> GetAsync(string key)
+        public async Task<RangeResponse> GetAsync(string key)
         {
             RangeResponse rangeResponse = new RangeResponse();
             try
@@ -273,6 +274,48 @@ namespace dotnet_etcd
                     Key = ByteString.CopyFromUtf8(key)
                 }
                 , _headers);
+            }
+            catch
+            {
+                ResetConnection();
+                throw;
+            }
+
+            return rangeResponse;
+        }
+
+        /// <summary>
+        /// Get the value for a specified key
+        /// </summary>
+        /// <returns>The value for the specified key</returns>
+        /// <param name="key">Key for which value need to be fetched</param>
+        public string GetVal(string key)
+        {
+            RangeResponse rangeResponse = new RangeResponse();
+            try
+            {
+                rangeResponse = Get(key);
+            }
+            catch
+            {
+                ResetConnection();
+                throw;
+            }
+
+            return rangeResponse.Count != 0 ? rangeResponse.Kvs[0].Value.ToStringUtf8().Trim() : string.Empty;
+        }
+
+        /// <summary>
+        /// Get the value for a specified key in async
+        /// </summary>
+        /// <returns>The value for the specified key</returns>
+        /// <param name="key">Key for which value need to be fetched</param>
+        public async Task<string> GetValAsync(string key)
+        {
+            RangeResponse rangeResponse = new RangeResponse();
+            try
+            {
+                rangeResponse = await GetAsync(key);
             }
             catch
             {

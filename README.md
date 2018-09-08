@@ -76,12 +76,16 @@ Add using statement at the top of your class file
 
 #### Get a key
     
-    client.Get(<KEY_STRING>);
+    client.GetVal(<KEY_STRING>);
     // E.g Get key "foo/bar"
+    client.GetVal("foo/bar");
+    // To get full etcd response
     client.Get("foo/bar");
 
-    await client.GetAsync(<KEY_STRING>);
+    await client.GetValAsync(<KEY_STRING>);
     // E.g. Get key "foo/bar" in async
+    await client.GetValAsync("foo/bar");
+    // To get full etcd response
     await client.GetAsync("foo/bar");
 
 #### Get multiple keys with a common prefix
