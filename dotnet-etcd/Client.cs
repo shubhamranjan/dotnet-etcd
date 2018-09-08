@@ -108,7 +108,7 @@ namespace dotnet_etcd
         /// <param name="caCert">Certificate contents to connect to etcd server</param>
         /// <param name="clientCert"></param>
         /// <param name="clientKey"></param>
-        public EtcdClient(string host, int port, string username = "", string password = "", string caCert = "", string clientCert = "", string clientKey = "",bool publicRootCa=false)
+        public EtcdClient(string host, int port, string username = "", string password = "", string caCert = "", string clientCert = "", string clientKey = "", bool publicRootCa = false)
         {
             _host = host;
             _port = port;
@@ -250,9 +250,13 @@ namespace dotnet_etcd
                     Key = ByteString.CopyFromUtf8(key)
                 }, _headers);
             }
-            catch
+            catch (Grpc.Core.RpcException)
             {
                 ResetConnection();
+                throw;
+            }
+            catch
+            {
                 throw;
             }
 
@@ -275,9 +279,13 @@ namespace dotnet_etcd
                 }
                 , _headers);
             }
-            catch
+            catch (Grpc.Core.RpcException)
             {
                 ResetConnection();
+                throw;
+            }
+            catch
+            {
                 throw;
             }
 
@@ -296,9 +304,13 @@ namespace dotnet_etcd
             {
                 rangeResponse = Get(key);
             }
-            catch
+            catch (Grpc.Core.RpcException)
             {
                 ResetConnection();
+                throw;
+            }
+            catch
+            {
                 throw;
             }
 
@@ -317,9 +329,13 @@ namespace dotnet_etcd
             {
                 rangeResponse = await GetAsync(key);
             }
-            catch
+            catch (Grpc.Core.RpcException)
             {
                 ResetConnection();
+                throw;
+            }
+            catch
+            {
                 throw;
             }
 
@@ -345,9 +361,13 @@ namespace dotnet_etcd
                 }, _headers);
 
             }
-            catch
+            catch (Grpc.Core.RpcException)
             {
                 ResetConnection();
+                throw;
+            }
+            catch
+            {
                 throw;
             }
 
@@ -372,9 +392,13 @@ namespace dotnet_etcd
                     RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
                 }, _headers);
             }
-            catch
+            catch (Grpc.Core.RpcException)
             {
                 ResetConnection();
+                throw;
+            }
+            catch
+            {
                 throw;
             }
 
@@ -397,9 +421,13 @@ namespace dotnet_etcd
                     Value = ByteString.CopyFromUtf8(val)
                 }, _headers);
             }
-            catch
+            catch (Grpc.Core.RpcException)
             {
                 ResetConnection();
+                throw;
+            }
+            catch
+            {
                 throw;
             }
         }
@@ -420,9 +448,13 @@ namespace dotnet_etcd
                     Value = ByteString.CopyFromUtf8(val)
                 }, _headers);
             }
-            catch
+            catch (Grpc.Core.RpcException)
             {
                 ResetConnection();
+                throw;
+            }
+            catch
+            {
                 throw;
             }
         }
@@ -440,9 +472,13 @@ namespace dotnet_etcd
                     Key = ByteString.CopyFromUtf8(key)
                 }, _headers);
             }
-            catch
+            catch (Grpc.Core.RpcException)
             {
                 ResetConnection();
+                throw;
+            }
+            catch
+            {
                 throw;
             }
         }
@@ -460,9 +496,13 @@ namespace dotnet_etcd
                     Key = ByteString.CopyFromUtf8(key)
                 }, _headers);
             }
-            catch
+            catch (Grpc.Core.RpcException)
             {
                 ResetConnection();
+                throw;
+            }
+            catch
+            {
                 throw;
             }
         }
@@ -482,9 +522,13 @@ namespace dotnet_etcd
                     RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
                 }, _headers);
             }
-            catch
+            catch (Grpc.Core.RpcException)
             {
                 ResetConnection();
+                throw;
+            }
+            catch
+            {
                 throw;
             }
         }
@@ -504,9 +548,13 @@ namespace dotnet_etcd
                     RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
                 }, _headers);
             }
-            catch
+            catch (Grpc.Core.RpcException)
             {
                 ResetConnection();
+                throw;
+            }
+            catch
+            {
                 throw;
             }
         }
