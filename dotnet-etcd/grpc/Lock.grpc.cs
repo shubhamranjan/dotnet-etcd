@@ -238,7 +238,7 @@ namespace V3Lockpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public LockResponse(LockResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       key_ = other.key_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -538,7 +538,7 @@ namespace V3Lockpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public UnlockResponse(UnlockResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 

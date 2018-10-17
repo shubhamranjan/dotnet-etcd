@@ -1166,7 +1166,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public RangeResponse(RangeResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       kvs_ = other.kvs_.Clone();
       more_ = other.more_;
       count_ = other.count_;
@@ -1678,8 +1678,8 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public PutResponse(PutResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
-      PrevKv = other.prevKv_ != null ? other.PrevKv.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
+      prevKv_ = other.prevKv_ != null ? other.prevKv_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -2049,7 +2049,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public DeleteRangeResponse(DeleteRangeResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       deleted_ = other.deleted_;
       prevKvs_ = other.prevKvs_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -3401,7 +3401,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public TxnResponse(TxnResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       succeeded_ = other.succeeded_;
       responses_ = other.responses_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -3760,7 +3760,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public CompactionResponse(CompactionResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -3996,7 +3996,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public HashResponse(HashResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       hash_ = other.hash_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -4294,7 +4294,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public HashKVResponse(HashKVResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       hash_ = other.hash_;
       compactRevision_ = other.compactRevision_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -4592,7 +4592,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public SnapshotResponse(SnapshotResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       remainingBytes_ = other.remainingBytes_;
       blob_ = other.blob_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -5435,7 +5435,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public WatchResponse(WatchResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       watchId_ = other.watchId_;
       created_ = other.created_;
       canceled_ = other.canceled_;
@@ -5919,7 +5919,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public LeaseGrantResponse(LeaseGrantResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       iD_ = other.iD_;
       tTL_ = other.tTL_;
       error_ = other.error_;
@@ -6276,7 +6276,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public LeaseRevokeResponse(LeaseRevokeResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -6543,7 +6543,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public LeaseKeepAliveResponse(LeaseKeepAliveResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       iD_ = other.iD_;
       tTL_ = other.tTL_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -6903,7 +6903,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public LeaseTimeToLiveResponse(LeaseTimeToLiveResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       iD_ = other.iD_;
       tTL_ = other.tTL_;
       grantedTTL_ = other.grantedTTL_;
@@ -7487,8 +7487,8 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public MemberAddResponse(MemberAddResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
-      Member = other.member_ != null ? other.Member.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
+      member_ = other.member_ != null ? other.member_.Clone() : null;
       members_ = other.members_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -7814,7 +7814,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public MemberRemoveResponse(MemberRemoveResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       members_ = other.members_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -8127,7 +8127,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public MemberUpdateResponse(MemberUpdateResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       members_ = other.members_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -8386,7 +8386,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public MemberListResponse(MemberListResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       members_ = other.members_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -8645,7 +8645,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public DefragmentResponse(DefragmentResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -8912,7 +8912,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public MoveLeaderResponse(MoveLeaderResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -9420,7 +9420,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public AlarmResponse(AlarmResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       alarms_ = other.alarms_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -9679,7 +9679,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public StatusResponse(StatusResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       version_ = other.version_;
       dbSize_ = other.dbSize_;
       leader_ = other.leader_;
@@ -11822,7 +11822,7 @@ namespace Etcdserverpb {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public AuthRoleGrantPermissionRequest(AuthRoleGrantPermissionRequest other) : this() {
       name_ = other.name_;
-      Perm = other.perm_ != null ? other.Perm.Clone() : null;
+      perm_ = other.perm_ != null ? other.perm_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -12175,7 +12175,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public AuthEnableResponse(AuthEnableResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -12310,7 +12310,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public AuthDisableResponse(AuthDisableResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -12445,7 +12445,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public AuthenticateResponse(AuthenticateResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       token_ = other.token_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -12611,7 +12611,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public AuthUserAddResponse(AuthUserAddResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -12746,7 +12746,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public AuthUserGetResponse(AuthUserGetResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       roles_ = other.roles_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -12901,7 +12901,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public AuthUserDeleteResponse(AuthUserDeleteResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -13036,7 +13036,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public AuthUserChangePasswordResponse(AuthUserChangePasswordResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -13171,7 +13171,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public AuthUserGrantRoleResponse(AuthUserGrantRoleResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -13306,7 +13306,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public AuthUserRevokeRoleResponse(AuthUserRevokeRoleResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -13441,7 +13441,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public AuthRoleAddResponse(AuthRoleAddResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -13576,7 +13576,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public AuthRoleGetResponse(AuthRoleGetResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       perm_ = other.perm_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -13731,7 +13731,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public AuthRoleListResponse(AuthRoleListResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       roles_ = other.roles_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -13886,7 +13886,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public AuthUserListResponse(AuthUserListResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       users_ = other.users_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -14041,7 +14041,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public AuthRoleDeleteResponse(AuthRoleDeleteResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -14176,7 +14176,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public AuthRoleGrantPermissionResponse(AuthRoleGrantPermissionResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -14311,7 +14311,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public AuthRoleRevokePermissionResponse(AuthRoleRevokePermissionResponse other) : this() {
-      Header = other.header_ != null ? other.Header.Clone() : null;
+      header_ = other.header_ != null ? other.header_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
