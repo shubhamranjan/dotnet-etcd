@@ -359,8 +359,8 @@ namespace Mvccpb {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public Event(Event other) : this() {
       type_ = other.type_;
-      Kv = other.kv_ != null ? other.Kv.Clone() : null;
-      PrevKv = other.prevKv_ != null ? other.PrevKv.Clone() : null;
+      kv_ = other.kv_ != null ? other.kv_.Clone() : null;
+      prevKv_ = other.prevKv_ != null ? other.prevKv_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
