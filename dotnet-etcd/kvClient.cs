@@ -10,7 +10,7 @@ namespace dotnet_etcd
 {
 
     #region Public Classes
-    public class EtcdClient : IDisposable
+    public partial class EtcdClient : IDisposable
     {
         #region Variables
 
@@ -93,6 +93,10 @@ namespace dotnet_etcd
         /// Depicts whether to connect using publicly trusted roots.
         /// </summary>
         private readonly bool _publicRootCa;
+
+        private Watch.WatchClient _watchClient;
+
+        private Lease.LeaseClient _leaseClient;
         #endregion
 
         #region Initializers
@@ -160,6 +164,7 @@ namespace dotnet_etcd
 
 
                 _kvClient = new KV.KVClient(_channel);
+                _watchClient = new Watch.WatchClient(_channel);
             }
             catch
             {
