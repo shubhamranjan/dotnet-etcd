@@ -53,5 +53,49 @@ namespace dotnet_etcd
                 throw;
             }
         }
+
+        /// <summary>
+        /// LeaseRevoke revokes a lease. All keys attached to the lease will expire and be deleted.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public LeaseRevokeResponse LeaseRevoke(LeaseRevokeRequest request)
+        {
+            try
+            {
+                return _leaseClient.LeaseRevoke(request, _headers);
+            }
+            catch (Grpc.Core.RpcException)
+            {
+                ResetConnection();
+                throw;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// LeaseRevoke revokes a lease in async. All keys attached to the lease will expire and be deleted.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public async Task<LeaseRevokeResponse> LeaseRevokeAsync(LeaseRevokeRequest request)
+        {
+            try
+            {
+                return await _leaseClient.LeaseRevokeAsync(request, _headers);
+            }
+            catch (Grpc.Core.RpcException)
+            {
+                ResetConnection();
+                throw;
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }
