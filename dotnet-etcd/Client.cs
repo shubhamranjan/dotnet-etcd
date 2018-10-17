@@ -558,6 +558,56 @@ namespace dotnet_etcd
                 throw;
             }
         }
+
+        /// <summary>
+        ///  Txn processes multiple requests in a single transaction.
+        /// A txn request increments the revision of the key-value store
+        /// and generates events with the same revision for every completed request.
+        /// It is not allowed to modify the same key several times within one txn.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public TxnResponse Transaction(TxnRequest request)
+        {
+            try
+            {
+                return _kvClient.Txn(request, _headers);
+            }
+            catch (Grpc.Core.RpcException)
+            {
+                ResetConnection();
+                throw;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///  Txn processes multiple requests in a single transaction.
+        /// A txn request increments the revision of the key-value store
+        /// and generates events with the same revision for every completed request.
+        /// It is not allowed to modify the same key several times within one txn.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public async Task<TxnResponse> TransactionAsync(TxnRequest request)
+        {
+            try
+            {
+                return await _kvClient.TxnAsync(request, _headers);
+            }
+            catch (Grpc.Core.RpcException)
+            {
+                ResetConnection();
+                throw;
+            }
+            catch
+            {
+                throw;
+            }
+        }
         #endregion
 
         #region IDisposable Support
