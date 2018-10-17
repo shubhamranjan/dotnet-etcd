@@ -585,7 +585,7 @@ namespace dotnet_etcd
         }
 
         /// <summary>
-        ///  Txn processes multiple requests in a single transaction.
+        ///  Txn processes multiple requests in a single transaction in async.
         /// A txn request increments the revision of the key-value store
         /// and generates events with the same revision for every completed request.
         /// It is not allowed to modify the same key several times within one txn.
@@ -597,6 +597,55 @@ namespace dotnet_etcd
             try
             {
                 return await _kvClient.TxnAsync(request, _headers);
+            }
+            catch (Grpc.Core.RpcException)
+            {
+                ResetConnection();
+                throw;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Compact compacts the event history in the etcd key-value store. The key-value
+        /// store should be periodically compacted or the event history will continue to grow
+        /// indefinitely.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public CompactionResponse Compact(CompactionRequest request)
+        {
+            try
+            {
+                return _kvClient.Compact(request, _headers);
+            }
+            catch (Grpc.Core.RpcException)
+            {
+                ResetConnection();
+                throw;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+
+        /// <summary>
+        /// Compact compacts the event history in the etcd key-value store in async. The key-value
+        /// store should be periodically compacted or the event history will continue to grow
+        /// indefinitely.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public async Task<CompactionResponse> CompactAsync(CompactionRequest request)
+        {
+            try
+            {
+                return await _kvClient.CompactAsync(request, _headers);
             }
             catch (Grpc.Core.RpcException)
             {
