@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Etcdserverpb;
+using System;
 using System.Threading.Tasks;
-using Etcdserverpb;
 
 namespace dotnet_etcd
 {
