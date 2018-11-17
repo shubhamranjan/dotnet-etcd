@@ -1,5 +1,6 @@
 ﻿using Etcdserverpb;
 using System;
+using Grpc.Core;
 using System.Threading.Tasks;
 
 namespace dotnet_etcd
@@ -19,7 +20,7 @@ namespace dotnet_etcd
             {
                 return _leaseClient.LeaseGrant(request, _headers);
             }
-            catch (Grpc.Core.RpcException)
+            catch (RpcException)
             {
                 ResetConnection();
                 throw;
@@ -43,7 +44,7 @@ namespace dotnet_etcd
             {
                 return await _leaseClient.LeaseGrantAsync(request, _headers);
             }
-            catch (Grpc.Core.RpcException)
+            catch (RpcException)
             {
                 ResetConnection();
                 throw;
@@ -65,7 +66,7 @@ namespace dotnet_etcd
             {
                 return _leaseClient.LeaseRevoke(request, _headers);
             }
-            catch (Grpc.Core.RpcException)
+            catch (RpcException)
             {
                 ResetConnection();
                 throw;
@@ -87,7 +88,7 @@ namespace dotnet_etcd
             {
                 return await _leaseClient.LeaseRevokeAsync(request, _headers);
             }
-            catch (Grpc.Core.RpcException)
+            catch (RpcException)
             {
                 ResetConnection();
                 throw;
