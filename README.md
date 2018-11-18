@@ -64,6 +64,9 @@ Add using statement at the top of your class file
     
 
 ### Operations
+
+A lot of methods have been implemented using etcd's default input/output parameters. I am simplifying a lot of methods by including more overloads as I come across use cases. If you have some, please feel free to raise and issue or a PR :)
+
 #### Put a key
 
     client.Put(<KEY_STRING>,<VALUE_STRING>);
@@ -97,6 +100,46 @@ Add using statement at the top of your class file
     await client.GetRangeAsync(<PREFIX_STRING>);
     // E.g. Get all keys with pattern "foo/*" in async
     await client.GetRangeAsync("foo/");
+
+#### Watch a key
+
+    WatchRequest request = new WatchRequest()
+    {
+        CreateRequest = new WatchCreateRequest()
+        {
+            Key = ByteString.CopyFromUtf8("foo")
+        }
+    };
+    etcdClient.Watch(request, print);
+
+    -------------------------------
+    // Print function that prints key and value from the watch response
+    private static void print(WatchResponse response)
+    {   
+        if (response.Events.Count == 0)
+        {
+            Console.WriteLine(response);
+        }
+        else
+        {
+            Console.WriteLine($"{response.Events[0].Kv.Key.ToStringUtf8()}:{response.Events .Kv.Value.ToStringUtf8()}");
+        }
+    }
+
+    ----------------------------------
+    // Print function that prints key and value from the minimal watch
+    // response data 
+    private static void print(WatchEvent[] response)
+    {
+        foreach(WatchEvent e1 in response)
+        {
+            Console.WriteLine($"{e1.Key}:{e1.Value}:{e1.Type}");
+        }
+    }
+##### Watch also has a simple overload as follows
+    etcdClient.Watch("foo", print);
+
+###### More overloads are also available. You can check them using IntelliSense (Ctrl+Shift+Space). Detailed documentation coming soon.
 
 #### Delete a key
 
