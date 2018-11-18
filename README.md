@@ -1,5 +1,5 @@
 # dotnet-etcd
-![](https://drive.google.com/uc?id=1w-1GDzFzmTjzBkFb2bWgQsqswrxLbZQo) 
+![](https://raw.githubusercontent.com/shubhamranjan/dotnet-etcd/master/docs/img/etcd-logo-rectangle.png)
 
 A C# .NET (dotnet) GRPC client for etcd v3+
 
