@@ -5,6 +5,10 @@ using System;
 
 namespace dotnet_etcd
 {
+    /// <summary>
+    /// Etcd client is the entrypoint for this library.
+    /// It contains all the functions required to perform operations on etcd.
+    /// </summary>
     public partial class EtcdClient : IDisposable
     {
         #region Variables
