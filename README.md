@@ -163,5 +163,5 @@ A lot of methods have been implemented using etcd's default input/output paramet
 
 
 ## Coming Soon
-* Watch support
 * Auth Operations (Add users,roles etc.)
+* ~~Watch support~~ Released v2.0.0 +
