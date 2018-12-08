@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">
-      netcoreapp2.0;netcoreapp2.1;netstandard2.0;net45;net451;net452;net46;net461;net462;net47;net471;net472
+      netcoreapp2.0;netcoreapp2.1;netcoreapp2.2;netstandard2.0;net45;net451;net452;net46;net461;net462;net47;net471;net472
     </TargetFrameworks>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
     <RootNamespace>dotnet_etcd</RootNamespace>
@@ -31,8 +31,11 @@ Advanced uses take advantage of the consistency guarantees to implement database
 
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.6.1" />
-    <PackageReference Include="Grpc.Core" Version="1.16.0" />
-    <PackageReference Include="Grpc.Tools" Version="1.16.0" />
+    <PackageReference Include="Grpc.Core" Version="1.17.0" />
+    <PackageReference Include="Grpc.Tools" Version="1.17.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>
