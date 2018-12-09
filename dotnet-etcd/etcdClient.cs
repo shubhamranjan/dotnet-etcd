@@ -96,6 +96,12 @@ namespace dotnet_etcd
         /// Key-Value client through which operations like range/put on etcd can be performed
         /// </summary>
         private KV.KVClient _kvClient;
+
+        /// <summary>
+        /// Client throug which operations like Add, Remove, Update and List
+        /// on etcd members could be performed.
+        /// </summary>
+        private Cluster.ClusterClient _clusterClient;
         #endregion
 
         #region Initializers
@@ -166,6 +172,7 @@ namespace dotnet_etcd
                 _kvClient = new KV.KVClient(_channel);
                 _watchClient = new Watch.WatchClient(_channel);
                 _leaseClient = new Lease.LeaseClient(_channel);
+                _clusterClient = new Cluster.ClusterClient(_channel);
             }
             catch
             {
