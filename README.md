@@ -66,9 +66,10 @@ Add using statement at the top of your class file
 
 ### Operations
 
-A lot of methods have been implemented using etcd's default input/output parameters. I am simplifying a lot of methods by including more overloads as I come across use cases. If you have some, please feel free to raise and issue or a PR :)
+>A lot of methods have been implemented using etcd's default input/output parameters. I am simplifying a lot of methods by including more overloads as I come across use cases. If you have some, please feel free to raise and issue or a PR :)
 
-#### Put a key
+#### Key-Value Operations
+##### Put a key
 
     client.Put(<KEY_STRING>,<VALUE_STRING>);
     // E.g Put key "foo/bar" with value "foobar"
@@ -78,7 +79,7 @@ A lot of methods have been implemented using etcd's default input/output paramet
     // E.g Put key "foo/bar" with value "foobar" in async
     await client.PutAsync("foo/bar","barfoo");
 
-#### Get a key
+##### Get a key
     
     client.GetVal(<KEY_STRING>);
     // E.g Get key "foo/bar"
@@ -92,7 +93,7 @@ A lot of methods have been implemented using etcd's default input/output paramet
     // To get full etcd response
     await client.GetAsync("foo/bar");
 
-#### Get multiple keys with a common prefix
+##### Get multiple keys with a common prefix
 
     client.GetRange(<PREFIX_STRING>);
     // E.g. Get all keys with pattern "foo/*"
@@ -102,7 +103,28 @@ A lot of methods have been implemented using etcd's default input/output paramet
     // E.g. Get all keys with pattern "foo/*" in async
     await client.GetRangeAsync("foo/");
 
-#### Watch a key
+##### Delete a key
+
+    client.Delete(<KEY_STRING>);
+    // E.g. Delete key "foo/bar"
+    client.Delete("foo/bar");
+
+    await client.DeleteAsync(<KEY_STRING>);
+    // E.g. Delete key "foo/bar" in async
+    await client.DeleteAsync("foo/bar");
+
+##### Delete multiple keys with a common prefix
+
+    client.DeleteRange(<PREFIX_STRING>);
+    // E.g. Delete all keys with pattern "foo/*"
+    client.DeleteRange("foo/"); 
+
+    await client.DeleteRangeAsync(<PREFIX_STRING>);
+    // E.g. Delete all keys with pattern "foo/*" in async
+    await client.DeleteRangeAsync("foo/");
+
+### Watch Operations
+##### Watch a key
 
     WatchRequest request = new WatchRequest()
     {
@@ -137,31 +159,68 @@ A lot of methods have been implemented using etcd's default input/output paramet
             Console.WriteLine($"{e1.Key}:{e1.Value}:{e1.Type}");
         }
     }
-##### Watch also has a simple overload as follows
+>Watch also has a simple overload as follows
+
     etcdClient.Watch("foo", print);
 
-###### More overloads are also available. You can check them using IntelliSense (Ctrl+Shift+Space). Detailed documentation coming soon.
+> More overloads are also available. You can check them using IntelliSense (Ctrl+Shift+Space). Detailed documentation coming soon.
 
-#### Delete a key
+### Cluster Operations
 
-    client.Delete(<KEY_STRING>);
-    // E.g. Delete key "foo/bar"
-    client.Delete("foo/bar");
+#### Add a member into the cluster
 
-    await client.DeleteAsync(<KEY_STRING>);
-    // E.g. Delete key "foo/bar" in async
-    await client.DeleteAsync("foo/bar");
+     MemberAddRequest request = new MemberAddRequest();
+     request.PeerURLs.Add("http://example.com:2380");
+     request.PeerURLs.Add("http://10.0.0.1:2380");
+     MemberAddResponse res = etcdClient.MemberAdd(request);
 
-#### Delete multiple keys with a common prefix
+     // Async
+     MemberAddResponse res = await etcdClient.MemberAddAsync(request);
 
-    client.DeleteRange(<PREFIX_STRING>);
-    // E.g. Delete all keys with pattern "foo/*"
-    client.DeleteRange("foo/"); 
+     // Do something with response
 
-    await client.DeleteRangeAsync(<PREFIX_STRING>);
-    // E.g. Delete all keys with pattern "foo/*" in async
-    await client.DeleteRangeAsync("foo/");
+#### Remove an existing member from the cluster
 
+    MemberRemoveRequest request = new MemberRemoveRequest
+    {
+        // ID of member to be removed
+        ID = 651748107021
+    };
+    MemberRemoveResponse res = etcdClient.MemberRemove(request);
+
+    // Async
+    MemberRemoveResponse res = await etcdClient.MemberRemoveAsync(request);
+
+    // Do something with response
+
+### Update the member configuration
+
+    MemberUpdateRequest request = new MemberUpdateRequest
+    {
+        // ID of member to be updated
+        ID = 651748107021
+    };
+    request.PeerURLs.Add("http://10.0.0.1:2380");
+    MemberUpdateResponse res = etcdClient.MemberUpdate(request);
+
+    // Async
+    MemberUpdateResponse res = await etcdClient.MemberUpdateAsync(request);
+
+    // Do something with response
+###  List all the members in the cluster
+
+    MemberListRequest request = new MemberListRequest();
+    etcdClient.MemberList(request);
+    MemberListResponse res = etcdClient.MemberList(request);
+
+    // Async
+    MemberListResponse res = await etcdClient.MemberListAsync(request);
+
+    // Do something with response
+    foreach(var member in res.Members)
+    {
+        Console.WriteLine($"{member.ID} - {member.Name} - {member.PeerURLs}");
+    }
 
 ## Coming Soon
 * Auth Operations (Add users,roles etc.)
