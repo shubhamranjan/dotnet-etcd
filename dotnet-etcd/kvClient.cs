@@ -3,7 +3,6 @@ using Google.Protobuf;
 using Grpc.Core;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace dotnet_etcd

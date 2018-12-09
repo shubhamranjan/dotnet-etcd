@@ -65,7 +65,7 @@ namespace dotnet_etcd
             MemberRemoveResponse response = new MemberRemoveResponse();
             try
             {
-                response =  _clusterClient.MemberRemove(request);
+                response = _clusterClient.MemberRemove(request);
             }
             catch (RpcException)
             {
@@ -113,7 +113,7 @@ namespace dotnet_etcd
             MemberUpdateResponse response = new MemberUpdateResponse();
             try
             {
-                response =  _clusterClient.MemberUpdate(request);
+                response = _clusterClient.MemberUpdate(request);
             }
             catch (RpcException)
             {
@@ -161,7 +161,7 @@ namespace dotnet_etcd
             MemberListResponse response = new MemberListResponse();
             try
             {
-                response =  _clusterClient.MemberList(request);
+                response = _clusterClient.MemberList(request);
             }
             catch (RpcException)
             {

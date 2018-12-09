@@ -1,6 +1,6 @@
 ﻿using Etcdserverpb;
-using System;
 using Grpc.Core;
+using System;
 using System.Threading.Tasks;
 
 namespace dotnet_etcd

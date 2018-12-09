@@ -8,7 +8,7 @@ namespace dotnet_etcd
 {
     public partial class EtcdClient : IDisposable
     {
-        
+
         /// <summary>
         /// Converts RangeResponse to Dictionary
         /// </summary>
