@@ -30,6 +30,8 @@ namespace dotnet_etcd
 
     }
 
+    // TODO: Add range methods for methods having  key as input instead of a whole watch request
+    // TODO: Update documentation on how to call range requests for watch using watch request as input param
     public partial class EtcdClient : IDisposable
     {
         /// <summary>
