@@ -1,7 +1,8 @@
 language: csharp
 mono: none
-dotnet: 2.1
+dotnet: 2.2
 script:
  - dotnet build -f netstandard2.0
  - dotnet build -f netcoreapp2.0
  - dotnet build -f netcoreapp2.1
+ - dotnet build -f netcoreapp2.2
