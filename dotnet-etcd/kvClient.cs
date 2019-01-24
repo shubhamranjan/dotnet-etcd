@@ -119,9 +119,72 @@ namespace dotnet_etcd
         /// <summary>
         /// Gets the range of keys with the specified prefix
         /// </summary>
+        /// <returns>RangeResponse containing range of key-values</returns>
+        /// <param name="prefixKey">Prefix key</param>
+        public RangeResponse GetRange(string prefixKey)
+        {
+            RangeResponse rangeResponse = new RangeResponse();
+            try
+            {
+                string rangeEnd = GetRangeEnd(prefixKey);
+
+                rangeResponse = _kvClient.Range(new RangeRequest
+                {
+                    Key = ByteString.CopyFromUtf8(prefixKey),
+                    RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
+                }, _headers);
+
+            }
+            catch (RpcException)
+            {
+                ResetConnection();
+                throw;
+            }
+            catch
+            {
+                throw;
+            }
+
+            return rangeResponse;
+        }
+
+        /// <summary>
+        /// Gets the range of keys with the specified prefix in async
+        /// </summary>
+        /// <returns>RangeResponse containing range of key-values</returns>
+        /// <param name="prefixKey">Prefix key</param>
+        public async Task<RangeResponse> GetRangeAsync(string prefixKey)
+        {
+            RangeResponse rangeResponse = new RangeResponse();
+            try
+            {
+                string rangeEnd = GetRangeEnd(prefixKey);
+
+                rangeResponse = await _kvClient.RangeAsync(new RangeRequest
+                {
+                    Key = ByteString.CopyFromUtf8(prefixKey),
+                    RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
+                }, _headers);
+            }
+            catch (RpcException)
+            {
+                ResetConnection();
+                throw;
+            }
+            catch
+            {
+                throw;
+            }
+
+            return rangeResponse;
+        }
+
+        /// <summary>
+        /// Gets the range of keys with the specified prefix
+        /// </summary>
         /// <returns>Dictionary containing range of key-values</returns>
         /// <param name="prefixKey">Prefix key</param>
-        public IDictionary<string, string> GetRange(string prefixKey)
+        public IDictionary<string, string> GetRangeVal(string prefixKey)
         {
             RangeResponse rangeResponse = new RangeResponse();
             try
@@ -153,7 +216,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <returns>Dictionary containing range of key-values</returns>
         /// <param name="prefixKey">Prefix key</param>
-        public async Task<IDictionary<string, string>> GetRangeAsync(string prefixKey)
+        public async Task<IDictionary<string, string>> GetRangeValAsync(string prefixKey)
         {
             RangeResponse rangeResponse = new RangeResponse();
             try
