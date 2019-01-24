@@ -29,7 +29,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <returns>The range end for prefix</returns>
         /// <param name="prefixKey">Prefix key</param>
-        private string GetRangeEnd(string prefixKey)
+        public string GetRangeEnd(string prefixKey)
         {
             StringBuilder rangeEnd = new StringBuilder(prefixKey);
             rangeEnd[rangeEnd.Length - 1] = ++rangeEnd[rangeEnd.Length - 1];
