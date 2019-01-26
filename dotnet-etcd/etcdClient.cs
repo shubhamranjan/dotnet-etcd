@@ -178,6 +178,7 @@ namespace dotnet_etcd
                 _watchClient = new Watch.WatchClient(_channel);
                 _leaseClient = new Lease.LeaseClient(_channel);
                 _clusterClient = new Cluster.ClusterClient(_channel);
+                _maintenanceClient = new Maintenance.MaintenanceClient(_channel);
             }
             catch
             {
