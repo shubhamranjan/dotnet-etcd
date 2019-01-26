@@ -102,6 +102,11 @@ namespace dotnet_etcd
         /// on etcd members could be performed.
         /// </summary>
         private Cluster.ClusterClient _clusterClient;
+
+        /// <summary>
+        /// Client through which maintenance operations can be performed.
+        /// </summary>
+        private Maintenance.MaintenanceClient _maintenanceClient;
         #endregion
 
         #region Initializers
