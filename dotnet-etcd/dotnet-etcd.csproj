@@ -10,9 +10,9 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryUrl>https://github.com/shubhamranjan/dotnet-etcd</RepositoryUrl>
     <PackageProjectUrl>https://github.com/shubhamranjan/dotnet-etcd</PackageProjectUrl>
-    <PackageReleaseNotes>1. Add cluster maintenance methods for cluster members
-2. Target dotnet core 2.2 as well
-3. Update nuget packages</PackageReleaseNotes>
+    <PackageReleaseNotes>1. Add support for  maintenance operations
+2. Add support for watching over a range of keys
+3. Add GetRange overload which returns RangeResponse</PackageReleaseNotes>
     <Authors>Shubham Ranjan</Authors>
     <Company />
     <Product />
@@ -26,8 +26,8 @@ Your applications can read and write data into etcd. A simple use-case is to sto
 Advanced uses take advantage of the consistency guarantees to implement database leader elections or do distributed locking across a cluster of workers.</Description>
     <PackageTags>etcd grpc etcdv3 etcd3</PackageTags>
     <SignAssembly>false</SignAssembly>
-    <PackageIconUrl>https://drive.google.com/uc?id=1MfMnMPh5nOl8W71X9COjD9ifWFBn1PuX</PackageIconUrl>
-    <Version>2.0.1</Version>
+    <PackageIconUrl>https://raw.githubusercontent.com/shubhamranjan/dotnet-etcd/master/docs/img/etcd-logo-rectangle.png</PackageIconUrl>
+    <Version>2.1.0</Version>
     <AutoGenerateBindingRedirects>False</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
