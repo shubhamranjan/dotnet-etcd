@@ -224,4 +224,3 @@ Add using statement at the top of your class file
 
 ## Coming Soon
 * Auth Operations (Add users,roles etc.)
-* ~~Watch support~~ Released v2.0.0 +
