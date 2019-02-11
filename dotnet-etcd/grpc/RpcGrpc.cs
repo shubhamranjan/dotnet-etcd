@@ -431,6 +431,19 @@ namespace Etcdserverpb {
           .AddMethod(__Method_Compact, serviceImpl.Compact).Build();
     }
 
+    /// <summary>Register service method implementations with a service binder. Useful when customizing the service binding logic.
+    /// Note: this method is part of an experimental API that can change or be removed without any prior notice.</summary>
+    /// <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
+    /// <param name="serviceImpl">An object implementing the server-side handling logic.</param>
+    public static void BindService(grpc::ServiceBinderBase serviceBinder, KVBase serviceImpl)
+    {
+      serviceBinder.AddMethod(__Method_Range, serviceImpl.Range);
+      serviceBinder.AddMethod(__Method_Put, serviceImpl.Put);
+      serviceBinder.AddMethod(__Method_DeleteRange, serviceImpl.DeleteRange);
+      serviceBinder.AddMethod(__Method_Txn, serviceImpl.Txn);
+      serviceBinder.AddMethod(__Method_Compact, serviceImpl.Compact);
+    }
+
   }
   public static partial class Watch
   {
@@ -537,6 +550,15 @@ namespace Etcdserverpb {
     {
       return grpc::ServerServiceDefinition.CreateBuilder()
           .AddMethod(__Method_Watch, serviceImpl.Watch).Build();
+    }
+
+    /// <summary>Register service method implementations with a service binder. Useful when customizing the service binding logic.
+    /// Note: this method is part of an experimental API that can change or be removed without any prior notice.</summary>
+    /// <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
+    /// <param name="serviceImpl">An object implementing the server-side handling logic.</param>
+    public static void BindService(grpc::ServiceBinderBase serviceBinder, WatchBase serviceImpl)
+    {
+      serviceBinder.AddMethod(__Method_Watch, serviceImpl.Watch);
     }
 
   }
@@ -841,6 +863,18 @@ namespace Etcdserverpb {
           .AddMethod(__Method_LeaseRevoke, serviceImpl.LeaseRevoke)
           .AddMethod(__Method_LeaseKeepAlive, serviceImpl.LeaseKeepAlive)
           .AddMethod(__Method_LeaseTimeToLive, serviceImpl.LeaseTimeToLive).Build();
+    }
+
+    /// <summary>Register service method implementations with a service binder. Useful when customizing the service binding logic.
+    /// Note: this method is part of an experimental API that can change or be removed without any prior notice.</summary>
+    /// <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
+    /// <param name="serviceImpl">An object implementing the server-side handling logic.</param>
+    public static void BindService(grpc::ServiceBinderBase serviceBinder, LeaseBase serviceImpl)
+    {
+      serviceBinder.AddMethod(__Method_LeaseGrant, serviceImpl.LeaseGrant);
+      serviceBinder.AddMethod(__Method_LeaseRevoke, serviceImpl.LeaseRevoke);
+      serviceBinder.AddMethod(__Method_LeaseKeepAlive, serviceImpl.LeaseKeepAlive);
+      serviceBinder.AddMethod(__Method_LeaseTimeToLive, serviceImpl.LeaseTimeToLive);
     }
 
   }
@@ -1155,6 +1189,18 @@ namespace Etcdserverpb {
           .AddMethod(__Method_MemberRemove, serviceImpl.MemberRemove)
           .AddMethod(__Method_MemberUpdate, serviceImpl.MemberUpdate)
           .AddMethod(__Method_MemberList, serviceImpl.MemberList).Build();
+    }
+
+    /// <summary>Register service method implementations with a service binder. Useful when customizing the service binding logic.
+    /// Note: this method is part of an experimental API that can change or be removed without any prior notice.</summary>
+    /// <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
+    /// <param name="serviceImpl">An object implementing the server-side handling logic.</param>
+    public static void BindService(grpc::ServiceBinderBase serviceBinder, ClusterBase serviceImpl)
+    {
+      serviceBinder.AddMethod(__Method_MemberAdd, serviceImpl.MemberAdd);
+      serviceBinder.AddMethod(__Method_MemberRemove, serviceImpl.MemberRemove);
+      serviceBinder.AddMethod(__Method_MemberUpdate, serviceImpl.MemberUpdate);
+      serviceBinder.AddMethod(__Method_MemberList, serviceImpl.MemberList);
     }
 
   }
@@ -1653,6 +1699,21 @@ namespace Etcdserverpb {
           .AddMethod(__Method_HashKV, serviceImpl.HashKV)
           .AddMethod(__Method_Snapshot, serviceImpl.Snapshot)
           .AddMethod(__Method_MoveLeader, serviceImpl.MoveLeader).Build();
+    }
+
+    /// <summary>Register service method implementations with a service binder. Useful when customizing the service binding logic.
+    /// Note: this method is part of an experimental API that can change or be removed without any prior notice.</summary>
+    /// <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
+    /// <param name="serviceImpl">An object implementing the server-side handling logic.</param>
+    public static void BindService(grpc::ServiceBinderBase serviceBinder, MaintenanceBase serviceImpl)
+    {
+      serviceBinder.AddMethod(__Method_Alarm, serviceImpl.Alarm);
+      serviceBinder.AddMethod(__Method_Status, serviceImpl.Status);
+      serviceBinder.AddMethod(__Method_Defragment, serviceImpl.Defragment);
+      serviceBinder.AddMethod(__Method_Hash, serviceImpl.Hash);
+      serviceBinder.AddMethod(__Method_HashKV, serviceImpl.HashKV);
+      serviceBinder.AddMethod(__Method_Snapshot, serviceImpl.Snapshot);
+      serviceBinder.AddMethod(__Method_MoveLeader, serviceImpl.MoveLeader);
     }
 
   }
@@ -2747,6 +2808,30 @@ namespace Etcdserverpb {
           .AddMethod(__Method_RoleDelete, serviceImpl.RoleDelete)
           .AddMethod(__Method_RoleGrantPermission, serviceImpl.RoleGrantPermission)
           .AddMethod(__Method_RoleRevokePermission, serviceImpl.RoleRevokePermission).Build();
+    }
+
+    /// <summary>Register service method implementations with a service binder. Useful when customizing the service binding logic.
+    /// Note: this method is part of an experimental API that can change or be removed without any prior notice.</summary>
+    /// <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
+    /// <param name="serviceImpl">An object implementing the server-side handling logic.</param>
+    public static void BindService(grpc::ServiceBinderBase serviceBinder, AuthBase serviceImpl)
+    {
+      serviceBinder.AddMethod(__Method_AuthEnable, serviceImpl.AuthEnable);
+      serviceBinder.AddMethod(__Method_AuthDisable, serviceImpl.AuthDisable);
+      serviceBinder.AddMethod(__Method_Authenticate, serviceImpl.Authenticate);
+      serviceBinder.AddMethod(__Method_UserAdd, serviceImpl.UserAdd);
+      serviceBinder.AddMethod(__Method_UserGet, serviceImpl.UserGet);
+      serviceBinder.AddMethod(__Method_UserList, serviceImpl.UserList);
+      serviceBinder.AddMethod(__Method_UserDelete, serviceImpl.UserDelete);
+      serviceBinder.AddMethod(__Method_UserChangePassword, serviceImpl.UserChangePassword);
+      serviceBinder.AddMethod(__Method_UserGrantRole, serviceImpl.UserGrantRole);
+      serviceBinder.AddMethod(__Method_UserRevokeRole, serviceImpl.UserRevokeRole);
+      serviceBinder.AddMethod(__Method_RoleAdd, serviceImpl.RoleAdd);
+      serviceBinder.AddMethod(__Method_RoleGet, serviceImpl.RoleGet);
+      serviceBinder.AddMethod(__Method_RoleList, serviceImpl.RoleList);
+      serviceBinder.AddMethod(__Method_RoleDelete, serviceImpl.RoleDelete);
+      serviceBinder.AddMethod(__Method_RoleGrantPermission, serviceImpl.RoleGrantPermission);
+      serviceBinder.AddMethod(__Method_RoleRevokePermission, serviceImpl.RoleRevokePermission);
     }
 
   }
