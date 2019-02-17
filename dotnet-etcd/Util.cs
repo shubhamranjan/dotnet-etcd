@@ -1,8 +1,8 @@
-﻿using Etcdserverpb;
-using Grpc.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Etcdserverpb;
+using Grpc.Core;
 
 namespace dotnet_etcd
 {
@@ -56,11 +56,13 @@ namespace dotnet_etcd
             };
         }
 
-        private void ResetConnection()
+        private void ResetConnection(RpcException ex)
         {
-
-            Dispose(true);
-            Init();
+            if (ex.Status.Equals(StatusCode.Unavailable))
+            {
+                Dispose(true);
+                Init();
+            }
         }
 
     }

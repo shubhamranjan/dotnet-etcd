@@ -19,9 +19,9 @@ namespace dotnet_etcd
             {
                 response = _clusterClient.MemberAdd(request);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -43,9 +43,9 @@ namespace dotnet_etcd
             {
                 response = await _clusterClient.MemberAddAsync(request);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -67,9 +67,9 @@ namespace dotnet_etcd
             {
                 response = _clusterClient.MemberRemove(request);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -91,9 +91,9 @@ namespace dotnet_etcd
             {
                 response = await _clusterClient.MemberRemoveAsync(request);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -115,9 +115,9 @@ namespace dotnet_etcd
             {
                 response = _clusterClient.MemberUpdate(request);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -139,9 +139,9 @@ namespace dotnet_etcd
             {
                 response = await _clusterClient.MemberUpdateAsync(request);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -163,9 +163,9 @@ namespace dotnet_etcd
             {
                 response = _clusterClient.MemberList(request);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -187,9 +187,9 @@ namespace dotnet_etcd
             {
                 response = await _clusterClient.MemberListAsync(request);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch

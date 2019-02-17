@@ -24,9 +24,9 @@ namespace dotnet_etcd
                     Key = ByteString.CopyFromUtf8(key)
                 }, _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -53,9 +53,9 @@ namespace dotnet_etcd
                 }
                 , _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -78,9 +78,9 @@ namespace dotnet_etcd
             {
                 rangeResponse = Get(key);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -103,9 +103,9 @@ namespace dotnet_etcd
             {
                 rangeResponse = await GetAsync(key);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -135,9 +135,9 @@ namespace dotnet_etcd
                 }, _headers);
 
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -166,9 +166,9 @@ namespace dotnet_etcd
                     RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
                 }, _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -198,9 +198,9 @@ namespace dotnet_etcd
                 }, _headers);
 
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -229,9 +229,9 @@ namespace dotnet_etcd
                     RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
                 }, _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -258,9 +258,9 @@ namespace dotnet_etcd
                     Value = ByteString.CopyFromUtf8(val)
                 }, _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -285,9 +285,9 @@ namespace dotnet_etcd
                     Value = ByteString.CopyFromUtf8(val)
                 }, _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -309,9 +309,9 @@ namespace dotnet_etcd
                     Key = ByteString.CopyFromUtf8(key)
                 }, _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -333,9 +333,9 @@ namespace dotnet_etcd
                     Key = ByteString.CopyFromUtf8(key)
                 }, _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -359,9 +359,9 @@ namespace dotnet_etcd
                     RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
                 }, _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -385,9 +385,9 @@ namespace dotnet_etcd
                     RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
                 }, _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -410,9 +410,9 @@ namespace dotnet_etcd
             {
                 return _kvClient.Txn(request, _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -435,9 +435,9 @@ namespace dotnet_etcd
             {
                 return await _kvClient.TxnAsync(request, _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -459,9 +459,9 @@ namespace dotnet_etcd
             {
                 return _kvClient.Compact(request, _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -484,9 +484,9 @@ namespace dotnet_etcd
             {
                 return await _kvClient.CompactAsync(request, _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch

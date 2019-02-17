@@ -43,9 +43,9 @@ namespace dotnet_etcd
             {
                 return _lockClient.Lock(request, _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
         }
@@ -84,9 +84,9 @@ namespace dotnet_etcd
             {
                 return await _lockClient.LockAsync(request, _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
         }
@@ -119,9 +119,9 @@ namespace dotnet_etcd
             {
                 return _lockClient.Unlock(request, _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
         }
@@ -154,9 +154,9 @@ namespace dotnet_etcd
             {
                 return await _lockClient.UnlockAsync(request, _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
         }

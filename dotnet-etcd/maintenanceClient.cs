@@ -19,9 +19,9 @@ namespace dotnet_etcd
             {
                 response = _maintenanceClient.Alarm(request);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -43,9 +43,9 @@ namespace dotnet_etcd
             {
                 response = await _maintenanceClient.AlarmAsync(request);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -67,9 +67,9 @@ namespace dotnet_etcd
             {
                 response = _maintenanceClient.Status(request);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -91,9 +91,9 @@ namespace dotnet_etcd
             {
                 response = await _maintenanceClient.StatusAsync(request);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -115,9 +115,9 @@ namespace dotnet_etcd
             {
                 response = _maintenanceClient.Defragment(request);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -139,9 +139,9 @@ namespace dotnet_etcd
             {
                 response = await _maintenanceClient.DefragmentAsync(request);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -168,9 +168,9 @@ namespace dotnet_etcd
             {
                 response = _maintenanceClient.Hash(request);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -197,9 +197,9 @@ namespace dotnet_etcd
             {
                 response = await _maintenanceClient.HashAsync(request);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -222,9 +222,9 @@ namespace dotnet_etcd
             {
                 response = _maintenanceClient.HashKV(request);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -247,9 +247,9 @@ namespace dotnet_etcd
             {
                 response = await _maintenanceClient.HashKVAsync(request);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -271,9 +271,9 @@ namespace dotnet_etcd
             {
                 response = _maintenanceClient.MoveLeader(request);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -295,9 +295,9 @@ namespace dotnet_etcd
             {
                 response = await _maintenanceClient.MoveLeaderAsync(request);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
