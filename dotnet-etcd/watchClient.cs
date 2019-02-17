@@ -63,10 +63,10 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
                 // If connection issue, then re-initate the watch
-                ResetConnection();
+                ResetConnection(ex);
                 Watch(request, method);
             }
             catch
@@ -107,10 +107,10 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
                 // If connection issue, then re-initate the watch
-                ResetConnection();
+                ResetConnection(ex);
                 Watch(request, methods);
             }
             catch
@@ -156,10 +156,10 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
                 // If connection issue, then re-initate the watch
-                ResetConnection();
+                ResetConnection(ex);
                 Watch(request, method);
             }
             catch
@@ -209,10 +209,10 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
                 // If connection issue, then re-initate the watch
-                ResetConnection();
+                ResetConnection(ex);
                 Watch(request, methods);
             }
             catch
@@ -253,10 +253,10 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
                 // If connection issue, then re-initate the watch
-                ResetConnection();
+                ResetConnection(ex);
                 Watch(requests, method);
             }
             catch
@@ -301,10 +301,10 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
                 // If connection issue, then re-initate the watch
-                ResetConnection();
+                ResetConnection(ex);
                 Watch(requests, methods);
             }
             catch
@@ -354,10 +354,10 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
                 // If connection issue, then re-initate the watch
-                ResetConnection();
+                ResetConnection(ex);
                 Watch(requests, method);
             }
             catch
@@ -411,10 +411,10 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
                 // If connection issue, then re-initate the watch
-                ResetConnection();
+                ResetConnection(ex);
                 Watch(requests, methods);
             }
             catch
@@ -678,10 +678,10 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
                 // If connection issue, then re-initate the watch
-                ResetConnection();
+                ResetConnection(ex);
                 Watch(request, method);
             }
             catch
@@ -722,10 +722,10 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
                 // If connection issue, then re-initate the watch
-                ResetConnection();
+                ResetConnection(ex);
                 Watch(request, methods);
             }
             catch
@@ -771,10 +771,10 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
                 // If connection issue, then re-initate the watch
-                ResetConnection();
+                ResetConnection(ex);
                 Watch(request, method);
             }
             catch
@@ -824,10 +824,10 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
                 // If connection issue, then re-initate the watch
-                ResetConnection();
+                ResetConnection(ex);
                 Watch(request, methods);
             }
             catch
@@ -868,10 +868,10 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
                 // If connection issue, then re-initate the watch
-                ResetConnection();
+                ResetConnection(ex);
                 Watch(requests, method);
             }
             catch
@@ -916,10 +916,10 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
                 // If connection issue, then re-initate the watch
-                ResetConnection();
+                ResetConnection(ex);
                 Watch(requests, methods);
             }
             catch
@@ -969,10 +969,10 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
                 // If connection issue, then re-initate the watch
-                ResetConnection();
+                ResetConnection(ex);
                 Watch(requests, method);
             }
             catch
@@ -1026,10 +1026,10 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
                 // If connection issue, then re-initate the watch
-                ResetConnection();
+                ResetConnection(ex);
                 Watch(requests, methods);
             }
             catch

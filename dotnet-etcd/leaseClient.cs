@@ -20,9 +20,9 @@ namespace dotnet_etcd
             {
                 return _leaseClient.LeaseGrant(request, _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -44,9 +44,9 @@ namespace dotnet_etcd
             {
                 return await _leaseClient.LeaseGrantAsync(request, _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -66,9 +66,9 @@ namespace dotnet_etcd
             {
                 return _leaseClient.LeaseRevoke(request, _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
@@ -88,9 +88,9 @@ namespace dotnet_etcd
             {
                 return await _leaseClient.LeaseRevokeAsync(request, _headers);
             }
-            catch (RpcException)
+            catch (RpcException ex)
             {
-                ResetConnection();
+                ResetConnection(ex);
                 throw;
             }
             catch
