@@ -63,7 +63,7 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException ex)
+            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
             {
                 // If connection issue, then re-initate the watch
                 ResetConnection(ex);
@@ -107,7 +107,7 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException ex)
+            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
             {
                 // If connection issue, then re-initate the watch
                 ResetConnection(ex);
@@ -156,7 +156,7 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException ex)
+            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
             {
                 // If connection issue, then re-initate the watch
                 ResetConnection(ex);
@@ -209,7 +209,7 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException ex)
+            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
             {
                 // If connection issue, then re-initate the watch
                 ResetConnection(ex);
@@ -253,7 +253,7 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException ex)
+            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
             {
                 // If connection issue, then re-initate the watch
                 ResetConnection(ex);
@@ -301,7 +301,7 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException ex)
+            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
             {
                 // If connection issue, then re-initate the watch
                 ResetConnection(ex);
@@ -354,7 +354,7 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException ex)
+            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
             {
                 // If connection issue, then re-initate the watch
                 ResetConnection(ex);
@@ -411,7 +411,7 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException ex)
+            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
             {
                 // If connection issue, then re-initate the watch
                 ResetConnection(ex);
@@ -678,7 +678,7 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException ex)
+            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
             {
                 // If connection issue, then re-initate the watch
                 ResetConnection(ex);
@@ -722,7 +722,7 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException ex)
+            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
             {
                 // If connection issue, then re-initate the watch
                 ResetConnection(ex);
@@ -771,7 +771,7 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException ex)
+            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
             {
                 // If connection issue, then re-initate the watch
                 ResetConnection(ex);
@@ -824,7 +824,7 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException ex)
+            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
             {
                 // If connection issue, then re-initate the watch
                 ResetConnection(ex);
@@ -868,7 +868,7 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException ex)
+            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
             {
                 // If connection issue, then re-initate the watch
                 ResetConnection(ex);
@@ -916,7 +916,7 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException ex)
+            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
             {
                 // If connection issue, then re-initate the watch
                 ResetConnection(ex);
@@ -969,7 +969,7 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException ex)
+            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
             {
                 // If connection issue, then re-initate the watch
                 ResetConnection(ex);
@@ -1026,7 +1026,7 @@ namespace dotnet_etcd
                 }
 
             }
-            catch (RpcException ex)
+            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
             {
                 // If connection issue, then re-initate the watch
                 ResetConnection(ex);
