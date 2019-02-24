@@ -1,6 +1,7 @@
 ﻿using Etcdserverpb;
 using Grpc.Core;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace dotnet_etcd
@@ -98,5 +99,188 @@ namespace dotnet_etcd
                 throw;
             }
         }
+
+
+        /// <summary>
+        /// LeaseKeepAlive keeps the lease alive by streaming keep alive requests from the client
+        /// to the server and streaming keep alive responses from the server to the client.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="method"></param>
+        /// <param name="token"></param>
+        public async void LeaseKeepAlive(LeaseKeepAliveRequest request, Action<LeaseKeepAliveResponse> method, CancellationToken token)
+        {
+            try
+            {
+                using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser = _leaseClient.LeaseKeepAlive())
+                {
+                    Task leaserTask = Task.Run(async () =>
+                    {
+                        while (await leaser.ResponseStream.MoveNext(token))
+                        {
+                            LeaseKeepAliveResponse update = leaser.ResponseStream.Current;
+                            method(update);
+                        }
+                    });
+
+                    await leaser.RequestStream.WriteAsync(request);
+                    await leaser.RequestStream.CompleteAsync();
+                    await leaserTask;
+                }
+
+            }
+            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
+            {
+                // If connection issue, then re-initate the LeaseKeepAlive request
+                ResetConnection(ex);
+                LeaseKeepAlive(request, method, token);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// LeaseKeepAlive keeps the lease alive by streaming keep alive requests from the client
+        /// to the server and streaming keep alive responses from the server to the client.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="methods"></param>
+        /// <param name="token"></param>
+        public async void LeaseKeepAlive(LeaseKeepAliveRequest request, Action<LeaseKeepAliveResponse>[] methods, CancellationToken token)
+        {
+
+            try
+            {
+                using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser = _leaseClient.LeaseKeepAlive())
+                {
+                    Task leaserTask = Task.Run(async () =>
+                    {
+                        while (await leaser.ResponseStream.MoveNext(token))
+                        {
+                            LeaseKeepAliveResponse update = leaser.ResponseStream.Current;
+                            foreach (Action<LeaseKeepAliveResponse> method in methods)
+                            {
+                                method(update);
+                            }
+
+                        }
+                    });
+
+                    await leaser.RequestStream.WriteAsync(request);
+                    await leaser.RequestStream.CompleteAsync();
+                    await leaserTask;
+                }
+
+            }
+            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
+            {
+                // If connection issue, then re-initate the LeaseKeepAlive request
+                ResetConnection(ex);
+                LeaseKeepAlive(request, methods, token);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+
+        /// <summary>
+        /// LeaseKeepAlive keeps the lease alive by streaming keep alive requests from the client
+        /// to the server and streaming keep alive responses from the server to the client.
+        /// </summary>
+        /// <param name="requests"></param>
+        /// <param name="method"></param>
+        /// <param name="token"></param>
+        public async void LeaseKeepAlive(LeaseKeepAliveRequest[] requests, Action<LeaseKeepAliveResponse> method, CancellationToken token)
+        {
+
+            try
+            {
+                using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser = _leaseClient.LeaseKeepAlive())
+                {
+                    Task leaserTask = Task.Run(async () =>
+                    {
+                        while (await leaser.ResponseStream.MoveNext(token))
+                        {
+                            LeaseKeepAliveResponse update = leaser.ResponseStream.Current;
+                            method(update);
+                        }
+                    });
+
+                    foreach (LeaseKeepAliveRequest request in requests)
+                    {
+                        await leaser.RequestStream.WriteAsync(request);
+                    }
+
+                    await leaser.RequestStream.CompleteAsync();
+                    await leaserTask;
+                }
+
+            }
+            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
+            {
+                // If connection issue, then re-initate the LeaseKeepAlive request
+                ResetConnection(ex);
+                LeaseKeepAlive(requests, method, token);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+
+        /// <summary>
+        /// LeaseKeepAlive keeps the lease alive by streaming keep alive requests from the client
+        /// to the server and streaming keep alive responses from the server to the client.
+        /// </summary>
+        /// <param name="requests"></param>
+        /// <param name="methods"></param>
+        /// <param name="token"></param>
+        public async void LeaseKeepAlive(LeaseKeepAliveRequest[] requests, Action<LeaseKeepAliveResponse>[] methods, CancellationToken token)
+        {
+
+            try
+            {
+                using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser = _leaseClient.LeaseKeepAlive())
+                {
+                    Task leaserTask = Task.Run(async () =>
+                    {
+                        while (await leaser.ResponseStream.MoveNext(token))
+                        {
+                            LeaseKeepAliveResponse update = leaser.ResponseStream.Current;
+                            foreach (Action<LeaseKeepAliveResponse> method in methods)
+                            {
+                                method(update);
+                            }
+
+                        }
+                    });
+
+                    foreach (LeaseKeepAliveRequest request in requests)
+                    {
+                        await leaser.RequestStream.WriteAsync(request);
+                    }
+
+                    await leaser.RequestStream.CompleteAsync();
+                    await leaserTask;
+                }
+
+            }
+            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
+            {
+                // If connection issue, then re-initate the watch
+                ResetConnection(ex);
+                LeaseKeepAlive(requests, methods, token);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
     }
 }
