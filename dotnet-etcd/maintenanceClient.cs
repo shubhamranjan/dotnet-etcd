@@ -1,6 +1,7 @@
 ﻿using Etcdserverpb;
 using Grpc.Core;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace dotnet_etcd
@@ -257,6 +258,80 @@ namespace dotnet_etcd
                 throw;
             }
             return response;
+        }
+
+        /// <summary>
+        /// Snapshot sends a snapshot of the entire backend from a member over a stream to a client.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="method"></param>
+        /// <param name="token"></param>
+        public async void Snapshot(SnapshotRequest request, Action<SnapshotResponse> method, CancellationToken token)
+        {
+            try
+            {
+                using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _maintenanceClient.Snapshot(request))
+                {
+                    Task snapshotTask = Task.Run(async () =>
+                    {
+                        while (await snapshotter.ResponseStream.MoveNext(token))
+                        {
+                            SnapshotResponse update = snapshotter.ResponseStream.Current;
+                            method(update);
+                        }
+                    });
+
+                    await snapshotTask;
+                }
+            }
+            catch (RpcException ex)
+            {
+                ResetConnection(ex);
+                throw;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+
+        /// <summary>
+        /// Snapshot sends a snapshot of the entire backend from a member over a stream to a client.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="methods"></param>
+        /// <param name="token"></param>
+        public async void Snapshot(SnapshotRequest request, Action<SnapshotResponse>[] methods, CancellationToken token)
+        {
+            try
+            {
+                using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _maintenanceClient.Snapshot(request))
+                {
+                    Task snapshotTask = Task.Run(async () =>
+                    {
+                        while (await snapshotter.ResponseStream.MoveNext(token))
+                        {
+                            SnapshotResponse update = snapshotter.ResponseStream.Current;
+                            foreach (Action<SnapshotResponse> method in methods)
+                            {
+                                method(update);
+                            }
+                        }
+                    });
+
+                    await snapshotTask;
+                }
+            }
+            catch (RpcException ex)
+            {
+                ResetConnection(ex);
+                throw;
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         /// <summary>
