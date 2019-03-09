@@ -46,7 +46,7 @@ namespace dotnet_etcd
 
             try
             {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch())
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -86,7 +86,7 @@ namespace dotnet_etcd
 
             try
             {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch())
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -130,7 +130,7 @@ namespace dotnet_etcd
 
             try
             {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch())
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -179,7 +179,7 @@ namespace dotnet_etcd
 
             try
             {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch())
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -232,7 +232,7 @@ namespace dotnet_etcd
 
             try
             {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch())
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -276,7 +276,7 @@ namespace dotnet_etcd
 
             try
             {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch())
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -324,7 +324,7 @@ namespace dotnet_etcd
 
             try
             {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch())
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -377,7 +377,7 @@ namespace dotnet_etcd
 
             try
             {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch())
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -661,7 +661,7 @@ namespace dotnet_etcd
 
             try
             {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch())
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -701,7 +701,7 @@ namespace dotnet_etcd
 
             try
             {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch())
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -745,7 +745,7 @@ namespace dotnet_etcd
 
             try
             {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch())
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -794,7 +794,7 @@ namespace dotnet_etcd
 
             try
             {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch())
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -847,7 +847,7 @@ namespace dotnet_etcd
 
             try
             {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch())
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -891,7 +891,7 @@ namespace dotnet_etcd
 
             try
             {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch())
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -939,7 +939,7 @@ namespace dotnet_etcd
 
             try
             {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch())
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -992,7 +992,7 @@ namespace dotnet_etcd
 
             try
             {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch())
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {

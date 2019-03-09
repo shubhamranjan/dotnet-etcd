@@ -112,7 +112,7 @@ namespace dotnet_etcd
         {
             try
             {
-                using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser = _leaseClient.LeaseKeepAlive())
+                using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser = _leaseClient.LeaseKeepAlive(_headers))
                 {
                     Task leaserTask = Task.Run(async () =>
                     {
@@ -153,7 +153,7 @@ namespace dotnet_etcd
 
             try
             {
-                using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser = _leaseClient.LeaseKeepAlive())
+                using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser = _leaseClient.LeaseKeepAlive(_headers))
                 {
                     Task leaserTask = Task.Run(async () =>
                     {
@@ -199,7 +199,7 @@ namespace dotnet_etcd
 
             try
             {
-                using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser = _leaseClient.LeaseKeepAlive())
+                using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser = _leaseClient.LeaseKeepAlive(_headers))
                 {
                     Task leaserTask = Task.Run(async () =>
                     {
@@ -245,7 +245,7 @@ namespace dotnet_etcd
 
             try
             {
-                using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser = _leaseClient.LeaseKeepAlive())
+                using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser = _leaseClient.LeaseKeepAlive(_headers))
                 {
                     Task leaserTask = Task.Run(async () =>
                     {

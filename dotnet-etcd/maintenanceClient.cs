@@ -18,7 +18,7 @@ namespace dotnet_etcd
             AlarmResponse response = new AlarmResponse();
             try
             {
-                response = _maintenanceClient.Alarm(request);
+                response = _maintenanceClient.Alarm(request, _headers);
             }
             catch (RpcException ex)
             {
@@ -42,7 +42,7 @@ namespace dotnet_etcd
             AlarmResponse response = new AlarmResponse();
             try
             {
-                response = await _maintenanceClient.AlarmAsync(request);
+                response = await _maintenanceClient.AlarmAsync(request, _headers);
             }
             catch (RpcException ex)
             {
@@ -66,7 +66,7 @@ namespace dotnet_etcd
             StatusResponse response = new StatusResponse();
             try
             {
-                response = _maintenanceClient.Status(request);
+                response = _maintenanceClient.Status(request, _headers);
             }
             catch (RpcException ex)
             {
@@ -90,7 +90,7 @@ namespace dotnet_etcd
             StatusResponse response = new StatusResponse();
             try
             {
-                response = await _maintenanceClient.StatusAsync(request);
+                response = await _maintenanceClient.StatusAsync(request, _headers);
             }
             catch (RpcException ex)
             {
@@ -114,7 +114,7 @@ namespace dotnet_etcd
             DefragmentResponse response = new DefragmentResponse();
             try
             {
-                response = _maintenanceClient.Defragment(request);
+                response = _maintenanceClient.Defragment(request, _headers);
             }
             catch (RpcException ex)
             {
@@ -138,7 +138,7 @@ namespace dotnet_etcd
             DefragmentResponse response = new DefragmentResponse();
             try
             {
-                response = await _maintenanceClient.DefragmentAsync(request);
+                response = await _maintenanceClient.DefragmentAsync(request, _headers);
             }
             catch (RpcException ex)
             {
@@ -167,7 +167,7 @@ namespace dotnet_etcd
             HashResponse response = new HashResponse();
             try
             {
-                response = _maintenanceClient.Hash(request);
+                response = _maintenanceClient.Hash(request, _headers);
             }
             catch (RpcException ex)
             {
@@ -196,7 +196,7 @@ namespace dotnet_etcd
             HashResponse response = new HashResponse();
             try
             {
-                response = await _maintenanceClient.HashAsync(request);
+                response = await _maintenanceClient.HashAsync(request, _headers);
             }
             catch (RpcException ex)
             {
@@ -221,7 +221,7 @@ namespace dotnet_etcd
             HashKVResponse response = new HashKVResponse();
             try
             {
-                response = _maintenanceClient.HashKV(request);
+                response = _maintenanceClient.HashKV(request, _headers);
             }
             catch (RpcException ex)
             {
@@ -246,7 +246,7 @@ namespace dotnet_etcd
             HashKVResponse response = new HashKVResponse();
             try
             {
-                response = await _maintenanceClient.HashKVAsync(request);
+                response = await _maintenanceClient.HashKVAsync(request, _headers);
             }
             catch (RpcException ex)
             {
@@ -270,7 +270,7 @@ namespace dotnet_etcd
         {
             try
             {
-                using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _maintenanceClient.Snapshot(request))
+                using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _maintenanceClient.Snapshot(request, _headers))
                 {
                     Task snapshotTask = Task.Run(async () =>
                     {
@@ -306,7 +306,7 @@ namespace dotnet_etcd
         {
             try
             {
-                using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _maintenanceClient.Snapshot(request))
+                using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _maintenanceClient.Snapshot(request, _headers))
                 {
                     Task snapshotTask = Task.Run(async () =>
                     {
@@ -344,7 +344,7 @@ namespace dotnet_etcd
             MoveLeaderResponse response = new MoveLeaderResponse();
             try
             {
-                response = _maintenanceClient.MoveLeader(request);
+                response = _maintenanceClient.MoveLeader(request, _headers);
             }
             catch (RpcException ex)
             {
@@ -368,7 +368,7 @@ namespace dotnet_etcd
             MoveLeaderResponse response = new MoveLeaderResponse();
             try
             {
-                response = await _maintenanceClient.MoveLeaderAsync(request);
+                response = await _maintenanceClient.MoveLeaderAsync(request, _headers);
             }
             catch (RpcException ex)
             {

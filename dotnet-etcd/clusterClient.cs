@@ -17,7 +17,7 @@ namespace dotnet_etcd
             MemberAddResponse response = new MemberAddResponse();
             try
             {
-                response = _clusterClient.MemberAdd(request);
+                response = _clusterClient.MemberAdd(request, _headers);
             }
             catch (RpcException ex)
             {
@@ -41,7 +41,7 @@ namespace dotnet_etcd
             MemberAddResponse response = new MemberAddResponse();
             try
             {
-                response = await _clusterClient.MemberAddAsync(request);
+                response = await _clusterClient.MemberAddAsync(request, _headers);
             }
             catch (RpcException ex)
             {
@@ -65,7 +65,7 @@ namespace dotnet_etcd
             MemberRemoveResponse response = new MemberRemoveResponse();
             try
             {
-                response = _clusterClient.MemberRemove(request);
+                response = _clusterClient.MemberRemove(request, _headers);
             }
             catch (RpcException ex)
             {
@@ -89,7 +89,7 @@ namespace dotnet_etcd
             MemberRemoveResponse response = new MemberRemoveResponse();
             try
             {
-                response = await _clusterClient.MemberRemoveAsync(request);
+                response = await _clusterClient.MemberRemoveAsync(request, _headers);
             }
             catch (RpcException ex)
             {
@@ -113,7 +113,7 @@ namespace dotnet_etcd
             MemberUpdateResponse response = new MemberUpdateResponse();
             try
             {
-                response = _clusterClient.MemberUpdate(request);
+                response = _clusterClient.MemberUpdate(request, _headers);
             }
             catch (RpcException ex)
             {
@@ -137,7 +137,7 @@ namespace dotnet_etcd
             MemberUpdateResponse response = new MemberUpdateResponse();
             try
             {
-                response = await _clusterClient.MemberUpdateAsync(request);
+                response = await _clusterClient.MemberUpdateAsync(request, _headers);
             }
             catch (RpcException ex)
             {
@@ -161,7 +161,7 @@ namespace dotnet_etcd
             MemberListResponse response = new MemberListResponse();
             try
             {
-                response = _clusterClient.MemberList(request);
+                response = _clusterClient.MemberList(request, _headers);
             }
             catch (RpcException ex)
             {
@@ -185,7 +185,7 @@ namespace dotnet_etcd
             MemberListResponse response = new MemberListResponse();
             try
             {
-                response = await _clusterClient.MemberListAsync(request);
+                response = await _clusterClient.MemberListAsync(request, _headers);
             }
             catch (RpcException ex)
             {
