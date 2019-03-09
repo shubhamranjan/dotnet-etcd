@@ -36,6 +36,8 @@ namespace dotnet_etcd
             return rangeEnd.ToString();
         }
 
+        // TODO: Change authentication flow and let users send in all requests and headers.
+
         /// <summary>
         /// Used to authenticate etcd server through basic auth
         /// </summary>
