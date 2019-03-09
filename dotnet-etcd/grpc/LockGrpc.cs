@@ -229,14 +229,14 @@ namespace V3Lockpb {
           .AddMethod(__Method_Unlock, serviceImpl.Unlock).Build();
     }
 
-    /// <summary>Register service method implementations with a service binder. Useful when customizing the service binding logic.
+    /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the  service binding logic.
     /// Note: this method is part of an experimental API that can change or be removed without any prior notice.</summary>
     /// <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
     /// <param name="serviceImpl">An object implementing the server-side handling logic.</param>
     public static void BindService(grpc::ServiceBinderBase serviceBinder, LockBase serviceImpl)
     {
-      serviceBinder.AddMethod(__Method_Lock, serviceImpl.Lock);
-      serviceBinder.AddMethod(__Method_Unlock, serviceImpl.Unlock);
+      serviceBinder.AddMethod(__Method_Lock, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::V3Lockpb.LockRequest, global::V3Lockpb.LockResponse>(serviceImpl.Lock));
+      serviceBinder.AddMethod(__Method_Unlock, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::V3Lockpb.UnlockRequest, global::V3Lockpb.UnlockResponse>(serviceImpl.Unlock));
     }
 
   }
