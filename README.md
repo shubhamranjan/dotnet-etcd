@@ -221,6 +221,3 @@ Add using statement at the top of your class file
     {
         Console.WriteLine($"{member.ID} - {member.Name} - {member.PeerURLs}");
     }
-
-## Coming Soon
-* Auth Operations (Add users,roles etc.)
