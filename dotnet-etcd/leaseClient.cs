@@ -282,5 +282,32 @@ namespace dotnet_etcd
             }
         }
 
+        public LeaseTimeToLiveResponse LeaseTimeToLive(LeaseTimeToLiveRequest request)
+        {
+
+            try
+            {
+                return _leaseClient.LeaseTimeToLive(request, _headers);
+            }
+            catch (RpcException ex)
+            {
+                ResetConnection(ex);
+                throw;
+            }
+        }
+
+        public async Task<LeaseTimeToLiveResponse> LeaseTimeToLiveAsync(LeaseTimeToLiveRequest request)
+        {
+
+            try
+            {
+                return await _leaseClient.LeaseTimeToLiveAsync(request, _headers);
+            }
+            catch (RpcException ex)
+            {
+                ResetConnection(ex);
+                throw;
+            }
+        }
     }
 }
