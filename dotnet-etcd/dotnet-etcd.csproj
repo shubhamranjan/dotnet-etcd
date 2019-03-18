@@ -10,11 +10,7 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryUrl>https://github.com/shubhamranjan/dotnet-etcd</RepositoryUrl>
     <PackageProjectUrl>https://github.com/shubhamranjan/dotnet-etcd</PackageProjectUrl>
-    <PackageReleaseNotes>1. Add support for Auth operations
-2. Inject Headers in all requests
-3. Add snapshot support in maintenance calls
-4. Add LeaseKeepAlive support
-5. Fix rpc exception loop</PackageReleaseNotes>
+    <PackageReleaseNotes>Exposed lease ttl from etcd client</PackageReleaseNotes>
     <Authors>Shubham Ranjan</Authors>
     <Company />
     <Product />
@@ -29,9 +25,15 @@ Advanced uses take advantage of the consistency guarantees to implement database
     <PackageTags>etcd grpc etcdv3 etcd3</PackageTags>
     <SignAssembly>false</SignAssembly>
     <PackageIconUrl>https://raw.githubusercontent.com/shubhamranjan/dotnet-etcd/master/docs/img/etcd-logo-rectangle.png</PackageIconUrl>
-    <Version>2.3.0</Version>
+    <Version>2.3.1</Version>
     <AutoGenerateBindingRedirects>False</AutoGenerateBindingRedirects>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="grpc\packages\**" />
+    <EmbeddedResource Remove="grpc\packages\**" />
+    <None Remove="grpc\packages\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.7.0" />
