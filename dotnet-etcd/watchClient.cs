@@ -1123,7 +1123,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public async void WatcRange(string path, Action<WatchEvent[]>[] methods)
+        public async void WatchRange(string path, Action<WatchEvent[]>[] methods)
         {
 
             try
