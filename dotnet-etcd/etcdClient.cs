@@ -176,7 +176,6 @@ namespace dotnet_etcd
                 {
                     Authenticate();
                 }
-
                 _kvClient = new KV.KVClient(_channel);
                 _watchClient = new Watch.WatchClient(_channel);
                 _leaseClient = new Lease.LeaseClient(_channel);
