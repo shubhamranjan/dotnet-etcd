@@ -35,11 +35,11 @@ namespace V3Lockpb {
             "bG9ja1Jlc3BvbnNlIgBiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Etcdserverpb.RpcReflection.Descriptor, },
-          new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::V3Lockpb.LockRequest), global::V3Lockpb.LockRequest.Parser, new[]{ "Name", "Lease" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::V3Lockpb.LockResponse), global::V3Lockpb.LockResponse.Parser, new[]{ "Header", "Key" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::V3Lockpb.UnlockRequest), global::V3Lockpb.UnlockRequest.Parser, new[]{ "Key" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::V3Lockpb.UnlockResponse), global::V3Lockpb.UnlockResponse.Parser, new[]{ "Header" }, null, null, null)
+          new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::V3Lockpb.LockRequest), global::V3Lockpb.LockRequest.Parser, new[]{ "Name", "Lease" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::V3Lockpb.LockResponse), global::V3Lockpb.LockResponse.Parser, new[]{ "Header", "Key" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::V3Lockpb.UnlockRequest), global::V3Lockpb.UnlockRequest.Parser, new[]{ "Key" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::V3Lockpb.UnlockResponse), global::V3Lockpb.UnlockResponse.Parser, new[]{ "Header" }, null, null, null, null)
           }));
     }
     #endregion
@@ -346,7 +346,7 @@ namespace V3Lockpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -366,9 +366,9 @@ namespace V3Lockpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 18: {
@@ -620,7 +620,7 @@ namespace V3Lockpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -637,9 +637,9 @@ namespace V3Lockpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
         }

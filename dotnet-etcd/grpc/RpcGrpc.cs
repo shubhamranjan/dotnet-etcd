@@ -65,6 +65,7 @@ namespace Etcdserverpb {
     }
 
     /// <summary>Base class for server-side implementations of KV</summary>
+    [grpc::BindServiceMethod(typeof(KV), "BindService")]
     public abstract partial class KVBase
     {
       /// <summary>
@@ -431,17 +432,17 @@ namespace Etcdserverpb {
           .AddMethod(__Method_Compact, serviceImpl.Compact).Build();
     }
 
-    /// <summary>Register service method implementations with a service binder. Useful when customizing the service binding logic.
+    /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the  service binding logic.
     /// Note: this method is part of an experimental API that can change or be removed without any prior notice.</summary>
     /// <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
     /// <param name="serviceImpl">An object implementing the server-side handling logic.</param>
     public static void BindService(grpc::ServiceBinderBase serviceBinder, KVBase serviceImpl)
     {
-      serviceBinder.AddMethod(__Method_Range, serviceImpl.Range);
-      serviceBinder.AddMethod(__Method_Put, serviceImpl.Put);
-      serviceBinder.AddMethod(__Method_DeleteRange, serviceImpl.DeleteRange);
-      serviceBinder.AddMethod(__Method_Txn, serviceImpl.Txn);
-      serviceBinder.AddMethod(__Method_Compact, serviceImpl.Compact);
+      serviceBinder.AddMethod(__Method_Range, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.RangeRequest, global::Etcdserverpb.RangeResponse>(serviceImpl.Range));
+      serviceBinder.AddMethod(__Method_Put, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.PutRequest, global::Etcdserverpb.PutResponse>(serviceImpl.Put));
+      serviceBinder.AddMethod(__Method_DeleteRange, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.DeleteRangeRequest, global::Etcdserverpb.DeleteRangeResponse>(serviceImpl.DeleteRange));
+      serviceBinder.AddMethod(__Method_Txn, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.TxnRequest, global::Etcdserverpb.TxnResponse>(serviceImpl.Txn));
+      serviceBinder.AddMethod(__Method_Compact, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.CompactionRequest, global::Etcdserverpb.CompactionResponse>(serviceImpl.Compact));
     }
 
   }
@@ -466,6 +467,7 @@ namespace Etcdserverpb {
     }
 
     /// <summary>Base class for server-side implementations of Watch</summary>
+    [grpc::BindServiceMethod(typeof(Watch), "BindService")]
     public abstract partial class WatchBase
     {
       /// <summary>
@@ -552,13 +554,13 @@ namespace Etcdserverpb {
           .AddMethod(__Method_Watch, serviceImpl.Watch).Build();
     }
 
-    /// <summary>Register service method implementations with a service binder. Useful when customizing the service binding logic.
+    /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the  service binding logic.
     /// Note: this method is part of an experimental API that can change or be removed without any prior notice.</summary>
     /// <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
     /// <param name="serviceImpl">An object implementing the server-side handling logic.</param>
     public static void BindService(grpc::ServiceBinderBase serviceBinder, WatchBase serviceImpl)
     {
-      serviceBinder.AddMethod(__Method_Watch, serviceImpl.Watch);
+      serviceBinder.AddMethod(__Method_Watch, serviceImpl == null ? null : new grpc::DuplexStreamingServerMethod<global::Etcdserverpb.WatchRequest, global::Etcdserverpb.WatchResponse>(serviceImpl.Watch));
     }
 
   }
@@ -610,6 +612,7 @@ namespace Etcdserverpb {
     }
 
     /// <summary>Base class for server-side implementations of Lease</summary>
+    [grpc::BindServiceMethod(typeof(Lease), "BindService")]
     public abstract partial class LeaseBase
     {
       /// <summary>
@@ -865,16 +868,16 @@ namespace Etcdserverpb {
           .AddMethod(__Method_LeaseTimeToLive, serviceImpl.LeaseTimeToLive).Build();
     }
 
-    /// <summary>Register service method implementations with a service binder. Useful when customizing the service binding logic.
+    /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the  service binding logic.
     /// Note: this method is part of an experimental API that can change or be removed without any prior notice.</summary>
     /// <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
     /// <param name="serviceImpl">An object implementing the server-side handling logic.</param>
     public static void BindService(grpc::ServiceBinderBase serviceBinder, LeaseBase serviceImpl)
     {
-      serviceBinder.AddMethod(__Method_LeaseGrant, serviceImpl.LeaseGrant);
-      serviceBinder.AddMethod(__Method_LeaseRevoke, serviceImpl.LeaseRevoke);
-      serviceBinder.AddMethod(__Method_LeaseKeepAlive, serviceImpl.LeaseKeepAlive);
-      serviceBinder.AddMethod(__Method_LeaseTimeToLive, serviceImpl.LeaseTimeToLive);
+      serviceBinder.AddMethod(__Method_LeaseGrant, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.LeaseGrantRequest, global::Etcdserverpb.LeaseGrantResponse>(serviceImpl.LeaseGrant));
+      serviceBinder.AddMethod(__Method_LeaseRevoke, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.LeaseRevokeRequest, global::Etcdserverpb.LeaseRevokeResponse>(serviceImpl.LeaseRevoke));
+      serviceBinder.AddMethod(__Method_LeaseKeepAlive, serviceImpl == null ? null : new grpc::DuplexStreamingServerMethod<global::Etcdserverpb.LeaseKeepAliveRequest, global::Etcdserverpb.LeaseKeepAliveResponse>(serviceImpl.LeaseKeepAlive));
+      serviceBinder.AddMethod(__Method_LeaseTimeToLive, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.LeaseTimeToLiveRequest, global::Etcdserverpb.LeaseTimeToLiveResponse>(serviceImpl.LeaseTimeToLive));
     }
 
   }
@@ -926,6 +929,7 @@ namespace Etcdserverpb {
     }
 
     /// <summary>Base class for server-side implementations of Cluster</summary>
+    [grpc::BindServiceMethod(typeof(Cluster), "BindService")]
     public abstract partial class ClusterBase
     {
       /// <summary>
@@ -1191,16 +1195,16 @@ namespace Etcdserverpb {
           .AddMethod(__Method_MemberList, serviceImpl.MemberList).Build();
     }
 
-    /// <summary>Register service method implementations with a service binder. Useful when customizing the service binding logic.
+    /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the  service binding logic.
     /// Note: this method is part of an experimental API that can change or be removed without any prior notice.</summary>
     /// <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
     /// <param name="serviceImpl">An object implementing the server-side handling logic.</param>
     public static void BindService(grpc::ServiceBinderBase serviceBinder, ClusterBase serviceImpl)
     {
-      serviceBinder.AddMethod(__Method_MemberAdd, serviceImpl.MemberAdd);
-      serviceBinder.AddMethod(__Method_MemberRemove, serviceImpl.MemberRemove);
-      serviceBinder.AddMethod(__Method_MemberUpdate, serviceImpl.MemberUpdate);
-      serviceBinder.AddMethod(__Method_MemberList, serviceImpl.MemberList);
+      serviceBinder.AddMethod(__Method_MemberAdd, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.MemberAddRequest, global::Etcdserverpb.MemberAddResponse>(serviceImpl.MemberAdd));
+      serviceBinder.AddMethod(__Method_MemberRemove, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.MemberRemoveRequest, global::Etcdserverpb.MemberRemoveResponse>(serviceImpl.MemberRemove));
+      serviceBinder.AddMethod(__Method_MemberUpdate, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.MemberUpdateRequest, global::Etcdserverpb.MemberUpdateResponse>(serviceImpl.MemberUpdate));
+      serviceBinder.AddMethod(__Method_MemberList, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.MemberListRequest, global::Etcdserverpb.MemberListResponse>(serviceImpl.MemberList));
     }
 
   }
@@ -1279,6 +1283,7 @@ namespace Etcdserverpb {
     }
 
     /// <summary>Base class for server-side implementations of Maintenance</summary>
+    [grpc::BindServiceMethod(typeof(Maintenance), "BindService")]
     public abstract partial class MaintenanceBase
     {
       /// <summary>
@@ -1701,19 +1706,19 @@ namespace Etcdserverpb {
           .AddMethod(__Method_MoveLeader, serviceImpl.MoveLeader).Build();
     }
 
-    /// <summary>Register service method implementations with a service binder. Useful when customizing the service binding logic.
+    /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the  service binding logic.
     /// Note: this method is part of an experimental API that can change or be removed without any prior notice.</summary>
     /// <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
     /// <param name="serviceImpl">An object implementing the server-side handling logic.</param>
     public static void BindService(grpc::ServiceBinderBase serviceBinder, MaintenanceBase serviceImpl)
     {
-      serviceBinder.AddMethod(__Method_Alarm, serviceImpl.Alarm);
-      serviceBinder.AddMethod(__Method_Status, serviceImpl.Status);
-      serviceBinder.AddMethod(__Method_Defragment, serviceImpl.Defragment);
-      serviceBinder.AddMethod(__Method_Hash, serviceImpl.Hash);
-      serviceBinder.AddMethod(__Method_HashKV, serviceImpl.HashKV);
-      serviceBinder.AddMethod(__Method_Snapshot, serviceImpl.Snapshot);
-      serviceBinder.AddMethod(__Method_MoveLeader, serviceImpl.MoveLeader);
+      serviceBinder.AddMethod(__Method_Alarm, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.AlarmRequest, global::Etcdserverpb.AlarmResponse>(serviceImpl.Alarm));
+      serviceBinder.AddMethod(__Method_Status, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.StatusRequest, global::Etcdserverpb.StatusResponse>(serviceImpl.Status));
+      serviceBinder.AddMethod(__Method_Defragment, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.DefragmentRequest, global::Etcdserverpb.DefragmentResponse>(serviceImpl.Defragment));
+      serviceBinder.AddMethod(__Method_Hash, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.HashRequest, global::Etcdserverpb.HashResponse>(serviceImpl.Hash));
+      serviceBinder.AddMethod(__Method_HashKV, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.HashKVRequest, global::Etcdserverpb.HashKVResponse>(serviceImpl.HashKV));
+      serviceBinder.AddMethod(__Method_Snapshot, serviceImpl == null ? null : new grpc::ServerStreamingServerMethod<global::Etcdserverpb.SnapshotRequest, global::Etcdserverpb.SnapshotResponse>(serviceImpl.Snapshot));
+      serviceBinder.AddMethod(__Method_MoveLeader, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.MoveLeaderRequest, global::Etcdserverpb.MoveLeaderResponse>(serviceImpl.MoveLeader));
     }
 
   }
@@ -1873,6 +1878,7 @@ namespace Etcdserverpb {
     }
 
     /// <summary>Base class for server-side implementations of Auth</summary>
+    [grpc::BindServiceMethod(typeof(Auth), "BindService")]
     public abstract partial class AuthBase
     {
       /// <summary>
@@ -2810,28 +2816,28 @@ namespace Etcdserverpb {
           .AddMethod(__Method_RoleRevokePermission, serviceImpl.RoleRevokePermission).Build();
     }
 
-    /// <summary>Register service method implementations with a service binder. Useful when customizing the service binding logic.
+    /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the  service binding logic.
     /// Note: this method is part of an experimental API that can change or be removed without any prior notice.</summary>
     /// <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
     /// <param name="serviceImpl">An object implementing the server-side handling logic.</param>
     public static void BindService(grpc::ServiceBinderBase serviceBinder, AuthBase serviceImpl)
     {
-      serviceBinder.AddMethod(__Method_AuthEnable, serviceImpl.AuthEnable);
-      serviceBinder.AddMethod(__Method_AuthDisable, serviceImpl.AuthDisable);
-      serviceBinder.AddMethod(__Method_Authenticate, serviceImpl.Authenticate);
-      serviceBinder.AddMethod(__Method_UserAdd, serviceImpl.UserAdd);
-      serviceBinder.AddMethod(__Method_UserGet, serviceImpl.UserGet);
-      serviceBinder.AddMethod(__Method_UserList, serviceImpl.UserList);
-      serviceBinder.AddMethod(__Method_UserDelete, serviceImpl.UserDelete);
-      serviceBinder.AddMethod(__Method_UserChangePassword, serviceImpl.UserChangePassword);
-      serviceBinder.AddMethod(__Method_UserGrantRole, serviceImpl.UserGrantRole);
-      serviceBinder.AddMethod(__Method_UserRevokeRole, serviceImpl.UserRevokeRole);
-      serviceBinder.AddMethod(__Method_RoleAdd, serviceImpl.RoleAdd);
-      serviceBinder.AddMethod(__Method_RoleGet, serviceImpl.RoleGet);
-      serviceBinder.AddMethod(__Method_RoleList, serviceImpl.RoleList);
-      serviceBinder.AddMethod(__Method_RoleDelete, serviceImpl.RoleDelete);
-      serviceBinder.AddMethod(__Method_RoleGrantPermission, serviceImpl.RoleGrantPermission);
-      serviceBinder.AddMethod(__Method_RoleRevokePermission, serviceImpl.RoleRevokePermission);
+      serviceBinder.AddMethod(__Method_AuthEnable, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.AuthEnableRequest, global::Etcdserverpb.AuthEnableResponse>(serviceImpl.AuthEnable));
+      serviceBinder.AddMethod(__Method_AuthDisable, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.AuthDisableRequest, global::Etcdserverpb.AuthDisableResponse>(serviceImpl.AuthDisable));
+      serviceBinder.AddMethod(__Method_Authenticate, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.AuthenticateRequest, global::Etcdserverpb.AuthenticateResponse>(serviceImpl.Authenticate));
+      serviceBinder.AddMethod(__Method_UserAdd, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.AuthUserAddRequest, global::Etcdserverpb.AuthUserAddResponse>(serviceImpl.UserAdd));
+      serviceBinder.AddMethod(__Method_UserGet, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.AuthUserGetRequest, global::Etcdserverpb.AuthUserGetResponse>(serviceImpl.UserGet));
+      serviceBinder.AddMethod(__Method_UserList, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.AuthUserListRequest, global::Etcdserverpb.AuthUserListResponse>(serviceImpl.UserList));
+      serviceBinder.AddMethod(__Method_UserDelete, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.AuthUserDeleteRequest, global::Etcdserverpb.AuthUserDeleteResponse>(serviceImpl.UserDelete));
+      serviceBinder.AddMethod(__Method_UserChangePassword, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.AuthUserChangePasswordRequest, global::Etcdserverpb.AuthUserChangePasswordResponse>(serviceImpl.UserChangePassword));
+      serviceBinder.AddMethod(__Method_UserGrantRole, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.AuthUserGrantRoleRequest, global::Etcdserverpb.AuthUserGrantRoleResponse>(serviceImpl.UserGrantRole));
+      serviceBinder.AddMethod(__Method_UserRevokeRole, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.AuthUserRevokeRoleRequest, global::Etcdserverpb.AuthUserRevokeRoleResponse>(serviceImpl.UserRevokeRole));
+      serviceBinder.AddMethod(__Method_RoleAdd, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.AuthRoleAddRequest, global::Etcdserverpb.AuthRoleAddResponse>(serviceImpl.RoleAdd));
+      serviceBinder.AddMethod(__Method_RoleGet, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.AuthRoleGetRequest, global::Etcdserverpb.AuthRoleGetResponse>(serviceImpl.RoleGet));
+      serviceBinder.AddMethod(__Method_RoleList, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.AuthRoleListRequest, global::Etcdserverpb.AuthRoleListResponse>(serviceImpl.RoleList));
+      serviceBinder.AddMethod(__Method_RoleDelete, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.AuthRoleDeleteRequest, global::Etcdserverpb.AuthRoleDeleteResponse>(serviceImpl.RoleDelete));
+      serviceBinder.AddMethod(__Method_RoleGrantPermission, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.AuthRoleGrantPermissionRequest, global::Etcdserverpb.AuthRoleGrantPermissionResponse>(serviceImpl.RoleGrantPermission));
+      serviceBinder.AddMethod(__Method_RoleRevokePermission, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.AuthRoleRevokePermissionRequest, global::Etcdserverpb.AuthRoleRevokePermissionResponse>(serviceImpl.RoleRevokePermission));
     }
 
   }

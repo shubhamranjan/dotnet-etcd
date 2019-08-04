@@ -263,89 +263,89 @@ namespace Etcdserverpb {
             "dG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Mvccpb.KvReflection.Descriptor, global::Authpb.AuthReflection.Descriptor, },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Etcdserverpb.AlarmType), }, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.ResponseHeader), global::Etcdserverpb.ResponseHeader.Parser, new[]{ "ClusterId", "MemberId", "Revision", "RaftTerm" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.RangeRequest), global::Etcdserverpb.RangeRequest.Parser, new[]{ "Key", "RangeEnd", "Limit", "Revision", "SortOrder", "SortTarget", "Serializable", "KeysOnly", "CountOnly", "MinModRevision", "MaxModRevision", "MinCreateRevision", "MaxCreateRevision" }, null, new[]{ typeof(global::Etcdserverpb.RangeRequest.Types.SortOrder), typeof(global::Etcdserverpb.RangeRequest.Types.SortTarget) }, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.RangeResponse), global::Etcdserverpb.RangeResponse.Parser, new[]{ "Header", "Kvs", "More", "Count" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.PutRequest), global::Etcdserverpb.PutRequest.Parser, new[]{ "Key", "Value", "Lease", "PrevKv", "IgnoreValue", "IgnoreLease" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.PutResponse), global::Etcdserverpb.PutResponse.Parser, new[]{ "Header", "PrevKv" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.DeleteRangeRequest), global::Etcdserverpb.DeleteRangeRequest.Parser, new[]{ "Key", "RangeEnd", "PrevKv" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.DeleteRangeResponse), global::Etcdserverpb.DeleteRangeResponse.Parser, new[]{ "Header", "Deleted", "PrevKvs" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.RequestOp), global::Etcdserverpb.RequestOp.Parser, new[]{ "RequestRange", "RequestPut", "RequestDeleteRange", "RequestTxn" }, new[]{ "Request" }, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.ResponseOp), global::Etcdserverpb.ResponseOp.Parser, new[]{ "ResponseRange", "ResponsePut", "ResponseDeleteRange", "ResponseTxn" }, new[]{ "Response" }, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.Compare), global::Etcdserverpb.Compare.Parser, new[]{ "Result", "Target", "Key", "Version", "CreateRevision", "ModRevision", "Value", "RangeEnd" }, new[]{ "TargetUnion" }, new[]{ typeof(global::Etcdserverpb.Compare.Types.CompareResult), typeof(global::Etcdserverpb.Compare.Types.CompareTarget) }, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.TxnRequest), global::Etcdserverpb.TxnRequest.Parser, new[]{ "Compare", "Success", "Failure" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.TxnResponse), global::Etcdserverpb.TxnResponse.Parser, new[]{ "Header", "Succeeded", "Responses" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.CompactionRequest), global::Etcdserverpb.CompactionRequest.Parser, new[]{ "Revision", "Physical" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.CompactionResponse), global::Etcdserverpb.CompactionResponse.Parser, new[]{ "Header" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.HashRequest), global::Etcdserverpb.HashRequest.Parser, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.HashResponse), global::Etcdserverpb.HashResponse.Parser, new[]{ "Header", "Hash" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.HashKVRequest), global::Etcdserverpb.HashKVRequest.Parser, new[]{ "Revision" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.HashKVResponse), global::Etcdserverpb.HashKVResponse.Parser, new[]{ "Header", "Hash", "CompactRevision" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.SnapshotRequest), global::Etcdserverpb.SnapshotRequest.Parser, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.SnapshotResponse), global::Etcdserverpb.SnapshotResponse.Parser, new[]{ "Header", "RemainingBytes", "Blob" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.WatchRequest), global::Etcdserverpb.WatchRequest.Parser, new[]{ "CreateRequest", "CancelRequest" }, new[]{ "RequestUnion" }, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.WatchCreateRequest), global::Etcdserverpb.WatchCreateRequest.Parser, new[]{ "Key", "RangeEnd", "StartRevision", "ProgressNotify", "Filters", "PrevKv" }, null, new[]{ typeof(global::Etcdserverpb.WatchCreateRequest.Types.FilterType) }, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.WatchCancelRequest), global::Etcdserverpb.WatchCancelRequest.Parser, new[]{ "WatchId" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.WatchResponse), global::Etcdserverpb.WatchResponse.Parser, new[]{ "Header", "WatchId", "Created", "Canceled", "CompactRevision", "CancelReason", "Events" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.LeaseGrantRequest), global::Etcdserverpb.LeaseGrantRequest.Parser, new[]{ "TTL", "ID" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.LeaseGrantResponse), global::Etcdserverpb.LeaseGrantResponse.Parser, new[]{ "Header", "ID", "TTL", "Error" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.LeaseRevokeRequest), global::Etcdserverpb.LeaseRevokeRequest.Parser, new[]{ "ID" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.LeaseRevokeResponse), global::Etcdserverpb.LeaseRevokeResponse.Parser, new[]{ "Header" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.LeaseKeepAliveRequest), global::Etcdserverpb.LeaseKeepAliveRequest.Parser, new[]{ "ID" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.LeaseKeepAliveResponse), global::Etcdserverpb.LeaseKeepAliveResponse.Parser, new[]{ "Header", "ID", "TTL" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.LeaseTimeToLiveRequest), global::Etcdserverpb.LeaseTimeToLiveRequest.Parser, new[]{ "ID", "Keys" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.LeaseTimeToLiveResponse), global::Etcdserverpb.LeaseTimeToLiveResponse.Parser, new[]{ "Header", "ID", "TTL", "GrantedTTL", "Keys" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.Member), global::Etcdserverpb.Member.Parser, new[]{ "ID", "Name", "PeerURLs", "ClientURLs" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.MemberAddRequest), global::Etcdserverpb.MemberAddRequest.Parser, new[]{ "PeerURLs" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.MemberAddResponse), global::Etcdserverpb.MemberAddResponse.Parser, new[]{ "Header", "Member", "Members" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.MemberRemoveRequest), global::Etcdserverpb.MemberRemoveRequest.Parser, new[]{ "ID" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.MemberRemoveResponse), global::Etcdserverpb.MemberRemoveResponse.Parser, new[]{ "Header", "Members" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.MemberUpdateRequest), global::Etcdserverpb.MemberUpdateRequest.Parser, new[]{ "ID", "PeerURLs" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.MemberUpdateResponse), global::Etcdserverpb.MemberUpdateResponse.Parser, new[]{ "Header", "Members" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.MemberListRequest), global::Etcdserverpb.MemberListRequest.Parser, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.MemberListResponse), global::Etcdserverpb.MemberListResponse.Parser, new[]{ "Header", "Members" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.DefragmentRequest), global::Etcdserverpb.DefragmentRequest.Parser, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.DefragmentResponse), global::Etcdserverpb.DefragmentResponse.Parser, new[]{ "Header" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.MoveLeaderRequest), global::Etcdserverpb.MoveLeaderRequest.Parser, new[]{ "TargetID" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.MoveLeaderResponse), global::Etcdserverpb.MoveLeaderResponse.Parser, new[]{ "Header" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AlarmRequest), global::Etcdserverpb.AlarmRequest.Parser, new[]{ "Action", "MemberID", "Alarm" }, null, new[]{ typeof(global::Etcdserverpb.AlarmRequest.Types.AlarmAction) }, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AlarmMember), global::Etcdserverpb.AlarmMember.Parser, new[]{ "MemberID", "Alarm" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AlarmResponse), global::Etcdserverpb.AlarmResponse.Parser, new[]{ "Header", "Alarms" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.StatusRequest), global::Etcdserverpb.StatusRequest.Parser, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.StatusResponse), global::Etcdserverpb.StatusResponse.Parser, new[]{ "Header", "Version", "DbSize", "Leader", "RaftIndex", "RaftTerm" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthEnableRequest), global::Etcdserverpb.AuthEnableRequest.Parser, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthDisableRequest), global::Etcdserverpb.AuthDisableRequest.Parser, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthenticateRequest), global::Etcdserverpb.AuthenticateRequest.Parser, new[]{ "Name", "Password" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserAddRequest), global::Etcdserverpb.AuthUserAddRequest.Parser, new[]{ "Name", "Password" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserGetRequest), global::Etcdserverpb.AuthUserGetRequest.Parser, new[]{ "Name" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserDeleteRequest), global::Etcdserverpb.AuthUserDeleteRequest.Parser, new[]{ "Name" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserChangePasswordRequest), global::Etcdserverpb.AuthUserChangePasswordRequest.Parser, new[]{ "Name", "Password" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserGrantRoleRequest), global::Etcdserverpb.AuthUserGrantRoleRequest.Parser, new[]{ "User", "Role" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserRevokeRoleRequest), global::Etcdserverpb.AuthUserRevokeRoleRequest.Parser, new[]{ "Name", "Role" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleAddRequest), global::Etcdserverpb.AuthRoleAddRequest.Parser, new[]{ "Name" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleGetRequest), global::Etcdserverpb.AuthRoleGetRequest.Parser, new[]{ "Role" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserListRequest), global::Etcdserverpb.AuthUserListRequest.Parser, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleListRequest), global::Etcdserverpb.AuthRoleListRequest.Parser, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleDeleteRequest), global::Etcdserverpb.AuthRoleDeleteRequest.Parser, new[]{ "Role" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleGrantPermissionRequest), global::Etcdserverpb.AuthRoleGrantPermissionRequest.Parser, new[]{ "Name", "Perm" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleRevokePermissionRequest), global::Etcdserverpb.AuthRoleRevokePermissionRequest.Parser, new[]{ "Role", "Key", "RangeEnd" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthEnableResponse), global::Etcdserverpb.AuthEnableResponse.Parser, new[]{ "Header" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthDisableResponse), global::Etcdserverpb.AuthDisableResponse.Parser, new[]{ "Header" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthenticateResponse), global::Etcdserverpb.AuthenticateResponse.Parser, new[]{ "Header", "Token" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserAddResponse), global::Etcdserverpb.AuthUserAddResponse.Parser, new[]{ "Header" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserGetResponse), global::Etcdserverpb.AuthUserGetResponse.Parser, new[]{ "Header", "Roles" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserDeleteResponse), global::Etcdserverpb.AuthUserDeleteResponse.Parser, new[]{ "Header" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserChangePasswordResponse), global::Etcdserverpb.AuthUserChangePasswordResponse.Parser, new[]{ "Header" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserGrantRoleResponse), global::Etcdserverpb.AuthUserGrantRoleResponse.Parser, new[]{ "Header" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserRevokeRoleResponse), global::Etcdserverpb.AuthUserRevokeRoleResponse.Parser, new[]{ "Header" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleAddResponse), global::Etcdserverpb.AuthRoleAddResponse.Parser, new[]{ "Header" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleGetResponse), global::Etcdserverpb.AuthRoleGetResponse.Parser, new[]{ "Header", "Perm" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleListResponse), global::Etcdserverpb.AuthRoleListResponse.Parser, new[]{ "Header", "Roles" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserListResponse), global::Etcdserverpb.AuthUserListResponse.Parser, new[]{ "Header", "Users" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleDeleteResponse), global::Etcdserverpb.AuthRoleDeleteResponse.Parser, new[]{ "Header" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleGrantPermissionResponse), global::Etcdserverpb.AuthRoleGrantPermissionResponse.Parser, new[]{ "Header" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleRevokePermissionResponse), global::Etcdserverpb.AuthRoleRevokePermissionResponse.Parser, new[]{ "Header" }, null, null, null)
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Etcdserverpb.AlarmType), }, null, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.ResponseHeader), global::Etcdserverpb.ResponseHeader.Parser, new[]{ "ClusterId", "MemberId", "Revision", "RaftTerm" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.RangeRequest), global::Etcdserverpb.RangeRequest.Parser, new[]{ "Key", "RangeEnd", "Limit", "Revision", "SortOrder", "SortTarget", "Serializable", "KeysOnly", "CountOnly", "MinModRevision", "MaxModRevision", "MinCreateRevision", "MaxCreateRevision" }, null, new[]{ typeof(global::Etcdserverpb.RangeRequest.Types.SortOrder), typeof(global::Etcdserverpb.RangeRequest.Types.SortTarget) }, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.RangeResponse), global::Etcdserverpb.RangeResponse.Parser, new[]{ "Header", "Kvs", "More", "Count" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.PutRequest), global::Etcdserverpb.PutRequest.Parser, new[]{ "Key", "Value", "Lease", "PrevKv", "IgnoreValue", "IgnoreLease" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.PutResponse), global::Etcdserverpb.PutResponse.Parser, new[]{ "Header", "PrevKv" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.DeleteRangeRequest), global::Etcdserverpb.DeleteRangeRequest.Parser, new[]{ "Key", "RangeEnd", "PrevKv" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.DeleteRangeResponse), global::Etcdserverpb.DeleteRangeResponse.Parser, new[]{ "Header", "Deleted", "PrevKvs" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.RequestOp), global::Etcdserverpb.RequestOp.Parser, new[]{ "RequestRange", "RequestPut", "RequestDeleteRange", "RequestTxn" }, new[]{ "Request" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.ResponseOp), global::Etcdserverpb.ResponseOp.Parser, new[]{ "ResponseRange", "ResponsePut", "ResponseDeleteRange", "ResponseTxn" }, new[]{ "Response" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.Compare), global::Etcdserverpb.Compare.Parser, new[]{ "Result", "Target", "Key", "Version", "CreateRevision", "ModRevision", "Value", "RangeEnd" }, new[]{ "TargetUnion" }, new[]{ typeof(global::Etcdserverpb.Compare.Types.CompareResult), typeof(global::Etcdserverpb.Compare.Types.CompareTarget) }, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.TxnRequest), global::Etcdserverpb.TxnRequest.Parser, new[]{ "Compare", "Success", "Failure" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.TxnResponse), global::Etcdserverpb.TxnResponse.Parser, new[]{ "Header", "Succeeded", "Responses" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.CompactionRequest), global::Etcdserverpb.CompactionRequest.Parser, new[]{ "Revision", "Physical" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.CompactionResponse), global::Etcdserverpb.CompactionResponse.Parser, new[]{ "Header" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.HashRequest), global::Etcdserverpb.HashRequest.Parser, null, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.HashResponse), global::Etcdserverpb.HashResponse.Parser, new[]{ "Header", "Hash" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.HashKVRequest), global::Etcdserverpb.HashKVRequest.Parser, new[]{ "Revision" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.HashKVResponse), global::Etcdserverpb.HashKVResponse.Parser, new[]{ "Header", "Hash", "CompactRevision" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.SnapshotRequest), global::Etcdserverpb.SnapshotRequest.Parser, null, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.SnapshotResponse), global::Etcdserverpb.SnapshotResponse.Parser, new[]{ "Header", "RemainingBytes", "Blob" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.WatchRequest), global::Etcdserverpb.WatchRequest.Parser, new[]{ "CreateRequest", "CancelRequest" }, new[]{ "RequestUnion" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.WatchCreateRequest), global::Etcdserverpb.WatchCreateRequest.Parser, new[]{ "Key", "RangeEnd", "StartRevision", "ProgressNotify", "Filters", "PrevKv" }, null, new[]{ typeof(global::Etcdserverpb.WatchCreateRequest.Types.FilterType) }, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.WatchCancelRequest), global::Etcdserverpb.WatchCancelRequest.Parser, new[]{ "WatchId" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.WatchResponse), global::Etcdserverpb.WatchResponse.Parser, new[]{ "Header", "WatchId", "Created", "Canceled", "CompactRevision", "CancelReason", "Events" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.LeaseGrantRequest), global::Etcdserverpb.LeaseGrantRequest.Parser, new[]{ "TTL", "ID" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.LeaseGrantResponse), global::Etcdserverpb.LeaseGrantResponse.Parser, new[]{ "Header", "ID", "TTL", "Error" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.LeaseRevokeRequest), global::Etcdserverpb.LeaseRevokeRequest.Parser, new[]{ "ID" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.LeaseRevokeResponse), global::Etcdserverpb.LeaseRevokeResponse.Parser, new[]{ "Header" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.LeaseKeepAliveRequest), global::Etcdserverpb.LeaseKeepAliveRequest.Parser, new[]{ "ID" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.LeaseKeepAliveResponse), global::Etcdserverpb.LeaseKeepAliveResponse.Parser, new[]{ "Header", "ID", "TTL" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.LeaseTimeToLiveRequest), global::Etcdserverpb.LeaseTimeToLiveRequest.Parser, new[]{ "ID", "Keys" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.LeaseTimeToLiveResponse), global::Etcdserverpb.LeaseTimeToLiveResponse.Parser, new[]{ "Header", "ID", "TTL", "GrantedTTL", "Keys" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.Member), global::Etcdserverpb.Member.Parser, new[]{ "ID", "Name", "PeerURLs", "ClientURLs" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.MemberAddRequest), global::Etcdserverpb.MemberAddRequest.Parser, new[]{ "PeerURLs" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.MemberAddResponse), global::Etcdserverpb.MemberAddResponse.Parser, new[]{ "Header", "Member", "Members" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.MemberRemoveRequest), global::Etcdserverpb.MemberRemoveRequest.Parser, new[]{ "ID" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.MemberRemoveResponse), global::Etcdserverpb.MemberRemoveResponse.Parser, new[]{ "Header", "Members" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.MemberUpdateRequest), global::Etcdserverpb.MemberUpdateRequest.Parser, new[]{ "ID", "PeerURLs" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.MemberUpdateResponse), global::Etcdserverpb.MemberUpdateResponse.Parser, new[]{ "Header", "Members" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.MemberListRequest), global::Etcdserverpb.MemberListRequest.Parser, null, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.MemberListResponse), global::Etcdserverpb.MemberListResponse.Parser, new[]{ "Header", "Members" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.DefragmentRequest), global::Etcdserverpb.DefragmentRequest.Parser, null, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.DefragmentResponse), global::Etcdserverpb.DefragmentResponse.Parser, new[]{ "Header" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.MoveLeaderRequest), global::Etcdserverpb.MoveLeaderRequest.Parser, new[]{ "TargetID" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.MoveLeaderResponse), global::Etcdserverpb.MoveLeaderResponse.Parser, new[]{ "Header" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AlarmRequest), global::Etcdserverpb.AlarmRequest.Parser, new[]{ "Action", "MemberID", "Alarm" }, null, new[]{ typeof(global::Etcdserverpb.AlarmRequest.Types.AlarmAction) }, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AlarmMember), global::Etcdserverpb.AlarmMember.Parser, new[]{ "MemberID", "Alarm" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AlarmResponse), global::Etcdserverpb.AlarmResponse.Parser, new[]{ "Header", "Alarms" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.StatusRequest), global::Etcdserverpb.StatusRequest.Parser, null, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.StatusResponse), global::Etcdserverpb.StatusResponse.Parser, new[]{ "Header", "Version", "DbSize", "Leader", "RaftIndex", "RaftTerm" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthEnableRequest), global::Etcdserverpb.AuthEnableRequest.Parser, null, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthDisableRequest), global::Etcdserverpb.AuthDisableRequest.Parser, null, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthenticateRequest), global::Etcdserverpb.AuthenticateRequest.Parser, new[]{ "Name", "Password" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserAddRequest), global::Etcdserverpb.AuthUserAddRequest.Parser, new[]{ "Name", "Password" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserGetRequest), global::Etcdserverpb.AuthUserGetRequest.Parser, new[]{ "Name" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserDeleteRequest), global::Etcdserverpb.AuthUserDeleteRequest.Parser, new[]{ "Name" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserChangePasswordRequest), global::Etcdserverpb.AuthUserChangePasswordRequest.Parser, new[]{ "Name", "Password" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserGrantRoleRequest), global::Etcdserverpb.AuthUserGrantRoleRequest.Parser, new[]{ "User", "Role" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserRevokeRoleRequest), global::Etcdserverpb.AuthUserRevokeRoleRequest.Parser, new[]{ "Name", "Role" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleAddRequest), global::Etcdserverpb.AuthRoleAddRequest.Parser, new[]{ "Name" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleGetRequest), global::Etcdserverpb.AuthRoleGetRequest.Parser, new[]{ "Role" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserListRequest), global::Etcdserverpb.AuthUserListRequest.Parser, null, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleListRequest), global::Etcdserverpb.AuthRoleListRequest.Parser, null, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleDeleteRequest), global::Etcdserverpb.AuthRoleDeleteRequest.Parser, new[]{ "Role" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleGrantPermissionRequest), global::Etcdserverpb.AuthRoleGrantPermissionRequest.Parser, new[]{ "Name", "Perm" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleRevokePermissionRequest), global::Etcdserverpb.AuthRoleRevokePermissionRequest.Parser, new[]{ "Role", "Key", "RangeEnd" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthEnableResponse), global::Etcdserverpb.AuthEnableResponse.Parser, new[]{ "Header" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthDisableResponse), global::Etcdserverpb.AuthDisableResponse.Parser, new[]{ "Header" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthenticateResponse), global::Etcdserverpb.AuthenticateResponse.Parser, new[]{ "Header", "Token" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserAddResponse), global::Etcdserverpb.AuthUserAddResponse.Parser, new[]{ "Header" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserGetResponse), global::Etcdserverpb.AuthUserGetResponse.Parser, new[]{ "Header", "Roles" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserDeleteResponse), global::Etcdserverpb.AuthUserDeleteResponse.Parser, new[]{ "Header" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserChangePasswordResponse), global::Etcdserverpb.AuthUserChangePasswordResponse.Parser, new[]{ "Header" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserGrantRoleResponse), global::Etcdserverpb.AuthUserGrantRoleResponse.Parser, new[]{ "Header" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserRevokeRoleResponse), global::Etcdserverpb.AuthUserRevokeRoleResponse.Parser, new[]{ "Header" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleAddResponse), global::Etcdserverpb.AuthRoleAddResponse.Parser, new[]{ "Header" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleGetResponse), global::Etcdserverpb.AuthRoleGetResponse.Parser, new[]{ "Header", "Perm" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleListResponse), global::Etcdserverpb.AuthRoleListResponse.Parser, new[]{ "Header", "Roles" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthUserListResponse), global::Etcdserverpb.AuthUserListResponse.Parser, new[]{ "Header", "Users" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleDeleteResponse), global::Etcdserverpb.AuthRoleDeleteResponse.Parser, new[]{ "Header" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleGrantPermissionResponse), global::Etcdserverpb.AuthRoleGrantPermissionResponse.Parser, new[]{ "Header" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Etcdserverpb.AuthRoleRevokePermissionResponse), global::Etcdserverpb.AuthRoleRevokePermissionResponse.Parser, new[]{ "Header" }, null, null, null, null)
           }));
     }
     #endregion
@@ -702,7 +702,7 @@ namespace Etcdserverpb {
 
     /// <summary>Field number for the "sort_order" field.</summary>
     public const int SortOrderFieldNumber = 5;
-    private global::Etcdserverpb.RangeRequest.Types.SortOrder sortOrder_ = 0;
+    private global::Etcdserverpb.RangeRequest.Types.SortOrder sortOrder_ = global::Etcdserverpb.RangeRequest.Types.SortOrder.None;
     /// <summary>
     /// sort_order is the order for returned sorted results.
     /// </summary>
@@ -716,7 +716,7 @@ namespace Etcdserverpb {
 
     /// <summary>Field number for the "sort_target" field.</summary>
     public const int SortTargetFieldNumber = 6;
-    private global::Etcdserverpb.RangeRequest.Types.SortTarget sortTarget_ = 0;
+    private global::Etcdserverpb.RangeRequest.Types.SortTarget sortTarget_ = global::Etcdserverpb.RangeRequest.Types.SortTarget.Key;
     /// <summary>
     /// sort_target is the key-value field to use for sorting.
     /// </summary>
@@ -871,8 +871,8 @@ namespace Etcdserverpb {
       if (RangeEnd.Length != 0) hash ^= RangeEnd.GetHashCode();
       if (Limit != 0L) hash ^= Limit.GetHashCode();
       if (Revision != 0L) hash ^= Revision.GetHashCode();
-      if (SortOrder != 0) hash ^= SortOrder.GetHashCode();
-      if (SortTarget != 0) hash ^= SortTarget.GetHashCode();
+      if (SortOrder != global::Etcdserverpb.RangeRequest.Types.SortOrder.None) hash ^= SortOrder.GetHashCode();
+      if (SortTarget != global::Etcdserverpb.RangeRequest.Types.SortTarget.Key) hash ^= SortTarget.GetHashCode();
       if (Serializable != false) hash ^= Serializable.GetHashCode();
       if (KeysOnly != false) hash ^= KeysOnly.GetHashCode();
       if (CountOnly != false) hash ^= CountOnly.GetHashCode();
@@ -909,11 +909,11 @@ namespace Etcdserverpb {
         output.WriteRawTag(32);
         output.WriteInt64(Revision);
       }
-      if (SortOrder != 0) {
+      if (SortOrder != global::Etcdserverpb.RangeRequest.Types.SortOrder.None) {
         output.WriteRawTag(40);
         output.WriteEnum((int) SortOrder);
       }
-      if (SortTarget != 0) {
+      if (SortTarget != global::Etcdserverpb.RangeRequest.Types.SortTarget.Key) {
         output.WriteRawTag(48);
         output.WriteEnum((int) SortTarget);
       }
@@ -965,10 +965,10 @@ namespace Etcdserverpb {
       if (Revision != 0L) {
         size += 1 + pb::CodedOutputStream.ComputeInt64Size(Revision);
       }
-      if (SortOrder != 0) {
+      if (SortOrder != global::Etcdserverpb.RangeRequest.Types.SortOrder.None) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) SortOrder);
       }
-      if (SortTarget != 0) {
+      if (SortTarget != global::Etcdserverpb.RangeRequest.Types.SortTarget.Key) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) SortTarget);
       }
       if (Serializable != false) {
@@ -1015,10 +1015,10 @@ namespace Etcdserverpb {
       if (other.Revision != 0L) {
         Revision = other.Revision;
       }
-      if (other.SortOrder != 0) {
+      if (other.SortOrder != global::Etcdserverpb.RangeRequest.Types.SortOrder.None) {
         SortOrder = other.SortOrder;
       }
-      if (other.SortTarget != 0) {
+      if (other.SortTarget != global::Etcdserverpb.RangeRequest.Types.SortTarget.Key) {
         SortTarget = other.SortTarget;
       }
       if (other.Serializable != false) {
@@ -1070,11 +1070,11 @@ namespace Etcdserverpb {
             break;
           }
           case 40: {
-            sortOrder_ = (global::Etcdserverpb.RangeRequest.Types.SortOrder) input.ReadEnum();
+            SortOrder = (global::Etcdserverpb.RangeRequest.Types.SortOrder) input.ReadEnum();
             break;
           }
           case 48: {
-            sortTarget_ = (global::Etcdserverpb.RangeRequest.Types.SortTarget) input.ReadEnum();
+            SortTarget = (global::Etcdserverpb.RangeRequest.Types.SortTarget) input.ReadEnum();
             break;
           }
           case 56: {
@@ -1315,7 +1315,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -1339,9 +1339,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 18: {
@@ -1784,13 +1784,13 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
       if (other.prevKv_ != null) {
         if (prevKv_ == null) {
-          prevKv_ = new global::Mvccpb.KeyValue();
+          PrevKv = new global::Mvccpb.KeyValue();
         }
         PrevKv.MergeFrom(other.PrevKv);
       }
@@ -1807,16 +1807,16 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 18: {
             if (prevKv_ == null) {
-              prevKv_ = new global::Mvccpb.KeyValue();
+              PrevKv = new global::Mvccpb.KeyValue();
             }
-            input.ReadMessage(prevKv_);
+            input.ReadMessage(PrevKv);
             break;
           }
         }
@@ -2173,7 +2173,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -2194,9 +2194,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 16: {
@@ -2831,7 +2831,7 @@ namespace Etcdserverpb {
 
     /// <summary>Field number for the "result" field.</summary>
     public const int ResultFieldNumber = 1;
-    private global::Etcdserverpb.Compare.Types.CompareResult result_ = 0;
+    private global::Etcdserverpb.Compare.Types.CompareResult result_ = global::Etcdserverpb.Compare.Types.CompareResult.Equal;
     /// <summary>
     /// result is logical comparison operation for this comparison.
     /// </summary>
@@ -2845,7 +2845,7 @@ namespace Etcdserverpb {
 
     /// <summary>Field number for the "target" field.</summary>
     public const int TargetFieldNumber = 2;
-    private global::Etcdserverpb.Compare.Types.CompareTarget target_ = 0;
+    private global::Etcdserverpb.Compare.Types.CompareTarget target_ = global::Etcdserverpb.Compare.Types.CompareTarget.Version;
     /// <summary>
     /// target is the key-value field to inspect for the comparison.
     /// </summary>
@@ -2991,8 +2991,8 @@ namespace Etcdserverpb {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      if (Result != 0) hash ^= Result.GetHashCode();
-      if (Target != 0) hash ^= Target.GetHashCode();
+      if (Result != global::Etcdserverpb.Compare.Types.CompareResult.Equal) hash ^= Result.GetHashCode();
+      if (Target != global::Etcdserverpb.Compare.Types.CompareTarget.Version) hash ^= Target.GetHashCode();
       if (Key.Length != 0) hash ^= Key.GetHashCode();
       if (targetUnionCase_ == TargetUnionOneofCase.Version) hash ^= Version.GetHashCode();
       if (targetUnionCase_ == TargetUnionOneofCase.CreateRevision) hash ^= CreateRevision.GetHashCode();
@@ -3013,11 +3013,11 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
-      if (Result != 0) {
+      if (Result != global::Etcdserverpb.Compare.Types.CompareResult.Equal) {
         output.WriteRawTag(8);
         output.WriteEnum((int) Result);
       }
-      if (Target != 0) {
+      if (Target != global::Etcdserverpb.Compare.Types.CompareTarget.Version) {
         output.WriteRawTag(16);
         output.WriteEnum((int) Target);
       }
@@ -3053,10 +3053,10 @@ namespace Etcdserverpb {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      if (Result != 0) {
+      if (Result != global::Etcdserverpb.Compare.Types.CompareResult.Equal) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Result);
       }
-      if (Target != 0) {
+      if (Target != global::Etcdserverpb.Compare.Types.CompareTarget.Version) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Target);
       }
       if (Key.Length != 0) {
@@ -3088,10 +3088,10 @@ namespace Etcdserverpb {
       if (other == null) {
         return;
       }
-      if (other.Result != 0) {
+      if (other.Result != global::Etcdserverpb.Compare.Types.CompareResult.Equal) {
         Result = other.Result;
       }
-      if (other.Target != 0) {
+      if (other.Target != global::Etcdserverpb.Compare.Types.CompareTarget.Version) {
         Target = other.Target;
       }
       if (other.Key.Length != 0) {
@@ -3127,11 +3127,11 @@ namespace Etcdserverpb {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            result_ = (global::Etcdserverpb.Compare.Types.CompareResult) input.ReadEnum();
+            Result = (global::Etcdserverpb.Compare.Types.CompareResult) input.ReadEnum();
             break;
           }
           case 16: {
-            target_ = (global::Etcdserverpb.Compare.Types.CompareTarget) input.ReadEnum();
+            Target = (global::Etcdserverpb.Compare.Types.CompareTarget) input.ReadEnum();
             break;
           }
           case 26: {
@@ -3526,7 +3526,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -3547,9 +3547,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 16: {
@@ -3842,7 +3842,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -3859,9 +3859,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
         }
@@ -4102,7 +4102,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -4122,9 +4122,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 16: {
@@ -4424,7 +4424,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -4447,9 +4447,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 16: {
@@ -4726,7 +4726,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -4749,9 +4749,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 16: {
@@ -5663,7 +5663,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -5696,9 +5696,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 16: {
@@ -6070,7 +6070,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -6096,9 +6096,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 16: {
@@ -6358,7 +6358,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -6375,9 +6375,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
         }
@@ -6673,7 +6673,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -6696,9 +6696,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 16: {
@@ -7075,7 +7075,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -7102,9 +7102,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 16: {
@@ -7611,13 +7611,13 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
       if (other.member_ != null) {
         if (member_ == null) {
-          member_ = new global::Etcdserverpb.Member();
+          Member = new global::Etcdserverpb.Member();
         }
         Member.MergeFrom(other.Member);
       }
@@ -7635,16 +7635,16 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 18: {
             if (member_ == null) {
-              member_ = new global::Etcdserverpb.Member();
+              Member = new global::Etcdserverpb.Member();
             }
-            input.ReadMessage(member_);
+            input.ReadMessage(Member);
             break;
           }
           case 26: {
@@ -7914,7 +7914,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -7932,9 +7932,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 18: {
@@ -8227,7 +8227,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -8245,9 +8245,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 18: {
@@ -8486,7 +8486,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -8504,9 +8504,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 18: {
@@ -8727,7 +8727,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -8744,9 +8744,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
         }
@@ -8994,7 +8994,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -9011,9 +9011,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
         }
@@ -9060,7 +9060,7 @@ namespace Etcdserverpb {
 
     /// <summary>Field number for the "action" field.</summary>
     public const int ActionFieldNumber = 1;
-    private global::Etcdserverpb.AlarmRequest.Types.AlarmAction action_ = 0;
+    private global::Etcdserverpb.AlarmRequest.Types.AlarmAction action_ = global::Etcdserverpb.AlarmRequest.Types.AlarmAction.Get;
     /// <summary>
     /// action is the kind of alarm request to issue. The action
     /// may GET alarm statuses, ACTIVATE an alarm, or DEACTIVATE a
@@ -9091,7 +9091,7 @@ namespace Etcdserverpb {
 
     /// <summary>Field number for the "alarm" field.</summary>
     public const int AlarmFieldNumber = 3;
-    private global::Etcdserverpb.AlarmType alarm_ = 0;
+    private global::Etcdserverpb.AlarmType alarm_ = global::Etcdserverpb.AlarmType.None;
     /// <summary>
     /// alarm is the type of alarm to consider for this request.
     /// </summary>
@@ -9125,9 +9125,9 @@ namespace Etcdserverpb {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      if (Action != 0) hash ^= Action.GetHashCode();
+      if (Action != global::Etcdserverpb.AlarmRequest.Types.AlarmAction.Get) hash ^= Action.GetHashCode();
       if (MemberID != 0UL) hash ^= MemberID.GetHashCode();
-      if (Alarm != 0) hash ^= Alarm.GetHashCode();
+      if (Alarm != global::Etcdserverpb.AlarmType.None) hash ^= Alarm.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -9141,7 +9141,7 @@ namespace Etcdserverpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
-      if (Action != 0) {
+      if (Action != global::Etcdserverpb.AlarmRequest.Types.AlarmAction.Get) {
         output.WriteRawTag(8);
         output.WriteEnum((int) Action);
       }
@@ -9149,7 +9149,7 @@ namespace Etcdserverpb {
         output.WriteRawTag(16);
         output.WriteUInt64(MemberID);
       }
-      if (Alarm != 0) {
+      if (Alarm != global::Etcdserverpb.AlarmType.None) {
         output.WriteRawTag(24);
         output.WriteEnum((int) Alarm);
       }
@@ -9161,13 +9161,13 @@ namespace Etcdserverpb {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      if (Action != 0) {
+      if (Action != global::Etcdserverpb.AlarmRequest.Types.AlarmAction.Get) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Action);
       }
       if (MemberID != 0UL) {
         size += 1 + pb::CodedOutputStream.ComputeUInt64Size(MemberID);
       }
-      if (Alarm != 0) {
+      if (Alarm != global::Etcdserverpb.AlarmType.None) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Alarm);
       }
       if (_unknownFields != null) {
@@ -9181,13 +9181,13 @@ namespace Etcdserverpb {
       if (other == null) {
         return;
       }
-      if (other.Action != 0) {
+      if (other.Action != global::Etcdserverpb.AlarmRequest.Types.AlarmAction.Get) {
         Action = other.Action;
       }
       if (other.MemberID != 0UL) {
         MemberID = other.MemberID;
       }
-      if (other.Alarm != 0) {
+      if (other.Alarm != global::Etcdserverpb.AlarmType.None) {
         Alarm = other.Alarm;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -9202,7 +9202,7 @@ namespace Etcdserverpb {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            action_ = (global::Etcdserverpb.AlarmRequest.Types.AlarmAction) input.ReadEnum();
+            Action = (global::Etcdserverpb.AlarmRequest.Types.AlarmAction) input.ReadEnum();
             break;
           }
           case 16: {
@@ -9210,7 +9210,7 @@ namespace Etcdserverpb {
             break;
           }
           case 24: {
-            alarm_ = (global::Etcdserverpb.AlarmType) input.ReadEnum();
+            Alarm = (global::Etcdserverpb.AlarmType) input.ReadEnum();
             break;
           }
         }
@@ -9283,7 +9283,7 @@ namespace Etcdserverpb {
 
     /// <summary>Field number for the "alarm" field.</summary>
     public const int AlarmFieldNumber = 2;
-    private global::Etcdserverpb.AlarmType alarm_ = 0;
+    private global::Etcdserverpb.AlarmType alarm_ = global::Etcdserverpb.AlarmType.None;
     /// <summary>
     /// alarm is the type of alarm which has been raised.
     /// </summary>
@@ -9317,7 +9317,7 @@ namespace Etcdserverpb {
     public override int GetHashCode() {
       int hash = 1;
       if (MemberID != 0UL) hash ^= MemberID.GetHashCode();
-      if (Alarm != 0) hash ^= Alarm.GetHashCode();
+      if (Alarm != global::Etcdserverpb.AlarmType.None) hash ^= Alarm.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -9335,7 +9335,7 @@ namespace Etcdserverpb {
         output.WriteRawTag(8);
         output.WriteUInt64(MemberID);
       }
-      if (Alarm != 0) {
+      if (Alarm != global::Etcdserverpb.AlarmType.None) {
         output.WriteRawTag(16);
         output.WriteEnum((int) Alarm);
       }
@@ -9350,7 +9350,7 @@ namespace Etcdserverpb {
       if (MemberID != 0UL) {
         size += 1 + pb::CodedOutputStream.ComputeUInt64Size(MemberID);
       }
-      if (Alarm != 0) {
+      if (Alarm != global::Etcdserverpb.AlarmType.None) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Alarm);
       }
       if (_unknownFields != null) {
@@ -9367,7 +9367,7 @@ namespace Etcdserverpb {
       if (other.MemberID != 0UL) {
         MemberID = other.MemberID;
       }
-      if (other.Alarm != 0) {
+      if (other.Alarm != global::Etcdserverpb.AlarmType.None) {
         Alarm = other.Alarm;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -9386,7 +9386,7 @@ namespace Etcdserverpb {
             break;
           }
           case 16: {
-            alarm_ = (global::Etcdserverpb.AlarmType) input.ReadEnum();
+            Alarm = (global::Etcdserverpb.AlarmType) input.ReadEnum();
             break;
           }
         }
@@ -9520,7 +9520,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -9538,9 +9538,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 18: {
@@ -9881,7 +9881,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -9913,9 +9913,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 18: {
@@ -11933,7 +11933,7 @@ namespace Etcdserverpb {
       }
       if (other.perm_ != null) {
         if (perm_ == null) {
-          perm_ = new global::Authpb.Permission();
+          Perm = new global::Authpb.Permission();
         }
         Perm.MergeFrom(other.Perm);
       }
@@ -11954,9 +11954,9 @@ namespace Etcdserverpb {
           }
           case 18: {
             if (perm_ == null) {
-              perm_ = new global::Authpb.Permission();
+              Perm = new global::Authpb.Permission();
             }
-            input.ReadMessage(perm_);
+            input.ReadMessage(Perm);
             break;
           }
         }
@@ -12257,7 +12257,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -12274,9 +12274,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
         }
@@ -12392,7 +12392,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -12409,9 +12409,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
         }
@@ -12551,7 +12551,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -12571,9 +12571,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 18: {
@@ -12693,7 +12693,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -12710,9 +12710,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
         }
@@ -12843,7 +12843,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -12861,9 +12861,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 18: {
@@ -12983,7 +12983,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -13000,9 +13000,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
         }
@@ -13118,7 +13118,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -13135,9 +13135,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
         }
@@ -13253,7 +13253,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -13270,9 +13270,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
         }
@@ -13388,7 +13388,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -13405,9 +13405,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
         }
@@ -13523,7 +13523,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -13540,9 +13540,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
         }
@@ -13673,7 +13673,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -13691,9 +13691,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 18: {
@@ -13828,7 +13828,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -13846,9 +13846,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 18: {
@@ -13983,7 +13983,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -14001,9 +14001,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
           case 18: {
@@ -14123,7 +14123,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -14140,9 +14140,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
         }
@@ -14258,7 +14258,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -14275,9 +14275,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
         }
@@ -14393,7 +14393,7 @@ namespace Etcdserverpb {
       }
       if (other.header_ != null) {
         if (header_ == null) {
-          header_ = new global::Etcdserverpb.ResponseHeader();
+          Header = new global::Etcdserverpb.ResponseHeader();
         }
         Header.MergeFrom(other.Header);
       }
@@ -14410,9 +14410,9 @@ namespace Etcdserverpb {
             break;
           case 10: {
             if (header_ == null) {
-              header_ = new global::Etcdserverpb.ResponseHeader();
+              Header = new global::Etcdserverpb.ResponseHeader();
             }
-            input.ReadMessage(header_);
+            input.ReadMessage(Header);
             break;
           }
         }

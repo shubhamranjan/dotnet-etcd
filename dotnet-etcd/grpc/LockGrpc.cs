@@ -41,6 +41,7 @@ namespace V3Lockpb {
     }
 
     /// <summary>Base class for server-side implementations of Lock</summary>
+    [grpc::BindServiceMethod(typeof(Lock), "BindService")]
     public abstract partial class LockBase
     {
       /// <summary>
