@@ -72,7 +72,8 @@ namespace dotnet_etcd.multiplexer
             _ssl = !_publicRootCa && !string.IsNullOrWhiteSpace(_caCert);
             _clientSSL = _ssl && (!string.IsNullOrWhiteSpace(_clientCert) && !(string.IsNullOrWhiteSpace(_clientKey)));
 
-            foreach(var node in nodes)
+            _Cluster = new Queue<Connection>();
+            foreach (var node in nodes)
             {
                 Channel channel = null;
                 if (_publicRootCa)
