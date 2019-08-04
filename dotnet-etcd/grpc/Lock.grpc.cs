@@ -35,11 +35,11 @@ namespace V3Lockpb {
             "bG9ja1Jlc3BvbnNlIgBiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Etcdserverpb.RpcReflection.Descriptor, },
-          new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::V3Lockpb.LockRequest), global::V3Lockpb.LockRequest.Parser, new[]{ "Name", "Lease" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::V3Lockpb.LockResponse), global::V3Lockpb.LockResponse.Parser, new[]{ "Header", "Key" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::V3Lockpb.UnlockRequest), global::V3Lockpb.UnlockRequest.Parser, new[]{ "Key" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::V3Lockpb.UnlockResponse), global::V3Lockpb.UnlockResponse.Parser, new[]{ "Header" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::V3Lockpb.LockRequest), global::V3Lockpb.LockRequest.Parser, new[]{ "Name", "Lease" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::V3Lockpb.LockResponse), global::V3Lockpb.LockResponse.Parser, new[]{ "Header", "Key" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::V3Lockpb.UnlockRequest), global::V3Lockpb.UnlockRequest.Parser, new[]{ "Key" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::V3Lockpb.UnlockResponse), global::V3Lockpb.UnlockResponse.Parser, new[]{ "Header" }, null, null, null)
           }));
     }
     #endregion

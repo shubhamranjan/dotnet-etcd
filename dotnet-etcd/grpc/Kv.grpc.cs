@@ -33,9 +33,9 @@ namespace Mvccpb {
             "VBAAEgoKBkRFTEVURRABYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Mvccpb.KeyValue), global::Mvccpb.KeyValue.Parser, new[]{ "Key", "CreateRevision", "ModRevision", "Version", "Value", "Lease" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Mvccpb.Event), global::Mvccpb.Event.Parser, new[]{ "Type", "Kv", "PrevKv" }, null, new[]{ typeof(global::Mvccpb.Event.Types.EventType) }, null, null)
+          new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::Mvccpb.KeyValue), global::Mvccpb.KeyValue.Parser, new[]{ "Key", "CreateRevision", "ModRevision", "Version", "Value", "Lease" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Mvccpb.Event), global::Mvccpb.Event.Parser, new[]{ "Type", "Kv", "PrevKv" }, null, new[]{ typeof(global::Mvccpb.Event.Types.EventType) }, null)
           }));
     }
     #endregion
@@ -371,7 +371,7 @@ namespace Mvccpb {
 
     /// <summary>Field number for the "type" field.</summary>
     public const int TypeFieldNumber = 1;
-    private global::Mvccpb.Event.Types.EventType type_ = global::Mvccpb.Event.Types.EventType.Put;
+    private global::Mvccpb.Event.Types.EventType type_ = 0;
     /// <summary>
     /// type is the kind of event. If type is a PUT, it indicates
     /// new data has been stored to the key. If type is a DELETE,
@@ -439,7 +439,7 @@ namespace Mvccpb {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      if (Type != global::Mvccpb.Event.Types.EventType.Put) hash ^= Type.GetHashCode();
+      if (Type != 0) hash ^= Type.GetHashCode();
       if (kv_ != null) hash ^= Kv.GetHashCode();
       if (prevKv_ != null) hash ^= PrevKv.GetHashCode();
       if (_unknownFields != null) {
@@ -455,7 +455,7 @@ namespace Mvccpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
-      if (Type != global::Mvccpb.Event.Types.EventType.Put) {
+      if (Type != 0) {
         output.WriteRawTag(8);
         output.WriteEnum((int) Type);
       }
@@ -475,7 +475,7 @@ namespace Mvccpb {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      if (Type != global::Mvccpb.Event.Types.EventType.Put) {
+      if (Type != 0) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Type);
       }
       if (kv_ != null) {
@@ -495,7 +495,7 @@ namespace Mvccpb {
       if (other == null) {
         return;
       }
-      if (other.Type != global::Mvccpb.Event.Types.EventType.Put) {
+      if (other.Type != 0) {
         Type = other.Type;
       }
       if (other.kv_ != null) {

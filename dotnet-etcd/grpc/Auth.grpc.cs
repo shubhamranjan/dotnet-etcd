@@ -33,10 +33,10 @@ namespace Authpb {
             "c2lvbmIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Authpb.User), global::Authpb.User.Parser, new[]{ "Name", "Password", "Roles" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Authpb.Permission), global::Authpb.Permission.Parser, new[]{ "PermType", "Key", "RangeEnd" }, null, new[]{ typeof(global::Authpb.Permission.Types.Type) }, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Authpb.Role), global::Authpb.Role.Parser, new[]{ "Name", "KeyPermission" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::Authpb.User), global::Authpb.User.Parser, new[]{ "Name", "Password", "Roles" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Authpb.Permission), global::Authpb.Permission.Parser, new[]{ "PermType", "Key", "RangeEnd" }, null, new[]{ typeof(global::Authpb.Permission.Types.Type) }, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Authpb.Role), global::Authpb.Role.Parser, new[]{ "Name", "KeyPermission" }, null, null, null)
           }));
     }
     #endregion
@@ -264,7 +264,7 @@ namespace Authpb {
 
     /// <summary>Field number for the "permType" field.</summary>
     public const int PermTypeFieldNumber = 1;
-    private global::Authpb.Permission.Types.Type permType_ = global::Authpb.Permission.Types.Type.Read;
+    private global::Authpb.Permission.Types.Type permType_ = 0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Authpb.Permission.Types.Type PermType {
       get { return permType_; }
@@ -317,7 +317,7 @@ namespace Authpb {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      if (PermType != global::Authpb.Permission.Types.Type.Read) hash ^= PermType.GetHashCode();
+      if (PermType != 0) hash ^= PermType.GetHashCode();
       if (Key.Length != 0) hash ^= Key.GetHashCode();
       if (RangeEnd.Length != 0) hash ^= RangeEnd.GetHashCode();
       if (_unknownFields != null) {
@@ -333,7 +333,7 @@ namespace Authpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
-      if (PermType != global::Authpb.Permission.Types.Type.Read) {
+      if (PermType != 0) {
         output.WriteRawTag(8);
         output.WriteEnum((int) PermType);
       }
@@ -353,7 +353,7 @@ namespace Authpb {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      if (PermType != global::Authpb.Permission.Types.Type.Read) {
+      if (PermType != 0) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) PermType);
       }
       if (Key.Length != 0) {
@@ -373,7 +373,7 @@ namespace Authpb {
       if (other == null) {
         return;
       }
-      if (other.PermType != global::Authpb.Permission.Types.Type.Read) {
+      if (other.PermType != 0) {
         PermType = other.PermType;
       }
       if (other.Key.Length != 0) {
