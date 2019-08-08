@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Etcdserverpb;
 using Grpc.Core;
@@ -10,7 +11,11 @@ namespace dotnet_etcd.multiplexer
 
     internal class Balancer
     {
-        private Queue<Connection> _Cluster;
+        private SortedSet<Connection> _HealthyCluster;
+
+        private SortedSet<Connection> _UnHealthyCluster;
+
+        private Random _random;
 
         /// <summary>
         /// The username for etcd server for basic auth
@@ -59,7 +64,7 @@ namespace dotnet_etcd.multiplexer
 
 
 
-        internal Balancer(Uri[] nodes, string username = "", string password = "", string caCert = "", string clientCert = "", string clientKey = "", bool publicRootCa = false)
+        internal Balancer(List<Uri> nodes, string username = "", string password = "", string caCert = "", string clientCert = "", string clientKey = "", bool publicRootCa = false)
         {
             _caCert = caCert;
             _clientCert = clientCert;
@@ -72,7 +77,10 @@ namespace dotnet_etcd.multiplexer
             _ssl = !_publicRootCa && !string.IsNullOrWhiteSpace(_caCert);
             _clientSSL = _ssl && (!string.IsNullOrWhiteSpace(_clientCert) && !(string.IsNullOrWhiteSpace(_clientKey)));
 
-            _Cluster = new Queue<Connection>();
+            _HealthyCluster = new SortedSet<Connection>();
+            _UnHealthyCluster = new SortedSet<Connection>();
+            _random = new Random(0);
+
             foreach (var node in nodes)
             {
                 Channel channel = null;
@@ -111,22 +119,29 @@ namespace dotnet_etcd.multiplexer
                     authClient = new Auth.AuthClient(channel)
                 };
 
-                _Cluster.Enqueue(connection);
+                _HealthyCluster.Add(connection);
             }
 
         }
 
         internal Connection GetConnection()
         {
-            return _Cluster.Peek();
+            return _HealthyCluster.ElementAt(_random.Next(_HealthyCluster.Count));
         }
 
-        internal void Rebalance()
+        internal void MarkUnHealthy(Connection connection)
         {
-            lock (_Cluster)
-            {
-                _Cluster.Enqueue(_Cluster.Dequeue());
-            }
+            _HealthyCluster.Remove(connection);
+            _UnHealthyCluster.Add(connection);
         }
+
+        internal void MarkHealthy(Connection connection)
+        {
+            _UnHealthyCluster.Remove(connection);
+            _HealthyCluster.Add(connection);
+        }
+
+        
+
     }
 }
