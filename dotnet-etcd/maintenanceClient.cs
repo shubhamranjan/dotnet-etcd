@@ -13,22 +13,12 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Alarm request</param>
         /// <returns>Alarm Response</returns>
-        public AlarmResponse Alarm(AlarmRequest request)
+        public AlarmResponse Alarm(AlarmRequest request, Metadata headers = null)
         {
             AlarmResponse response = new AlarmResponse();
-            try
-            {
-                response = _maintenanceClient.Alarm(request, _headers);
-            }
-            catch (RpcException ex)
-            {
-                ResetConnection(ex);
-                throw;
-            }
-            catch
-            {
-                throw;
-            }
+
+                response = _balancer.GetConnection().maintenanceClient.Alarm(request, headers);
+
             return response;
         }
 
@@ -37,22 +27,12 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Alarm request</param>
         /// <returns>Alarm Response</returns>
-        public async Task<AlarmResponse> AlarmAsync(AlarmRequest request)
+        public async Task<AlarmResponse> AlarmAsync(AlarmRequest request, Metadata headers = null)
         {
             AlarmResponse response = new AlarmResponse();
-            try
-            {
-                response = await _maintenanceClient.AlarmAsync(request, _headers);
-            }
-            catch (RpcException ex)
-            {
-                ResetConnection(ex);
-                throw;
-            }
-            catch
-            {
-                throw;
-            }
+
+                response = await _balancer.GetConnection().maintenanceClient.AlarmAsync(request, headers);
+
             return response;
         }
 
@@ -61,22 +41,12 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Status Request</param>
         /// <returns>Status response</returns>
-        public StatusResponse Status(StatusRequest request)
+        public StatusResponse Status(StatusRequest request, Metadata headers = null)
         {
             StatusResponse response = new StatusResponse();
-            try
-            {
-                response = _maintenanceClient.Status(request, _headers);
-            }
-            catch (RpcException ex)
-            {
-                ResetConnection(ex);
-                throw;
-            }
-            catch
-            {
-                throw;
-            }
+
+                response = _balancer.GetConnection().maintenanceClient.Status(request, headers);
+
             return response;
         }
 
@@ -85,22 +55,12 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Status Request</param>
         /// <returns>Status response</returns>
-        public async Task<StatusResponse> StatusASync(StatusRequest request)
+        public async Task<StatusResponse> StatusASync(StatusRequest request, Metadata headers = null)
         {
             StatusResponse response = new StatusResponse();
-            try
-            {
-                response = await _maintenanceClient.StatusAsync(request, _headers);
-            }
-            catch (RpcException ex)
-            {
-                ResetConnection(ex);
-                throw;
-            }
-            catch
-            {
-                throw;
-            }
+
+                response = await _balancer.GetConnection().maintenanceClient.StatusAsync(request, headers);
+
             return response;
         }
 
@@ -109,22 +69,12 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Defragment Request</param>
         /// <returns>Defragment Response</returns>
-        public DefragmentResponse Defragment(DefragmentRequest request)
+        public DefragmentResponse Defragment(DefragmentRequest request, Metadata headers = null)
         {
             DefragmentResponse response = new DefragmentResponse();
-            try
-            {
-                response = _maintenanceClient.Defragment(request, _headers);
-            }
-            catch (RpcException ex)
-            {
-                ResetConnection(ex);
-                throw;
-            }
-            catch
-            {
-                throw;
-            }
+
+                response = _balancer.GetConnection().maintenanceClient.Defragment(request, headers);
+
             return response;
         }
 
@@ -133,22 +83,12 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Defragment Request</param>
         /// <returns>Defragment Response</returns>
-        public async Task<DefragmentResponse> DefragmentAsync(DefragmentRequest request)
+        public async Task<DefragmentResponse> DefragmentAsync(DefragmentRequest request, Metadata headers = null)
         {
             DefragmentResponse response = new DefragmentResponse();
-            try
-            {
-                response = await _maintenanceClient.DefragmentAsync(request, _headers);
-            }
-            catch (RpcException ex)
-            {
-                ResetConnection(ex);
-                throw;
-            }
-            catch
-            {
-                throw;
-            }
+
+                response = await _balancer.GetConnection().maintenanceClient.DefragmentAsync(request, headers);
+
             return response;
         }
 
@@ -162,22 +102,12 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Hash Request</param>
         /// <returns>Hash Response</returns>
-        public HashResponse Hash(HashRequest request)
+        public HashResponse Hash(HashRequest request, Metadata headers = null)
         {
             HashResponse response = new HashResponse();
-            try
-            {
-                response = _maintenanceClient.Hash(request, _headers);
-            }
-            catch (RpcException ex)
-            {
-                ResetConnection(ex);
-                throw;
-            }
-            catch
-            {
-                throw;
-            }
+
+                response = _balancer.GetConnection().maintenanceClient.Hash(request, headers);
+
             return response;
         }
 
@@ -191,22 +121,12 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Hash Request</param>
         /// <returns>Hash Response</returns>
-        public async Task<HashResponse> HashAsync(HashRequest request)
+        public async Task<HashResponse> HashAsync(HashRequest request, Metadata headers = null)
         {
             HashResponse response = new HashResponse();
-            try
-            {
-                response = await _maintenanceClient.HashAsync(request, _headers);
-            }
-            catch (RpcException ex)
-            {
-                ResetConnection(ex);
-                throw;
-            }
-            catch
-            {
-                throw;
-            }
+
+                response = await _balancer.GetConnection().maintenanceClient.HashAsync(request, headers);
+
             return response;
         }
 
@@ -216,22 +136,12 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">HashKV Request</param>
         /// <returns>HashKV Response</returns>
-        public HashKVResponse HashKV(HashKVRequest request)
+        public HashKVResponse HashKV(HashKVRequest request, Metadata headers = null)
         {
             HashKVResponse response = new HashKVResponse();
-            try
-            {
-                response = _maintenanceClient.HashKV(request, _headers);
-            }
-            catch (RpcException ex)
-            {
-                ResetConnection(ex);
-                throw;
-            }
-            catch
-            {
-                throw;
-            }
+
+                response = _balancer.GetConnection().maintenanceClient.HashKV(request, headers);
+
             return response;
         }
 
@@ -241,22 +151,12 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">HashKV Request</param>
         /// <returns>HashKV Response</returns>
-        public async Task<HashKVResponse> HashKVAsync(HashKVRequest request)
+        public async Task<HashKVResponse> HashKVAsync(HashKVRequest request, Metadata headers = null)
         {
             HashKVResponse response = new HashKVResponse();
-            try
-            {
-                response = await _maintenanceClient.HashKVAsync(request, _headers);
-            }
-            catch (RpcException ex)
-            {
-                ResetConnection(ex);
-                throw;
-            }
-            catch
-            {
-                throw;
-            }
+
+                response = await _balancer.GetConnection().maintenanceClient.HashKVAsync(request, headers);
+
             return response;
         }
 
@@ -266,11 +166,10 @@ namespace dotnet_etcd
         /// <param name="request"></param>
         /// <param name="method"></param>
         /// <param name="token"></param>
-        public async void Snapshot(SnapshotRequest request, Action<SnapshotResponse> method, CancellationToken token)
+        public async void Snapshot(SnapshotRequest request, Action<SnapshotResponse> method, CancellationToken token, Metadata headers = null)
         {
-            try
-            {
-                using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _maintenanceClient.Snapshot(request, _headers))
+
+                using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _balancer.GetConnection().maintenanceClient.Snapshot(request, headers))
                 {
                     Task snapshotTask = Task.Run(async () =>
                     {
@@ -283,16 +182,7 @@ namespace dotnet_etcd
 
                     await snapshotTask;
                 }
-            }
-            catch (RpcException ex)
-            {
-                ResetConnection(ex);
-                throw;
-            }
-            catch
-            {
-                throw;
-            }
+
         }
 
 
@@ -302,11 +192,10 @@ namespace dotnet_etcd
         /// <param name="request"></param>
         /// <param name="methods"></param>
         /// <param name="token"></param>
-        public async void Snapshot(SnapshotRequest request, Action<SnapshotResponse>[] methods, CancellationToken token)
+        public async void Snapshot(SnapshotRequest request, Action<SnapshotResponse>[] methods, CancellationToken token, Metadata headers = null)
         {
-            try
-            {
-                using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _maintenanceClient.Snapshot(request, _headers))
+
+                using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _balancer.GetConnection().maintenanceClient.Snapshot(request, headers))
                 {
                     Task snapshotTask = Task.Run(async () =>
                     {
@@ -322,16 +211,7 @@ namespace dotnet_etcd
 
                     await snapshotTask;
                 }
-            }
-            catch (RpcException ex)
-            {
-                ResetConnection(ex);
-                throw;
-            }
-            catch
-            {
-                throw;
-            }
+
         }
 
         /// <summary>
@@ -339,22 +219,12 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">MoveLeader Request</param>
         /// <returns>MoveLeader Response</returns>
-        public MoveLeaderResponse MoveLeader(MoveLeaderRequest request)
+        public MoveLeaderResponse MoveLeader(MoveLeaderRequest request, Metadata headers = null)
         {
             MoveLeaderResponse response = new MoveLeaderResponse();
-            try
-            {
-                response = _maintenanceClient.MoveLeader(request, _headers);
-            }
-            catch (RpcException ex)
-            {
-                ResetConnection(ex);
-                throw;
-            }
-            catch
-            {
-                throw;
-            }
+
+                response = _balancer.GetConnection().maintenanceClient.MoveLeader(request, headers);
+
             return response;
         }
 
@@ -363,22 +233,12 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">MoveLeader Request</param>
         /// <returns>MoveLeader Response</returns>
-        public async Task<MoveLeaderResponse> MoveLeaderAsync(MoveLeaderRequest request)
+        public async Task<MoveLeaderResponse> MoveLeaderAsync(MoveLeaderRequest request, Metadata headers = null)
         {
             MoveLeaderResponse response = new MoveLeaderResponse();
-            try
-            {
-                response = await _maintenanceClient.MoveLeaderAsync(request, _headers);
-            }
-            catch (RpcException ex)
-            {
-                ResetConnection(ex);
-                throw;
-            }
-            catch
-            {
-                throw;
-            }
+
+                response = await _balancer.GetConnection().maintenanceClient.MoveLeaderAsync(request, headers);
+
             return response;
         }
 

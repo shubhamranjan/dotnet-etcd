@@ -36,36 +36,5 @@ namespace dotnet_etcd
             return rangeEnd.ToString();
         }
 
-        // TODO: Change authentication flow and let users send in all requests and headers.
-
-        /// <summary>
-        /// Used to authenticate etcd server through basic auth
-        /// </summary>
-        private void Authenticate()
-        {
-
-            _authClient = new Auth.AuthClient(_channel);
-            AuthenticateResponse authRes = _authClient.Authenticate(new AuthenticateRequest
-            {
-                Name = _username,
-                Password = _password
-            });
-
-            _authToken = authRes.Token;
-            _headers = new Metadata
-            {
-                { "Authorization", _authToken }
-            };
-        }
-
-        private void ResetConnection(RpcException ex)
-        {
-            if (ex.Status.Equals(StatusCode.Unavailable))
-            {
-                Dispose(true);
-                Init();
-            }
-        }
-
     }
 }

@@ -41,12 +41,11 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public async void Watch(WatchRequest request, Action<WatchResponse> method)
+        public async void Watch(WatchRequest request, Action<WatchResponse> method, Metadata headers = null)
         {
 
-            try
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
+
+            using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -62,17 +61,7 @@ namespace dotnet_etcd
                     await watcherTask;
                 }
 
-            }
-            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
-            {
-                // If connection issue, then re-initate the watch
-                ResetConnection(ex);
-                Watch(request, method);
-            }
-            catch
-            {
-                throw;
-            }
+
         }
 
         /// <summary>
@@ -81,12 +70,11 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public async void Watch(WatchRequest request, Action<WatchResponse>[] methods)
+        public async void Watch(WatchRequest request, Action<WatchResponse>[] methods, Metadata headers = null)
         {
 
-            try
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
+
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -106,17 +94,7 @@ namespace dotnet_etcd
                     await watcherTask;
                 }
 
-            }
-            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
-            {
-                // If connection issue, then re-initate the watch
-                ResetConnection(ex);
-                Watch(request, methods);
-            }
-            catch
-            {
-                throw;
-            }
+
         }
 
         /// <summary>
@@ -125,12 +103,11 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public async void Watch(WatchRequest request, Action<WatchEvent[]> method)
+        public async void Watch(WatchRequest request, Action<WatchEvent[]> method, Metadata headers = null)
         {
 
-            try
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
+
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -155,17 +132,7 @@ namespace dotnet_etcd
                     await watcherTask;
                 }
 
-            }
-            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
-            {
-                // If connection issue, then re-initate the watch
-                ResetConnection(ex);
-                Watch(request, method);
-            }
-            catch
-            {
-                throw;
-            }
+
         }
 
         /// <summary>
@@ -174,12 +141,11 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public async void Watch(WatchRequest request, Action<WatchEvent[]>[] methods)
+        public async void Watch(WatchRequest request, Action<WatchEvent[]>[] methods, Metadata headers = null)
         {
 
-            try
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
+
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -208,17 +174,8 @@ namespace dotnet_etcd
                     await watcherTask;
                 }
 
-            }
-            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
-            {
-                // If connection issue, then re-initate the watch
-                ResetConnection(ex);
-                Watch(request, methods);
-            }
-            catch
-            {
-                throw;
-            }
+            
+ 
         }
 
         /// <summary>
@@ -227,12 +184,11 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Requests containing keys to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public async void Watch(WatchRequest[] requests, Action<WatchResponse> method)
+        public async void Watch(WatchRequest[] requests, Action<WatchResponse> method, Metadata headers = null)
         {
 
-            try
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
+ 
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -252,17 +208,8 @@ namespace dotnet_etcd
                     await watcherTask;
                 }
 
-            }
-            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
-            {
-                // If connection issue, then re-initate the watch
-                ResetConnection(ex);
-                Watch(requests, method);
-            }
-            catch
-            {
-                throw;
-            }
+            
+
         }
 
         /// <summary>
@@ -271,12 +218,11 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Requests containing keys to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public async void Watch(WatchRequest[] requests, Action<WatchResponse>[] methods)
+        public async void Watch(WatchRequest[] requests, Action<WatchResponse>[] methods, Metadata headers = null)
         {
 
-            try
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
+
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -300,17 +246,7 @@ namespace dotnet_etcd
                     await watcherTask;
                 }
 
-            }
-            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
-            {
-                // If connection issue, then re-initate the watch
-                ResetConnection(ex);
-                Watch(requests, methods);
-            }
-            catch
-            {
-                throw;
-            }
+
         }
 
         /// <summary>
@@ -319,12 +255,11 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Requests containing keys to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public async void Watch(WatchRequest[] requests, Action<WatchEvent[]> method)
+        public async void Watch(WatchRequest[] requests, Action<WatchEvent[]> method, Metadata headers = null)
         {
 
-            try
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
+
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -353,17 +288,7 @@ namespace dotnet_etcd
                     await watcherTask;
                 }
 
-            }
-            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
-            {
-                // If connection issue, then re-initate the watch
-                ResetConnection(ex);
-                Watch(requests, method);
-            }
-            catch
-            {
-                throw;
-            }
+
         }
 
         /// <summary>
@@ -372,12 +297,10 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Request containing keys to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public async void Watch(WatchRequest[] requests, Action<WatchEvent[]>[] methods)
+        public async void Watch(WatchRequest[] requests, Action<WatchEvent[]>[] methods, Metadata headers = null)
         {
 
-            try
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -410,17 +333,7 @@ namespace dotnet_etcd
                     await watcherTask;
                 }
 
-            }
-            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
-            {
-                // If connection issue, then re-initate the watch
-                ResetConnection(ex);
-                Watch(requests, methods);
-            }
-            catch
-            {
-                throw;
-            }
+
         }
 
         /// <summary>
@@ -428,11 +341,10 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public async void Watch(string key, Action<WatchResponse> method)
+        public async void Watch(string key, Action<WatchResponse> method, Metadata headers = null)
         {
 
-            try
-            {
+
                 WatchRequest request = new WatchRequest()
                 {
                     CreateRequest = new WatchCreateRequest()
@@ -442,11 +354,6 @@ namespace dotnet_etcd
                 };
                 Watch(request, method);
 
-            }
-            catch
-            {
-                throw;
-            }
         }
 
         /// <summary>
@@ -454,11 +361,9 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public async void Watch(string key, Action<WatchResponse>[] methods)
+        public async void Watch(string key, Action<WatchResponse>[] methods, Metadata headers = null)
         {
 
-            try
-            {
                 WatchRequest request = new WatchRequest()
                 {
                     CreateRequest = new WatchCreateRequest()
@@ -468,11 +373,6 @@ namespace dotnet_etcd
                 };
                 Watch(request, methods);
 
-            }
-            catch
-            {
-                throw;
-            }
         }
 
         /// <summary>
@@ -480,11 +380,10 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public async void Watch(string key, Action<WatchEvent[]> method)
+        public async void Watch(string key, Action<WatchEvent[]> method, Metadata headers = null)
         {
 
-            try
-            {
+   
                 WatchRequest request = new WatchRequest()
                 {
                     CreateRequest = new WatchCreateRequest()
@@ -493,11 +392,7 @@ namespace dotnet_etcd
                     }
                 };
                 Watch(request, method);
-            }
-            catch
-            {
-                throw;
-            }
+
         }
 
         /// <summary>
@@ -505,11 +400,10 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public async void Watch(string key, Action<WatchEvent[]>[] methods)
+        public async void Watch(string key, Action<WatchEvent[]>[] methods, Metadata headers = null)
         {
 
-            try
-            {
+
                 WatchRequest request = new WatchRequest()
                 {
                     CreateRequest = new WatchCreateRequest()
@@ -518,11 +412,7 @@ namespace dotnet_etcd
                     }
                 };
                 Watch(request, methods);
-            }
-            catch
-            {
-                throw;
-            }
+
         }
 
         /// <summary>
@@ -530,10 +420,9 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public async void Watch(string[] keys, Action<WatchResponse> method)
+        public async void Watch(string[] keys, Action<WatchResponse> method, Metadata headers = null)
         {
-            try
-            {
+
                 List<WatchRequest> requests = new List<WatchRequest>();
 
                 foreach (string key in keys)
@@ -548,11 +437,7 @@ namespace dotnet_etcd
                     requests.Add(request);
                 }
                 Watch(requests.ToArray(), method);
-            }
-            catch
-            {
-                throw;
-            }
+ 
         }
 
         /// <summary>
@@ -560,10 +445,9 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public async void Watch(string[] keys, Action<WatchResponse>[] methods)
+        public async void Watch(string[] keys, Action<WatchResponse>[] methods, Metadata headers = null)
         {
-            try
-            {
+
                 List<WatchRequest> requests = new List<WatchRequest>();
 
                 foreach (string key in keys)
@@ -578,11 +462,7 @@ namespace dotnet_etcd
                     requests.Add(request);
                 }
                 Watch(requests.ToArray(), methods);
-            }
-            catch
-            {
-                throw;
-            }
+
         }
 
         /// <summary>
@@ -590,11 +470,10 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public async void Watch(string[] keys, Action<WatchEvent[]> method)
+        public async void Watch(string[] keys, Action<WatchEvent[]> method, Metadata headers = null)
         {
 
-            try
-            {
+
                 List<WatchRequest> requests = new List<WatchRequest>();
 
                 foreach (string key in keys)
@@ -609,11 +488,7 @@ namespace dotnet_etcd
                     requests.Add(request);
                 }
                 Watch(requests.ToArray(), method);
-            }
-            catch
-            {
-                throw;
-            }
+
         }
 
         /// <summary>
@@ -621,11 +496,10 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public async void Watch(string[] keys, Action<WatchEvent[]>[] methods)
+        public async void Watch(string[] keys, Action<WatchEvent[]>[] methods, Metadata headers = null)
         {
 
-            try
-            {
+
                 List<WatchRequest> requests = new List<WatchRequest>();
 
                 foreach (string key in keys)
@@ -641,11 +515,7 @@ namespace dotnet_etcd
                 }
                 Watch(requests.ToArray(), methods);
 
-            }
-            catch
-            {
-                throw;
-            }
+
         }
         #endregion
 
@@ -656,12 +526,11 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public async void WatchRange(WatchRequest request, Action<WatchResponse> method)
+        public async void WatchRange(WatchRequest request, Action<WatchResponse> method, Metadata headers = null)
         {
 
-            try
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
+
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -677,17 +546,7 @@ namespace dotnet_etcd
                     await watcherTask;
                 }
 
-            }
-            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
-            {
-                // If connection issue, then re-initate the watch
-                ResetConnection(ex);
-                Watch(request, method);
-            }
-            catch
-            {
-                throw;
-            }
+          
         }
 
         /// <summary>
@@ -696,12 +555,11 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public async void WatchRange(WatchRequest request, Action<WatchResponse>[] methods)
+        public async void WatchRange(WatchRequest request, Action<WatchResponse>[] methods, Metadata headers = null)
         {
 
-            try
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
+
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -721,17 +579,7 @@ namespace dotnet_etcd
                     await watcherTask;
                 }
 
-            }
-            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
-            {
-                // If connection issue, then re-initate the watch
-                ResetConnection(ex);
-                Watch(request, methods);
-            }
-            catch
-            {
-                throw;
-            }
+          
         }
 
         /// <summary>
@@ -740,12 +588,11 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public async void WatchRange(WatchRequest request, Action<WatchEvent[]> method)
+        public async void WatchRange(WatchRequest request, Action<WatchEvent[]> method, Metadata headers = null)
         {
 
-            try
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
+
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -770,17 +617,7 @@ namespace dotnet_etcd
                     await watcherTask;
                 }
 
-            }
-            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
-            {
-                // If connection issue, then re-initate the watch
-                ResetConnection(ex);
-                Watch(request, method);
-            }
-            catch
-            {
-                throw;
-            }
+           
         }
 
         /// <summary>
@@ -789,12 +626,11 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public async void WatchRange(WatchRequest request, Action<WatchEvent[]>[] methods)
+        public async void WatchRange(WatchRequest request, Action<WatchEvent[]>[] methods, Metadata headers = null)
         {
 
-            try
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
+         
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -823,17 +659,7 @@ namespace dotnet_etcd
                     await watcherTask;
                 }
 
-            }
-            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
-            {
-                // If connection issue, then re-initate the watch
-                ResetConnection(ex);
-                Watch(request, methods);
-            }
-            catch
-            {
-                throw;
-            }
+
         }
 
         /// <summary>
@@ -842,12 +668,11 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Requests containing keys to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public async void WatchRange(WatchRequest[] requests, Action<WatchResponse> method)
+        public async void WatchRange(WatchRequest[] requests, Action<WatchResponse> method, Metadata headers = null)
         {
 
-            try
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
+
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -867,17 +692,7 @@ namespace dotnet_etcd
                     await watcherTask;
                 }
 
-            }
-            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
-            {
-                // If connection issue, then re-initate the watch
-                ResetConnection(ex);
-                Watch(requests, method);
-            }
-            catch
-            {
-                throw;
-            }
+          
         }
 
         /// <summary>
@@ -886,12 +701,11 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Requests containing keys to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public async void WatchRange(WatchRequest[] requests, Action<WatchResponse>[] methods)
+        public async void WatchRange(WatchRequest[] requests, Action<WatchResponse>[] methods, Metadata headers = null)
         {
 
-            try
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
+            
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -915,17 +729,7 @@ namespace dotnet_etcd
                     await watcherTask;
                 }
 
-            }
-            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
-            {
-                // If connection issue, then re-initate the watch
-                ResetConnection(ex);
-                Watch(requests, methods);
-            }
-            catch
-            {
-                throw;
-            }
+           
         }
 
         /// <summary>
@@ -934,12 +738,11 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Requests containing keys to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public async void WatchRange(WatchRequest[] requests, Action<WatchEvent[]> method)
+        public async void WatchRange(WatchRequest[] requests, Action<WatchEvent[]> method, Metadata headers = null)
         {
 
-            try
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
+            
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -968,17 +771,7 @@ namespace dotnet_etcd
                     await watcherTask;
                 }
 
-            }
-            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
-            {
-                // If connection issue, then re-initate the watch
-                ResetConnection(ex);
-                Watch(requests, method);
-            }
-            catch
-            {
-                throw;
-            }
+            
         }
 
         /// <summary>
@@ -987,12 +780,11 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Request containing keys to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public async void WatchRange(WatchRequest[] requests, Action<WatchEvent[]>[] methods)
+        public async void WatchRange(WatchRequest[] requests, Action<WatchEvent[]>[] methods, Metadata headers = null)
         {
 
-            try
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _watchClient.Watch(_headers))
+           
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -1025,17 +817,7 @@ namespace dotnet_etcd
                     await watcherTask;
                 }
 
-            }
-            catch (RpcException ex) when (ex.Status.Equals(StatusCode.Unavailable))
-            {
-                // If connection issue, then re-initate the watch
-                ResetConnection(ex);
-                Watch(requests, methods);
-            }
-            catch
-            {
-                throw;
-            }
+           
         }
 
         /// <summary>
@@ -1043,11 +825,10 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public async void WatchRange(string path, Action<WatchResponse> method)
+        public async void WatchRange(string path, Action<WatchResponse> method, Metadata headers = null)
         {
 
-            try
-            {
+           
                 WatchRequest request = new WatchRequest()
                 {
                     CreateRequest = new WatchCreateRequest()
@@ -1058,11 +839,6 @@ namespace dotnet_etcd
                 };
                 Watch(request, method);
 
-            }
-            catch
-            {
-                throw;
-            }
         }
 
         /// <summary>
@@ -1070,11 +846,10 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public async void WatchRange(string path, Action<WatchResponse>[] methods)
+        public async void WatchRange(string path, Action<WatchResponse>[] methods, Metadata headers = null)
         {
 
-            try
-            {
+           
                 WatchRequest request = new WatchRequest()
                 {
                     CreateRequest = new WatchCreateRequest()
@@ -1085,11 +860,7 @@ namespace dotnet_etcd
                 };
                 Watch(request, methods);
 
-            }
-            catch
-            {
-                throw;
-            }
+
         }
 
         /// <summary>
@@ -1097,11 +868,10 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public async void WatchRange(string path, Action<WatchEvent[]> method)
+        public async void WatchRange(string path, Action<WatchEvent[]> method, Metadata headers = null)
         {
 
-            try
-            {
+            
                 WatchRequest request = new WatchRequest()
                 {
                     CreateRequest = new WatchCreateRequest()
@@ -1111,11 +881,7 @@ namespace dotnet_etcd
                     }
                 };
                 Watch(request, method);
-            }
-            catch
-            {
-                throw;
-            }
+            
         }
 
         /// <summary>
@@ -1123,11 +889,10 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public async void WatchRange(string path, Action<WatchEvent[]>[] methods)
+        public async void WatchRange(string path, Action<WatchEvent[]>[] methods, Metadata headers = null)
         {
 
-            try
-            {
+            
                 WatchRequest request = new WatchRequest()
                 {
                     CreateRequest = new WatchCreateRequest()
@@ -1137,11 +902,7 @@ namespace dotnet_etcd
                     }
                 };
                 Watch(request, methods);
-            }
-            catch
-            {
-                throw;
-            }
+           
         }
 
         /// <summary>
@@ -1149,10 +910,9 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public async void WatchRange(string[] paths, Action<WatchResponse> method)
+        public async void WatchRange(string[] paths, Action<WatchResponse> method, Metadata headers = null)
         {
-            try
-            {
+           
                 List<WatchRequest> requests = new List<WatchRequest>();
 
                 foreach (string path in paths)
@@ -1168,11 +928,7 @@ namespace dotnet_etcd
                     requests.Add(request);
                 }
                 Watch(requests.ToArray(), method);
-            }
-            catch
-            {
-                throw;
-            }
+           
         }
 
         /// <summary>
@@ -1180,10 +936,9 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public async void WatchRange(string[] paths, Action<WatchResponse>[] methods)
+        public async void WatchRange(string[] paths, Action<WatchResponse>[] methods, Metadata headers = null)
         {
-            try
-            {
+           
                 List<WatchRequest> requests = new List<WatchRequest>();
 
                 foreach (string path in paths)
@@ -1199,11 +954,7 @@ namespace dotnet_etcd
                     requests.Add(request);
                 }
                 Watch(requests.ToArray(), methods);
-            }
-            catch
-            {
-                throw;
-            }
+
         }
 
         /// <summary>
@@ -1211,11 +962,10 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public async void WatchRange(string[] paths, Action<WatchEvent[]> method)
+        public async void WatchRange(string[] paths, Action<WatchEvent[]> method, Metadata headers = null)
         {
 
-            try
-            {
+           
                 List<WatchRequest> requests = new List<WatchRequest>();
 
                 foreach (string path in paths)
@@ -1231,11 +981,7 @@ namespace dotnet_etcd
                     requests.Add(request);
                 }
                 Watch(requests.ToArray(), method);
-            }
-            catch
-            {
-                throw;
-            }
+           
         }
 
         /// <summary>
@@ -1243,11 +989,10 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public async void WatchRange(string[] paths, Action<WatchEvent[]>[] methods)
+        public async void WatchRange(string[] paths, Action<WatchEvent[]>[] methods, Metadata headers = null)
         {
 
-            try
-            {
+           
                 List<WatchRequest> requests = new List<WatchRequest>();
 
                 foreach (string path in paths)
@@ -1264,11 +1009,7 @@ namespace dotnet_etcd
                 }
                 Watch(requests.ToArray(), methods);
 
-            }
-            catch
-            {
-                throw;
-            }
+            
         }
         #endregion
     }

@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Google.Protobuf;
 using Grpc.Core;
-using Grpc.Core.Logging;
 using V3Lockpb;
 
 namespace dotnet_etcd
@@ -26,7 +25,7 @@ namespace dotnet_etcd
                 Name = ByteString.CopyFromUtf8(name),
             });
         }
-        
+
         /// <summary>
         /// Lock acquires a distributed shared lock on a given named lock.
         /// On success, it will return a unique key that exists so long as the
@@ -37,17 +36,11 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">The request to send to the server</param>
         /// <returns></returns>
-        public LockResponse Lock(LockRequest request)
+        public LockResponse Lock(LockRequest request, Metadata headers = null)
         {
-            try
-            {
-                return _lockClient.Lock(request, _headers);
-            }
-            catch (RpcException ex)
-            {
-                ResetConnection(ex);
-                throw;
-            }
+
+            return _balancer.GetConnection().lockClient.Lock(request, headers);
+
         }
 
         /// <summary>
@@ -67,7 +60,7 @@ namespace dotnet_etcd
                 Name = ByteString.CopyFromUtf8(name),
             });
         }
-        
+
         /// <summary>
         /// LockAsync acquires a distributed shared lock on a given named lock.
         /// On success, it will return a unique key that exists so long as the
@@ -78,17 +71,11 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">The request to send to the server</param>
         /// <returns></returns>
-        public async Task<LockResponse> LockAsync(LockRequest request)
+        public async Task<LockResponse> LockAsync(LockRequest request, Metadata headers = null)
         {
-            try
-            {
-                return await _lockClient.LockAsync(request, _headers);
-            }
-            catch (RpcException ex)
-            {
-                ResetConnection(ex);
-                throw;
-            }
+
+            return await _balancer.GetConnection().lockClient.LockAsync(request, headers);
+
         }
 
         /// <summary>
@@ -105,7 +92,7 @@ namespace dotnet_etcd
                 Key = ByteString.CopyFromUtf8(key),
             });
         }
-        
+
         /// <summary>
         /// Unlock takes a key returned by Lock and releases the hold on lock. The
         /// next Lock caller waiting for the lock will then be woken up and given
@@ -113,17 +100,11 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">The request to send to the server</param>
         /// <returns></returns>
-        public UnlockResponse Unlock(UnlockRequest request)
+        public UnlockResponse Unlock(UnlockRequest request, Metadata headers = null)
         {
-            try
-            {
-                return _lockClient.Unlock(request, _headers);
-            }
-            catch (RpcException ex)
-            {
-                ResetConnection(ex);
-                throw;
-            }
+
+            return _balancer.GetConnection().lockClient.Unlock(request, headers);
+
         }
 
         /// <summary>
@@ -148,17 +129,11 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">The request to send to the server</param>
         /// <returns></returns>
-        public async Task<UnlockResponse> UnlockAsync(UnlockRequest request)
+        public async Task<UnlockResponse> UnlockAsync(UnlockRequest request, Metadata headers = null)
         {
-            try
-            {
-                return await _lockClient.UnlockAsync(request, _headers);
-            }
-            catch (RpcException ex)
-            {
-                ResetConnection(ex);
-                throw;
-            }
+
+            return await _balancer.GetConnection().lockClient.UnlockAsync(request, headers);
+
         }
     }
 }
