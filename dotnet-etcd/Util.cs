@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using Etcdserverpb;
-using Grpc.Core;
 
 namespace dotnet_etcd
 {

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Etcdserverpb;
 using Grpc.Core;
 
@@ -81,7 +79,7 @@ namespace dotnet_etcd.multiplexer
             _UnHealthyCluster = new SortedSet<Connection>();
             _random = new Random(0);
 
-            foreach (var node in nodes)
+            foreach (Uri node in nodes)
             {
                 Channel channel = null;
                 if (_publicRootCa)
@@ -141,7 +139,7 @@ namespace dotnet_etcd.multiplexer
             _HealthyCluster.Add(connection);
         }
 
-        
+
 
     }
 }

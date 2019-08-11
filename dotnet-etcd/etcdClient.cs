@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using dotnet_etcd.multiplexer;
-using Etcdserverpb;
-using Grpc.Core;
-using V3Lockpb;
 
 
 namespace dotnet_etcd
@@ -23,18 +20,18 @@ namespace dotnet_etcd
 
 
 
-        public EtcdClient(string connectionString, int port = 2379,string username = "", string password = "", string caCert = "", string clientCert = "", string clientKey = "", bool publicRootCa = false)
+        public EtcdClient(string connectionString, int port = 2379, string username = "", string password = "", string caCert = "", string clientCert = "", string clientKey = "", bool publicRootCa = false)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
             {
                 throw new Exception("etcd connection string is empty.");
             }
 
-            var hosts = connectionString.Split(',');
+            string[] hosts = connectionString.Split(',');
 
             List<Uri> nodes = new List<Uri>();
 
-            for(int i=0;i< hosts.Length; i++)
+            for (int i = 0; i < hosts.Length; i++)
             {
                 string host = hosts[i];
                 if (host.Split(':').Length < 2)

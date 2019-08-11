@@ -1,10 +1,10 @@
-﻿using Etcdserverpb;
-using Google.Protobuf;
-using Grpc.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Etcdserverpb;
+using Google.Protobuf;
+using Grpc.Core;
 using static Mvccpb.Event.Types;
 
 namespace dotnet_etcd
@@ -46,20 +46,20 @@ namespace dotnet_etcd
 
 
             using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            {
+                Task watcherTask = Task.Run(async () =>
                 {
-                    Task watcherTask = Task.Run(async () =>
+                    while (await watcher.ResponseStream.MoveNext())
                     {
-                        while (await watcher.ResponseStream.MoveNext())
-                        {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            method(update);
-                        }
-                    });
+                        WatchResponse update = watcher.ResponseStream.Current;
+                        method(update);
+                    }
+                });
 
-                    await watcher.RequestStream.WriteAsync(request);
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
-                }
+                await watcher.RequestStream.WriteAsync(request);
+                await watcher.RequestStream.CompleteAsync();
+                await watcherTask;
+            }
 
 
         }
@@ -74,25 +74,25 @@ namespace dotnet_etcd
         {
 
 
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            {
+                Task watcherTask = Task.Run(async () =>
                 {
-                    Task watcherTask = Task.Run(async () =>
+                    while (await watcher.ResponseStream.MoveNext())
                     {
-                        while (await watcher.ResponseStream.MoveNext())
+                        WatchResponse update = watcher.ResponseStream.Current;
+                        foreach (Action<WatchResponse> method in methods)
                         {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            foreach (Action<WatchResponse> method in methods)
-                            {
-                                method(update);
-                            }
-
+                            method(update);
                         }
-                    });
 
-                    await watcher.RequestStream.WriteAsync(request);
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
-                }
+                    }
+                });
+
+                await watcher.RequestStream.WriteAsync(request);
+                await watcher.RequestStream.CompleteAsync();
+                await watcherTask;
+            }
 
 
         }
@@ -107,30 +107,30 @@ namespace dotnet_etcd
         {
 
 
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            {
+                Task watcherTask = Task.Run(async () =>
                 {
-                    Task watcherTask = Task.Run(async () =>
+                    while (await watcher.ResponseStream.MoveNext())
                     {
-                        while (await watcher.ResponseStream.MoveNext())
+                        WatchResponse update = watcher.ResponseStream.Current;
+                        method(update.Events.Select(i =>
                         {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            method(update.Events.Select(i =>
+                            return new WatchEvent
                             {
-                                return new WatchEvent
-                                {
-                                    Key = i.Kv.Key.ToStringUtf8(),
-                                    Value = i.Kv.Value.ToStringUtf8(),
-                                    Type = i.Type
-                                };
-                            }).ToArray()
-                            );
-                        }
-                    });
+                                Key = i.Kv.Key.ToStringUtf8(),
+                                Value = i.Kv.Value.ToStringUtf8(),
+                                Type = i.Type
+                            };
+                        }).ToArray()
+                        );
+                    }
+                });
 
-                    await watcher.RequestStream.WriteAsync(request);
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
-                }
+                await watcher.RequestStream.WriteAsync(request);
+                await watcher.RequestStream.CompleteAsync();
+                await watcherTask;
+            }
 
 
         }
@@ -145,37 +145,37 @@ namespace dotnet_etcd
         {
 
 
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            {
+                Task watcherTask = Task.Run(async () =>
                 {
-                    Task watcherTask = Task.Run(async () =>
+                    while (await watcher.ResponseStream.MoveNext())
                     {
-                        while (await watcher.ResponseStream.MoveNext())
+                        WatchResponse update = watcher.ResponseStream.Current;
+                        foreach (Action<WatchEvent[]> method in methods)
                         {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            foreach (Action<WatchEvent[]> method in methods)
+                            method(update.Events.Select(i =>
                             {
-                                method(update.Events.Select(i =>
+                                return new WatchEvent
                                 {
-                                    return new WatchEvent
-                                    {
-                                        Key = i.Kv.Key.ToStringUtf8(),
-                                        Value = i.Kv.Value.ToStringUtf8(),
-                                        Type = i.Type
-                                    };
-                                }).ToArray()
-                               );
-                            }
-
+                                    Key = i.Kv.Key.ToStringUtf8(),
+                                    Value = i.Kv.Value.ToStringUtf8(),
+                                    Type = i.Type
+                                };
+                            }).ToArray()
+                           );
                         }
-                    });
 
-                    await watcher.RequestStream.WriteAsync(request);
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
-                }
+                    }
+                });
 
-            
- 
+                await watcher.RequestStream.WriteAsync(request);
+                await watcher.RequestStream.CompleteAsync();
+                await watcherTask;
+            }
+
+
+
         }
 
         /// <summary>
@@ -187,28 +187,28 @@ namespace dotnet_etcd
         public async void Watch(WatchRequest[] requests, Action<WatchResponse> method, Metadata headers = null)
         {
 
- 
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+
+            using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            {
+                Task watcherTask = Task.Run(async () =>
                 {
-                    Task watcherTask = Task.Run(async () =>
+                    while (await watcher.ResponseStream.MoveNext())
                     {
-                        while (await watcher.ResponseStream.MoveNext())
-                        {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            method(update);
-                        }
-                    });
-
-                    foreach (WatchRequest request in requests)
-                    {
-                        await watcher.RequestStream.WriteAsync(request);
+                        WatchResponse update = watcher.ResponseStream.Current;
+                        method(update);
                     }
+                });
 
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                foreach (WatchRequest request in requests)
+                {
+                    await watcher.RequestStream.WriteAsync(request);
                 }
 
-            
+                await watcher.RequestStream.CompleteAsync();
+                await watcherTask;
+            }
+
+
 
         }
 
@@ -222,29 +222,29 @@ namespace dotnet_etcd
         {
 
 
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            {
+                Task watcherTask = Task.Run(async () =>
                 {
-                    Task watcherTask = Task.Run(async () =>
+                    while (await watcher.ResponseStream.MoveNext())
                     {
-                        while (await watcher.ResponseStream.MoveNext())
+                        WatchResponse update = watcher.ResponseStream.Current;
+                        foreach (Action<WatchResponse> method in methods)
                         {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            foreach (Action<WatchResponse> method in methods)
-                            {
-                                method(update);
-                            }
-
+                            method(update);
                         }
-                    });
 
-                    foreach (WatchRequest request in requests)
-                    {
-                        await watcher.RequestStream.WriteAsync(request);
                     }
+                });
 
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                foreach (WatchRequest request in requests)
+                {
+                    await watcher.RequestStream.WriteAsync(request);
                 }
+
+                await watcher.RequestStream.CompleteAsync();
+                await watcherTask;
+            }
 
 
         }
@@ -259,34 +259,34 @@ namespace dotnet_etcd
         {
 
 
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            {
+                Task watcherTask = Task.Run(async () =>
                 {
-                    Task watcherTask = Task.Run(async () =>
+                    while (await watcher.ResponseStream.MoveNext())
                     {
-                        while (await watcher.ResponseStream.MoveNext())
+                        WatchResponse update = watcher.ResponseStream.Current;
+                        method(update.Events.Select(i =>
                         {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            method(update.Events.Select(i =>
+                            return new WatchEvent
                             {
-                                return new WatchEvent
-                                {
-                                    Key = i.Kv.Key.ToStringUtf8(),
-                                    Value = i.Kv.Value.ToStringUtf8(),
-                                    Type = i.Type
-                                };
-                            }).ToArray()
-                            );
-                        }
-                    });
-
-                    foreach (WatchRequest request in requests)
-                    {
-                        await watcher.RequestStream.WriteAsync(request);
+                                Key = i.Kv.Key.ToStringUtf8(),
+                                Value = i.Kv.Value.ToStringUtf8(),
+                                Type = i.Type
+                            };
+                        }).ToArray()
+                        );
                     }
+                });
 
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                foreach (WatchRequest request in requests)
+                {
+                    await watcher.RequestStream.WriteAsync(request);
                 }
+
+                await watcher.RequestStream.CompleteAsync();
+                await watcherTask;
+            }
 
 
         }
@@ -300,38 +300,38 @@ namespace dotnet_etcd
         public async void Watch(WatchRequest[] requests, Action<WatchEvent[]>[] methods, Metadata headers = null)
         {
 
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            {
+                Task watcherTask = Task.Run(async () =>
                 {
-                    Task watcherTask = Task.Run(async () =>
+                    while (await watcher.ResponseStream.MoveNext())
                     {
-                        while (await watcher.ResponseStream.MoveNext())
+                        WatchResponse update = watcher.ResponseStream.Current;
+                        foreach (Action<WatchEvent[]> method in methods)
                         {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            foreach (Action<WatchEvent[]> method in methods)
+                            method(update.Events.Select(i =>
                             {
-                                method(update.Events.Select(i =>
+                                return new WatchEvent
                                 {
-                                    return new WatchEvent
-                                    {
-                                        Key = i.Kv.Key.ToStringUtf8(),
-                                        Value = i.Kv.Value.ToStringUtf8(),
-                                        Type = i.Type
-                                    };
-                                }).ToArray()
-                               );
-                            }
-
+                                    Key = i.Kv.Key.ToStringUtf8(),
+                                    Value = i.Kv.Value.ToStringUtf8(),
+                                    Type = i.Type
+                                };
+                            }).ToArray()
+                           );
                         }
-                    });
 
-                    foreach (WatchRequest request in requests)
-                    {
-                        await watcher.RequestStream.WriteAsync(request);
                     }
+                });
 
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                foreach (WatchRequest request in requests)
+                {
+                    await watcher.RequestStream.WriteAsync(request);
                 }
+
+                await watcher.RequestStream.CompleteAsync();
+                await watcherTask;
+            }
 
 
         }
@@ -345,14 +345,14 @@ namespace dotnet_etcd
         {
 
 
-                WatchRequest request = new WatchRequest()
+            WatchRequest request = new WatchRequest()
+            {
+                CreateRequest = new WatchCreateRequest()
                 {
-                    CreateRequest = new WatchCreateRequest()
-                    {
-                        Key = ByteString.CopyFromUtf8(key)
-                    }
-                };
-                Watch(request, method);
+                    Key = ByteString.CopyFromUtf8(key)
+                }
+            };
+            Watch(request, method);
 
         }
 
@@ -364,14 +364,14 @@ namespace dotnet_etcd
         public async void Watch(string key, Action<WatchResponse>[] methods, Metadata headers = null)
         {
 
-                WatchRequest request = new WatchRequest()
+            WatchRequest request = new WatchRequest()
+            {
+                CreateRequest = new WatchCreateRequest()
                 {
-                    CreateRequest = new WatchCreateRequest()
-                    {
-                        Key = ByteString.CopyFromUtf8(key)
-                    }
-                };
-                Watch(request, methods);
+                    Key = ByteString.CopyFromUtf8(key)
+                }
+            };
+            Watch(request, methods);
 
         }
 
@@ -383,15 +383,15 @@ namespace dotnet_etcd
         public async void Watch(string key, Action<WatchEvent[]> method, Metadata headers = null)
         {
 
-   
-                WatchRequest request = new WatchRequest()
+
+            WatchRequest request = new WatchRequest()
+            {
+                CreateRequest = new WatchCreateRequest()
                 {
-                    CreateRequest = new WatchCreateRequest()
-                    {
-                        Key = ByteString.CopyFromUtf8(key)
-                    }
-                };
-                Watch(request, method);
+                    Key = ByteString.CopyFromUtf8(key)
+                }
+            };
+            Watch(request, method);
 
         }
 
@@ -404,14 +404,14 @@ namespace dotnet_etcd
         {
 
 
-                WatchRequest request = new WatchRequest()
+            WatchRequest request = new WatchRequest()
+            {
+                CreateRequest = new WatchCreateRequest()
                 {
-                    CreateRequest = new WatchCreateRequest()
-                    {
-                        Key = ByteString.CopyFromUtf8(key)
-                    }
-                };
-                Watch(request, methods);
+                    Key = ByteString.CopyFromUtf8(key)
+                }
+            };
+            Watch(request, methods);
 
         }
 
@@ -423,21 +423,21 @@ namespace dotnet_etcd
         public async void Watch(string[] keys, Action<WatchResponse> method, Metadata headers = null)
         {
 
-                List<WatchRequest> requests = new List<WatchRequest>();
+            List<WatchRequest> requests = new List<WatchRequest>();
 
-                foreach (string key in keys)
+            foreach (string key in keys)
+            {
+                WatchRequest request = new WatchRequest()
                 {
-                    WatchRequest request = new WatchRequest()
+                    CreateRequest = new WatchCreateRequest()
                     {
-                        CreateRequest = new WatchCreateRequest()
-                        {
-                            Key = ByteString.CopyFromUtf8(key)
-                        }
-                    };
-                    requests.Add(request);
-                }
-                Watch(requests.ToArray(), method);
- 
+                        Key = ByteString.CopyFromUtf8(key)
+                    }
+                };
+                requests.Add(request);
+            }
+            Watch(requests.ToArray(), method);
+
         }
 
         /// <summary>
@@ -448,20 +448,20 @@ namespace dotnet_etcd
         public async void Watch(string[] keys, Action<WatchResponse>[] methods, Metadata headers = null)
         {
 
-                List<WatchRequest> requests = new List<WatchRequest>();
+            List<WatchRequest> requests = new List<WatchRequest>();
 
-                foreach (string key in keys)
+            foreach (string key in keys)
+            {
+                WatchRequest request = new WatchRequest()
                 {
-                    WatchRequest request = new WatchRequest()
+                    CreateRequest = new WatchCreateRequest()
                     {
-                        CreateRequest = new WatchCreateRequest()
-                        {
-                            Key = ByteString.CopyFromUtf8(key)
-                        }
-                    };
-                    requests.Add(request);
-                }
-                Watch(requests.ToArray(), methods);
+                        Key = ByteString.CopyFromUtf8(key)
+                    }
+                };
+                requests.Add(request);
+            }
+            Watch(requests.ToArray(), methods);
 
         }
 
@@ -474,20 +474,20 @@ namespace dotnet_etcd
         {
 
 
-                List<WatchRequest> requests = new List<WatchRequest>();
+            List<WatchRequest> requests = new List<WatchRequest>();
 
-                foreach (string key in keys)
+            foreach (string key in keys)
+            {
+                WatchRequest request = new WatchRequest()
                 {
-                    WatchRequest request = new WatchRequest()
+                    CreateRequest = new WatchCreateRequest()
                     {
-                        CreateRequest = new WatchCreateRequest()
-                        {
-                            Key = ByteString.CopyFromUtf8(key)
-                        }
-                    };
-                    requests.Add(request);
-                }
-                Watch(requests.ToArray(), method);
+                        Key = ByteString.CopyFromUtf8(key)
+                    }
+                };
+                requests.Add(request);
+            }
+            Watch(requests.ToArray(), method);
 
         }
 
@@ -500,20 +500,20 @@ namespace dotnet_etcd
         {
 
 
-                List<WatchRequest> requests = new List<WatchRequest>();
+            List<WatchRequest> requests = new List<WatchRequest>();
 
-                foreach (string key in keys)
+            foreach (string key in keys)
+            {
+                WatchRequest request = new WatchRequest()
                 {
-                    WatchRequest request = new WatchRequest()
+                    CreateRequest = new WatchCreateRequest()
                     {
-                        CreateRequest = new WatchCreateRequest()
-                        {
-                            Key = ByteString.CopyFromUtf8(key)
-                        }
-                    };
-                    requests.Add(request);
-                }
-                Watch(requests.ToArray(), methods);
+                        Key = ByteString.CopyFromUtf8(key)
+                    }
+                };
+                requests.Add(request);
+            }
+            Watch(requests.ToArray(), methods);
 
 
         }
@@ -530,23 +530,23 @@ namespace dotnet_etcd
         {
 
 
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            {
+                Task watcherTask = Task.Run(async () =>
                 {
-                    Task watcherTask = Task.Run(async () =>
+                    while (await watcher.ResponseStream.MoveNext())
                     {
-                        while (await watcher.ResponseStream.MoveNext())
-                        {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            method(update);
-                        }
-                    });
+                        WatchResponse update = watcher.ResponseStream.Current;
+                        method(update);
+                    }
+                });
 
-                    await watcher.RequestStream.WriteAsync(request);
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
-                }
+                await watcher.RequestStream.WriteAsync(request);
+                await watcher.RequestStream.CompleteAsync();
+                await watcherTask;
+            }
 
-          
+
         }
 
         /// <summary>
@@ -559,27 +559,27 @@ namespace dotnet_etcd
         {
 
 
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            {
+                Task watcherTask = Task.Run(async () =>
                 {
-                    Task watcherTask = Task.Run(async () =>
+                    while (await watcher.ResponseStream.MoveNext())
                     {
-                        while (await watcher.ResponseStream.MoveNext())
+                        WatchResponse update = watcher.ResponseStream.Current;
+                        foreach (Action<WatchResponse> method in methods)
                         {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            foreach (Action<WatchResponse> method in methods)
-                            {
-                                method(update);
-                            }
-
+                            method(update);
                         }
-                    });
 
-                    await watcher.RequestStream.WriteAsync(request);
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
-                }
+                    }
+                });
 
-          
+                await watcher.RequestStream.WriteAsync(request);
+                await watcher.RequestStream.CompleteAsync();
+                await watcherTask;
+            }
+
+
         }
 
         /// <summary>
@@ -592,32 +592,32 @@ namespace dotnet_etcd
         {
 
 
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            {
+                Task watcherTask = Task.Run(async () =>
                 {
-                    Task watcherTask = Task.Run(async () =>
+                    while (await watcher.ResponseStream.MoveNext())
                     {
-                        while (await watcher.ResponseStream.MoveNext())
+                        WatchResponse update = watcher.ResponseStream.Current;
+                        method(update.Events.Select(i =>
                         {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            method(update.Events.Select(i =>
+                            return new WatchEvent
                             {
-                                return new WatchEvent
-                                {
-                                    Key = i.Kv.Key.ToStringUtf8(),
-                                    Value = i.Kv.Value.ToStringUtf8(),
-                                    Type = i.Type
-                                };
-                            }).ToArray()
-                            );
-                        }
-                    });
+                                Key = i.Kv.Key.ToStringUtf8(),
+                                Value = i.Kv.Value.ToStringUtf8(),
+                                Type = i.Type
+                            };
+                        }).ToArray()
+                        );
+                    }
+                });
 
-                    await watcher.RequestStream.WriteAsync(request);
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
-                }
+                await watcher.RequestStream.WriteAsync(request);
+                await watcher.RequestStream.CompleteAsync();
+                await watcherTask;
+            }
 
-           
+
         }
 
         /// <summary>
@@ -629,35 +629,35 @@ namespace dotnet_etcd
         public async void WatchRange(WatchRequest request, Action<WatchEvent[]>[] methods, Metadata headers = null)
         {
 
-         
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+
+            using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            {
+                Task watcherTask = Task.Run(async () =>
                 {
-                    Task watcherTask = Task.Run(async () =>
+                    while (await watcher.ResponseStream.MoveNext())
                     {
-                        while (await watcher.ResponseStream.MoveNext())
+                        WatchResponse update = watcher.ResponseStream.Current;
+                        foreach (Action<WatchEvent[]> method in methods)
                         {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            foreach (Action<WatchEvent[]> method in methods)
+                            method(update.Events.Select(i =>
                             {
-                                method(update.Events.Select(i =>
+                                return new WatchEvent
                                 {
-                                    return new WatchEvent
-                                    {
-                                        Key = i.Kv.Key.ToStringUtf8(),
-                                        Value = i.Kv.Value.ToStringUtf8(),
-                                        Type = i.Type
-                                    };
-                                }).ToArray()
-                               );
-                            }
-
+                                    Key = i.Kv.Key.ToStringUtf8(),
+                                    Value = i.Kv.Value.ToStringUtf8(),
+                                    Type = i.Type
+                                };
+                            }).ToArray()
+                           );
                         }
-                    });
 
-                    await watcher.RequestStream.WriteAsync(request);
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
-                }
+                    }
+                });
+
+                await watcher.RequestStream.WriteAsync(request);
+                await watcher.RequestStream.CompleteAsync();
+                await watcherTask;
+            }
 
 
         }
@@ -672,27 +672,27 @@ namespace dotnet_etcd
         {
 
 
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            {
+                Task watcherTask = Task.Run(async () =>
                 {
-                    Task watcherTask = Task.Run(async () =>
+                    while (await watcher.ResponseStream.MoveNext())
                     {
-                        while (await watcher.ResponseStream.MoveNext())
-                        {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            method(update);
-                        }
-                    });
-
-                    foreach (WatchRequest request in requests)
-                    {
-                        await watcher.RequestStream.WriteAsync(request);
+                        WatchResponse update = watcher.ResponseStream.Current;
+                        method(update);
                     }
+                });
 
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                foreach (WatchRequest request in requests)
+                {
+                    await watcher.RequestStream.WriteAsync(request);
                 }
 
-          
+                await watcher.RequestStream.CompleteAsync();
+                await watcherTask;
+            }
+
+
         }
 
         /// <summary>
@@ -704,32 +704,32 @@ namespace dotnet_etcd
         public async void WatchRange(WatchRequest[] requests, Action<WatchResponse>[] methods, Metadata headers = null)
         {
 
-            
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+
+            using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            {
+                Task watcherTask = Task.Run(async () =>
                 {
-                    Task watcherTask = Task.Run(async () =>
+                    while (await watcher.ResponseStream.MoveNext())
                     {
-                        while (await watcher.ResponseStream.MoveNext())
+                        WatchResponse update = watcher.ResponseStream.Current;
+                        foreach (Action<WatchResponse> method in methods)
                         {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            foreach (Action<WatchResponse> method in methods)
-                            {
-                                method(update);
-                            }
-
+                            method(update);
                         }
-                    });
 
-                    foreach (WatchRequest request in requests)
-                    {
-                        await watcher.RequestStream.WriteAsync(request);
                     }
+                });
 
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                foreach (WatchRequest request in requests)
+                {
+                    await watcher.RequestStream.WriteAsync(request);
                 }
 
-           
+                await watcher.RequestStream.CompleteAsync();
+                await watcherTask;
+            }
+
+
         }
 
         /// <summary>
@@ -741,37 +741,37 @@ namespace dotnet_etcd
         public async void WatchRange(WatchRequest[] requests, Action<WatchEvent[]> method, Metadata headers = null)
         {
 
-            
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+
+            using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            {
+                Task watcherTask = Task.Run(async () =>
                 {
-                    Task watcherTask = Task.Run(async () =>
+                    while (await watcher.ResponseStream.MoveNext())
                     {
-                        while (await watcher.ResponseStream.MoveNext())
+                        WatchResponse update = watcher.ResponseStream.Current;
+                        method(update.Events.Select(i =>
                         {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            method(update.Events.Select(i =>
+                            return new WatchEvent
                             {
-                                return new WatchEvent
-                                {
-                                    Key = i.Kv.Key.ToStringUtf8(),
-                                    Value = i.Kv.Value.ToStringUtf8(),
-                                    Type = i.Type
-                                };
-                            }).ToArray()
-                            );
-                        }
-                    });
-
-                    foreach (WatchRequest request in requests)
-                    {
-                        await watcher.RequestStream.WriteAsync(request);
+                                Key = i.Kv.Key.ToStringUtf8(),
+                                Value = i.Kv.Value.ToStringUtf8(),
+                                Type = i.Type
+                            };
+                        }).ToArray()
+                        );
                     }
+                });
 
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                foreach (WatchRequest request in requests)
+                {
+                    await watcher.RequestStream.WriteAsync(request);
                 }
 
-            
+                await watcher.RequestStream.CompleteAsync();
+                await watcherTask;
+            }
+
+
         }
 
         /// <summary>
@@ -783,41 +783,41 @@ namespace dotnet_etcd
         public async void WatchRange(WatchRequest[] requests, Action<WatchEvent[]>[] methods, Metadata headers = null)
         {
 
-           
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+
+            using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher = _balancer.GetConnection().watchClient.Watch(headers))
+            {
+                Task watcherTask = Task.Run(async () =>
                 {
-                    Task watcherTask = Task.Run(async () =>
+                    while (await watcher.ResponseStream.MoveNext())
                     {
-                        while (await watcher.ResponseStream.MoveNext())
+                        WatchResponse update = watcher.ResponseStream.Current;
+                        foreach (Action<WatchEvent[]> method in methods)
                         {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            foreach (Action<WatchEvent[]> method in methods)
+                            method(update.Events.Select(i =>
                             {
-                                method(update.Events.Select(i =>
+                                return new WatchEvent
                                 {
-                                    return new WatchEvent
-                                    {
-                                        Key = i.Kv.Key.ToStringUtf8(),
-                                        Value = i.Kv.Value.ToStringUtf8(),
-                                        Type = i.Type
-                                    };
-                                }).ToArray()
-                               );
-                            }
-
+                                    Key = i.Kv.Key.ToStringUtf8(),
+                                    Value = i.Kv.Value.ToStringUtf8(),
+                                    Type = i.Type
+                                };
+                            }).ToArray()
+                           );
                         }
-                    });
 
-                    foreach (WatchRequest request in requests)
-                    {
-                        await watcher.RequestStream.WriteAsync(request);
                     }
+                });
 
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                foreach (WatchRequest request in requests)
+                {
+                    await watcher.RequestStream.WriteAsync(request);
                 }
 
-           
+                await watcher.RequestStream.CompleteAsync();
+                await watcherTask;
+            }
+
+
         }
 
         /// <summary>
@@ -828,16 +828,16 @@ namespace dotnet_etcd
         public async void WatchRange(string path, Action<WatchResponse> method, Metadata headers = null)
         {
 
-           
-                WatchRequest request = new WatchRequest()
+
+            WatchRequest request = new WatchRequest()
+            {
+                CreateRequest = new WatchCreateRequest()
                 {
-                    CreateRequest = new WatchCreateRequest()
-                    {
-                        Key = ByteString.CopyFromUtf8(path),
-                        RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
-                    }
-                };
-                Watch(request, method);
+                    Key = ByteString.CopyFromUtf8(path),
+                    RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
+                }
+            };
+            Watch(request, method);
 
         }
 
@@ -849,16 +849,16 @@ namespace dotnet_etcd
         public async void WatchRange(string path, Action<WatchResponse>[] methods, Metadata headers = null)
         {
 
-           
-                WatchRequest request = new WatchRequest()
+
+            WatchRequest request = new WatchRequest()
+            {
+                CreateRequest = new WatchCreateRequest()
                 {
-                    CreateRequest = new WatchCreateRequest()
-                    {
-                        Key = ByteString.CopyFromUtf8(path),
-                        RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
-                    }
-                };
-                Watch(request, methods);
+                    Key = ByteString.CopyFromUtf8(path),
+                    RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
+                }
+            };
+            Watch(request, methods);
 
 
         }
@@ -871,17 +871,17 @@ namespace dotnet_etcd
         public async void WatchRange(string path, Action<WatchEvent[]> method, Metadata headers = null)
         {
 
-            
-                WatchRequest request = new WatchRequest()
+
+            WatchRequest request = new WatchRequest()
+            {
+                CreateRequest = new WatchCreateRequest()
                 {
-                    CreateRequest = new WatchCreateRequest()
-                    {
-                        Key = ByteString.CopyFromUtf8(path),
-                        RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
-                    }
-                };
-                Watch(request, method);
-            
+                    Key = ByteString.CopyFromUtf8(path),
+                    RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
+                }
+            };
+            Watch(request, method);
+
         }
 
         /// <summary>
@@ -892,17 +892,17 @@ namespace dotnet_etcd
         public async void WatchRange(string path, Action<WatchEvent[]>[] methods, Metadata headers = null)
         {
 
-            
-                WatchRequest request = new WatchRequest()
+
+            WatchRequest request = new WatchRequest()
+            {
+                CreateRequest = new WatchCreateRequest()
                 {
-                    CreateRequest = new WatchCreateRequest()
-                    {
-                        Key = ByteString.CopyFromUtf8(path),
-                        RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
-                    }
-                };
-                Watch(request, methods);
-           
+                    Key = ByteString.CopyFromUtf8(path),
+                    RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
+                }
+            };
+            Watch(request, methods);
+
         }
 
         /// <summary>
@@ -912,23 +912,23 @@ namespace dotnet_etcd
         /// <param name="method">Method to which watch response should be passed on</param>
         public async void WatchRange(string[] paths, Action<WatchResponse> method, Metadata headers = null)
         {
-           
-                List<WatchRequest> requests = new List<WatchRequest>();
 
-                foreach (string path in paths)
+            List<WatchRequest> requests = new List<WatchRequest>();
+
+            foreach (string path in paths)
+            {
+                WatchRequest request = new WatchRequest()
                 {
-                    WatchRequest request = new WatchRequest()
+                    CreateRequest = new WatchCreateRequest()
                     {
-                        CreateRequest = new WatchCreateRequest()
-                        {
-                            Key = ByteString.CopyFromUtf8(path),
-                            RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
-                        }
-                    };
-                    requests.Add(request);
-                }
-                Watch(requests.ToArray(), method);
-           
+                        Key = ByteString.CopyFromUtf8(path),
+                        RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
+                    }
+                };
+                requests.Add(request);
+            }
+            Watch(requests.ToArray(), method);
+
         }
 
         /// <summary>
@@ -938,22 +938,22 @@ namespace dotnet_etcd
         /// <param name="methods">Methods to which watch response should be passed on</param>
         public async void WatchRange(string[] paths, Action<WatchResponse>[] methods, Metadata headers = null)
         {
-           
-                List<WatchRequest> requests = new List<WatchRequest>();
 
-                foreach (string path in paths)
+            List<WatchRequest> requests = new List<WatchRequest>();
+
+            foreach (string path in paths)
+            {
+                WatchRequest request = new WatchRequest()
                 {
-                    WatchRequest request = new WatchRequest()
+                    CreateRequest = new WatchCreateRequest()
                     {
-                        CreateRequest = new WatchCreateRequest()
-                        {
-                            Key = ByteString.CopyFromUtf8(path),
-                            RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
-                        }
-                    };
-                    requests.Add(request);
-                }
-                Watch(requests.ToArray(), methods);
+                        Key = ByteString.CopyFromUtf8(path),
+                        RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
+                    }
+                };
+                requests.Add(request);
+            }
+            Watch(requests.ToArray(), methods);
 
         }
 
@@ -965,23 +965,23 @@ namespace dotnet_etcd
         public async void WatchRange(string[] paths, Action<WatchEvent[]> method, Metadata headers = null)
         {
 
-           
-                List<WatchRequest> requests = new List<WatchRequest>();
 
-                foreach (string path in paths)
+            List<WatchRequest> requests = new List<WatchRequest>();
+
+            foreach (string path in paths)
+            {
+                WatchRequest request = new WatchRequest()
                 {
-                    WatchRequest request = new WatchRequest()
+                    CreateRequest = new WatchCreateRequest()
                     {
-                        CreateRequest = new WatchCreateRequest()
-                        {
-                            Key = ByteString.CopyFromUtf8(path),
-                            RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
-                        }
-                    };
-                    requests.Add(request);
-                }
-                Watch(requests.ToArray(), method);
-           
+                        Key = ByteString.CopyFromUtf8(path),
+                        RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
+                    }
+                };
+                requests.Add(request);
+            }
+            Watch(requests.ToArray(), method);
+
         }
 
         /// <summary>
@@ -992,24 +992,24 @@ namespace dotnet_etcd
         public async void WatchRange(string[] paths, Action<WatchEvent[]>[] methods, Metadata headers = null)
         {
 
-           
-                List<WatchRequest> requests = new List<WatchRequest>();
 
-                foreach (string path in paths)
+            List<WatchRequest> requests = new List<WatchRequest>();
+
+            foreach (string path in paths)
+            {
+                WatchRequest request = new WatchRequest()
                 {
-                    WatchRequest request = new WatchRequest()
+                    CreateRequest = new WatchCreateRequest()
                     {
-                        CreateRequest = new WatchCreateRequest()
-                        {
-                            Key = ByteString.CopyFromUtf8(path),
-                            RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
-                        }
-                    };
-                    requests.Add(request);
-                }
-                Watch(requests.ToArray(), methods);
+                        Key = ByteString.CopyFromUtf8(path),
+                        RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
+                    }
+                };
+                requests.Add(request);
+            }
+            Watch(requests.ToArray(), methods);
 
-            
+
         }
         #endregion
     }

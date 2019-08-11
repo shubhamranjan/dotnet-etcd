@@ -1,8 +1,8 @@
-﻿using Etcdserverpb;
-using Grpc.Core;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Etcdserverpb;
+using Grpc.Core;
 
 namespace dotnet_etcd
 {
@@ -17,7 +17,7 @@ namespace dotnet_etcd
         {
             AlarmResponse response = new AlarmResponse();
 
-                response = _balancer.GetConnection().maintenanceClient.Alarm(request, headers);
+            response = _balancer.GetConnection().maintenanceClient.Alarm(request, headers);
 
             return response;
         }
@@ -31,7 +31,7 @@ namespace dotnet_etcd
         {
             AlarmResponse response = new AlarmResponse();
 
-                response = await _balancer.GetConnection().maintenanceClient.AlarmAsync(request, headers);
+            response = await _balancer.GetConnection().maintenanceClient.AlarmAsync(request, headers);
 
             return response;
         }
@@ -45,7 +45,7 @@ namespace dotnet_etcd
         {
             StatusResponse response = new StatusResponse();
 
-                response = _balancer.GetConnection().maintenanceClient.Status(request, headers);
+            response = _balancer.GetConnection().maintenanceClient.Status(request, headers);
 
             return response;
         }
@@ -59,7 +59,7 @@ namespace dotnet_etcd
         {
             StatusResponse response = new StatusResponse();
 
-                response = await _balancer.GetConnection().maintenanceClient.StatusAsync(request, headers);
+            response = await _balancer.GetConnection().maintenanceClient.StatusAsync(request, headers);
 
             return response;
         }
@@ -73,7 +73,7 @@ namespace dotnet_etcd
         {
             DefragmentResponse response = new DefragmentResponse();
 
-                response = _balancer.GetConnection().maintenanceClient.Defragment(request, headers);
+            response = _balancer.GetConnection().maintenanceClient.Defragment(request, headers);
 
             return response;
         }
@@ -87,7 +87,7 @@ namespace dotnet_etcd
         {
             DefragmentResponse response = new DefragmentResponse();
 
-                response = await _balancer.GetConnection().maintenanceClient.DefragmentAsync(request, headers);
+            response = await _balancer.GetConnection().maintenanceClient.DefragmentAsync(request, headers);
 
             return response;
         }
@@ -106,7 +106,7 @@ namespace dotnet_etcd
         {
             HashResponse response = new HashResponse();
 
-                response = _balancer.GetConnection().maintenanceClient.Hash(request, headers);
+            response = _balancer.GetConnection().maintenanceClient.Hash(request, headers);
 
             return response;
         }
@@ -125,7 +125,7 @@ namespace dotnet_etcd
         {
             HashResponse response = new HashResponse();
 
-                response = await _balancer.GetConnection().maintenanceClient.HashAsync(request, headers);
+            response = await _balancer.GetConnection().maintenanceClient.HashAsync(request, headers);
 
             return response;
         }
@@ -140,7 +140,7 @@ namespace dotnet_etcd
         {
             HashKVResponse response = new HashKVResponse();
 
-                response = _balancer.GetConnection().maintenanceClient.HashKV(request, headers);
+            response = _balancer.GetConnection().maintenanceClient.HashKV(request, headers);
 
             return response;
         }
@@ -155,7 +155,7 @@ namespace dotnet_etcd
         {
             HashKVResponse response = new HashKVResponse();
 
-                response = await _balancer.GetConnection().maintenanceClient.HashKVAsync(request, headers);
+            response = await _balancer.GetConnection().maintenanceClient.HashKVAsync(request, headers);
 
             return response;
         }
@@ -169,19 +169,19 @@ namespace dotnet_etcd
         public async void Snapshot(SnapshotRequest request, Action<SnapshotResponse> method, CancellationToken token, Metadata headers = null)
         {
 
-                using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _balancer.GetConnection().maintenanceClient.Snapshot(request, headers))
+            using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _balancer.GetConnection().maintenanceClient.Snapshot(request, headers))
+            {
+                Task snapshotTask = Task.Run(async () =>
                 {
-                    Task snapshotTask = Task.Run(async () =>
+                    while (await snapshotter.ResponseStream.MoveNext(token))
                     {
-                        while (await snapshotter.ResponseStream.MoveNext(token))
-                        {
-                            SnapshotResponse update = snapshotter.ResponseStream.Current;
-                            method(update);
-                        }
-                    });
+                        SnapshotResponse update = snapshotter.ResponseStream.Current;
+                        method(update);
+                    }
+                });
 
-                    await snapshotTask;
-                }
+                await snapshotTask;
+            }
 
         }
 
@@ -195,22 +195,22 @@ namespace dotnet_etcd
         public async void Snapshot(SnapshotRequest request, Action<SnapshotResponse>[] methods, CancellationToken token, Metadata headers = null)
         {
 
-                using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _balancer.GetConnection().maintenanceClient.Snapshot(request, headers))
+            using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _balancer.GetConnection().maintenanceClient.Snapshot(request, headers))
+            {
+                Task snapshotTask = Task.Run(async () =>
                 {
-                    Task snapshotTask = Task.Run(async () =>
+                    while (await snapshotter.ResponseStream.MoveNext(token))
                     {
-                        while (await snapshotter.ResponseStream.MoveNext(token))
+                        SnapshotResponse update = snapshotter.ResponseStream.Current;
+                        foreach (Action<SnapshotResponse> method in methods)
                         {
-                            SnapshotResponse update = snapshotter.ResponseStream.Current;
-                            foreach (Action<SnapshotResponse> method in methods)
-                            {
-                                method(update);
-                            }
+                            method(update);
                         }
-                    });
+                    }
+                });
 
-                    await snapshotTask;
-                }
+                await snapshotTask;
+            }
 
         }
 
@@ -223,7 +223,7 @@ namespace dotnet_etcd
         {
             MoveLeaderResponse response = new MoveLeaderResponse();
 
-                response = _balancer.GetConnection().maintenanceClient.MoveLeader(request, headers);
+            response = _balancer.GetConnection().maintenanceClient.MoveLeader(request, headers);
 
             return response;
         }
@@ -237,7 +237,7 @@ namespace dotnet_etcd
         {
             MoveLeaderResponse response = new MoveLeaderResponse();
 
-                response = await _balancer.GetConnection().maintenanceClient.MoveLeaderAsync(request, headers);
+            response = await _balancer.GetConnection().maintenanceClient.MoveLeaderAsync(request, headers);
 
             return response;
         }
