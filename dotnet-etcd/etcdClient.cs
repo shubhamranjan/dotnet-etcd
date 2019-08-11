@@ -36,7 +36,7 @@ namespace dotnet_etcd
                 string host = hosts[i];
                 if (host.Split(':').Length < 2)
                 {
-                    host += Convert.ToString(port);
+                    host += $":{Convert.ToString(port)}";
                 }
 
                 nodes.Add(new Uri(host));
