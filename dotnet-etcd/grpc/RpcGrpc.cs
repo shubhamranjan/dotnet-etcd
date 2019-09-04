@@ -576,6 +576,8 @@ namespace Etcdserverpb {
     static readonly grpc::Marshaller<global::Etcdserverpb.LeaseKeepAliveResponse> __Marshaller_etcdserverpb_LeaseKeepAliveResponse = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::Etcdserverpb.LeaseKeepAliveResponse.Parser.ParseFrom);
     static readonly grpc::Marshaller<global::Etcdserverpb.LeaseTimeToLiveRequest> __Marshaller_etcdserverpb_LeaseTimeToLiveRequest = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::Etcdserverpb.LeaseTimeToLiveRequest.Parser.ParseFrom);
     static readonly grpc::Marshaller<global::Etcdserverpb.LeaseTimeToLiveResponse> __Marshaller_etcdserverpb_LeaseTimeToLiveResponse = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::Etcdserverpb.LeaseTimeToLiveResponse.Parser.ParseFrom);
+    static readonly grpc::Marshaller<global::Etcdserverpb.LeaseLeasesRequest> __Marshaller_etcdserverpb_LeaseLeasesRequest = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::Etcdserverpb.LeaseLeasesRequest.Parser.ParseFrom);
+    static readonly grpc::Marshaller<global::Etcdserverpb.LeaseLeasesResponse> __Marshaller_etcdserverpb_LeaseLeasesResponse = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::Etcdserverpb.LeaseLeasesResponse.Parser.ParseFrom);
 
     static readonly grpc::Method<global::Etcdserverpb.LeaseGrantRequest, global::Etcdserverpb.LeaseGrantResponse> __Method_LeaseGrant = new grpc::Method<global::Etcdserverpb.LeaseGrantRequest, global::Etcdserverpb.LeaseGrantResponse>(
         grpc::MethodType.Unary,
@@ -604,6 +606,13 @@ namespace Etcdserverpb {
         "LeaseTimeToLive",
         __Marshaller_etcdserverpb_LeaseTimeToLiveRequest,
         __Marshaller_etcdserverpb_LeaseTimeToLiveResponse);
+
+    static readonly grpc::Method<global::Etcdserverpb.LeaseLeasesRequest, global::Etcdserverpb.LeaseLeasesResponse> __Method_LeaseLeases = new grpc::Method<global::Etcdserverpb.LeaseLeasesRequest, global::Etcdserverpb.LeaseLeasesResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "LeaseLeases",
+        __Marshaller_etcdserverpb_LeaseLeasesRequest,
+        __Marshaller_etcdserverpb_LeaseLeasesResponse);
 
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
@@ -659,6 +668,17 @@ namespace Etcdserverpb {
       /// <param name="context">The context of the server-side call handler being invoked.</param>
       /// <returns>The response to send back to the client (wrapped by a task).</returns>
       public virtual global::System.Threading.Tasks.Task<global::Etcdserverpb.LeaseTimeToLiveResponse> LeaseTimeToLive(global::Etcdserverpb.LeaseTimeToLiveRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      /// <summary>
+      /// LeaseLeases lists all existing leases.
+      /// </summary>
+      /// <param name="request">The request received from the client.</param>
+      /// <param name="context">The context of the server-side call handler being invoked.</param>
+      /// <returns>The response to send back to the client (wrapped by a task).</returns>
+      public virtual global::System.Threading.Tasks.Task<global::Etcdserverpb.LeaseLeasesResponse> LeaseLeases(global::Etcdserverpb.LeaseLeasesRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -850,6 +870,50 @@ namespace Etcdserverpb {
       {
         return CallInvoker.AsyncUnaryCall(__Method_LeaseTimeToLive, null, options, request);
       }
+      /// <summary>
+      /// LeaseLeases lists all existing leases.
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The response received from the server.</returns>
+      public virtual global::Etcdserverpb.LeaseLeasesResponse LeaseLeases(global::Etcdserverpb.LeaseLeasesRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return LeaseLeases(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// LeaseLeases lists all existing leases.
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The response received from the server.</returns>
+      public virtual global::Etcdserverpb.LeaseLeasesResponse LeaseLeases(global::Etcdserverpb.LeaseLeasesRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_LeaseLeases, null, options, request);
+      }
+      /// <summary>
+      /// LeaseLeases lists all existing leases.
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
+      public virtual grpc::AsyncUnaryCall<global::Etcdserverpb.LeaseLeasesResponse> LeaseLeasesAsync(global::Etcdserverpb.LeaseLeasesRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return LeaseLeasesAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// LeaseLeases lists all existing leases.
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
+      public virtual grpc::AsyncUnaryCall<global::Etcdserverpb.LeaseLeasesResponse> LeaseLeasesAsync(global::Etcdserverpb.LeaseLeasesRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_LeaseLeases, null, options, request);
+      }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       protected override LeaseClient NewInstance(ClientBaseConfiguration configuration)
       {
@@ -865,7 +929,8 @@ namespace Etcdserverpb {
           .AddMethod(__Method_LeaseGrant, serviceImpl.LeaseGrant)
           .AddMethod(__Method_LeaseRevoke, serviceImpl.LeaseRevoke)
           .AddMethod(__Method_LeaseKeepAlive, serviceImpl.LeaseKeepAlive)
-          .AddMethod(__Method_LeaseTimeToLive, serviceImpl.LeaseTimeToLive).Build();
+          .AddMethod(__Method_LeaseTimeToLive, serviceImpl.LeaseTimeToLive)
+          .AddMethod(__Method_LeaseLeases, serviceImpl.LeaseLeases).Build();
     }
 
     /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the  service binding logic.
@@ -878,6 +943,7 @@ namespace Etcdserverpb {
       serviceBinder.AddMethod(__Method_LeaseRevoke, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.LeaseRevokeRequest, global::Etcdserverpb.LeaseRevokeResponse>(serviceImpl.LeaseRevoke));
       serviceBinder.AddMethod(__Method_LeaseKeepAlive, serviceImpl == null ? null : new grpc::DuplexStreamingServerMethod<global::Etcdserverpb.LeaseKeepAliveRequest, global::Etcdserverpb.LeaseKeepAliveResponse>(serviceImpl.LeaseKeepAlive));
       serviceBinder.AddMethod(__Method_LeaseTimeToLive, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.LeaseTimeToLiveRequest, global::Etcdserverpb.LeaseTimeToLiveResponse>(serviceImpl.LeaseTimeToLive));
+      serviceBinder.AddMethod(__Method_LeaseLeases, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.LeaseLeasesRequest, global::Etcdserverpb.LeaseLeasesResponse>(serviceImpl.LeaseLeases));
     }
 
   }
@@ -893,6 +959,8 @@ namespace Etcdserverpb {
     static readonly grpc::Marshaller<global::Etcdserverpb.MemberUpdateResponse> __Marshaller_etcdserverpb_MemberUpdateResponse = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::Etcdserverpb.MemberUpdateResponse.Parser.ParseFrom);
     static readonly grpc::Marshaller<global::Etcdserverpb.MemberListRequest> __Marshaller_etcdserverpb_MemberListRequest = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::Etcdserverpb.MemberListRequest.Parser.ParseFrom);
     static readonly grpc::Marshaller<global::Etcdserverpb.MemberListResponse> __Marshaller_etcdserverpb_MemberListResponse = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::Etcdserverpb.MemberListResponse.Parser.ParseFrom);
+    static readonly grpc::Marshaller<global::Etcdserverpb.MemberPromoteRequest> __Marshaller_etcdserverpb_MemberPromoteRequest = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::Etcdserverpb.MemberPromoteRequest.Parser.ParseFrom);
+    static readonly grpc::Marshaller<global::Etcdserverpb.MemberPromoteResponse> __Marshaller_etcdserverpb_MemberPromoteResponse = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::Etcdserverpb.MemberPromoteResponse.Parser.ParseFrom);
 
     static readonly grpc::Method<global::Etcdserverpb.MemberAddRequest, global::Etcdserverpb.MemberAddResponse> __Method_MemberAdd = new grpc::Method<global::Etcdserverpb.MemberAddRequest, global::Etcdserverpb.MemberAddResponse>(
         grpc::MethodType.Unary,
@@ -921,6 +989,13 @@ namespace Etcdserverpb {
         "MemberList",
         __Marshaller_etcdserverpb_MemberListRequest,
         __Marshaller_etcdserverpb_MemberListResponse);
+
+    static readonly grpc::Method<global::Etcdserverpb.MemberPromoteRequest, global::Etcdserverpb.MemberPromoteResponse> __Method_MemberPromote = new grpc::Method<global::Etcdserverpb.MemberPromoteRequest, global::Etcdserverpb.MemberPromoteResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "MemberPromote",
+        __Marshaller_etcdserverpb_MemberPromoteRequest,
+        __Marshaller_etcdserverpb_MemberPromoteResponse);
 
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
@@ -972,6 +1047,17 @@ namespace Etcdserverpb {
       /// <param name="context">The context of the server-side call handler being invoked.</param>
       /// <returns>The response to send back to the client (wrapped by a task).</returns>
       public virtual global::System.Threading.Tasks.Task<global::Etcdserverpb.MemberListResponse> MemberList(global::Etcdserverpb.MemberListRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      /// <summary>
+      /// MemberPromote promotes a member from raft learner (non-voting) to raft voting member.
+      /// </summary>
+      /// <param name="request">The request received from the client.</param>
+      /// <param name="context">The context of the server-side call handler being invoked.</param>
+      /// <returns>The response to send back to the client (wrapped by a task).</returns>
+      public virtual global::System.Threading.Tasks.Task<global::Etcdserverpb.MemberPromoteResponse> MemberPromote(global::Etcdserverpb.MemberPromoteRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -1177,6 +1263,50 @@ namespace Etcdserverpb {
       {
         return CallInvoker.AsyncUnaryCall(__Method_MemberList, null, options, request);
       }
+      /// <summary>
+      /// MemberPromote promotes a member from raft learner (non-voting) to raft voting member.
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The response received from the server.</returns>
+      public virtual global::Etcdserverpb.MemberPromoteResponse MemberPromote(global::Etcdserverpb.MemberPromoteRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return MemberPromote(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// MemberPromote promotes a member from raft learner (non-voting) to raft voting member.
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The response received from the server.</returns>
+      public virtual global::Etcdserverpb.MemberPromoteResponse MemberPromote(global::Etcdserverpb.MemberPromoteRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_MemberPromote, null, options, request);
+      }
+      /// <summary>
+      /// MemberPromote promotes a member from raft learner (non-voting) to raft voting member.
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
+      public virtual grpc::AsyncUnaryCall<global::Etcdserverpb.MemberPromoteResponse> MemberPromoteAsync(global::Etcdserverpb.MemberPromoteRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return MemberPromoteAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// MemberPromote promotes a member from raft learner (non-voting) to raft voting member.
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
+      public virtual grpc::AsyncUnaryCall<global::Etcdserverpb.MemberPromoteResponse> MemberPromoteAsync(global::Etcdserverpb.MemberPromoteRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_MemberPromote, null, options, request);
+      }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       protected override ClusterClient NewInstance(ClientBaseConfiguration configuration)
       {
@@ -1192,7 +1322,8 @@ namespace Etcdserverpb {
           .AddMethod(__Method_MemberAdd, serviceImpl.MemberAdd)
           .AddMethod(__Method_MemberRemove, serviceImpl.MemberRemove)
           .AddMethod(__Method_MemberUpdate, serviceImpl.MemberUpdate)
-          .AddMethod(__Method_MemberList, serviceImpl.MemberList).Build();
+          .AddMethod(__Method_MemberList, serviceImpl.MemberList)
+          .AddMethod(__Method_MemberPromote, serviceImpl.MemberPromote).Build();
     }
 
     /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the  service binding logic.
@@ -1205,6 +1336,7 @@ namespace Etcdserverpb {
       serviceBinder.AddMethod(__Method_MemberRemove, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.MemberRemoveRequest, global::Etcdserverpb.MemberRemoveResponse>(serviceImpl.MemberRemove));
       serviceBinder.AddMethod(__Method_MemberUpdate, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.MemberUpdateRequest, global::Etcdserverpb.MemberUpdateResponse>(serviceImpl.MemberUpdate));
       serviceBinder.AddMethod(__Method_MemberList, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.MemberListRequest, global::Etcdserverpb.MemberListResponse>(serviceImpl.MemberList));
+      serviceBinder.AddMethod(__Method_MemberPromote, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Etcdserverpb.MemberPromoteRequest, global::Etcdserverpb.MemberPromoteResponse>(serviceImpl.MemberPromote));
     }
 
   }
@@ -1320,9 +1452,12 @@ namespace Etcdserverpb {
       }
 
       /// <summary>
-      /// Hash returns the hash of the local KV state for consistency checking purpose.
-      /// This is designed for testing; do not use this in production when there
-      /// are ongoing transactions.
+      /// Hash computes the hash of whole backend keyspace,
+      /// including key, lease, and other buckets in storage.
+      /// This is designed for testing ONLY!
+      /// Do not rely on this in production with ongoing transactions,
+      /// since Hash operation does not hold MVCC locks.
+      /// Use "HashKV" API instead for "key" bucket consistency checks.
       /// </summary>
       /// <param name="request">The request received from the client.</param>
       /// <param name="context">The context of the server-side call handler being invoked.</param>
@@ -1334,6 +1469,7 @@ namespace Etcdserverpb {
 
       /// <summary>
       /// HashKV computes the hash of all MVCC keys up to a given revision.
+      /// It only iterates "key" bucket in backend storage.
       /// </summary>
       /// <param name="request">The request received from the client.</param>
       /// <param name="context">The context of the server-side call handler being invoked.</param>
@@ -1524,9 +1660,12 @@ namespace Etcdserverpb {
         return CallInvoker.AsyncUnaryCall(__Method_Defragment, null, options, request);
       }
       /// <summary>
-      /// Hash returns the hash of the local KV state for consistency checking purpose.
-      /// This is designed for testing; do not use this in production when there
-      /// are ongoing transactions.
+      /// Hash computes the hash of whole backend keyspace,
+      /// including key, lease, and other buckets in storage.
+      /// This is designed for testing ONLY!
+      /// Do not rely on this in production with ongoing transactions,
+      /// since Hash operation does not hold MVCC locks.
+      /// Use "HashKV" API instead for "key" bucket consistency checks.
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -1538,9 +1677,12 @@ namespace Etcdserverpb {
         return Hash(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      /// Hash returns the hash of the local KV state for consistency checking purpose.
-      /// This is designed for testing; do not use this in production when there
-      /// are ongoing transactions.
+      /// Hash computes the hash of whole backend keyspace,
+      /// including key, lease, and other buckets in storage.
+      /// This is designed for testing ONLY!
+      /// Do not rely on this in production with ongoing transactions,
+      /// since Hash operation does not hold MVCC locks.
+      /// Use "HashKV" API instead for "key" bucket consistency checks.
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
@@ -1550,9 +1692,12 @@ namespace Etcdserverpb {
         return CallInvoker.BlockingUnaryCall(__Method_Hash, null, options, request);
       }
       /// <summary>
-      /// Hash returns the hash of the local KV state for consistency checking purpose.
-      /// This is designed for testing; do not use this in production when there
-      /// are ongoing transactions.
+      /// Hash computes the hash of whole backend keyspace,
+      /// including key, lease, and other buckets in storage.
+      /// This is designed for testing ONLY!
+      /// Do not rely on this in production with ongoing transactions,
+      /// since Hash operation does not hold MVCC locks.
+      /// Use "HashKV" API instead for "key" bucket consistency checks.
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -1564,9 +1709,12 @@ namespace Etcdserverpb {
         return HashAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      /// Hash returns the hash of the local KV state for consistency checking purpose.
-      /// This is designed for testing; do not use this in production when there
-      /// are ongoing transactions.
+      /// Hash computes the hash of whole backend keyspace,
+      /// including key, lease, and other buckets in storage.
+      /// This is designed for testing ONLY!
+      /// Do not rely on this in production with ongoing transactions,
+      /// since Hash operation does not hold MVCC locks.
+      /// Use "HashKV" API instead for "key" bucket consistency checks.
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
@@ -1577,6 +1725,7 @@ namespace Etcdserverpb {
       }
       /// <summary>
       /// HashKV computes the hash of all MVCC keys up to a given revision.
+      /// It only iterates "key" bucket in backend storage.
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -1589,6 +1738,7 @@ namespace Etcdserverpb {
       }
       /// <summary>
       /// HashKV computes the hash of all MVCC keys up to a given revision.
+      /// It only iterates "key" bucket in backend storage.
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
@@ -1599,6 +1749,7 @@ namespace Etcdserverpb {
       }
       /// <summary>
       /// HashKV computes the hash of all MVCC keys up to a given revision.
+      /// It only iterates "key" bucket in backend storage.
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -1611,6 +1762,7 @@ namespace Etcdserverpb {
       }
       /// <summary>
       /// HashKV computes the hash of all MVCC keys up to a given revision.
+      /// It only iterates "key" bucket in backend storage.
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
@@ -1915,7 +2067,7 @@ namespace Etcdserverpb {
       }
 
       /// <summary>
-      /// UserAdd adds a new user.
+      /// UserAdd adds a new user. User name cannot be empty.
       /// </summary>
       /// <param name="request">The request received from the client.</param>
       /// <param name="context">The context of the server-side call handler being invoked.</param>
@@ -1992,7 +2144,7 @@ namespace Etcdserverpb {
       }
 
       /// <summary>
-      /// RoleAdd adds a new role.
+      /// RoleAdd adds a new role. Role name cannot be empty.
       /// </summary>
       /// <param name="request">The request received from the client.</param>
       /// <param name="context">The context of the server-side call handler being invoked.</param>
@@ -2215,7 +2367,7 @@ namespace Etcdserverpb {
         return CallInvoker.AsyncUnaryCall(__Method_Authenticate, null, options, request);
       }
       /// <summary>
-      /// UserAdd adds a new user.
+      /// UserAdd adds a new user. User name cannot be empty.
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -2227,7 +2379,7 @@ namespace Etcdserverpb {
         return UserAdd(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      /// UserAdd adds a new user.
+      /// UserAdd adds a new user. User name cannot be empty.
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
@@ -2237,7 +2389,7 @@ namespace Etcdserverpb {
         return CallInvoker.BlockingUnaryCall(__Method_UserAdd, null, options, request);
       }
       /// <summary>
-      /// UserAdd adds a new user.
+      /// UserAdd adds a new user. User name cannot be empty.
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -2249,7 +2401,7 @@ namespace Etcdserverpb {
         return UserAddAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      /// UserAdd adds a new user.
+      /// UserAdd adds a new user. User name cannot be empty.
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
@@ -2523,7 +2675,7 @@ namespace Etcdserverpb {
         return CallInvoker.AsyncUnaryCall(__Method_UserRevokeRole, null, options, request);
       }
       /// <summary>
-      /// RoleAdd adds a new role.
+      /// RoleAdd adds a new role. Role name cannot be empty.
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -2535,7 +2687,7 @@ namespace Etcdserverpb {
         return RoleAdd(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      /// RoleAdd adds a new role.
+      /// RoleAdd adds a new role. Role name cannot be empty.
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
@@ -2545,7 +2697,7 @@ namespace Etcdserverpb {
         return CallInvoker.BlockingUnaryCall(__Method_RoleAdd, null, options, request);
       }
       /// <summary>
-      /// RoleAdd adds a new role.
+      /// RoleAdd adds a new role. Role name cannot be empty.
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -2557,7 +2709,7 @@ namespace Etcdserverpb {
         return RoleAddAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      /// RoleAdd adds a new role.
+      /// RoleAdd adds a new role. Role name cannot be empty.
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>

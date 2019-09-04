@@ -24,17 +24,20 @@ namespace Authpb {
     static AuthReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "CgphdXRoLnByb3RvEgZhdXRocGIiNQoEVXNlchIMCgRuYW1lGAEgASgMEhAK",
-            "CHBhc3N3b3JkGAIgASgMEg0KBXJvbGVzGAMgAygJIoMBCgpQZXJtaXNzaW9u",
-            "EikKCHBlcm1UeXBlGAEgASgOMhcuYXV0aHBiLlBlcm1pc3Npb24uVHlwZRIL",
-            "CgNrZXkYAiABKAwSEQoJcmFuZ2VfZW5kGAMgASgMIioKBFR5cGUSCAoEUkVB",
-            "RBAAEgkKBVdSSVRFEAESDQoJUkVBRFdSSVRFEAIiPwoEUm9sZRIMCgRuYW1l",
-            "GAEgASgMEikKDWtleVBlcm1pc3Npb24YAiADKAsyEi5hdXRocGIuUGVybWlz",
-            "c2lvbmIGcHJvdG8z"));
+            "CgphdXRoLnByb3RvEgZhdXRocGIiJQoOVXNlckFkZE9wdGlvbnMSEwoLbm9f",
+            "cGFzc3dvcmQYASABKAgiXgoEVXNlchIMCgRuYW1lGAEgASgMEhAKCHBhc3N3",
+            "b3JkGAIgASgMEg0KBXJvbGVzGAMgAygJEicKB29wdGlvbnMYBCABKAsyFi5h",
+            "dXRocGIuVXNlckFkZE9wdGlvbnMigwEKClBlcm1pc3Npb24SKQoIcGVybVR5",
+            "cGUYASABKA4yFy5hdXRocGIuUGVybWlzc2lvbi5UeXBlEgsKA2tleRgCIAEo",
+            "DBIRCglyYW5nZV9lbmQYAyABKAwiKgoEVHlwZRIICgRSRUFEEAASCQoFV1JJ",
+            "VEUQARINCglSRUFEV1JJVEUQAiI/CgRSb2xlEgwKBG5hbWUYASABKAwSKQoN",
+            "a2V5UGVybWlzc2lvbhgCIAMoCzISLmF1dGhwYi5QZXJtaXNzaW9uYgZwcm90",
+            "bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Authpb.User), global::Authpb.User.Parser, new[]{ "Name", "Password", "Roles" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Authpb.UserAddOptions), global::Authpb.UserAddOptions.Parser, new[]{ "NoPassword" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Authpb.User), global::Authpb.User.Parser, new[]{ "Name", "Password", "Roles", "Options" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Authpb.Permission), global::Authpb.Permission.Parser, new[]{ "PermType", "Key", "RangeEnd" }, null, new[]{ typeof(global::Authpb.Permission.Types.Type) }, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Authpb.Role), global::Authpb.Role.Parser, new[]{ "Name", "KeyPermission" }, null, null, null)
           }));
@@ -43,6 +46,135 @@ namespace Authpb {
 
   }
   #region Messages
+  public sealed partial class UserAddOptions : pb::IMessage<UserAddOptions> {
+    private static readonly pb::MessageParser<UserAddOptions> _parser = new pb::MessageParser<UserAddOptions>(() => new UserAddOptions());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<UserAddOptions> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Authpb.AuthReflection.Descriptor.MessageTypes[0]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public UserAddOptions() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public UserAddOptions(UserAddOptions other) : this() {
+      noPassword_ = other.noPassword_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public UserAddOptions Clone() {
+      return new UserAddOptions(this);
+    }
+
+    /// <summary>Field number for the "no_password" field.</summary>
+    public const int NoPasswordFieldNumber = 1;
+    private bool noPassword_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool NoPassword {
+      get { return noPassword_; }
+      set {
+        noPassword_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as UserAddOptions);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(UserAddOptions other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (NoPassword != other.NoPassword) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (NoPassword != false) hash ^= NoPassword.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (NoPassword != false) {
+        output.WriteRawTag(8);
+        output.WriteBool(NoPassword);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (NoPassword != false) {
+        size += 1 + 1;
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(UserAddOptions other) {
+      if (other == null) {
+        return;
+      }
+      if (other.NoPassword != false) {
+        NoPassword = other.NoPassword;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            NoPassword = input.ReadBool();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
   /// <summary>
   /// User is a single entry in the bucket authUsers
   /// </summary>
@@ -54,7 +186,7 @@ namespace Authpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Authpb.AuthReflection.Descriptor.MessageTypes[0]; }
+      get { return global::Authpb.AuthReflection.Descriptor.MessageTypes[1]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -74,6 +206,7 @@ namespace Authpb {
       name_ = other.name_;
       password_ = other.password_;
       roles_ = other.roles_.Clone();
+      options_ = other.options_ != null ? other.options_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -114,6 +247,17 @@ namespace Authpb {
       get { return roles_; }
     }
 
+    /// <summary>Field number for the "options" field.</summary>
+    public const int OptionsFieldNumber = 4;
+    private global::Authpb.UserAddOptions options_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Authpb.UserAddOptions Options {
+      get { return options_; }
+      set {
+        options_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as User);
@@ -130,6 +274,7 @@ namespace Authpb {
       if (Name != other.Name) return false;
       if (Password != other.Password) return false;
       if(!roles_.Equals(other.roles_)) return false;
+      if (!object.Equals(Options, other.Options)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -139,6 +284,7 @@ namespace Authpb {
       if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (Password.Length != 0) hash ^= Password.GetHashCode();
       hash ^= roles_.GetHashCode();
+      if (options_ != null) hash ^= Options.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -161,6 +307,10 @@ namespace Authpb {
         output.WriteBytes(Password);
       }
       roles_.WriteTo(output, _repeated_roles_codec);
+      if (options_ != null) {
+        output.WriteRawTag(34);
+        output.WriteMessage(Options);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -176,6 +326,9 @@ namespace Authpb {
         size += 1 + pb::CodedOutputStream.ComputeBytesSize(Password);
       }
       size += roles_.CalculateSize(_repeated_roles_codec);
+      if (options_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Options);
+      }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -194,6 +347,12 @@ namespace Authpb {
         Password = other.Password;
       }
       roles_.Add(other.roles_);
+      if (other.options_ != null) {
+        if (options_ == null) {
+          Options = new global::Authpb.UserAddOptions();
+        }
+        Options.MergeFrom(other.Options);
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -217,6 +376,13 @@ namespace Authpb {
             roles_.AddEntriesFrom(input, _repeated_roles_codec);
             break;
           }
+          case 34: {
+            if (options_ == null) {
+              Options = new global::Authpb.UserAddOptions();
+            }
+            input.ReadMessage(Options);
+            break;
+          }
         }
       }
     }
@@ -234,7 +400,7 @@ namespace Authpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Authpb.AuthReflection.Descriptor.MessageTypes[1]; }
+      get { return global::Authpb.AuthReflection.Descriptor.MessageTypes[2]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -435,7 +601,7 @@ namespace Authpb {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Authpb.AuthReflection.Descriptor.MessageTypes[2]; }
+      get { return global::Authpb.AuthReflection.Descriptor.MessageTypes[3]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
