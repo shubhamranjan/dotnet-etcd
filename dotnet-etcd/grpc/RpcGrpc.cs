@@ -139,7 +139,7 @@ namespace Etcdserverpb {
     {
       /// <summary>Creates a new client for KV</summary>
       /// <param name="channel">The channel to use to make remote calls.</param>
-      public KVClient(grpc::Channel channel) : base(channel)
+      public KVClient(grpc::ChannelBase channel) : base(channel)
       {
       }
       /// <summary>Creates a new client for KV that uses a custom <c>CallInvoker</c>.</summary>
@@ -493,7 +493,7 @@ namespace Etcdserverpb {
     {
       /// <summary>Creates a new client for Watch</summary>
       /// <param name="channel">The channel to use to make remote calls.</param>
-      public WatchClient(grpc::Channel channel) : base(channel)
+      public WatchClient(grpc::ChannelBase channel) : base(channel)
       {
       }
       /// <summary>Creates a new client for Watch that uses a custom <c>CallInvoker</c>.</summary>
@@ -670,7 +670,7 @@ namespace Etcdserverpb {
     {
       /// <summary>Creates a new client for Lease</summary>
       /// <param name="channel">The channel to use to make remote calls.</param>
-      public LeaseClient(grpc::Channel channel) : base(channel)
+      public LeaseClient(grpc::ChannelBase channel) : base(channel)
       {
       }
       /// <summary>Creates a new client for Lease that uses a custom <c>CallInvoker</c>.</summary>
@@ -983,7 +983,7 @@ namespace Etcdserverpb {
     {
       /// <summary>Creates a new client for Cluster</summary>
       /// <param name="channel">The channel to use to make remote calls.</param>
-      public ClusterClient(grpc::Channel channel) : base(channel)
+      public ClusterClient(grpc::ChannelBase channel) : base(channel)
       {
       }
       /// <summary>Creates a new client for Cluster that uses a custom <c>CallInvoker</c>.</summary>
@@ -1373,7 +1373,7 @@ namespace Etcdserverpb {
     {
       /// <summary>Creates a new client for Maintenance</summary>
       /// <param name="channel">The channel to use to make remote calls.</param>
-      public MaintenanceClient(grpc::Channel channel) : base(channel)
+      public MaintenanceClient(grpc::ChannelBase channel) : base(channel)
       {
       }
       /// <summary>Creates a new client for Maintenance that uses a custom <c>CallInvoker</c>.</summary>
@@ -2064,7 +2064,7 @@ namespace Etcdserverpb {
     {
       /// <summary>Creates a new client for Auth</summary>
       /// <param name="channel">The channel to use to make remote calls.</param>
-      public AuthClient(grpc::Channel channel) : base(channel)
+      public AuthClient(grpc::ChannelBase channel) : base(channel)
       {
       }
       /// <summary>Creates a new client for Auth that uses a custom <c>CallInvoker</c>.</summary>

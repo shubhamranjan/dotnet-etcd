@@ -80,7 +80,7 @@ namespace V3Lockpb {
     {
       /// <summary>Creates a new client for Lock</summary>
       /// <param name="channel">The channel to use to make remote calls.</param>
-      public LockClient(grpc::Channel channel) : base(channel)
+      public LockClient(grpc::ChannelBase channel) : base(channel)
       {
       }
       /// <summary>Creates a new client for Lock that uses a custom <c>CallInvoker</c>.</summary>
