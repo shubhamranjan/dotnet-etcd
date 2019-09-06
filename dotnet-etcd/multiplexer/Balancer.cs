@@ -10,9 +10,9 @@ namespace dotnet_etcd.multiplexer
 
     internal class Balancer
     {
-        private SortedSet<Connection> _HealthyCluster;
+        private HashSet<Connection> _HealthyCluster;
 
-        private SortedSet<Connection> _UnHealthyCluster;
+        private HashSet<Connection> _UnHealthyCluster;
 
         private Random _random;
 
@@ -86,8 +86,8 @@ namespace dotnet_etcd.multiplexer
             _ssl = !_publicRootCa && !string.IsNullOrWhiteSpace(_caCert);
             _clientSSL = _ssl && (!string.IsNullOrWhiteSpace(_clientCert) && !(string.IsNullOrWhiteSpace(_clientKey)));
 
-            _HealthyCluster = new SortedSet<Connection>();
-            _UnHealthyCluster = new SortedSet<Connection>();
+            _HealthyCluster = new HashSet<Connection>();
+            _UnHealthyCluster = new HashSet<Connection>();
             _random = new Random(0);
 
             foreach (Uri node in nodes)

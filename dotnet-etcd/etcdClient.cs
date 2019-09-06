@@ -34,7 +34,7 @@ namespace dotnet_etcd
             for (int i = 0; i < hosts.Length; i++)
             {
                 string host = hosts[i];
-                if (host.Split(':').Length < 2)
+                if (host.Split(':').Length < 3)
                 {
                     host += $":{Convert.ToString(port)}";
                 }
