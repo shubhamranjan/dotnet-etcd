@@ -18,9 +18,22 @@ namespace dotnet_etcd
         public RangeResponse Get(RangeRequest request, Metadata headers = null)
         {
             RangeResponse rangeResponse = new RangeResponse();
-
-            rangeResponse = _balancer.GetConnection().kvClient.Range(request, headers);
-
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    rangeResponse = _balancer.GetConnection().kvClient.Range(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
 
             return rangeResponse;
         }
@@ -51,9 +64,22 @@ namespace dotnet_etcd
         public async Task<RangeResponse> GetAsync(RangeRequest request, Metadata headers = null)
         {
             RangeResponse rangeResponse = new RangeResponse();
-
-            rangeResponse = await _balancer.GetConnection().kvClient.RangeAsync(request, headers);
-
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    rangeResponse = await _balancer.GetConnection().kvClient.RangeAsync(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
 
             return rangeResponse;
         }
@@ -198,9 +224,24 @@ namespace dotnet_etcd
         /// <returns></returns>
         public PutResponse Put(PutRequest request, Metadata headers = null)
         {
-
-            return _balancer.GetConnection().kvClient.Put(request, headers);
-
+            PutResponse response = new PutResponse();
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = _balancer.GetConnection().kvClient.Put(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
+            return response;
         }
 
         /// <summary>
@@ -227,9 +268,24 @@ namespace dotnet_etcd
         /// <returns></returns>
         public async Task<PutResponse> PutAsync(PutRequest request, Metadata headers = null)
         {
-
-            return await _balancer.GetConnection().kvClient.PutAsync(request, headers);
-
+            PutResponse response = new PutResponse();
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = await _balancer.GetConnection().kvClient.PutAsync(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
+            return response;
         }
 
 
@@ -257,9 +313,24 @@ namespace dotnet_etcd
         /// <returns></returns>
         public DeleteRangeResponse Delete(DeleteRangeRequest request, Metadata headers = null)
         {
-
-            return _balancer.GetConnection().kvClient.DeleteRange(request, headers);
-
+            DeleteRangeResponse response = new DeleteRangeResponse();
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = _balancer.GetConnection().kvClient.DeleteRange(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
+            return response;
         }
 
         /// <summary>
@@ -284,9 +355,24 @@ namespace dotnet_etcd
         /// <returns></returns>
         public async Task<DeleteRangeResponse> DeleteAsync(DeleteRangeRequest request, Metadata headers = null)
         {
-
-            return await _balancer.GetConnection().kvClient.DeleteRangeAsync(request, headers);
-
+            DeleteRangeResponse response = new DeleteRangeResponse();
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = await _balancer.GetConnection().kvClient.DeleteRangeAsync(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
+            return response;
         }
 
         /// <summary>
@@ -345,9 +431,24 @@ namespace dotnet_etcd
         /// <returns></returns>
         public TxnResponse Transaction(TxnRequest request, Metadata headers = null)
         {
-
-            return _balancer.GetConnection().kvClient.Txn(request, headers);
-
+            TxnResponse response = new TxnResponse();
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = _balancer.GetConnection().kvClient.Txn(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
+            return response;
 
         }
 
@@ -361,9 +462,24 @@ namespace dotnet_etcd
         /// <returns></returns>
         public async Task<TxnResponse> TransactionAsync(TxnRequest request, Metadata headers = null)
         {
-
-            return await _balancer.GetConnection().kvClient.TxnAsync(request, headers);
-
+            TxnResponse response = new TxnResponse();
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = await _balancer.GetConnection().kvClient.TxnAsync(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
+            return response;
         }
 
         /// <summary>
@@ -375,9 +491,24 @@ namespace dotnet_etcd
         /// <returns></returns>
         public CompactionResponse Compact(CompactionRequest request, Metadata headers = null)
         {
-
-            return _balancer.GetConnection().kvClient.Compact(request, headers);
-
+            CompactionResponse response = new CompactionResponse();
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = _balancer.GetConnection().kvClient.Compact(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
+            return response;
         }
 
         /// <summary>
@@ -389,9 +520,24 @@ namespace dotnet_etcd
         /// <returns></returns>
         public async Task<CompactionResponse> CompactAsync(CompactionRequest request, Metadata headers = null)
         {
-
-            return await _balancer.GetConnection().kvClient.CompactAsync(request, headers);
-
+            CompactionResponse response = new CompactionResponse();
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = await _balancer.GetConnection().kvClient.CompactAsync(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
+            return response;
         }
 
     }
