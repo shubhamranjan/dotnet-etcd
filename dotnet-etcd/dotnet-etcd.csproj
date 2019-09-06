@@ -10,8 +10,8 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryUrl>https://github.com/shubhamranjan/dotnet-etcd</RepositoryUrl>
     <PackageProjectUrl>https://github.com/shubhamranjan/dotnet-etcd</PackageProjectUrl>
-    <PackageReleaseNotes>1. Update proto files
-2. Update nuget packages</PackageReleaseNotes>
+    <PackageReleaseNotes>1. Update balancer logic
+2. Fix header injections</PackageReleaseNotes>
     <Authors>Shubham Ranjan</Authors>
     <Company />
     <Product />
@@ -26,7 +26,7 @@ Advanced uses take advantage of the consistency guarantees to implement database
     <PackageTags>etcd grpc etcdv3 etcd3</PackageTags>
     <SignAssembly>false</SignAssembly>
     <PackageIconUrl>https://raw.githubusercontent.com/shubhamranjan/dotnet-etcd/master/docs/img/etcd-logo-rectangle.png</PackageIconUrl>
-    <Version>3.1.0-alpha</Version>
+    <Version>3.0.0-beta</Version>
     <AutoGenerateBindingRedirects>False</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
