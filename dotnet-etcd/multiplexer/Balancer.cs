@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Etcdserverpb;
 using Grpc.Core;
 
@@ -60,16 +61,26 @@ namespace dotnet_etcd.multiplexer
         /// </summary>
         private readonly bool _publicRootCa;
 
+        /// <summary>
+        /// No of etcd nodes
+        /// </summary>
+        internal readonly int _numNodes;
 
+        /// <summary>
+        /// Last used node index
+        /// </summary>
+        private int _lastNodeIndex;
 
         internal Balancer(List<Uri> nodes, string username = "", string password = "", string caCert = "", string clientCert = "", string clientKey = "", bool publicRootCa = false)
         {
+            _numNodes = nodes.Count;
             _caCert = caCert;
             _clientCert = clientCert;
             _clientKey = clientKey;
             _username = username;
             _password = password;
             _publicRootCa = publicRootCa;
+            _lastNodeIndex = -1;
 
             _basicAuth = (!string.IsNullOrWhiteSpace(_username) && !(string.IsNullOrWhiteSpace(_password)));
             _ssl = !_publicRootCa && !string.IsNullOrWhiteSpace(_caCert);
@@ -122,9 +133,15 @@ namespace dotnet_etcd.multiplexer
 
         }
 
-        internal Connection GetConnection()
+        internal (Connection, int) GetConnection()
         {
-            return _HealthyCluster.ElementAt(_random.Next(_HealthyCluster.Count));
+            int nextNodeIndex = GetNextNodeIndex();
+            return (_HealthyCluster.ElementAt(nextNodeIndex), nextNodeIndex);
+        }
+
+        internal Connection GetConnection(int index)
+        {
+            return _HealthyCluster.ElementAt(index);
         }
 
         internal void MarkUnHealthy(Connection connection)
@@ -139,6 +156,18 @@ namespace dotnet_etcd.multiplexer
             _HealthyCluster.Add(connection);
         }
 
+        internal int GetNextNodeIndex()
+        {
+            int initial, computed;
+            do
+            {
+                initial = _lastNodeIndex;
+                computed = initial + 1;
+                computed = computed >= _numNodes ? computed = 0 : computed;
+            }
+            while (Interlocked.CompareExchange(ref _lastNodeIndex, computed, initial) != initial);
+            return computed;
+        }
 
 
     }
