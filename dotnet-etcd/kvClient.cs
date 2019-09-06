@@ -43,14 +43,14 @@ namespace dotnet_etcd
         /// </summary>
         /// <returns>The etcd response for the specified key</returns>
         /// <param name="key">Key for which value need to be fetched</param>
-        public RangeResponse Get(string key)
+        public RangeResponse Get(string key, Metadata headers = null)
         {
             RangeResponse rangeResponse = new RangeResponse();
 
             rangeResponse = Get(new RangeRequest
             {
                 Key = ByteString.CopyFromUtf8(key)
-            });
+            }, headers);
 
 
             return rangeResponse;
@@ -89,14 +89,14 @@ namespace dotnet_etcd
         /// </summary>
         /// <returns>The etcd response for the specified key</returns>
         /// <param name="key">Key for which value need to be fetched</param>
-        public async Task<RangeResponse> GetAsync(string key)
+        public async Task<RangeResponse> GetAsync(string key, Metadata headers = null)
         {
             RangeResponse rangeResponse = new RangeResponse();
 
             rangeResponse = await GetAsync(new RangeRequest
             {
                 Key = ByteString.CopyFromUtf8(key)
-            });
+            }, headers);
 
 
             return rangeResponse;
@@ -107,11 +107,11 @@ namespace dotnet_etcd
         /// </summary>
         /// <returns>The value for the specified key</returns>
         /// <param name="key">Key for which value need to be fetched</param>
-        public string GetVal(string key)
+        public string GetVal(string key, Metadata headers = null)
         {
             RangeResponse rangeResponse = new RangeResponse();
 
-            rangeResponse = Get(key);
+            rangeResponse = Get(key, headers);
 
 
             return rangeResponse.Count != 0 ? rangeResponse.Kvs[0].Value.ToStringUtf8().Trim() : string.Empty;
@@ -122,11 +122,11 @@ namespace dotnet_etcd
         /// </summary>
         /// <returns>The value for the specified key</returns>
         /// <param name="key">Key for which value need to be fetched</param>
-        public async Task<string> GetValAsync(string key)
+        public async Task<string> GetValAsync(string key, Metadata headers = null)
         {
             RangeResponse rangeResponse = new RangeResponse();
 
-            rangeResponse = await GetAsync(key);
+            rangeResponse = await GetAsync(key, headers);
 
 
             return rangeResponse.Count != 0 ? rangeResponse.Kvs[0].Value.ToStringUtf8().Trim() : string.Empty;
@@ -137,7 +137,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <returns>RangeResponse containing range of key-values</returns>
         /// <param name="prefixKey">Prefix key</param>
-        public RangeResponse GetRange(string prefixKey)
+        public RangeResponse GetRange(string prefixKey, Metadata headers = null)
         {
             RangeResponse rangeResponse = new RangeResponse();
 
@@ -147,7 +147,7 @@ namespace dotnet_etcd
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
                 RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
-            });
+            }, headers);
 
 
 
@@ -159,7 +159,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <returns>RangeResponse containing range of key-values</returns>
         /// <param name="prefixKey">Prefix key</param>
-        public async Task<RangeResponse> GetRangeAsync(string prefixKey)
+        public async Task<RangeResponse> GetRangeAsync(string prefixKey, Metadata headers = null)
         {
             RangeResponse rangeResponse = new RangeResponse();
 
@@ -169,7 +169,7 @@ namespace dotnet_etcd
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
                 RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
-            });
+            }, headers);
 
             return rangeResponse;
         }
@@ -179,7 +179,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <returns>Dictionary containing range of key-values</returns>
         /// <param name="prefixKey">Prefix key</param>
-        public IDictionary<string, string> GetRangeVal(string prefixKey)
+        public IDictionary<string, string> GetRangeVal(string prefixKey, Metadata headers = null)
         {
             RangeResponse rangeResponse = new RangeResponse();
 
@@ -189,7 +189,7 @@ namespace dotnet_etcd
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
                 RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
-            });
+            }, headers);
 
 
 
@@ -201,7 +201,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <returns>Dictionary containing range of key-values</returns>
         /// <param name="prefixKey">Prefix key</param>
-        public async Task<IDictionary<string, string>> GetRangeValAsync(string prefixKey)
+        public async Task<IDictionary<string, string>> GetRangeValAsync(string prefixKey, Metadata headers = null)
         {
             RangeResponse rangeResponse = new RangeResponse();
 
@@ -211,7 +211,7 @@ namespace dotnet_etcd
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
                 RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
-            });
+            }, headers);
 
 
             return RangeRespondToDictionary(rangeResponse);
@@ -250,14 +250,14 @@ namespace dotnet_etcd
         /// <param name="key">Key for which value need to be set</param>
         /// <param name="val">Value corresponding the key</param>
         /// <returns></returns>
-        public PutResponse Put(string key, string val)
+        public PutResponse Put(string key, string val, Metadata headers = null)
         {
 
             return Put(new PutRequest
             {
                 Key = ByteString.CopyFromUtf8(key),
                 Value = ByteString.CopyFromUtf8(val)
-            });
+            }, headers);
 
         }
 
@@ -295,14 +295,14 @@ namespace dotnet_etcd
         /// <param name="key">Key for which value need to be set</param>
         /// <param name="val">Value corresponding the key</param>
         /// <returns></returns>
-        public async Task<PutResponse> PutAsync(string key, string val)
+        public async Task<PutResponse> PutAsync(string key, string val, Metadata headers = null)
         {
 
             return await PutAsync(new PutRequest
             {
                 Key = ByteString.CopyFromUtf8(key),
                 Value = ByteString.CopyFromUtf8(val)
-            });
+            }, headers);
 
         }
 
@@ -337,13 +337,13 @@ namespace dotnet_etcd
         /// Delete the specified key in etcd
         /// </summary>
         /// <param name="key">Key which needs to be deleted</param>
-        public DeleteRangeResponse Delete(string key)
+        public DeleteRangeResponse Delete(string key, Metadata headers = null)
         {
 
             return Delete(new DeleteRangeRequest
             {
                 Key = ByteString.CopyFromUtf8(key)
-            });
+            }, headers);
 
         }
 
@@ -379,13 +379,13 @@ namespace dotnet_etcd
         /// Delete the specified key in etcd in async
         /// </summary>
         /// <param name="key">Key which needs to be deleted</param>
-        public async Task<DeleteRangeResponse> DeleteAsync(string key)
+        public async Task<DeleteRangeResponse> DeleteAsync(string key, Metadata headers = null)
         {
 
             return await DeleteAsync(new DeleteRangeRequest
             {
                 Key = ByteString.CopyFromUtf8(key)
-            });
+            }, headers);
 
         }
 
@@ -393,7 +393,7 @@ namespace dotnet_etcd
         /// Deletes all keys with the specified prefix
         /// </summary>
         /// <param name="prefixKey">Commin prefix of all keys that need to be deleted</param>
-        public DeleteRangeResponse DeleteRange(string prefixKey)
+        public DeleteRangeResponse DeleteRange(string prefixKey, Metadata headers = null)
         {
 
             string rangeEnd = GetRangeEnd(prefixKey);
@@ -401,7 +401,7 @@ namespace dotnet_etcd
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
                 RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
-            });
+            }, headers);
 
         }
 
@@ -409,7 +409,7 @@ namespace dotnet_etcd
         /// Deletes all keys with the specified prefix in async
         /// </summary>
         /// <param name="prefixKey">Commin prefix of all keys that need to be deleted</param>
-        public async Task<DeleteRangeResponse> DeleteRangeAsync(string prefixKey)
+        public async Task<DeleteRangeResponse> DeleteRangeAsync(string prefixKey, Metadata headers = null)
         {
 
             string rangeEnd = GetRangeEnd(prefixKey);
@@ -417,7 +417,7 @@ namespace dotnet_etcd
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
                 RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
-            });
+            }, headers);
 
         }
 

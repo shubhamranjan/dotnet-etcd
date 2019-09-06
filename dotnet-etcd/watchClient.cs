@@ -456,7 +456,7 @@ namespace dotnet_etcd
                     Key = ByteString.CopyFromUtf8(key)
                 }
             };
-            Watch(request, method);
+            Watch(request, method, headers);
 
         }
 
@@ -475,7 +475,7 @@ namespace dotnet_etcd
                     Key = ByteString.CopyFromUtf8(key)
                 }
             };
-            Watch(request, methods);
+            Watch(request, methods, headers);
 
         }
 
@@ -495,7 +495,7 @@ namespace dotnet_etcd
                     Key = ByteString.CopyFromUtf8(key)
                 }
             };
-            Watch(request, method);
+            Watch(request, method, headers);
 
         }
 
@@ -515,7 +515,7 @@ namespace dotnet_etcd
                     Key = ByteString.CopyFromUtf8(key)
                 }
             };
-            Watch(request, methods);
+            Watch(request, methods, headers);
 
         }
 
@@ -540,7 +540,7 @@ namespace dotnet_etcd
                 };
                 requests.Add(request);
             }
-            Watch(requests.ToArray(), method);
+            Watch(requests.ToArray(), method, headers);
 
         }
 
@@ -565,7 +565,7 @@ namespace dotnet_etcd
                 };
                 requests.Add(request);
             }
-            Watch(requests.ToArray(), methods);
+            Watch(requests.ToArray(), methods, headers);
 
         }
 
@@ -591,7 +591,7 @@ namespace dotnet_etcd
                 };
                 requests.Add(request);
             }
-            Watch(requests.ToArray(), method);
+            Watch(requests.ToArray(), method, headers);
 
         }
 
@@ -617,7 +617,7 @@ namespace dotnet_etcd
                 };
                 requests.Add(request);
             }
-            Watch(requests.ToArray(), methods);
+            Watch(requests.ToArray(), methods, headers);
 
 
         }
@@ -1045,7 +1045,7 @@ namespace dotnet_etcd
                     RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
                 }
             };
-            Watch(request, method);
+            Watch(request, method, headers);
 
         }
 
@@ -1066,7 +1066,7 @@ namespace dotnet_etcd
                     RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
                 }
             };
-            Watch(request, methods);
+            Watch(request, methods, headers);
 
 
         }
@@ -1088,7 +1088,7 @@ namespace dotnet_etcd
                     RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
                 }
             };
-            Watch(request, method);
+            Watch(request, method, headers);
 
         }
 
@@ -1109,7 +1109,7 @@ namespace dotnet_etcd
                     RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
                 }
             };
-            Watch(request, methods);
+            Watch(request, methods, headers);
 
         }
 
@@ -1135,7 +1135,7 @@ namespace dotnet_etcd
                 };
                 requests.Add(request);
             }
-            Watch(requests.ToArray(), method);
+            Watch(requests.ToArray(), method, headers);
 
         }
 
@@ -1161,7 +1161,7 @@ namespace dotnet_etcd
                 };
                 requests.Add(request);
             }
-            Watch(requests.ToArray(), methods);
+            Watch(requests.ToArray(), methods, headers);
 
         }
 
@@ -1188,7 +1188,7 @@ namespace dotnet_etcd
                 };
                 requests.Add(request);
             }
-            Watch(requests.ToArray(), method);
+            Watch(requests.ToArray(), method, headers);
 
         }
 
@@ -1215,7 +1215,7 @@ namespace dotnet_etcd
                 };
                 requests.Add(request);
             }
-            Watch(requests.ToArray(), methods);
+            Watch(requests.ToArray(), methods, headers);
 
 
         }

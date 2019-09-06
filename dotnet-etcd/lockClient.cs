@@ -18,12 +18,12 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="name">is the identifier for the distributed shared lock to be acquired.</param>
         /// <returns></returns>
-        public LockResponse Lock(string name)
+        public LockResponse Lock(string name, Metadata headers = null)
         {
             return Lock(new LockRequest()
             {
                 Name = ByteString.CopyFromUtf8(name),
-            });
+            }, headers);
         }
 
         /// <summary>
@@ -68,12 +68,12 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="name">is the identifier for the distributed shared lock to be acquired.</param>
         /// <returns></returns>
-        public async Task<LockResponse> LockAsync(string name)
+        public async Task<LockResponse> LockAsync(string name, Metadata headers = null)
         {
             return await LockAsync(new LockRequest()
             {
                 Name = ByteString.CopyFromUtf8(name),
-            });
+            }, headers);
         }
 
         /// <summary>
@@ -115,12 +115,12 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">the lock ownership key granted by Lock.</param>
         /// <returns></returns>
-        public UnlockResponse Unlock(string key)
+        public UnlockResponse Unlock(string key, Metadata headers = null)
         {
             return Unlock(new UnlockRequest()
             {
                 Key = ByteString.CopyFromUtf8(key),
-            });
+            }, headers);
         }
 
         /// <summary>
@@ -159,12 +159,12 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">the lock ownership key granted by Lock.</param>
         /// <returns></returns>
-        public async Task<UnlockResponse> UnlockAsync(string key)
+        public async Task<UnlockResponse> UnlockAsync(string key, Metadata headers = null)
         {
             return await UnlockAsync(new UnlockRequest()
             {
                 Key = ByteString.CopyFromUtf8(key),
-            });
+            }, headers);
         }
 
         /// <summary>
