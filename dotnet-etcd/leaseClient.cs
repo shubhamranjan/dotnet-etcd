@@ -318,7 +318,7 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    response =  _balancer.GetConnection().leaseClient.LeaseTimeToLive(request, headers);
+                    response = _balancer.GetConnection().leaseClient.LeaseTimeToLive(request, headers);
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
