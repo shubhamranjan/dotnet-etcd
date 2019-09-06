@@ -133,10 +133,9 @@ namespace dotnet_etcd.multiplexer
 
         }
 
-        internal (Connection, int) GetConnection()
+        internal Connection GetConnection()
         {
-            int nextNodeIndex = GetNextNodeIndex();
-            return (_HealthyCluster.ElementAt(nextNodeIndex), nextNodeIndex);
+            return _HealthyCluster.ElementAt(GetNextNodeIndex());
         }
 
         internal Connection GetConnection(int index)
