@@ -38,9 +38,24 @@ namespace dotnet_etcd
         /// <returns></returns>
         public LockResponse Lock(LockRequest request, Metadata headers = null)
         {
-
-            return _balancer.GetConnection().lockClient.Lock(request, headers);
-
+            LockResponse response = new LockResponse();
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = _balancer.GetConnection().lockClient.Lock(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
+            return response;
         }
 
         /// <summary>
@@ -73,9 +88,24 @@ namespace dotnet_etcd
         /// <returns></returns>
         public async Task<LockResponse> LockAsync(LockRequest request, Metadata headers = null)
         {
-
-            return await _balancer.GetConnection().lockClient.LockAsync(request, headers);
-
+            LockResponse response = new LockResponse();
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = await _balancer.GetConnection().lockClient.LockAsync(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
+            return response;
         }
 
         /// <summary>
@@ -102,9 +132,24 @@ namespace dotnet_etcd
         /// <returns></returns>
         public UnlockResponse Unlock(UnlockRequest request, Metadata headers = null)
         {
-
-            return _balancer.GetConnection().lockClient.Unlock(request, headers);
-
+            UnlockResponse response = new UnlockResponse();
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = _balancer.GetConnection().lockClient.Unlock(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
+            return response;
         }
 
         /// <summary>
@@ -131,9 +176,24 @@ namespace dotnet_etcd
         /// <returns></returns>
         public async Task<UnlockResponse> UnlockAsync(UnlockRequest request, Metadata headers = null)
         {
-
-            return await _balancer.GetConnection().lockClient.UnlockAsync(request, headers);
-
+            UnlockResponse response = new UnlockResponse();
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = await _balancer.GetConnection().lockClient.UnlockAsync(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
+            return response;
         }
     }
 }
