@@ -16,9 +16,22 @@ namespace dotnet_etcd
         public AlarmResponse Alarm(AlarmRequest request, Metadata headers = null)
         {
             AlarmResponse response = new AlarmResponse();
-
-            response = _balancer.GetConnection().maintenanceClient.Alarm(request, headers);
-
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = _balancer.GetConnection().maintenanceClient.Alarm(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
             return response;
         }
 
@@ -30,9 +43,22 @@ namespace dotnet_etcd
         public async Task<AlarmResponse> AlarmAsync(AlarmRequest request, Metadata headers = null)
         {
             AlarmResponse response = new AlarmResponse();
-
-            response = await _balancer.GetConnection().maintenanceClient.AlarmAsync(request, headers);
-
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = await _balancer.GetConnection().maintenanceClient.AlarmAsync(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
             return response;
         }
 
@@ -44,9 +70,22 @@ namespace dotnet_etcd
         public StatusResponse Status(StatusRequest request, Metadata headers = null)
         {
             StatusResponse response = new StatusResponse();
-
-            response = _balancer.GetConnection().maintenanceClient.Status(request, headers);
-
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = _balancer.GetConnection().maintenanceClient.Status(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
             return response;
         }
 
@@ -58,9 +97,22 @@ namespace dotnet_etcd
         public async Task<StatusResponse> StatusASync(StatusRequest request, Metadata headers = null)
         {
             StatusResponse response = new StatusResponse();
-
-            response = await _balancer.GetConnection().maintenanceClient.StatusAsync(request, headers);
-
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = await _balancer.GetConnection().maintenanceClient.StatusAsync(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
             return response;
         }
 
@@ -72,9 +124,22 @@ namespace dotnet_etcd
         public DefragmentResponse Defragment(DefragmentRequest request, Metadata headers = null)
         {
             DefragmentResponse response = new DefragmentResponse();
-
-            response = _balancer.GetConnection().maintenanceClient.Defragment(request, headers);
-
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = _balancer.GetConnection().maintenanceClient.Defragment(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
             return response;
         }
 
@@ -86,9 +151,22 @@ namespace dotnet_etcd
         public async Task<DefragmentResponse> DefragmentAsync(DefragmentRequest request, Metadata headers = null)
         {
             DefragmentResponse response = new DefragmentResponse();
-
-            response = await _balancer.GetConnection().maintenanceClient.DefragmentAsync(request, headers);
-
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = await _balancer.GetConnection().maintenanceClient.DefragmentAsync(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
             return response;
         }
 
@@ -105,9 +183,22 @@ namespace dotnet_etcd
         public HashResponse Hash(HashRequest request, Metadata headers = null)
         {
             HashResponse response = new HashResponse();
-
-            response = _balancer.GetConnection().maintenanceClient.Hash(request, headers);
-
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = _balancer.GetConnection().maintenanceClient.Hash(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
             return response;
         }
 
@@ -124,9 +215,22 @@ namespace dotnet_etcd
         public async Task<HashResponse> HashAsync(HashRequest request, Metadata headers = null)
         {
             HashResponse response = new HashResponse();
-
-            response = await _balancer.GetConnection().maintenanceClient.HashAsync(request, headers);
-
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = await _balancer.GetConnection().maintenanceClient.HashAsync(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
             return response;
         }
 
@@ -139,9 +243,22 @@ namespace dotnet_etcd
         public HashKVResponse HashKV(HashKVRequest request, Metadata headers = null)
         {
             HashKVResponse response = new HashKVResponse();
-
-            response = _balancer.GetConnection().maintenanceClient.HashKV(request, headers);
-
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = _balancer.GetConnection().maintenanceClient.HashKV(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
             return response;
         }
 
@@ -154,9 +271,22 @@ namespace dotnet_etcd
         public async Task<HashKVResponse> HashKVAsync(HashKVRequest request, Metadata headers = null)
         {
             HashKVResponse response = new HashKVResponse();
-
-            response = await _balancer.GetConnection().maintenanceClient.HashKVAsync(request, headers);
-
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = await _balancer.GetConnection().maintenanceClient.HashKVAsync(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
             return response;
         }
 
@@ -168,19 +298,33 @@ namespace dotnet_etcd
         /// <param name="token"></param>
         public async void Snapshot(SnapshotRequest request, Action<SnapshotResponse> method, CancellationToken token, Metadata headers = null)
         {
-
-            using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _balancer.GetConnection().maintenanceClient.Snapshot(request, headers))
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
             {
-                Task snapshotTask = Task.Run(async () =>
+                try
                 {
-                    while (await snapshotter.ResponseStream.MoveNext(token))
+                    using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _balancer.GetConnection().maintenanceClient.Snapshot(request, headers))
                     {
-                        SnapshotResponse update = snapshotter.ResponseStream.Current;
-                        method(update);
-                    }
-                });
+                        Task snapshotTask = Task.Run(async () =>
+                        {
+                            while (await snapshotter.ResponseStream.MoveNext(token))
+                            {
+                                SnapshotResponse update = snapshotter.ResponseStream.Current;
+                                method(update);
+                            }
+                        });
 
-                await snapshotTask;
+                        await snapshotTask;
+                    }
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
             }
 
         }
@@ -194,22 +338,36 @@ namespace dotnet_etcd
         /// <param name="token"></param>
         public async void Snapshot(SnapshotRequest request, Action<SnapshotResponse>[] methods, CancellationToken token, Metadata headers = null)
         {
-
-            using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _balancer.GetConnection().maintenanceClient.Snapshot(request, headers))
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
             {
-                Task snapshotTask = Task.Run(async () =>
+                try
                 {
-                    while (await snapshotter.ResponseStream.MoveNext(token))
+                    using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _balancer.GetConnection().maintenanceClient.Snapshot(request, headers))
                     {
-                        SnapshotResponse update = snapshotter.ResponseStream.Current;
-                        foreach (Action<SnapshotResponse> method in methods)
+                        Task snapshotTask = Task.Run(async () =>
                         {
-                            method(update);
-                        }
-                    }
-                });
+                            while (await snapshotter.ResponseStream.MoveNext(token))
+                            {
+                                SnapshotResponse update = snapshotter.ResponseStream.Current;
+                                foreach (Action<SnapshotResponse> method in methods)
+                                {
+                                    method(update);
+                                }
+                            }
+                        });
 
-                await snapshotTask;
+                        await snapshotTask;
+                    }
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
             }
 
         }
@@ -222,9 +380,22 @@ namespace dotnet_etcd
         public MoveLeaderResponse MoveLeader(MoveLeaderRequest request, Metadata headers = null)
         {
             MoveLeaderResponse response = new MoveLeaderResponse();
-
-            response = _balancer.GetConnection().maintenanceClient.MoveLeader(request, headers);
-
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = _balancer.GetConnection().maintenanceClient.MoveLeader(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
             return response;
         }
 
@@ -236,9 +407,22 @@ namespace dotnet_etcd
         public async Task<MoveLeaderResponse> MoveLeaderAsync(MoveLeaderRequest request, Metadata headers = null)
         {
             MoveLeaderResponse response = new MoveLeaderResponse();
-
-            response = await _balancer.GetConnection().maintenanceClient.MoveLeaderAsync(request, headers);
-
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    response = await _balancer.GetConnection().maintenanceClient.MoveLeaderAsync(request, headers);
+                    success = true;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                        throw ex;
+                }
+            }
             return response;
         }
 
