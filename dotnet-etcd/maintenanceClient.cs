@@ -29,7 +29,9 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
                         throw ex;
+                    }
                 }
             }
             return response;
@@ -56,7 +58,9 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
                         throw ex;
+                    }
                 }
             }
             return response;
@@ -83,7 +87,9 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
                         throw ex;
+                    }
                 }
             }
             return response;
@@ -110,7 +116,9 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
                         throw ex;
+                    }
                 }
             }
             return response;
@@ -137,7 +145,9 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
                         throw ex;
+                    }
                 }
             }
             return response;
@@ -164,7 +174,9 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
                         throw ex;
+                    }
                 }
             }
             return response;
@@ -196,7 +208,9 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
                         throw ex;
+                    }
                 }
             }
             return response;
@@ -228,7 +242,9 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
                         throw ex;
+                    }
                 }
             }
             return response;
@@ -256,7 +272,9 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
                         throw ex;
+                    }
                 }
             }
             return response;
@@ -284,7 +302,9 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
                         throw ex;
+                    }
                 }
             }
             return response;
@@ -323,7 +343,9 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
                         throw ex;
+                    }
                 }
             }
 
@@ -366,7 +388,9 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
                         throw ex;
+                    }
                 }
             }
 
@@ -393,7 +417,9 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
                         throw ex;
+                    }
                 }
             }
             return response;
@@ -420,7 +446,9 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
                         throw ex;
+                    }
                 }
             }
             return response;
