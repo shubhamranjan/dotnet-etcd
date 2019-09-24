@@ -9,10 +9,13 @@ A C# .NET (dotnet) GRPC client for etcd v3+
 
 ## Supported .NET Versions
 
+* .NETCoreApp 3.0
 * .NETCoreApp 2.2
 * .NETCoreApp 2.1
 * .NETCoreApp 2.0
+* .NETStandard 2.1
 * .NETStandard 2.0
+* .NETFramework 4.8
 * .NETFramework 4.7.2
 * .NETFramework 4.7.1
 * .NETFramework 4.7
@@ -50,9 +53,9 @@ Add using statement at the top of your class file
 
 #### No Basic auth or SSL
     
-    EtcdClient client = new EtcdClient(<HOSTNAME_STRING>, <PORTNO_INT>);
+    EtcdClient client = new EtcdClient("host1:port1:,...., hostN:portN");
     // E.g.
-    EtcdClient client = new EtcdClient("127.0.0.1", 2379);
+    EtcdClient etcdClient = new EtcdClient("https://localhost:23790,https://localhost:23791,https://localhost:23792");
 
 #### Available Constructor Parameters
 
