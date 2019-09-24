@@ -3,8 +3,8 @@
 package etcdserverpb;
 
 
-import "kv.proto";
-import "auth.proto";
+import "grpc/proto/kv.proto";
+import "grpc/proto/auth.proto";
 
 
 service KV {

@@ -2,7 +2,7 @@
 
 package v3lockpb;
 
-import "rpc.proto";
+import "grpc/proto/rpc.proto";
 
 // The lock service exposes client-side locking facilities as a gRPC interface.
 service Lock {

@@ -3,8 +3,8 @@
 package v3electionpb;
 
 
-import "rpc.proto";
-import "kv.proto";
+import "grpc/proto/rpc.proto";
+import "grpc/proto/kv.proto";
 
 // The election service exposes client-side election facilities as a gRPC interface.
 service Election {
