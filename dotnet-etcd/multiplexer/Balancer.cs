@@ -14,8 +14,6 @@ namespace dotnet_etcd.multiplexer
 
         private HashSet<Connection> _UnHealthyCluster;
 
-        private Random _random;
-
         /// <summary>
         /// The username for etcd server for basic auth
         /// </summary>
@@ -88,7 +86,6 @@ namespace dotnet_etcd.multiplexer
 
             _HealthyCluster = new HashSet<Connection>();
             _UnHealthyCluster = new HashSet<Connection>();
-            _random = new Random(0);
 
             foreach (Uri node in nodes)
             {
