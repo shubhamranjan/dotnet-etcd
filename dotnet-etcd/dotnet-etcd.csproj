@@ -48,7 +48,7 @@ Advanced uses take advantage of the consistency guarantees to implement database
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.9.2" />
     <PackageReference Include="Grpc.Core" Version="2.24.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.23.0">
+    <PackageReference Include="Grpc.Tools" Version="2.24.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
