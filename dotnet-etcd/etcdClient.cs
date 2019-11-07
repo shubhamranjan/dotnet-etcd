@@ -14,15 +14,15 @@ namespace dotnet_etcd
     public partial class EtcdClient : IDisposable
     {
         #region Variables
+
         private readonly Balancer _balancer;
 
         #endregion
 
         #region Initializers
 
-
-
-        public EtcdClient(string connectionString, int port = 2379, string username = "", string password = "", string caCert = "", string clientCert = "", string clientKey = "", bool publicRootCa = false)
+        public EtcdClient(string connectionString, int port = 2379, string username = "", string password = "",
+            string caCert = "", string clientCert = "", string clientKey = "", bool publicRootCa = false)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
             {
@@ -30,7 +30,7 @@ namespace dotnet_etcd
             }
 
             string[] hosts;
-            
+
             if (connectionString.ToLowerInvariant().StartsWith("discovery-srv://"))
             {
                 // Expecting it to be discovery-srv://{domain}/{name}
@@ -40,7 +40,9 @@ namespace dotnet_etcd
                 Uri discoverySrv = new Uri(connectionString);
                 var client = new LookupClient {UseCache = true};
                 // SSL first ...
-                var serviceName = "/".Equals(discoverySrv.AbsolutePath) ? "" : $"-{discoverySrv.AbsolutePath.Substring(1, discoverySrv.AbsolutePath.Length - 1)}";
+                var serviceName = "/".Equals(discoverySrv.AbsolutePath)
+                    ? ""
+                    : $"-{discoverySrv.AbsolutePath.Substring(1, discoverySrv.AbsolutePath.Length - 1)}";
                 var result = client.Query($"_etcd-client-ssl{serviceName}._tcp.{discoverySrv.Host}", QueryType.SRV);
                 var scheme = "https";
                 if (result.HasError)
@@ -57,20 +59,22 @@ namespace dotnet_etcd
                 var results = result.Answers.OfType<SrvRecord>().OrderBy(a => a.Priority)
                     .ThenByDescending(a => a.Weight).ToList();
                 hosts = new string[results.Count];
-                for(int index = 0; index < results.Count; index++)
+                for (int index = 0; index < results.Count; index++)
                 {
                     var srvRecord = results[index];
-                    var additionalRecord = result.Additionals.FirstOrDefault(p => p.DomainName.Equals(srvRecord.Target));
+                    var additionalRecord =
+                        result.Additionals.FirstOrDefault(p => p.DomainName.Equals(srvRecord.Target));
                     var host = srvRecord.Target.Value;
-                    switch (additionalRecord)
+
+                    if (additionalRecord is ARecord aRecord)
                     {
-                        case ARecord aRecord:
-                            host = aRecord.Address.ToString();
-                            break;
-                        case CNameRecord cname:
-                            host = cname.CanonicalName;
-                            break;
+                        host = aRecord.Address.ToString();
                     }
+                    else if (additionalRecord is CNameRecord cname)
+                    {
+                        host = cname.CanonicalName;
+                    }
+
                     if (host.EndsWith("."))
                         host = host.Substring(0, host.Length - 1);
                     hosts[index] = $"{scheme}://{host}:{srvRecord.Port}";
@@ -80,7 +84,7 @@ namespace dotnet_etcd
             {
                 hosts = connectionString.Split(',');
             }
-            
+
             List<Uri> nodes = new List<Uri>();
 
             for (int i = 0; i < hosts.Length; i++)
@@ -92,14 +96,15 @@ namespace dotnet_etcd
                 }
 
                 nodes.Add(new Uri(host));
-
             }
 
             _balancer = new Balancer(nodes, username, password, caCert, clientCert, clientKey, publicRootCa);
         }
+
         #endregion
 
         #region IDisposable Support
+
         private bool _disposed = false; // To detect redundant calls
 
         protected virtual void Dispose(bool disposing)
@@ -126,7 +131,7 @@ namespace dotnet_etcd
             // TODO: uncomment the following line if the finalizer is overridden above.
             GC.SuppressFinalize(this);
         }
-        #endregion
 
+        #endregion
     }
 }
