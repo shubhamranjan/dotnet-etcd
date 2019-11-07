@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using dotnet_etcd.multiplexer;
-
+using DnsClient;
+using DnsClient.Protocol;
 
 namespace dotnet_etcd
 {
@@ -27,8 +29,58 @@ namespace dotnet_etcd
                 throw new Exception("etcd connection string is empty.");
             }
 
-            string[] hosts = connectionString.Split(',');
+            string[] hosts;
+            
+            if (connectionString.ToLowerInvariant().StartsWith("discovery-srv://"))
+            {
+                // Expecting it to be discovery-srv://{domain}/{name}
+                // Examples:
+                // discovery-srv://my-domain.local/ would expect entries for either _etcd-client-ssl._tcp.my-domain.local or _etcd-client._tcp.my-domain.local
+                // discovery-srv://my-domain.local/project1 would expect entries for either _etcd-client-ssl-project1._tcp.my-domain.local or _etcd-client-project1._tcp.my-domain.local
+                Uri discoverySrv = new Uri(connectionString);
+                var client = new LookupClient {UseCache = true};
+                // SSL first ...
+                var serviceName = "/".Equals(discoverySrv.AbsolutePath) ? "" : $"-{discoverySrv.AbsolutePath.Substring(1, discoverySrv.AbsolutePath.Length - 1)}";
+                var result = client.Query($"_etcd-client-ssl{serviceName}._tcp.{discoverySrv.Host}", QueryType.SRV);
+                var scheme = "https";
+                if (result.HasError)
+                {
+                    scheme = "http";
+                    // No SSL ...
+                    result = client.Query($"_etcd-client{serviceName}._tcp.{discoverySrv.Host}", QueryType.SRV);
+                    if (result.HasError)
+                    {
+                        throw new InvalidOperationException(result.ErrorMessage);
+                    }
+                }
 
+                var results = result.Answers.OfType<SrvRecord>().OrderBy(a => a.Priority)
+                    .ThenByDescending(a => a.Weight).ToList();
+                hosts = new string[results.Count];
+                for(int index = 0; index < results.Count; index++)
+                {
+                    var srvRecord = results[index];
+                    var additionalRecord = result.Additionals.FirstOrDefault(p => p.DomainName.Equals(srvRecord.Target));
+                    var host = srvRecord.Target.Value;
+                    switch (additionalRecord)
+                    {
+                        case ARecord aRecord:
+                            host = aRecord.Address.ToString();
+                            break;
+                        case CNameRecord cname:
+                            host = cname.CanonicalName;
+                            break;
+                    }
+                    if (host.EndsWith("."))
+                        host = host.Substring(0, host.Length - 1);
+                    hosts[index] = $"{scheme}://{host}:{srvRecord.Port}";
+                }
+            }
+            else
+            {
+                hosts = connectionString.Split(',');
+            }
+            
             List<Uri> nodes = new List<Uri>();
 
             for (int i = 0; i < hosts.Length; i++)
