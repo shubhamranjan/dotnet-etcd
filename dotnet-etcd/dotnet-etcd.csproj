@@ -10,9 +10,7 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryUrl>https://github.com/shubhamranjan/dotnet-etcd</RepositoryUrl>
     <PackageProjectUrl>https://github.com/shubhamranjan/dotnet-etcd</PackageProjectUrl>
-    <PackageReleaseNotes>1. Add dotnet core 3.0 support
-2. Update packages
-3. Add cluster support</PackageReleaseNotes>
+    <PackageReleaseNotes>1. Add support for discovery via DNSt</PackageReleaseNotes>
     <Authors>Shubham Ranjan</Authors>
     <Company />
     <Product />
@@ -27,7 +25,7 @@ Advanced uses take advantage of the consistency guarantees to implement database
     <PackageTags>etcd grpc etcdv3 etcd3</PackageTags>
     <SignAssembly>false</SignAssembly>
     <PackageIconUrl>https://raw.githubusercontent.com/shubhamranjan/dotnet-etcd/master/docs/img/etcd-logo-rectangle.png</PackageIconUrl>
-    <Version>3.0.0</Version>
+    <Version>3.1.0</Version>
     <AutoGenerateBindingRedirects>False</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
