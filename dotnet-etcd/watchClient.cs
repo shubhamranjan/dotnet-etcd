@@ -41,7 +41,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public async void Watch(WatchRequest request, Action<WatchResponse> method, Metadata headers = null)
+        public async void Watch(WatchRequest request, Action<WatchResponse> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -54,10 +54,24 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            while (await watcher.ResponseStream.MoveNext())
+                            try
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                method(update);
+                                while (await watcher.ResponseStream.MoveNext())
+                                {
+                                    WatchResponse update = watcher.ResponseStream.Current;
+                                    method(update);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                if (exceptionHandler != null)
+                                {
+                                    exceptionHandler(ex);
+                                }
+                                else
+                                {
+                                    throw ex;
+                                }
                             }
                         });
 
@@ -85,7 +99,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public async void Watch(WatchRequest request, Action<WatchResponse>[] methods, Metadata headers = null)
+        public async void Watch(WatchRequest request, Action<WatchResponse>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -98,14 +112,28 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            while (await watcher.ResponseStream.MoveNext())
+                            try
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                foreach (Action<WatchResponse> method in methods)
+                                while (await watcher.ResponseStream.MoveNext())
                                 {
-                                    method(update);
-                                }
+                                    WatchResponse update = watcher.ResponseStream.Current;
+                                    foreach (Action<WatchResponse> method in methods)
+                                    {
+                                        method(update);
+                                    }
 
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                if (exceptionHandler != null)
+                                {
+                                    exceptionHandler(ex);
+                                }
+                                else
+                                {
+                                    throw ex;
+                                }
                             }
                         });
 
@@ -133,7 +161,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public async void Watch(WatchRequest request, Action<WatchEvent[]> method, Metadata headers = null)
+        public async void Watch(WatchRequest request, Action<WatchEvent[]> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -146,19 +174,33 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            while (await watcher.ResponseStream.MoveNext())
+                            try
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                method(update.Events.Select(i =>
+                                while (await watcher.ResponseStream.MoveNext())
                                 {
-                                    return new WatchEvent
+                                    WatchResponse update = watcher.ResponseStream.Current;
+                                    method(update.Events.Select(i =>
                                     {
-                                        Key = i.Kv.Key.ToStringUtf8(),
-                                        Value = i.Kv.Value.ToStringUtf8(),
-                                        Type = i.Type
-                                    };
-                                }).ToArray()
-                                );
+                                        return new WatchEvent
+                                        {
+                                            Key = i.Kv.Key.ToStringUtf8(),
+                                            Value = i.Kv.Value.ToStringUtf8(),
+                                            Type = i.Type
+                                        };
+                                    }).ToArray()
+                                    );
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                if (exceptionHandler != null)
+                                {
+                                    exceptionHandler(ex);
+                                }
+                                else
+                                {
+                                    throw ex;
+                                }
                             }
                         });
 
@@ -186,7 +228,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public async void Watch(WatchRequest request, Action<WatchEvent[]>[] methods, Metadata headers = null)
+        public async void Watch(WatchRequest request, Action<WatchEvent[]>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -199,23 +241,37 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            while (await watcher.ResponseStream.MoveNext())
+                            try
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                foreach (Action<WatchEvent[]> method in methods)
+                                while (await watcher.ResponseStream.MoveNext())
                                 {
-                                    method(update.Events.Select(i =>
+                                    WatchResponse update = watcher.ResponseStream.Current;
+                                    foreach (Action<WatchEvent[]> method in methods)
                                     {
-                                        return new WatchEvent
+                                        method(update.Events.Select(i =>
                                         {
-                                            Key = i.Kv.Key.ToStringUtf8(),
-                                            Value = i.Kv.Value.ToStringUtf8(),
-                                            Type = i.Type
-                                        };
-                                    }).ToArray()
-                                   );
-                                }
+                                            return new WatchEvent
+                                            {
+                                                Key = i.Kv.Key.ToStringUtf8(),
+                                                Value = i.Kv.Value.ToStringUtf8(),
+                                                Type = i.Type
+                                            };
+                                        }).ToArray()
+                                       );
+                                    }
 
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                if (exceptionHandler != null)
+                                {
+                                    exceptionHandler(ex);
+                                }
+                                else
+                                {
+                                    throw ex;
+                                }
                             }
                         });
 
@@ -244,7 +300,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Requests containing keys to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public async void Watch(WatchRequest[] requests, Action<WatchResponse> method, Metadata headers = null)
+        public async void Watch(WatchRequest[] requests, Action<WatchResponse> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -257,10 +313,24 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            while (await watcher.ResponseStream.MoveNext())
+                            try
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                method(update);
+                                while (await watcher.ResponseStream.MoveNext())
+                                {
+                                    WatchResponse update = watcher.ResponseStream.Current;
+                                    method(update);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                if (exceptionHandler != null)
+                                {
+                                    exceptionHandler(ex);
+                                }
+                                else
+                                {
+                                    throw ex;
+                                }
                             }
                         });
 
@@ -293,7 +363,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Requests containing keys to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public async void Watch(WatchRequest[] requests, Action<WatchResponse>[] methods, Metadata headers = null)
+        public async void Watch(WatchRequest[] requests, Action<WatchResponse>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -306,14 +376,28 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            while (await watcher.ResponseStream.MoveNext())
+                            try
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                foreach (Action<WatchResponse> method in methods)
+                                while (await watcher.ResponseStream.MoveNext())
                                 {
-                                    method(update);
-                                }
+                                    WatchResponse update = watcher.ResponseStream.Current;
+                                    foreach (Action<WatchResponse> method in methods)
+                                    {
+                                        method(update);
+                                    }
 
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                if (exceptionHandler != null)
+                                {
+                                    exceptionHandler(ex);
+                                }
+                                else
+                                {
+                                    throw ex;
+                                }
                             }
                         });
 
@@ -345,7 +429,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Requests containing keys to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public async void Watch(WatchRequest[] requests, Action<WatchEvent[]> method, Metadata headers = null)
+        public async void Watch(WatchRequest[] requests, Action<WatchEvent[]> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -358,19 +442,33 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            while (await watcher.ResponseStream.MoveNext())
+                            try
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                method(update.Events.Select(i =>
+                                while (await watcher.ResponseStream.MoveNext())
                                 {
-                                    return new WatchEvent
+                                    WatchResponse update = watcher.ResponseStream.Current;
+                                    method(update.Events.Select(i =>
                                     {
-                                        Key = i.Kv.Key.ToStringUtf8(),
-                                        Value = i.Kv.Value.ToStringUtf8(),
-                                        Type = i.Type
-                                    };
-                                }).ToArray()
-                                );
+                                        return new WatchEvent
+                                        {
+                                            Key = i.Kv.Key.ToStringUtf8(),
+                                            Value = i.Kv.Value.ToStringUtf8(),
+                                            Type = i.Type
+                                        };
+                                    }).ToArray()
+                                    );
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                if (exceptionHandler != null)
+                                {
+                                    exceptionHandler(ex);
+                                }
+                                else
+                                {
+                                    throw ex;
+                                }
                             }
                         });
 
@@ -402,7 +500,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Request containing keys to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public async void Watch(WatchRequest[] requests, Action<WatchEvent[]>[] methods, Metadata headers = null)
+        public async void Watch(WatchRequest[] requests, Action<WatchEvent[]>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
             bool success = false;
             int retryCount = 0;
@@ -414,23 +512,37 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            while (await watcher.ResponseStream.MoveNext())
+                            try
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                foreach (Action<WatchEvent[]> method in methods)
+                                while (await watcher.ResponseStream.MoveNext())
                                 {
-                                    method(update.Events.Select(i =>
+                                    WatchResponse update = watcher.ResponseStream.Current;
+                                    foreach (Action<WatchEvent[]> method in methods)
                                     {
-                                        return new WatchEvent
+                                        method(update.Events.Select(i =>
                                         {
-                                            Key = i.Kv.Key.ToStringUtf8(),
-                                            Value = i.Kv.Value.ToStringUtf8(),
-                                            Type = i.Type
-                                        };
-                                    }).ToArray()
-                                   );
-                                }
+                                            return new WatchEvent
+                                            {
+                                                Key = i.Kv.Key.ToStringUtf8(),
+                                                Value = i.Kv.Value.ToStringUtf8(),
+                                                Type = i.Type
+                                            };
+                                        }).ToArray()
+                                       );
+                                    }
 
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                if (exceptionHandler != null)
+                                {
+                                    exceptionHandler(ex);
+                                }
+                                else
+                                {
+                                    throw ex;
+                                }
                             }
                         });
 
@@ -461,7 +573,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public void Watch(string key, Action<WatchResponse> method, Metadata headers = null)
+        public void Watch(string key, Action<WatchResponse> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 
@@ -472,7 +584,7 @@ namespace dotnet_etcd
                     Key = ByteString.CopyFromUtf8(key)
                 }
             };
-            Watch(request, method, headers);
+            Watch(request, method, headers, exceptionHandler);
 
         }
 
@@ -481,7 +593,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public void Watch(string key, Action<WatchResponse>[] methods, Metadata headers = null)
+        public void Watch(string key, Action<WatchResponse>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             WatchRequest request = new WatchRequest()
@@ -491,7 +603,7 @@ namespace dotnet_etcd
                     Key = ByteString.CopyFromUtf8(key)
                 }
             };
-            Watch(request, methods, headers);
+            Watch(request, methods, headers, exceptionHandler);
 
         }
 
@@ -500,7 +612,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public void Watch(string key, Action<WatchEvent[]> method, Metadata headers = null)
+        public void Watch(string key, Action<WatchEvent[]> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 
@@ -511,7 +623,7 @@ namespace dotnet_etcd
                     Key = ByteString.CopyFromUtf8(key)
                 }
             };
-            Watch(request, method, headers);
+            Watch(request, method, headers, exceptionHandler);
 
         }
 
@@ -520,7 +632,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public void Watch(string key, Action<WatchEvent[]>[] methods, Metadata headers = null)
+        public void Watch(string key, Action<WatchEvent[]>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 
@@ -531,7 +643,7 @@ namespace dotnet_etcd
                     Key = ByteString.CopyFromUtf8(key)
                 }
             };
-            Watch(request, methods, headers);
+            Watch(request, methods, headers, exceptionHandler);
 
         }
 
@@ -540,7 +652,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public void Watch(string[] keys, Action<WatchResponse> method, Metadata headers = null)
+        public void Watch(string[] keys, Action<WatchResponse> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             List<WatchRequest> requests = new List<WatchRequest>();
@@ -556,7 +668,7 @@ namespace dotnet_etcd
                 };
                 requests.Add(request);
             }
-            Watch(requests.ToArray(), method, headers);
+            Watch(requests.ToArray(), method, headers, exceptionHandler);
 
         }
 
@@ -565,7 +677,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public void Watch(string[] keys, Action<WatchResponse>[] methods, Metadata headers = null)
+        public void Watch(string[] keys, Action<WatchResponse>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             List<WatchRequest> requests = new List<WatchRequest>();
@@ -581,7 +693,7 @@ namespace dotnet_etcd
                 };
                 requests.Add(request);
             }
-            Watch(requests.ToArray(), methods, headers);
+            Watch(requests.ToArray(), methods, headers, exceptionHandler);
 
         }
 
@@ -590,7 +702,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public void Watch(string[] keys, Action<WatchEvent[]> method, Metadata headers = null)
+        public void Watch(string[] keys, Action<WatchEvent[]> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 
@@ -607,7 +719,7 @@ namespace dotnet_etcd
                 };
                 requests.Add(request);
             }
-            Watch(requests.ToArray(), method, headers);
+            Watch(requests.ToArray(), method, headers, exceptionHandler);
 
         }
 
@@ -616,7 +728,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public void Watch(string[] keys, Action<WatchEvent[]>[] methods, Metadata headers = null)
+        public void Watch(string[] keys, Action<WatchEvent[]>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 
@@ -633,7 +745,7 @@ namespace dotnet_etcd
                 };
                 requests.Add(request);
             }
-            Watch(requests.ToArray(), methods, headers);
+            Watch(requests.ToArray(), methods, headers, exceptionHandler);
 
 
         }
@@ -646,7 +758,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public async void WatchRange(WatchRequest request, Action<WatchResponse> method, Metadata headers = null)
+        public async void WatchRange(WatchRequest request, Action<WatchResponse> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -659,10 +771,24 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            while (await watcher.ResponseStream.MoveNext())
+                            try
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                method(update);
+                                while (await watcher.ResponseStream.MoveNext())
+                                {
+                                    WatchResponse update = watcher.ResponseStream.Current;
+                                    method(update);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                if (exceptionHandler != null)
+                                {
+                                    exceptionHandler(ex);
+                                }
+                                else
+                                {
+                                    throw ex;
+                                }
                             }
                         });
 
@@ -690,7 +816,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public async void WatchRange(WatchRequest request, Action<WatchResponse>[] methods, Metadata headers = null)
+        public async void WatchRange(WatchRequest request, Action<WatchResponse>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -703,14 +829,28 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            while (await watcher.ResponseStream.MoveNext())
+                            try
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                foreach (Action<WatchResponse> method in methods)
+                                while (await watcher.ResponseStream.MoveNext())
                                 {
-                                    method(update);
-                                }
+                                    WatchResponse update = watcher.ResponseStream.Current;
+                                    foreach (Action<WatchResponse> method in methods)
+                                    {
+                                        method(update);
+                                    }
 
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                if (exceptionHandler != null)
+                                {
+                                    exceptionHandler(ex);
+                                }
+                                else
+                                {
+                                    throw ex;
+                                }
                             }
                         });
 
@@ -738,7 +878,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public async void WatchRange(WatchRequest request, Action<WatchEvent[]> method, Metadata headers = null)
+        public async void WatchRange(WatchRequest request, Action<WatchEvent[]> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -751,19 +891,33 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            while (await watcher.ResponseStream.MoveNext())
+                            try
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                method(update.Events.Select(i =>
+                                while (await watcher.ResponseStream.MoveNext())
                                 {
-                                    return new WatchEvent
+                                    WatchResponse update = watcher.ResponseStream.Current;
+                                    method(update.Events.Select(i =>
                                     {
-                                        Key = i.Kv.Key.ToStringUtf8(),
-                                        Value = i.Kv.Value.ToStringUtf8(),
-                                        Type = i.Type
-                                    };
-                                }).ToArray()
-                                );
+                                        return new WatchEvent
+                                        {
+                                            Key = i.Kv.Key.ToStringUtf8(),
+                                            Value = i.Kv.Value.ToStringUtf8(),
+                                            Type = i.Type
+                                        };
+                                    }).ToArray()
+                                    );
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                if (exceptionHandler != null)
+                                {
+                                    exceptionHandler(ex);
+                                }
+                                else
+                                {
+                                    throw ex;
+                                }
                             }
                         });
 
@@ -791,7 +945,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public async void WatchRange(WatchRequest request, Action<WatchEvent[]>[] methods, Metadata headers = null)
+        public async void WatchRange(WatchRequest request, Action<WatchEvent[]>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -804,23 +958,37 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            while (await watcher.ResponseStream.MoveNext())
+                            try
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                foreach (Action<WatchEvent[]> method in methods)
+                                while (await watcher.ResponseStream.MoveNext())
                                 {
-                                    method(update.Events.Select(i =>
+                                    WatchResponse update = watcher.ResponseStream.Current;
+                                    foreach (Action<WatchEvent[]> method in methods)
                                     {
-                                        return new WatchEvent
+                                        method(update.Events.Select(i =>
                                         {
-                                            Key = i.Kv.Key.ToStringUtf8(),
-                                            Value = i.Kv.Value.ToStringUtf8(),
-                                            Type = i.Type
-                                        };
-                                    }).ToArray()
-                                   );
-                                }
+                                            return new WatchEvent
+                                            {
+                                                Key = i.Kv.Key.ToStringUtf8(),
+                                                Value = i.Kv.Value.ToStringUtf8(),
+                                                Type = i.Type
+                                            };
+                                        }).ToArray()
+                                       );
+                                    }
 
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                if (exceptionHandler != null)
+                                {
+                                    exceptionHandler(ex);
+                                }
+                                else
+                                {
+                                    throw ex;
+                                }
                             }
                         });
 
@@ -848,7 +1016,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Requests containing keys to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public async void WatchRange(WatchRequest[] requests, Action<WatchResponse> method, Metadata headers = null)
+        public async void WatchRange(WatchRequest[] requests, Action<WatchResponse> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -861,10 +1029,24 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            while (await watcher.ResponseStream.MoveNext())
+                            try
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                method(update);
+                                while (await watcher.ResponseStream.MoveNext())
+                                {
+                                    WatchResponse update = watcher.ResponseStream.Current;
+                                    method(update);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                if (exceptionHandler != null)
+                                {
+                                    exceptionHandler(ex);
+                                }
+                                else
+                                {
+                                    throw ex;
+                                }
                             }
                         });
 
@@ -896,7 +1078,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Requests containing keys to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public async void WatchRange(WatchRequest[] requests, Action<WatchResponse>[] methods, Metadata headers = null)
+        public async void WatchRange(WatchRequest[] requests, Action<WatchResponse>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -909,14 +1091,30 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            while (await watcher.ResponseStream.MoveNext())
+                            try
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                foreach (Action<WatchResponse> method in methods)
-                                {
-                                    method(update);
-                                }
 
+
+                                while (await watcher.ResponseStream.MoveNext())
+                                {
+                                    WatchResponse update = watcher.ResponseStream.Current;
+                                    foreach (Action<WatchResponse> method in methods)
+                                    {
+                                        method(update);
+                                    }
+
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                if (exceptionHandler != null)
+                                {
+                                    exceptionHandler(ex);
+                                }
+                                else
+                                {
+                                    throw ex;
+                                }
                             }
                         });
 
@@ -948,7 +1146,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Requests containing keys to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public async void WatchRange(WatchRequest[] requests, Action<WatchEvent[]> method, Metadata headers = null)
+        public async void WatchRange(WatchRequest[] requests, Action<WatchEvent[]> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -961,19 +1159,33 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            while (await watcher.ResponseStream.MoveNext())
+                            try
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                method(update.Events.Select(i =>
+                                while (await watcher.ResponseStream.MoveNext())
                                 {
-                                    return new WatchEvent
+                                    WatchResponse update = watcher.ResponseStream.Current;
+                                    method(update.Events.Select(i =>
                                     {
-                                        Key = i.Kv.Key.ToStringUtf8(),
-                                        Value = i.Kv.Value.ToStringUtf8(),
-                                        Type = i.Type
-                                    };
-                                }).ToArray()
-                                );
+                                        return new WatchEvent
+                                        {
+                                            Key = i.Kv.Key.ToStringUtf8(),
+                                            Value = i.Kv.Value.ToStringUtf8(),
+                                            Type = i.Type
+                                        };
+                                    }).ToArray()
+                                    );
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                if (exceptionHandler != null)
+                                {
+                                    exceptionHandler(ex);
+                                }
+                                else
+                                {
+                                    throw ex;
+                                }
                             }
                         });
 
@@ -1005,7 +1217,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Request containing keys to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public async void WatchRange(WatchRequest[] requests, Action<WatchEvent[]>[] methods, Metadata headers = null)
+        public async void WatchRange(WatchRequest[] requests, Action<WatchEvent[]>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -1018,23 +1230,37 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            while (await watcher.ResponseStream.MoveNext())
+                            try
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                foreach (Action<WatchEvent[]> method in methods)
+                                while (await watcher.ResponseStream.MoveNext())
                                 {
-                                    method(update.Events.Select(i =>
+                                    WatchResponse update = watcher.ResponseStream.Current;
+                                    foreach (Action<WatchEvent[]> method in methods)
                                     {
-                                        return new WatchEvent
+                                        method(update.Events.Select(i =>
                                         {
-                                            Key = i.Kv.Key.ToStringUtf8(),
-                                            Value = i.Kv.Value.ToStringUtf8(),
-                                            Type = i.Type
-                                        };
-                                    }).ToArray()
-                                   );
-                                }
+                                            return new WatchEvent
+                                            {
+                                                Key = i.Kv.Key.ToStringUtf8(),
+                                                Value = i.Kv.Value.ToStringUtf8(),
+                                                Type = i.Type
+                                            };
+                                        }).ToArray()
+                                       );
+                                    }
 
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                if (exceptionHandler != null)
+                                {
+                                    exceptionHandler(ex);
+                                }
+                                else
+                                {
+                                    throw ex;
+                                }
                             }
                         });
 
@@ -1065,7 +1291,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public void WatchRange(string path, Action<WatchResponse> method, Metadata headers = null)
+        public void WatchRange(string path, Action<WatchResponse> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 
@@ -1077,7 +1303,7 @@ namespace dotnet_etcd
                     RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
                 }
             };
-            Watch(request, method, headers);
+            Watch(request, method, headers, exceptionHandler);
 
         }
 
@@ -1086,7 +1312,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public void WatchRange(string path, Action<WatchResponse>[] methods, Metadata headers = null)
+        public void WatchRange(string path, Action<WatchResponse>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 
@@ -1098,7 +1324,7 @@ namespace dotnet_etcd
                     RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
                 }
             };
-            Watch(request, methods, headers);
+            Watch(request, methods, headers, exceptionHandler);
 
 
         }
@@ -1108,7 +1334,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public void WatchRange(string path, Action<WatchEvent[]> method, Metadata headers = null)
+        public void WatchRange(string path, Action<WatchEvent[]> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 
@@ -1120,7 +1346,7 @@ namespace dotnet_etcd
                     RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
                 }
             };
-            Watch(request, method, headers);
+            Watch(request, method, headers, exceptionHandler);
 
         }
 
@@ -1129,7 +1355,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public void WatchRange(string path, Action<WatchEvent[]>[] methods, Metadata headers = null)
+        public void WatchRange(string path, Action<WatchEvent[]>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 
@@ -1141,7 +1367,7 @@ namespace dotnet_etcd
                     RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
                 }
             };
-            Watch(request, methods, headers);
+            Watch(request, methods, headers, exceptionHandler);
 
         }
 
@@ -1150,7 +1376,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public void WatchRange(string[] paths, Action<WatchResponse> method, Metadata headers = null)
+        public void WatchRange(string[] paths, Action<WatchResponse> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             List<WatchRequest> requests = new List<WatchRequest>();
@@ -1167,7 +1393,7 @@ namespace dotnet_etcd
                 };
                 requests.Add(request);
             }
-            Watch(requests.ToArray(), method, headers);
+            Watch(requests.ToArray(), method, headers, exceptionHandler);
 
         }
 
@@ -1176,7 +1402,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public void WatchRange(string[] paths, Action<WatchResponse>[] methods, Metadata headers = null)
+        public void WatchRange(string[] paths, Action<WatchResponse>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             List<WatchRequest> requests = new List<WatchRequest>();
@@ -1193,7 +1419,7 @@ namespace dotnet_etcd
                 };
                 requests.Add(request);
             }
-            Watch(requests.ToArray(), methods, headers);
+            Watch(requests.ToArray(), methods, headers, exceptionHandler);
 
         }
 
@@ -1202,7 +1428,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public void WatchRange(string[] paths, Action<WatchEvent[]> method, Metadata headers = null)
+        public void WatchRange(string[] paths, Action<WatchEvent[]> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 
@@ -1220,7 +1446,7 @@ namespace dotnet_etcd
                 };
                 requests.Add(request);
             }
-            Watch(requests.ToArray(), method, headers);
+            Watch(requests.ToArray(), method, headers, exceptionHandler);
 
         }
 
@@ -1229,7 +1455,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public void WatchRange(string[] paths, Action<WatchEvent[]>[] methods, Metadata headers = null)
+        public void WatchRange(string[] paths, Action<WatchEvent[]>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 
@@ -1247,7 +1473,7 @@ namespace dotnet_etcd
                 };
                 requests.Add(request);
             }
-            Watch(requests.ToArray(), methods, headers);
+            Watch(requests.ToArray(), methods, headers, exceptionHandler);
 
 
         }
