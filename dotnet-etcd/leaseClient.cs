@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Etcdserverpb;
+
 using Grpc.Core;
 
 namespace dotnet_etcd
@@ -15,7 +17,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public LeaseGrantResponse LeaseGrant(LeaseGrantRequest request, Metadata headers = null)
+        public LeaseGrantResponse LeaseGrant(LeaseGrantRequest request, Grpc.Core.Metadata headers = null)
         {
             LeaseGrantResponse response = new LeaseGrantResponse();
             bool success = false;
@@ -46,7 +48,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<LeaseGrantResponse> LeaseGrantAsync(LeaseGrantRequest request, Metadata headers = null)
+        public async Task<LeaseGrantResponse> LeaseGrantAsync(LeaseGrantRequest request, Grpc.Core.Metadata headers = null)
         {
             LeaseGrantResponse response = new LeaseGrantResponse();
             bool success = false;
@@ -75,7 +77,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public LeaseRevokeResponse LeaseRevoke(LeaseRevokeRequest request, Metadata headers = null)
+        public LeaseRevokeResponse LeaseRevoke(LeaseRevokeRequest request, Grpc.Core.Metadata headers = null)
         {
             LeaseRevokeResponse response = new LeaseRevokeResponse();
             bool success = false;
@@ -104,7 +106,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<LeaseRevokeResponse> LeaseRevokeAsync(LeaseRevokeRequest request, Metadata headers = null)
+        public async Task<LeaseRevokeResponse> LeaseRevokeAsync(LeaseRevokeRequest request, Grpc.Core.Metadata headers = null)
         {
             LeaseRevokeResponse response = new LeaseRevokeResponse();
             bool success = false;
@@ -136,7 +138,7 @@ namespace dotnet_etcd
         /// <param name="request"></param>
         /// <param name="method"></param>
         /// <param name="token"></param>
-        public async void LeaseKeepAlive(LeaseKeepAliveRequest request, Action<LeaseKeepAliveResponse> method, CancellationToken token, Metadata headers = null)
+        public async void LeaseKeepAlive(LeaseKeepAliveRequest request, Action<LeaseKeepAliveResponse> method, CancellationToken token, Grpc.Core.Metadata headers = null)
         {
             bool success = false;
             int retryCount = 0;
@@ -180,7 +182,7 @@ namespace dotnet_etcd
         /// <param name="request"></param>
         /// <param name="methods"></param>
         /// <param name="token"></param>
-        public async void LeaseKeepAlive(LeaseKeepAliveRequest request, Action<LeaseKeepAliveResponse>[] methods, CancellationToken token, Metadata headers = null)
+        public async void LeaseKeepAlive(LeaseKeepAliveRequest request, Action<LeaseKeepAliveResponse>[] methods, CancellationToken token, Grpc.Core.Metadata headers = null)
         {
 
             bool success = false;
@@ -230,7 +232,7 @@ namespace dotnet_etcd
         /// <param name="requests"></param>
         /// <param name="method"></param>
         /// <param name="token"></param>
-        public async void LeaseKeepAlive(LeaseKeepAliveRequest[] requests, Action<LeaseKeepAliveResponse> method, CancellationToken token, Metadata headers = null)
+        public async void LeaseKeepAlive(LeaseKeepAliveRequest[] requests, Action<LeaseKeepAliveResponse> method, CancellationToken token, Grpc.Core.Metadata headers = null)
         {
             bool success = false;
             int retryCount = 0;
@@ -280,7 +282,7 @@ namespace dotnet_etcd
         /// <param name="requests"></param>
         /// <param name="methods"></param>
         /// <param name="token"></param>
-        public async void LeaseKeepAlive(LeaseKeepAliveRequest[] requests, Action<LeaseKeepAliveResponse>[] methods, CancellationToken token, Metadata headers = null)
+        public async void LeaseKeepAlive(LeaseKeepAliveRequest[] requests, Action<LeaseKeepAliveResponse>[] methods, CancellationToken token, Grpc.Core.Metadata headers = null)
         {
             bool success = false;
             int retryCount = 0;
@@ -325,7 +327,7 @@ namespace dotnet_etcd
 
         }
 
-        public LeaseTimeToLiveResponse LeaseTimeToLive(LeaseTimeToLiveRequest request, Metadata headers = null)
+        public LeaseTimeToLiveResponse LeaseTimeToLive(LeaseTimeToLiveRequest request, Grpc.Core.Metadata headers = null)
         {
             LeaseTimeToLiveResponse response = new LeaseTimeToLiveResponse();
             bool success = false;
@@ -349,7 +351,7 @@ namespace dotnet_etcd
             return response;
         }
 
-        public async Task<LeaseTimeToLiveResponse> LeaseTimeToLiveAsync(LeaseTimeToLiveRequest request, Metadata headers = null)
+        public async Task<LeaseTimeToLiveResponse> LeaseTimeToLiveAsync(LeaseTimeToLiveRequest request, Grpc.Core.Metadata headers = null)
         {
             LeaseTimeToLiveResponse response = new LeaseTimeToLiveResponse();
             bool success = false;

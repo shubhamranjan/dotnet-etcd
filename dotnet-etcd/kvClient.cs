@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using Etcdserverpb;
+
 using Google.Protobuf;
+
 using Grpc.Core;
 
 namespace dotnet_etcd
@@ -15,7 +18,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns>The etcd response for the specified request</returns>
-        public RangeResponse Get(RangeRequest request, Metadata headers = null)
+        public RangeResponse Get(RangeRequest request, Grpc.Core.Metadata headers = null)
         {
             RangeResponse rangeResponse = new RangeResponse();
             bool success = false;
@@ -45,17 +48,12 @@ namespace dotnet_etcd
         /// </summary>
         /// <returns>The etcd response for the specified key</returns>
         /// <param name="key">Key for which value need to be fetched</param>
-        public RangeResponse Get(string key, Metadata headers = null)
+        public RangeResponse Get(string key, Grpc.Core.Metadata headers = null)
         {
-            RangeResponse rangeResponse = new RangeResponse();
-
-            rangeResponse = Get(new RangeRequest
+            return Get(new RangeRequest
             {
                 Key = ByteString.CopyFromUtf8(key)
             }, headers);
-
-
-            return rangeResponse;
         }
 
         /// <summary>
@@ -63,7 +61,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns>The etcd response for the specified request</returns>
-        public async Task<RangeResponse> GetAsync(RangeRequest request, Metadata headers = null)
+        public async Task<RangeResponse> GetAsync(RangeRequest request, Grpc.Core.Metadata headers = null)
         {
             RangeResponse rangeResponse = new RangeResponse();
             bool success = false;
@@ -93,17 +91,12 @@ namespace dotnet_etcd
         /// </summary>
         /// <returns>The etcd response for the specified key</returns>
         /// <param name="key">Key for which value need to be fetched</param>
-        public async Task<RangeResponse> GetAsync(string key, Metadata headers = null)
+        public async Task<RangeResponse> GetAsync(string key, Grpc.Core.Metadata headers = null)
         {
-            RangeResponse rangeResponse = new RangeResponse();
-
-            rangeResponse = await GetAsync(new RangeRequest
+            return await GetAsync(new RangeRequest
             {
                 Key = ByteString.CopyFromUtf8(key)
             }, headers);
-
-
-            return rangeResponse;
         }
 
         /// <summary>
@@ -111,12 +104,9 @@ namespace dotnet_etcd
         /// </summary>
         /// <returns>The value for the specified key</returns>
         /// <param name="key">Key for which value need to be fetched</param>
-        public string GetVal(string key, Metadata headers = null)
+        public string GetVal(string key, Grpc.Core.Metadata headers = null)
         {
-            RangeResponse rangeResponse = new RangeResponse();
-
-            rangeResponse = Get(key, headers);
-
+            RangeResponse rangeResponse = Get(key, headers);
 
             return rangeResponse.Count != 0 ? rangeResponse.Kvs[0].Value.ToStringUtf8().Trim() : string.Empty;
         }
@@ -126,12 +116,9 @@ namespace dotnet_etcd
         /// </summary>
         /// <returns>The value for the specified key</returns>
         /// <param name="key">Key for which value need to be fetched</param>
-        public async Task<string> GetValAsync(string key, Metadata headers = null)
+        public async Task<string> GetValAsync(string key, Grpc.Core.Metadata headers = null)
         {
-            RangeResponse rangeResponse = new RangeResponse();
-
-            rangeResponse = await GetAsync(key, headers);
-
+            RangeResponse rangeResponse = await GetAsync(key, headers);
 
             return rangeResponse.Count != 0 ? rangeResponse.Kvs[0].Value.ToStringUtf8().Trim() : string.Empty;
         }
@@ -141,21 +128,16 @@ namespace dotnet_etcd
         /// </summary>
         /// <returns>RangeResponse containing range of key-values</returns>
         /// <param name="prefixKey">Prefix key</param>
-        public RangeResponse GetRange(string prefixKey, Metadata headers = null)
+        public RangeResponse GetRange(string prefixKey, Grpc.Core.Metadata headers = null)
         {
-            RangeResponse rangeResponse = new RangeResponse();
-
             string rangeEnd = GetRangeEnd(prefixKey);
 
-            rangeResponse = Get(new RangeRequest
+            return Get(new RangeRequest
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
                 RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
             }, headers);
 
-
-
-            return rangeResponse;
         }
 
         /// <summary>
@@ -163,19 +145,16 @@ namespace dotnet_etcd
         /// </summary>
         /// <returns>RangeResponse containing range of key-values</returns>
         /// <param name="prefixKey">Prefix key</param>
-        public async Task<RangeResponse> GetRangeAsync(string prefixKey, Metadata headers = null)
+        public async Task<RangeResponse> GetRangeAsync(string prefixKey, Grpc.Core.Metadata headers = null)
         {
-            RangeResponse rangeResponse = new RangeResponse();
 
             string rangeEnd = GetRangeEnd(prefixKey);
 
-            rangeResponse = await GetAsync(new RangeRequest
+            return await GetAsync(new RangeRequest
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
                 RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
             }, headers);
-
-            return rangeResponse;
         }
 
         /// <summary>
@@ -183,21 +162,16 @@ namespace dotnet_etcd
         /// </summary>
         /// <returns>Dictionary containing range of key-values</returns>
         /// <param name="prefixKey">Prefix key</param>
-        public IDictionary<string, string> GetRangeVal(string prefixKey, Metadata headers = null)
+        public IDictionary<string, string> GetRangeVal(string prefixKey, Grpc.Core.Metadata headers = null)
         {
-            RangeResponse rangeResponse = new RangeResponse();
 
             string rangeEnd = GetRangeEnd(prefixKey);
 
-            rangeResponse = Get(new RangeRequest
+            return RangeRespondToDictionary(Get(new RangeRequest
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
                 RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
-            }, headers);
-
-
-
-            return RangeRespondToDictionary(rangeResponse);
+            }, headers));
         }
 
         /// <summary>
@@ -205,20 +179,16 @@ namespace dotnet_etcd
         /// </summary>
         /// <returns>Dictionary containing range of key-values</returns>
         /// <param name="prefixKey">Prefix key</param>
-        public async Task<IDictionary<string, string>> GetRangeValAsync(string prefixKey, Metadata headers = null)
+        public async Task<IDictionary<string, string>> GetRangeValAsync(string prefixKey, Grpc.Core.Metadata headers = null)
         {
-            RangeResponse rangeResponse = new RangeResponse();
 
             string rangeEnd = GetRangeEnd(prefixKey);
 
-            rangeResponse = await GetAsync(new RangeRequest
+            return RangeRespondToDictionary(await GetAsync(new RangeRequest
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
                 RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
-            }, headers);
-
-
-            return RangeRespondToDictionary(rangeResponse);
+            }, headers));
         }
 
         /// <summary>
@@ -226,7 +196,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public PutResponse Put(PutRequest request, Metadata headers = null)
+        public PutResponse Put(PutRequest request, Grpc.Core.Metadata headers = null)
         {
             PutResponse response = new PutResponse();
             bool success = false;
@@ -256,7 +226,7 @@ namespace dotnet_etcd
         /// <param name="key">Key for which value need to be set</param>
         /// <param name="val">Value corresponding the key</param>
         /// <returns></returns>
-        public PutResponse Put(string key, string val, Metadata headers = null)
+        public PutResponse Put(string key, string val, Grpc.Core.Metadata headers = null)
         {
 
             return Put(new PutRequest
@@ -272,7 +242,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<PutResponse> PutAsync(PutRequest request, Metadata headers = null)
+        public async Task<PutResponse> PutAsync(PutRequest request, Grpc.Core.Metadata headers = null)
         {
             PutResponse response = new PutResponse();
             bool success = false;
@@ -303,7 +273,7 @@ namespace dotnet_etcd
         /// <param name="key">Key for which value need to be set</param>
         /// <param name="val">Value corresponding the key</param>
         /// <returns></returns>
-        public async Task<PutResponse> PutAsync(string key, string val, Metadata headers = null)
+        public async Task<PutResponse> PutAsync(string key, string val, Grpc.Core.Metadata headers = null)
         {
 
             return await PutAsync(new PutRequest
@@ -319,7 +289,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public DeleteRangeResponse Delete(DeleteRangeRequest request, Metadata headers = null)
+        public DeleteRangeResponse Delete(DeleteRangeRequest request, Grpc.Core.Metadata headers = null)
         {
             DeleteRangeResponse response = new DeleteRangeResponse();
             bool success = false;
@@ -347,7 +317,7 @@ namespace dotnet_etcd
         /// Delete the specified key in etcd
         /// </summary>
         /// <param name="key">Key which needs to be deleted</param>
-        public DeleteRangeResponse Delete(string key, Metadata headers = null)
+        public DeleteRangeResponse Delete(string key, Grpc.Core.Metadata headers = null)
         {
 
             return Delete(new DeleteRangeRequest
@@ -363,7 +333,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<DeleteRangeResponse> DeleteAsync(DeleteRangeRequest request, Metadata headers = null)
+        public async Task<DeleteRangeResponse> DeleteAsync(DeleteRangeRequest request, Grpc.Core.Metadata headers = null)
         {
             DeleteRangeResponse response = new DeleteRangeResponse();
             bool success = false;
@@ -391,7 +361,7 @@ namespace dotnet_etcd
         /// Delete the specified key in etcd in async
         /// </summary>
         /// <param name="key">Key which needs to be deleted</param>
-        public async Task<DeleteRangeResponse> DeleteAsync(string key, Metadata headers = null)
+        public async Task<DeleteRangeResponse> DeleteAsync(string key, Grpc.Core.Metadata headers = null)
         {
 
             return await DeleteAsync(new DeleteRangeRequest
@@ -405,7 +375,7 @@ namespace dotnet_etcd
         /// Deletes all keys with the specified prefix
         /// </summary>
         /// <param name="prefixKey">Commin prefix of all keys that need to be deleted</param>
-        public DeleteRangeResponse DeleteRange(string prefixKey, Metadata headers = null)
+        public DeleteRangeResponse DeleteRange(string prefixKey, Grpc.Core.Metadata headers = null)
         {
 
             string rangeEnd = GetRangeEnd(prefixKey);
@@ -421,7 +391,7 @@ namespace dotnet_etcd
         /// Deletes all keys with the specified prefix in async
         /// </summary>
         /// <param name="prefixKey">Commin prefix of all keys that need to be deleted</param>
-        public async Task<DeleteRangeResponse> DeleteRangeAsync(string prefixKey, Metadata headers = null)
+        public async Task<DeleteRangeResponse> DeleteRangeAsync(string prefixKey, Grpc.Core.Metadata headers = null)
         {
 
             string rangeEnd = GetRangeEnd(prefixKey);
@@ -441,7 +411,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public TxnResponse Transaction(TxnRequest request, Metadata headers = null)
+        public TxnResponse Transaction(TxnRequest request, Grpc.Core.Metadata headers = null)
         {
             TxnResponse response = new TxnResponse();
             bool success = false;
@@ -474,7 +444,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<TxnResponse> TransactionAsync(TxnRequest request, Metadata headers = null)
+        public async Task<TxnResponse> TransactionAsync(TxnRequest request, Grpc.Core.Metadata headers = null)
         {
             TxnResponse response = new TxnResponse();
             bool success = false;
@@ -505,7 +475,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public CompactionResponse Compact(CompactionRequest request, Metadata headers = null)
+        public CompactionResponse Compact(CompactionRequest request, Grpc.Core.Metadata headers = null)
         {
             CompactionResponse response = new CompactionResponse();
             bool success = false;
@@ -536,7 +506,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<CompactionResponse> CompactAsync(CompactionRequest request, Metadata headers = null)
+        public async Task<CompactionResponse> CompactAsync(CompactionRequest request, Grpc.Core.Metadata headers = null)
         {
             CompactionResponse response = new CompactionResponse();
             bool success = false;

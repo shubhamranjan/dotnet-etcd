@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Etcdserverpb;
+
 using Google.Protobuf;
+
 using Grpc.Core;
+
 using static Mvccpb.Event.Types;
 
 namespace dotnet_etcd
@@ -41,7 +45,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public async void Watch(WatchRequest request, Action<WatchResponse> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public async void Watch(WatchRequest request, Action<WatchResponse> method, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -99,7 +103,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public async void Watch(WatchRequest request, Action<WatchResponse>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public async void Watch(WatchRequest request, Action<WatchResponse>[] methods, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -161,7 +165,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public async void Watch(WatchRequest request, Action<WatchEvent[]> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public async void Watch(WatchRequest request, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -228,7 +232,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public async void Watch(WatchRequest request, Action<WatchEvent[]>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public async void Watch(WatchRequest request, Action<WatchEvent[]>[] methods, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -300,7 +304,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Requests containing keys to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public async void Watch(WatchRequest[] requests, Action<WatchResponse> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public async void Watch(WatchRequest[] requests, Action<WatchResponse> method, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -363,7 +367,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Requests containing keys to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public async void Watch(WatchRequest[] requests, Action<WatchResponse>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public async void Watch(WatchRequest[] requests, Action<WatchResponse>[] methods, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -429,7 +433,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Requests containing keys to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public async void Watch(WatchRequest[] requests, Action<WatchEvent[]> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public async void Watch(WatchRequest[] requests, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -500,7 +504,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Request containing keys to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public async void Watch(WatchRequest[] requests, Action<WatchEvent[]>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public async void Watch(WatchRequest[] requests, Action<WatchEvent[]>[] methods, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
             bool success = false;
             int retryCount = 0;
@@ -573,7 +577,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public void Watch(string key, Action<WatchResponse> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public void Watch(string key, Action<WatchResponse> method, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 
@@ -593,7 +597,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public void Watch(string key, Action<WatchResponse>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public void Watch(string key, Action<WatchResponse>[] methods, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             WatchRequest request = new WatchRequest()
@@ -612,7 +616,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public void Watch(string key, Action<WatchEvent[]> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public void Watch(string key, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 
@@ -632,7 +636,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public void Watch(string key, Action<WatchEvent[]>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public void Watch(string key, Action<WatchEvent[]>[] methods, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 
@@ -652,7 +656,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public void Watch(string[] keys, Action<WatchResponse> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public void Watch(string[] keys, Action<WatchResponse> method, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             List<WatchRequest> requests = new List<WatchRequest>();
@@ -677,7 +681,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public void Watch(string[] keys, Action<WatchResponse>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public void Watch(string[] keys, Action<WatchResponse>[] methods, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             List<WatchRequest> requests = new List<WatchRequest>();
@@ -702,7 +706,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public void Watch(string[] keys, Action<WatchEvent[]> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public void Watch(string[] keys, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 
@@ -728,7 +732,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public void Watch(string[] keys, Action<WatchEvent[]>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public void Watch(string[] keys, Action<WatchEvent[]>[] methods, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 
@@ -758,7 +762,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public async void WatchRange(WatchRequest request, Action<WatchResponse> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public async void WatchRange(WatchRequest request, Action<WatchResponse> method, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -816,7 +820,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public async void WatchRange(WatchRequest request, Action<WatchResponse>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public async void WatchRange(WatchRequest request, Action<WatchResponse>[] methods, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -878,7 +882,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public async void WatchRange(WatchRequest request, Action<WatchEvent[]> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public async void WatchRange(WatchRequest request, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -945,7 +949,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Watch Request containing key to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public async void WatchRange(WatchRequest request, Action<WatchEvent[]>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public async void WatchRange(WatchRequest request, Action<WatchEvent[]>[] methods, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -1016,7 +1020,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Requests containing keys to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public async void WatchRange(WatchRequest[] requests, Action<WatchResponse> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public async void WatchRange(WatchRequest[] requests, Action<WatchResponse> method, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -1078,7 +1082,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Requests containing keys to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public async void WatchRange(WatchRequest[] requests, Action<WatchResponse>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public async void WatchRange(WatchRequest[] requests, Action<WatchResponse>[] methods, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -1146,7 +1150,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Requests containing keys to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public async void WatchRange(WatchRequest[] requests, Action<WatchEvent[]> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public async void WatchRange(WatchRequest[] requests, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -1217,7 +1221,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Request containing keys to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public async void WatchRange(WatchRequest[] requests, Action<WatchEvent[]>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public async void WatchRange(WatchRequest[] requests, Action<WatchEvent[]>[] methods, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             bool success = false;
@@ -1291,7 +1295,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public void WatchRange(string path, Action<WatchResponse> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public void WatchRange(string path, Action<WatchResponse> method, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 
@@ -1312,7 +1316,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public void WatchRange(string path, Action<WatchResponse>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public void WatchRange(string path, Action<WatchResponse>[] methods, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 
@@ -1334,7 +1338,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public void WatchRange(string path, Action<WatchEvent[]> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public void WatchRange(string path, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 
@@ -1355,7 +1359,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">Key to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public void WatchRange(string path, Action<WatchEvent[]>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public void WatchRange(string path, Action<WatchEvent[]>[] methods, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 
@@ -1376,7 +1380,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
-        public void WatchRange(string[] paths, Action<WatchResponse> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public void WatchRange(string[] paths, Action<WatchResponse> method, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             List<WatchRequest> requests = new List<WatchRequest>();
@@ -1402,7 +1406,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public void WatchRange(string[] paths, Action<WatchResponse>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public void WatchRange(string[] paths, Action<WatchResponse>[] methods, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
             List<WatchRequest> requests = new List<WatchRequest>();
@@ -1428,7 +1432,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
-        public void WatchRange(string[] paths, Action<WatchEvent[]> method, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public void WatchRange(string[] paths, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 
@@ -1455,7 +1459,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="keys">Keys to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
-        public void WatchRange(string[] paths, Action<WatchEvent[]>[] methods, Metadata headers = null, Action<Exception> exceptionHandler = null)
+        public void WatchRange(string[] paths, Action<WatchEvent[]>[] methods, Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null)
         {
 
 

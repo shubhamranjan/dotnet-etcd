@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
+
 using Etcdserverpb;
+
 using Grpc.Core;
 
 namespace dotnet_etcd
 {
     public partial class EtcdClient : IDisposable
     {
-        public AuthenticateResponse Authenticate(AuthenticateRequest request, Metadata headers = null)
+        public AuthenticateResponse Authenticate(AuthenticateRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthenticateResponse response = new AuthenticateResponse();
             bool success = false;
@@ -31,7 +33,7 @@ namespace dotnet_etcd
             return response;
         }
 
-        public async Task<AuthenticateResponse> AuthenticateAsync(AuthenticateRequest request, Metadata headers = null)
+        public async Task<AuthenticateResponse> AuthenticateAsync(AuthenticateRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthenticateResponse response = new AuthenticateResponse();
             bool success = false;
@@ -60,7 +62,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public AuthEnableResponse AuthEnable(AuthEnableRequest request, Metadata headers = null)
+        public AuthEnableResponse AuthEnable(AuthEnableRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthEnableResponse response = new AuthEnableResponse();
             bool success = false;
@@ -89,7 +91,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<AuthEnableResponse> AuthEnableAsync(AuthEnableRequest request, Metadata headers = null)
+        public async Task<AuthEnableResponse> AuthEnableAsync(AuthEnableRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthEnableResponse response = new AuthEnableResponse();
             bool success = false;
@@ -118,7 +120,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public AuthDisableResponse AuthDisable(AuthDisableRequest request, Metadata headers = null)
+        public AuthDisableResponse AuthDisable(AuthDisableRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthDisableResponse response = new AuthDisableResponse();
             bool success = false;
@@ -147,7 +149,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<AuthDisableResponse> AuthDisableAsync(AuthDisableRequest request, Metadata headers = null)
+        public async Task<AuthDisableResponse> AuthDisableAsync(AuthDisableRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthDisableResponse response = new AuthDisableResponse();
             bool success = false;
@@ -176,7 +178,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public AuthUserAddResponse UserAdd(AuthUserAddRequest request, Metadata headers = null)
+        public AuthUserAddResponse UserAdd(AuthUserAddRequest request, Grpc.Core.Metadata headers = null)
         {
 
             AuthUserAddResponse response = new AuthUserAddResponse();
@@ -206,7 +208,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<AuthUserAddResponse> UserAddAsync(AuthUserAddRequest request, Metadata headers = null)
+        public async Task<AuthUserAddResponse> UserAddAsync(AuthUserAddRequest request, Grpc.Core.Metadata headers = null)
         {
 
             AuthUserAddResponse response = new AuthUserAddResponse();
@@ -236,7 +238,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public AuthUserGetResponse UserGet(AuthUserGetRequest request, Metadata headers = null)
+        public AuthUserGetResponse UserGet(AuthUserGetRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthUserGetResponse response = new AuthUserGetResponse();
             bool success = false;
@@ -265,7 +267,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<AuthUserGetResponse> UserGetAsync(AuthUserGetRequest request, Metadata headers = null)
+        public async Task<AuthUserGetResponse> UserGetAsync(AuthUserGetRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthUserGetResponse response = new AuthUserGetResponse();
             bool success = false;
@@ -294,7 +296,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public AuthUserListResponse UserList(AuthUserListRequest request, Metadata headers = null)
+        public AuthUserListResponse UserList(AuthUserListRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthUserListResponse response = new AuthUserListResponse();
             bool success = false;
@@ -324,7 +326,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<AuthUserListResponse> UserListAsync(AuthUserListRequest request, Metadata headers = null)
+        public async Task<AuthUserListResponse> UserListAsync(AuthUserListRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthUserListResponse response = new AuthUserListResponse();
             bool success = false;
@@ -353,7 +355,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public AuthUserDeleteResponse UserDelete(AuthUserDeleteRequest request, Metadata headers = null)
+        public AuthUserDeleteResponse UserDelete(AuthUserDeleteRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthUserDeleteResponse response = new AuthUserDeleteResponse();
             bool success = false;
@@ -382,7 +384,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<AuthUserDeleteResponse> UserDeleteAsync(AuthUserDeleteRequest request, Metadata headers = null)
+        public async Task<AuthUserDeleteResponse> UserDeleteAsync(AuthUserDeleteRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthUserDeleteResponse response = new AuthUserDeleteResponse();
             bool success = false;
@@ -411,7 +413,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public AuthUserChangePasswordResponse UserChangePassword(AuthUserChangePasswordRequest request, Metadata headers = null)
+        public AuthUserChangePasswordResponse UserChangePassword(AuthUserChangePasswordRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthUserChangePasswordResponse response = new AuthUserChangePasswordResponse();
             bool success = false;
@@ -440,7 +442,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<AuthUserChangePasswordResponse> UserChangePasswordAsync(AuthUserChangePasswordRequest request, Metadata headers = null)
+        public async Task<AuthUserChangePasswordResponse> UserChangePasswordAsync(AuthUserChangePasswordRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthUserChangePasswordResponse response = new AuthUserChangePasswordResponse();
             bool success = false;
@@ -469,7 +471,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public AuthUserGrantRoleResponse UserGrantRole(AuthUserGrantRoleRequest request, Metadata headers = null)
+        public AuthUserGrantRoleResponse UserGrantRole(AuthUserGrantRoleRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthUserGrantRoleResponse response = new AuthUserGrantRoleResponse();
             bool success = false;
@@ -498,7 +500,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<AuthUserGrantRoleResponse> UserGrantRoleAsync(AuthUserGrantRoleRequest request, Metadata headers = null)
+        public async Task<AuthUserGrantRoleResponse> UserGrantRoleAsync(AuthUserGrantRoleRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthUserGrantRoleResponse response = new AuthUserGrantRoleResponse();
             bool success = false;
@@ -527,7 +529,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public AuthUserRevokeRoleResponse UserRevokeRole(AuthUserRevokeRoleRequest request, Metadata headers = null)
+        public AuthUserRevokeRoleResponse UserRevokeRole(AuthUserRevokeRoleRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthUserRevokeRoleResponse response = new AuthUserRevokeRoleResponse();
             bool success = false;
@@ -556,7 +558,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<AuthUserRevokeRoleResponse> UserRevokeRoleAsync(AuthUserRevokeRoleRequest request, Metadata headers = null)
+        public async Task<AuthUserRevokeRoleResponse> UserRevokeRoleAsync(AuthUserRevokeRoleRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthUserRevokeRoleResponse response = new AuthUserRevokeRoleResponse();
             bool success = false;
@@ -585,7 +587,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public AuthRoleAddResponse RoleAdd(AuthRoleAddRequest request, Metadata headers = null)
+        public AuthRoleAddResponse RoleAdd(AuthRoleAddRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthRoleAddResponse response = new AuthRoleAddResponse();
             bool success = false;
@@ -614,7 +616,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<AuthRoleAddResponse> RoleAddAsync(AuthRoleAddRequest request, Metadata headers = null)
+        public async Task<AuthRoleAddResponse> RoleAddAsync(AuthRoleAddRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthRoleAddResponse response = new AuthRoleAddResponse();
             bool success = false;
@@ -643,7 +645,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public AuthRoleGetResponse RoleGet(AuthRoleGetRequest request, Metadata headers = null)
+        public AuthRoleGetResponse RoleGet(AuthRoleGetRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthRoleGetResponse response = new AuthRoleGetResponse();
 
@@ -673,7 +675,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<AuthRoleGetResponse> RoleGetASync(AuthRoleGetRequest request, Metadata headers = null)
+        public async Task<AuthRoleGetResponse> RoleGetASync(AuthRoleGetRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthRoleGetResponse response = new AuthRoleGetResponse();
             bool success = false;
@@ -702,7 +704,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public AuthRoleListResponse RoleList(AuthRoleListRequest request, Metadata headers = null)
+        public AuthRoleListResponse RoleList(AuthRoleListRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthRoleListResponse response = new AuthRoleListResponse();
             bool success = false;
@@ -731,7 +733,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<AuthRoleListResponse> RoleListAsync(AuthRoleListRequest request, Metadata headers = null)
+        public async Task<AuthRoleListResponse> RoleListAsync(AuthRoleListRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthRoleListResponse response = new AuthRoleListResponse();
             bool success = false;
@@ -760,7 +762,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public AuthRoleDeleteResponse RoleDelete(AuthRoleDeleteRequest request, Metadata headers = null)
+        public AuthRoleDeleteResponse RoleDelete(AuthRoleDeleteRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthRoleDeleteResponse response = new AuthRoleDeleteResponse();
             bool success = false;
@@ -789,7 +791,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<AuthRoleDeleteResponse> RoleDeleteAsync(AuthRoleDeleteRequest request, Metadata headers = null)
+        public async Task<AuthRoleDeleteResponse> RoleDeleteAsync(AuthRoleDeleteRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthRoleDeleteResponse response = new AuthRoleDeleteResponse();
             bool success = false;
@@ -818,7 +820,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public AuthRoleGrantPermissionResponse RoleGrantPermission(AuthRoleGrantPermissionRequest request, Metadata headers = null)
+        public AuthRoleGrantPermissionResponse RoleGrantPermission(AuthRoleGrantPermissionRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthRoleGrantPermissionResponse response = new AuthRoleGrantPermissionResponse();
             bool success = false;
@@ -847,7 +849,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<AuthRoleGrantPermissionResponse> RoleGrantPermissionAsync(AuthRoleGrantPermissionRequest request, Metadata headers = null)
+        public async Task<AuthRoleGrantPermissionResponse> RoleGrantPermissionAsync(AuthRoleGrantPermissionRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthRoleGrantPermissionResponse response = new AuthRoleGrantPermissionResponse();
             bool success = false;
@@ -876,7 +878,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public AuthRoleRevokePermissionResponse RoleRevokePermission(AuthRoleRevokePermissionRequest request, Metadata headers = null)
+        public AuthRoleRevokePermissionResponse RoleRevokePermission(AuthRoleRevokePermissionRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthRoleRevokePermissionResponse response = new AuthRoleRevokePermissionResponse();
             bool success = false;
@@ -905,7 +907,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<AuthRoleRevokePermissionResponse> RoleRevokePermissionAsync(AuthRoleRevokePermissionRequest request, Metadata headers = null)
+        public async Task<AuthRoleRevokePermissionResponse> RoleRevokePermissionAsync(AuthRoleRevokePermissionRequest request, Grpc.Core.Metadata headers = null)
         {
             AuthRoleRevokePermissionResponse response = new AuthRoleRevokePermissionResponse();
             bool success = false;

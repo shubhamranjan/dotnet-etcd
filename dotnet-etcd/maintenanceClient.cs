@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Etcdserverpb;
+
 using Grpc.Core;
 
 namespace dotnet_etcd
@@ -13,7 +15,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Alarm request</param>
         /// <returns>Alarm Response</returns>
-        public AlarmResponse Alarm(AlarmRequest request, Metadata headers = null)
+        public AlarmResponse Alarm(AlarmRequest request, Grpc.Core.Metadata headers = null)
         {
             AlarmResponse response = new AlarmResponse();
             bool success = false;
@@ -42,7 +44,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Alarm request</param>
         /// <returns>Alarm Response</returns>
-        public async Task<AlarmResponse> AlarmAsync(AlarmRequest request, Metadata headers = null)
+        public async Task<AlarmResponse> AlarmAsync(AlarmRequest request, Grpc.Core.Metadata headers = null)
         {
             AlarmResponse response = new AlarmResponse();
             bool success = false;
@@ -71,7 +73,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Status Request</param>
         /// <returns>Status response</returns>
-        public StatusResponse Status(StatusRequest request, Metadata headers = null)
+        public StatusResponse Status(StatusRequest request, Grpc.Core.Metadata headers = null)
         {
             StatusResponse response = new StatusResponse();
             bool success = false;
@@ -100,7 +102,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Status Request</param>
         /// <returns>Status response</returns>
-        public async Task<StatusResponse> StatusASync(StatusRequest request, Metadata headers = null)
+        public async Task<StatusResponse> StatusASync(StatusRequest request, Grpc.Core.Metadata headers = null)
         {
             StatusResponse response = new StatusResponse();
             bool success = false;
@@ -129,7 +131,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Defragment Request</param>
         /// <returns>Defragment Response</returns>
-        public DefragmentResponse Defragment(DefragmentRequest request, Metadata headers = null)
+        public DefragmentResponse Defragment(DefragmentRequest request, Grpc.Core.Metadata headers = null)
         {
             DefragmentResponse response = new DefragmentResponse();
             bool success = false;
@@ -158,7 +160,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Defragment Request</param>
         /// <returns>Defragment Response</returns>
-        public async Task<DefragmentResponse> DefragmentAsync(DefragmentRequest request, Metadata headers = null)
+        public async Task<DefragmentResponse> DefragmentAsync(DefragmentRequest request, Grpc.Core.Metadata headers = null)
         {
             DefragmentResponse response = new DefragmentResponse();
             bool success = false;
@@ -192,7 +194,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Hash Request</param>
         /// <returns>Hash Response</returns>
-        public HashResponse Hash(HashRequest request, Metadata headers = null)
+        public HashResponse Hash(HashRequest request, Grpc.Core.Metadata headers = null)
         {
             HashResponse response = new HashResponse();
             bool success = false;
@@ -226,7 +228,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">Hash Request</param>
         /// <returns>Hash Response</returns>
-        public async Task<HashResponse> HashAsync(HashRequest request, Metadata headers = null)
+        public async Task<HashResponse> HashAsync(HashRequest request, Grpc.Core.Metadata headers = null)
         {
             HashResponse response = new HashResponse();
             bool success = false;
@@ -256,7 +258,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">HashKV Request</param>
         /// <returns>HashKV Response</returns>
-        public HashKVResponse HashKV(HashKVRequest request, Metadata headers = null)
+        public HashKVResponse HashKV(HashKVRequest request, Grpc.Core.Metadata headers = null)
         {
             HashKVResponse response = new HashKVResponse();
             bool success = false;
@@ -286,7 +288,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">HashKV Request</param>
         /// <returns>HashKV Response</returns>
-        public async Task<HashKVResponse> HashKVAsync(HashKVRequest request, Metadata headers = null)
+        public async Task<HashKVResponse> HashKVAsync(HashKVRequest request, Grpc.Core.Metadata headers = null)
         {
             HashKVResponse response = new HashKVResponse();
             bool success = false;
@@ -316,7 +318,7 @@ namespace dotnet_etcd
         /// <param name="request"></param>
         /// <param name="method"></param>
         /// <param name="token"></param>
-        public async void Snapshot(SnapshotRequest request, Action<SnapshotResponse> method, CancellationToken token, Metadata headers = null)
+        public async void Snapshot(SnapshotRequest request, Action<SnapshotResponse> method, CancellationToken token, Grpc.Core.Metadata headers = null)
         {
             bool success = false;
             int retryCount = 0;
@@ -358,7 +360,7 @@ namespace dotnet_etcd
         /// <param name="request"></param>
         /// <param name="methods"></param>
         /// <param name="token"></param>
-        public async void Snapshot(SnapshotRequest request, Action<SnapshotResponse>[] methods, CancellationToken token, Metadata headers = null)
+        public async void Snapshot(SnapshotRequest request, Action<SnapshotResponse>[] methods, CancellationToken token, Grpc.Core.Metadata headers = null)
         {
             bool success = false;
             int retryCount = 0;
@@ -401,7 +403,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">MoveLeader Request</param>
         /// <returns>MoveLeader Response</returns>
-        public MoveLeaderResponse MoveLeader(MoveLeaderRequest request, Metadata headers = null)
+        public MoveLeaderResponse MoveLeader(MoveLeaderRequest request, Grpc.Core.Metadata headers = null)
         {
             MoveLeaderResponse response = new MoveLeaderResponse();
             bool success = false;
@@ -430,7 +432,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">MoveLeader Request</param>
         /// <returns>MoveLeader Response</returns>
-        public async Task<MoveLeaderResponse> MoveLeaderAsync(MoveLeaderRequest request, Metadata headers = null)
+        public async Task<MoveLeaderResponse> MoveLeaderAsync(MoveLeaderRequest request, Grpc.Core.Metadata headers = null)
         {
             MoveLeaderResponse response = new MoveLeaderResponse();
             bool success = false;

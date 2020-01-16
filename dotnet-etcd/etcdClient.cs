@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using dotnet_etcd.multiplexer;
+
 using DnsClient;
 using DnsClient.Protocol;
+
+using dotnet_etcd.multiplexer;
 
 namespace dotnet_etcd
 {
@@ -38,13 +40,13 @@ namespace dotnet_etcd
                 // discovery-srv://my-domain.local/ would expect entries for either _etcd-client-ssl._tcp.my-domain.local or _etcd-client._tcp.my-domain.local
                 // discovery-srv://my-domain.local/project1 would expect entries for either _etcd-client-ssl-project1._tcp.my-domain.local or _etcd-client-project1._tcp.my-domain.local
                 Uri discoverySrv = new Uri(connectionString);
-                var client = new LookupClient {UseCache = true};
+                LookupClient client = new LookupClient { UseCache = true };
                 // SSL first ...
-                var serviceName = "/".Equals(discoverySrv.AbsolutePath)
+                string serviceName = "/".Equals(discoverySrv.AbsolutePath)
                     ? ""
                     : $"-{discoverySrv.AbsolutePath.Substring(1, discoverySrv.AbsolutePath.Length - 1)}";
-                var result = client.Query($"_etcd-client-ssl{serviceName}._tcp.{discoverySrv.Host}", QueryType.SRV);
-                var scheme = "https";
+                IDnsQueryResponse result = client.Query($"_etcd-client-ssl{serviceName}._tcp.{discoverySrv.Host}", QueryType.SRV);
+                string scheme = "https";
                 if (result.HasError)
                 {
                     scheme = "http";
@@ -56,15 +58,15 @@ namespace dotnet_etcd
                     }
                 }
 
-                var results = result.Answers.OfType<SrvRecord>().OrderBy(a => a.Priority)
+                List<SrvRecord> results = result.Answers.OfType<SrvRecord>().OrderBy(a => a.Priority)
                     .ThenByDescending(a => a.Weight).ToList();
                 hosts = new string[results.Count];
                 for (int index = 0; index < results.Count; index++)
                 {
-                    var srvRecord = results[index];
-                    var additionalRecord =
+                    SrvRecord srvRecord = results[index];
+                    DnsResourceRecord additionalRecord =
                         result.Additionals.FirstOrDefault(p => p.DomainName.Equals(srvRecord.Target));
-                    var host = srvRecord.Target.Value;
+                    string host = srvRecord.Target.Value;
 
                     if (additionalRecord is ARecord aRecord)
                     {
@@ -76,7 +78,10 @@ namespace dotnet_etcd
                     }
 
                     if (host.EndsWith("."))
+                    {
                         host = host.Substring(0, host.Length - 1);
+                    }
+
                     hosts[index] = $"{scheme}://{host}:{srvRecord.Port}";
                 }
             }

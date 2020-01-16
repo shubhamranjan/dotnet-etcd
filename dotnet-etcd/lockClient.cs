@@ -1,7 +1,10 @@
 using System;
 using System.Threading.Tasks;
+
 using Google.Protobuf;
+
 using Grpc.Core;
+
 using V3Lockpb;
 
 namespace dotnet_etcd
@@ -18,7 +21,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="name">is the identifier for the distributed shared lock to be acquired.</param>
         /// <returns></returns>
-        public LockResponse Lock(string name, Metadata headers = null)
+        public LockResponse Lock(string name, Grpc.Core.Metadata headers = null)
         {
             return Lock(new LockRequest()
             {
@@ -36,7 +39,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">The request to send to the server</param>
         /// <returns></returns>
-        public LockResponse Lock(LockRequest request, Metadata headers = null)
+        public LockResponse Lock(LockRequest request, Grpc.Core.Metadata headers = null)
         {
             LockResponse response = new LockResponse();
             bool success = false;
@@ -70,7 +73,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="name">is the identifier for the distributed shared lock to be acquired.</param>
         /// <returns></returns>
-        public async Task<LockResponse> LockAsync(string name, Metadata headers = null)
+        public async Task<LockResponse> LockAsync(string name, Grpc.Core.Metadata headers = null)
         {
             return await LockAsync(new LockRequest()
             {
@@ -88,7 +91,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">The request to send to the server</param>
         /// <returns></returns>
-        public async Task<LockResponse> LockAsync(LockRequest request, Metadata headers = null)
+        public async Task<LockResponse> LockAsync(LockRequest request, Grpc.Core.Metadata headers = null)
         {
             LockResponse response = new LockResponse();
             bool success = false;
@@ -119,7 +122,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">the lock ownership key granted by Lock.</param>
         /// <returns></returns>
-        public UnlockResponse Unlock(string key, Metadata headers = null)
+        public UnlockResponse Unlock(string key, Grpc.Core.Metadata headers = null)
         {
             return Unlock(new UnlockRequest()
             {
@@ -134,7 +137,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">The request to send to the server</param>
         /// <returns></returns>
-        public UnlockResponse Unlock(UnlockRequest request, Metadata headers = null)
+        public UnlockResponse Unlock(UnlockRequest request, Grpc.Core.Metadata headers = null)
         {
             UnlockResponse response = new UnlockResponse();
             bool success = false;
@@ -165,7 +168,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="key">the lock ownership key granted by Lock.</param>
         /// <returns></returns>
-        public async Task<UnlockResponse> UnlockAsync(string key, Metadata headers = null)
+        public async Task<UnlockResponse> UnlockAsync(string key, Grpc.Core.Metadata headers = null)
         {
             return await UnlockAsync(new UnlockRequest()
             {
@@ -180,7 +183,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request">The request to send to the server</param>
         /// <returns></returns>
-        public async Task<UnlockResponse> UnlockAsync(UnlockRequest request, Metadata headers = null)
+        public async Task<UnlockResponse> UnlockAsync(UnlockRequest request, Grpc.Core.Metadata headers = null)
         {
             UnlockResponse response = new UnlockResponse();
             bool success = false;

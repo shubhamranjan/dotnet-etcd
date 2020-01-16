@@ -10,9 +10,9 @@ namespace dotnet_etcd.multiplexer
 
     internal class Balancer
     {
-        private HashSet<Connection> _HealthyCluster;
+        private readonly HashSet<Connection> _HealthyCluster;
 
-        private HashSet<Connection> _UnHealthyCluster;
+        private readonly HashSet<Connection> _UnHealthyCluster;
 
         /// <summary>
         /// The username for etcd server for basic auth
@@ -89,7 +89,7 @@ namespace dotnet_etcd.multiplexer
 
             foreach (Uri node in nodes)
             {
-                Channel channel = null;
+                Channel channel;
                 if (_publicRootCa)
                 {
                     channel = new Channel(node.Host, node.Port, new SslCredentials());

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+
 using Etcdserverpb;
+
 using Grpc.Core;
 
 namespace dotnet_etcd
@@ -12,7 +14,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public MemberAddResponse MemberAdd(MemberAddRequest request, Metadata headers = null)
+        public MemberAddResponse MemberAdd(MemberAddRequest request, Grpc.Core.Metadata headers = null)
         {
             MemberAddResponse response = new MemberAddResponse();
             bool success = false;
@@ -41,7 +43,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<MemberAddResponse> MemberAddAsync(MemberAddRequest request, Metadata headers = null)
+        public async Task<MemberAddResponse> MemberAddAsync(MemberAddRequest request, Grpc.Core.Metadata headers = null)
         {
             MemberAddResponse response = new MemberAddResponse();
             bool success = false;
@@ -70,7 +72,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public MemberRemoveResponse MemberRemove(MemberRemoveRequest request, Metadata headers = null)
+        public MemberRemoveResponse MemberRemove(MemberRemoveRequest request, Grpc.Core.Metadata headers = null)
         {
             MemberRemoveResponse response = new MemberRemoveResponse();
             bool success = false;
@@ -99,7 +101,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<MemberRemoveResponse> MemberRemoveAsync(MemberRemoveRequest request, Metadata headers = null)
+        public async Task<MemberRemoveResponse> MemberRemoveAsync(MemberRemoveRequest request, Grpc.Core.Metadata headers = null)
         {
             MemberRemoveResponse response = new MemberRemoveResponse();
             bool success = false;
@@ -128,7 +130,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public MemberUpdateResponse MemberUpdate(MemberUpdateRequest request, Metadata headers = null)
+        public MemberUpdateResponse MemberUpdate(MemberUpdateRequest request, Grpc.Core.Metadata headers = null)
         {
             MemberUpdateResponse response = new MemberUpdateResponse();
             bool success = false;
@@ -157,7 +159,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<MemberUpdateResponse> MemberUpdateAsync(MemberUpdateRequest request, Metadata headers = null)
+        public async Task<MemberUpdateResponse> MemberUpdateAsync(MemberUpdateRequest request, Grpc.Core.Metadata headers = null)
         {
             MemberUpdateResponse response = new MemberUpdateResponse();
             bool success = false;
@@ -186,7 +188,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public MemberListResponse MemberList(MemberListRequest request, Metadata headers = null)
+        public MemberListResponse MemberList(MemberListRequest request, Grpc.Core.Metadata headers = null)
         {
             MemberListResponse response = new MemberListResponse();
             bool success = false;
@@ -215,7 +217,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<MemberListResponse> MemberListAsync(MemberListRequest request, Metadata headers = null)
+        public async Task<MemberListResponse> MemberListAsync(MemberListRequest request, Grpc.Core.Metadata headers = null)
         {
             MemberListResponse response = new MemberListResponse();
             bool success = false;
