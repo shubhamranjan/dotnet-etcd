@@ -139,32 +139,36 @@ namespace dotnet_etcd
         /// <param name="token"></param>
         public async Task LeaseKeepAlive(long leaseId, CancellationToken token)
         {
-            LeaseKeepAliveRequest request = new LeaseKeepAliveRequest();
-            request.ID = leaseId;
-
-            long? ttl = null;
-            bool success = false;
             int retryCount = 0;
-            while (!success)
+            while (true)
             {
                 try
                 {
                     using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser = _balancer.GetConnection().leaseClient.LeaseKeepAlive())
                     {
-                        token.ThrowIfCancellationRequested();
+                        LeaseKeepAliveRequest request = new LeaseKeepAliveRequest();
+                        request.ID = leaseId;
 
-                        await leaser.RequestStream.WriteAsync(request);
-                        await leaser.RequestStream.CompleteAsync();
-                        if (!await leaser.ResponseStream.MoveNext(token))
-                            throw new EndOfStreamException();
+                        while (true)
+                        {
+                            token.ThrowIfCancellationRequested();
 
-                        LeaseKeepAliveResponse update = leaser.ResponseStream.Current;
-                        if (update.ID != leaseId || update.TTL == 0)  // expired
-                            return;
-                        if (ttl == null)
-                            ttl = update.TTL;
+                            await leaser.RequestStream.WriteAsync(request);
+                            if (!await leaser.ResponseStream.MoveNext(token))
+                            {
+                                await leaser.RequestStream.CompleteAsync();
+                                throw new EndOfStreamException();
+                            }
 
-                        await Task.Delay((int)(ttl * 1000 / 3), token);
+                            LeaseKeepAliveResponse update = leaser.ResponseStream.Current;
+                            if (update.ID != leaseId || update.TTL == 0)  // expired
+                            {
+                                await leaser.RequestStream.CompleteAsync();
+                                return;
+                            }
+
+                            await Task.Delay((int)(update.TTL * 1000 / 3), token);
+                        }
                     }
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
