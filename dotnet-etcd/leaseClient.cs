@@ -151,6 +151,8 @@ namespace dotnet_etcd
                 {
                     using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser = _balancer.GetConnection().leaseClient.LeaseKeepAlive())
                     {
+                        token.ThrowIfCancellationRequested();
+
                         await leaser.RequestStream.WriteAsync(request);
                         await leaser.RequestStream.CompleteAsync();
                         if (!await leaser.ResponseStream.MoveNext(token))
@@ -162,7 +164,7 @@ namespace dotnet_etcd
                         if (ttl == null)
                             ttl = update.TTL;
 
-                        await Task.Delay((int)(ttl * 1000 / 3));
+                        await Task.Delay((int)(ttl * 1000 / 3), token);
                     }
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
