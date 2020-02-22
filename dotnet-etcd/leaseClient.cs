@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -130,6 +131,50 @@ namespace dotnet_etcd
             return response;
         }
 
+        /// <summary>
+        /// LeaseKeepAlive keeps the lease alive by streaming keep alive requests from the client
+        /// to the server and streaming keep alive responses from the server to the client.
+        /// </summary>
+        /// <param name="leaseId"></param>
+        /// <param name="token"></param>
+        public async Task LeaseKeepAlive(long leaseId, CancellationToken token)
+        {
+            LeaseKeepAliveRequest request = new LeaseKeepAliveRequest();
+            request.ID = leaseId;
+
+            long? ttl = null;
+            bool success = false;
+            int retryCount = 0;
+            while (!success)
+            {
+                try
+                {
+                    using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser = _balancer.GetConnection().leaseClient.LeaseKeepAlive())
+                    {
+                        await leaser.RequestStream.WriteAsync(request);
+                        await leaser.RequestStream.CompleteAsync();
+                        if (!await leaser.ResponseStream.MoveNext(token))
+                            throw new EndOfStreamException();
+
+                        LeaseKeepAliveResponse update = leaser.ResponseStream.Current;
+                        if (update.ID != leaseId || update.TTL == 0)  // expired
+                            return;
+                        if (ttl == null)
+                            ttl = update.TTL;
+
+                        await Task.Delay((int)(ttl * 1000 / 3));
+                    }
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                    {
+                        throw ex;
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// LeaseKeepAlive keeps the lease alive by streaming keep alive requests from the client
@@ -138,7 +183,7 @@ namespace dotnet_etcd
         /// <param name="request"></param>
         /// <param name="method"></param>
         /// <param name="token"></param>
-        public async void LeaseKeepAlive(LeaseKeepAliveRequest request, Action<LeaseKeepAliveResponse> method, CancellationToken token, Grpc.Core.Metadata headers = null)
+        public async Task LeaseKeepAlive(LeaseKeepAliveRequest request, Action<LeaseKeepAliveResponse> method, CancellationToken token, Grpc.Core.Metadata headers = null)
         {
             bool success = false;
             int retryCount = 0;
@@ -182,7 +227,7 @@ namespace dotnet_etcd
         /// <param name="request"></param>
         /// <param name="methods"></param>
         /// <param name="token"></param>
-        public async void LeaseKeepAlive(LeaseKeepAliveRequest request, Action<LeaseKeepAliveResponse>[] methods, CancellationToken token, Grpc.Core.Metadata headers = null)
+        public async Task LeaseKeepAlive(LeaseKeepAliveRequest request, Action<LeaseKeepAliveResponse>[] methods, CancellationToken token, Grpc.Core.Metadata headers = null)
         {
 
             bool success = false;
@@ -232,7 +277,7 @@ namespace dotnet_etcd
         /// <param name="requests"></param>
         /// <param name="method"></param>
         /// <param name="token"></param>
-        public async void LeaseKeepAlive(LeaseKeepAliveRequest[] requests, Action<LeaseKeepAliveResponse> method, CancellationToken token, Grpc.Core.Metadata headers = null)
+        public async Task LeaseKeepAlive(LeaseKeepAliveRequest[] requests, Action<LeaseKeepAliveResponse> method, CancellationToken token, Grpc.Core.Metadata headers = null)
         {
             bool success = false;
             int retryCount = 0;
@@ -282,7 +327,7 @@ namespace dotnet_etcd
         /// <param name="requests"></param>
         /// <param name="methods"></param>
         /// <param name="token"></param>
-        public async void LeaseKeepAlive(LeaseKeepAliveRequest[] requests, Action<LeaseKeepAliveResponse>[] methods, CancellationToken token, Grpc.Core.Metadata headers = null)
+        public async Task LeaseKeepAlive(LeaseKeepAliveRequest[] requests, Action<LeaseKeepAliveResponse>[] methods, CancellationToken token, Grpc.Core.Metadata headers = null)
         {
             bool success = false;
             int retryCount = 0;
