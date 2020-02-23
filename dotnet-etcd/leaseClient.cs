@@ -167,7 +167,7 @@ namespace dotnet_etcd
                                 return;
                             }
 
-                            await Task.Delay((int)(update.TTL * 1000 / 3), token);
+                            await Task.Delay(TimeSpan.FromMilliseconds(update.TTL * 1000 / 3), token);
                         }
                     }
                 }
