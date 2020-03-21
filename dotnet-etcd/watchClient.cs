@@ -58,24 +58,10 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            try
+                            while (await watcher.ResponseStream.MoveNext())
                             {
-                                while (await watcher.ResponseStream.MoveNext())
-                                {
-                                    WatchResponse update = watcher.ResponseStream.Current;
-                                    method(update);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                if (exceptionHandler != null)
-                                {
-                                    exceptionHandler(ex);
-                                }
-                                else
-                                {
-                                    throw ex;
-                                }
+                                WatchResponse update = watcher.ResponseStream.Current;
+                                method(update);
                             }
                         });
 
@@ -89,6 +75,24 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
+                        if (exceptionHandler != null)
+                        {
+                            exceptionHandler(ex);
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (exceptionHandler != null)
+                    {
+                        exceptionHandler(ex);
+                    }
+                    else
                     {
                         throw ex;
                     }
@@ -116,8 +120,7 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            try
-                            {
+
                                 while (await watcher.ResponseStream.MoveNext())
                                 {
                                     WatchResponse update = watcher.ResponseStream.Current;
@@ -127,18 +130,7 @@ namespace dotnet_etcd
                                     }
 
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                if (exceptionHandler != null)
-                                {
-                                    exceptionHandler(ex);
-                                }
-                                else
-                                {
-                                    throw ex;
-                                }
-                            }
+                           
                         });
 
                         await watcher.RequestStream.WriteAsync(request);
@@ -151,6 +143,24 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
+                        if (exceptionHandler != null)
+                        {
+                            exceptionHandler(ex);
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (exceptionHandler != null)
+                    {
+                        exceptionHandler(ex);
+                    }
+                    else
                     {
                         throw ex;
                     }
@@ -178,8 +188,7 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            try
-                            {
+                           
                                 while (await watcher.ResponseStream.MoveNext())
                                 {
                                     WatchResponse update = watcher.ResponseStream.Current;
@@ -194,18 +203,7 @@ namespace dotnet_etcd
                                     }).ToArray()
                                     );
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                if (exceptionHandler != null)
-                                {
-                                    exceptionHandler(ex);
-                                }
-                                else
-                                {
-                                    throw ex;
-                                }
-                            }
+                           
                         });
 
                         await watcher.RequestStream.WriteAsync(request);
@@ -218,6 +216,24 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
+                        if (exceptionHandler != null)
+                        {
+                            exceptionHandler(ex);
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (exceptionHandler != null)
+                    {
+                        exceptionHandler(ex);
+                    }
+                    else
                     {
                         throw ex;
                     }
@@ -245,8 +261,7 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            try
-                            {
+                            
                                 while (await watcher.ResponseStream.MoveNext())
                                 {
                                     WatchResponse update = watcher.ResponseStream.Current;
@@ -265,18 +280,7 @@ namespace dotnet_etcd
                                     }
 
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                if (exceptionHandler != null)
-                                {
-                                    exceptionHandler(ex);
-                                }
-                                else
-                                {
-                                    throw ex;
-                                }
-                            }
+                            
                         });
 
                         await watcher.RequestStream.WriteAsync(request);
@@ -289,6 +293,24 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
+                        if (exceptionHandler != null)
+                        {
+                            exceptionHandler(ex);
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (exceptionHandler != null)
+                    {
+                        exceptionHandler(ex);
+                    }
+                    else
                     {
                         throw ex;
                     }
@@ -317,25 +339,13 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            try
-                            {
+                           
                                 while (await watcher.ResponseStream.MoveNext())
                                 {
                                     WatchResponse update = watcher.ResponseStream.Current;
                                     method(update);
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                if (exceptionHandler != null)
-                                {
-                                    exceptionHandler(ex);
-                                }
-                                else
-                                {
-                                    throw ex;
-                                }
-                            }
+                           
                         });
 
                         foreach (WatchRequest request in requests)
@@ -352,6 +362,24 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
+                        if (exceptionHandler != null)
+                        {
+                            exceptionHandler(ex);
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (exceptionHandler != null)
+                    {
+                        exceptionHandler(ex);
+                    }
+                    else
                     {
                         throw ex;
                     }
@@ -380,9 +408,7 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            try
-                            {
-                                while (await watcher.ResponseStream.MoveNext())
+                              while (await watcher.ResponseStream.MoveNext())
                                 {
                                     WatchResponse update = watcher.ResponseStream.Current;
                                     foreach (Action<WatchResponse> method in methods)
@@ -391,18 +417,7 @@ namespace dotnet_etcd
                                     }
 
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                if (exceptionHandler != null)
-                                {
-                                    exceptionHandler(ex);
-                                }
-                                else
-                                {
-                                    throw ex;
-                                }
-                            }
+                            
                         });
 
                         foreach (WatchRequest request in requests)
@@ -419,6 +434,24 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
+                        if (exceptionHandler != null)
+                        {
+                            exceptionHandler(ex);
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (exceptionHandler != null)
+                    {
+                        exceptionHandler(ex);
+                    }
+                    else
                     {
                         throw ex;
                     }
@@ -446,8 +479,7 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            try
-                            {
+                           
                                 while (await watcher.ResponseStream.MoveNext())
                                 {
                                     WatchResponse update = watcher.ResponseStream.Current;
@@ -462,18 +494,7 @@ namespace dotnet_etcd
                                     }).ToArray()
                                     );
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                if (exceptionHandler != null)
-                                {
-                                    exceptionHandler(ex);
-                                }
-                                else
-                                {
-                                    throw ex;
-                                }
-                            }
+                            
                         });
 
                         foreach (WatchRequest request in requests)
@@ -490,6 +511,25 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
+
+                        if (exceptionHandler != null)
+                        {
+                            exceptionHandler(ex);
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (exceptionHandler != null)
+                    {
+                        exceptionHandler(ex);
+                    }
+                    else
                     {
                         throw ex;
                     }
@@ -516,8 +556,7 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            try
-                            {
+                          
                                 while (await watcher.ResponseStream.MoveNext())
                                 {
                                     WatchResponse update = watcher.ResponseStream.Current;
@@ -536,18 +575,7 @@ namespace dotnet_etcd
                                     }
 
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                if (exceptionHandler != null)
-                                {
-                                    exceptionHandler(ex);
-                                }
-                                else
-                                {
-                                    throw ex;
-                                }
-                            }
+                          
                         });
 
                         foreach (WatchRequest request in requests)
@@ -564,6 +592,24 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
+                        if (exceptionHandler != null)
+                        {
+                            exceptionHandler(ex);
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (exceptionHandler != null)
+                    {
+                        exceptionHandler(ex);
+                    }
+                    else
                     {
                         throw ex;
                     }
@@ -775,25 +821,13 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            try
-                            {
+                            
                                 while (await watcher.ResponseStream.MoveNext())
                                 {
                                     WatchResponse update = watcher.ResponseStream.Current;
                                     method(update);
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                if (exceptionHandler != null)
-                                {
-                                    exceptionHandler(ex);
-                                }
-                                else
-                                {
-                                    throw ex;
-                                }
-                            }
+                            
                         });
 
                         await watcher.RequestStream.WriteAsync(request);
@@ -806,6 +840,24 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
+                        if (exceptionHandler != null)
+                        {
+                            exceptionHandler(ex);
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (exceptionHandler != null)
+                    {
+                        exceptionHandler(ex);
+                    }
+                    else
                     {
                         throw ex;
                     }
@@ -833,8 +885,7 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            try
-                            {
+                            
                                 while (await watcher.ResponseStream.MoveNext())
                                 {
                                     WatchResponse update = watcher.ResponseStream.Current;
@@ -844,18 +895,7 @@ namespace dotnet_etcd
                                     }
 
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                if (exceptionHandler != null)
-                                {
-                                    exceptionHandler(ex);
-                                }
-                                else
-                                {
-                                    throw ex;
-                                }
-                            }
+                           
                         });
 
                         await watcher.RequestStream.WriteAsync(request);
@@ -868,6 +908,24 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
+                        if (exceptionHandler != null)
+                        {
+                            exceptionHandler(ex);
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (exceptionHandler != null)
+                    {
+                        exceptionHandler(ex);
+                    }
+                    else
                     {
                         throw ex;
                     }
@@ -895,8 +953,7 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            try
-                            {
+                            
                                 while (await watcher.ResponseStream.MoveNext())
                                 {
                                     WatchResponse update = watcher.ResponseStream.Current;
@@ -911,18 +968,7 @@ namespace dotnet_etcd
                                     }).ToArray()
                                     );
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                if (exceptionHandler != null)
-                                {
-                                    exceptionHandler(ex);
-                                }
-                                else
-                                {
-                                    throw ex;
-                                }
-                            }
+                           
                         });
 
                         await watcher.RequestStream.WriteAsync(request);
@@ -935,6 +981,24 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
+                        if (exceptionHandler != null)
+                        {
+                            exceptionHandler(ex);
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (exceptionHandler != null)
+                    {
+                        exceptionHandler(ex);
+                    }
+                    else
                     {
                         throw ex;
                     }
@@ -962,8 +1026,7 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            try
-                            {
+                           
                                 while (await watcher.ResponseStream.MoveNext())
                                 {
                                     WatchResponse update = watcher.ResponseStream.Current;
@@ -982,18 +1045,7 @@ namespace dotnet_etcd
                                     }
 
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                if (exceptionHandler != null)
-                                {
-                                    exceptionHandler(ex);
-                                }
-                                else
-                                {
-                                    throw ex;
-                                }
-                            }
+                           
                         });
 
                         await watcher.RequestStream.WriteAsync(request);
@@ -1006,6 +1058,24 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
+                        if (exceptionHandler != null)
+                        {
+                            exceptionHandler(ex);
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (exceptionHandler != null)
+                    {
+                        exceptionHandler(ex);
+                    }
+                    else
                     {
                         throw ex;
                     }
@@ -1033,25 +1103,14 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            try
-                            {
+                            
                                 while (await watcher.ResponseStream.MoveNext())
                                 {
                                     WatchResponse update = watcher.ResponseStream.Current;
                                     method(update);
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                if (exceptionHandler != null)
-                                {
-                                    exceptionHandler(ex);
-                                }
-                                else
-                                {
-                                    throw ex;
-                                }
-                            }
+                            
+                            
                         });
 
                         foreach (WatchRequest request in requests)
@@ -1068,6 +1127,24 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
+                        if (exceptionHandler != null)
+                        {
+                            exceptionHandler(ex);
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (exceptionHandler != null)
+                    {
+                        exceptionHandler(ex);
+                    }
+                    else
                     {
                         throw ex;
                     }
@@ -1095,10 +1172,7 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            try
-                            {
-
-
+                           
                                 while (await watcher.ResponseStream.MoveNext())
                                 {
                                     WatchResponse update = watcher.ResponseStream.Current;
@@ -1108,18 +1182,7 @@ namespace dotnet_etcd
                                     }
 
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                if (exceptionHandler != null)
-                                {
-                                    exceptionHandler(ex);
-                                }
-                                else
-                                {
-                                    throw ex;
-                                }
-                            }
+                            
                         });
 
                         foreach (WatchRequest request in requests)
@@ -1136,6 +1199,24 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
+                        if (exceptionHandler != null)
+                        {
+                            exceptionHandler(ex);
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (exceptionHandler != null)
+                    {
+                        exceptionHandler(ex);
+                    }
+                    else
                     {
                         throw ex;
                     }
@@ -1163,8 +1244,7 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            try
-                            {
+                            
                                 while (await watcher.ResponseStream.MoveNext())
                                 {
                                     WatchResponse update = watcher.ResponseStream.Current;
@@ -1179,18 +1259,7 @@ namespace dotnet_etcd
                                     }).ToArray()
                                     );
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                if (exceptionHandler != null)
-                                {
-                                    exceptionHandler(ex);
-                                }
-                                else
-                                {
-                                    throw ex;
-                                }
-                            }
+                           
                         });
 
                         foreach (WatchRequest request in requests)
@@ -1207,6 +1276,24 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
+                        if (exceptionHandler != null)
+                        {
+                            exceptionHandler(ex);
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (exceptionHandler != null)
+                    {
+                        exceptionHandler(ex);
+                    }
+                    else
                     {
                         throw ex;
                     }
@@ -1234,8 +1321,7 @@ namespace dotnet_etcd
                     {
                         Task watcherTask = Task.Run(async () =>
                         {
-                            try
-                            {
+                           
                                 while (await watcher.ResponseStream.MoveNext())
                                 {
                                     WatchResponse update = watcher.ResponseStream.Current;
@@ -1254,18 +1340,7 @@ namespace dotnet_etcd
                                     }
 
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                if (exceptionHandler != null)
-                                {
-                                    exceptionHandler(ex);
-                                }
-                                else
-                                {
-                                    throw ex;
-                                }
-                            }
+                            
                         });
 
                         foreach (WatchRequest request in requests)
@@ -1282,6 +1357,24 @@ namespace dotnet_etcd
                 {
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
+                    {
+                        if (exceptionHandler != null)
+                        {
+                            exceptionHandler(ex);
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (exceptionHandler != null)
+                    {
+                        exceptionHandler(ex);
+                    }
+                    else
                     {
                         throw ex;
                     }
