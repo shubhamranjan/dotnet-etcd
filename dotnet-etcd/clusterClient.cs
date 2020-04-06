@@ -20,7 +20,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public MemberAddResponse MemberAdd(MemberAddRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             MemberAddResponse response = new MemberAddResponse();
             bool success = false;
@@ -38,7 +38,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -56,7 +56,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<MemberAddResponse> MemberAddAsync(MemberAddRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             MemberAddResponse response = new MemberAddResponse();
             bool success = false;
@@ -74,7 +74,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -92,7 +92,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public MemberRemoveResponse MemberRemove(MemberRemoveRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             MemberRemoveResponse response = new MemberRemoveResponse();
             bool success = false;
@@ -110,7 +110,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -128,7 +128,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<MemberRemoveResponse> MemberRemoveAsync(MemberRemoveRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             MemberRemoveResponse response = new MemberRemoveResponse();
             bool success = false;
@@ -146,7 +146,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -164,7 +164,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public MemberUpdateResponse MemberUpdate(MemberUpdateRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             MemberUpdateResponse response = new MemberUpdateResponse();
             bool success = false;
@@ -182,7 +182,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -200,7 +200,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<MemberUpdateResponse> MemberUpdateAsync(MemberUpdateRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             MemberUpdateResponse response = new MemberUpdateResponse();
             bool success = false;
@@ -218,7 +218,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -236,7 +236,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public MemberListResponse MemberList(MemberListRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             MemberListResponse response = new MemberListResponse();
             bool success = false;
@@ -254,7 +254,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -272,7 +272,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<MemberListResponse> MemberListAsync(MemberListRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             MemberListResponse response = new MemberListResponse();
             bool success = false;
@@ -290,7 +290,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }

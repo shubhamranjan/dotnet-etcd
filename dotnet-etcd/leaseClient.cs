@@ -23,7 +23,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public LeaseGrantResponse LeaseGrant(LeaseGrantRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             LeaseGrantResponse response = new LeaseGrantResponse();
             bool success = false;
@@ -41,7 +41,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -61,7 +61,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<LeaseGrantResponse> LeaseGrantAsync(LeaseGrantRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             LeaseGrantResponse response = new LeaseGrantResponse();
             bool success = false;
@@ -79,7 +79,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -97,7 +97,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public LeaseRevokeResponse LeaseRevoke(LeaseRevokeRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             LeaseRevokeResponse response = new LeaseRevokeResponse();
             bool success = false;
@@ -115,7 +115,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -133,7 +133,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<LeaseRevokeResponse> LeaseRevokeAsync(LeaseRevokeRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             LeaseRevokeResponse response = new LeaseRevokeResponse();
             bool success = false;
@@ -151,7 +151,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -175,8 +175,10 @@ namespace dotnet_etcd
                     using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser =
                         _balancer.GetConnection().leaseClient.LeaseKeepAlive(cancellationToken: cancellationToken))
                     {
-                        LeaseKeepAliveRequest request = new LeaseKeepAliveRequest();
-                        request.ID = leaseId;
+                        LeaseKeepAliveRequest request = new LeaseKeepAliveRequest
+                        {
+                            ID = leaseId
+                        };
 
                         while (true)
                         {
@@ -205,7 +207,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -253,7 +255,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -307,7 +309,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -362,7 +364,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -390,7 +392,7 @@ namespace dotnet_etcd
                 {
                     using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser =
                         _balancer.GetConnection().leaseClient
-                            .LeaseKeepAlive(headers, cancellationToken: cancellationToken))
+                            .LeaseKeepAlive(headers, deadline, cancellationToken))
                     {
                         Task leaserTask = Task.Run(async () =>
                         {
@@ -421,7 +423,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -438,7 +440,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public LeaseTimeToLiveResponse LeaseTimeToLive(LeaseTimeToLiveRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             LeaseTimeToLiveResponse response = new LeaseTimeToLiveResponse();
             bool success = false;
@@ -456,7 +458,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -474,7 +476,7 @@ namespace dotnet_etcd
         /// <returns>The call object.</returns>
         public async Task<LeaseTimeToLiveResponse> LeaseTimeToLiveAsync(LeaseTimeToLiveRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             LeaseTimeToLiveResponse response = new LeaseTimeToLiveResponse();
             bool success = false;
@@ -492,7 +494,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }

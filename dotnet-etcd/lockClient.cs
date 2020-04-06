@@ -26,7 +26,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public LockResponse Lock(string name, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             return Lock(new LockRequest()
             {
@@ -48,7 +48,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public LockResponse Lock(LockRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             LockResponse response = new LockResponse();
             bool success = false;
@@ -65,7 +65,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -87,7 +87,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public async Task<LockResponse> LockAsync(string name, Grpc.Core.Metadata headers = null,
-            DateTime? deadline = null, CancellationToken cancellationToken = default(CancellationToken))
+            DateTime? deadline = null, CancellationToken cancellationToken = default)
         {
             return await LockAsync(new LockRequest()
             {
@@ -109,7 +109,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public async Task<LockResponse> LockAsync(LockRequest request, Grpc.Core.Metadata headers = null,
-            DateTime? deadline = null, CancellationToken cancellationToken = default(CancellationToken))
+            DateTime? deadline = null, CancellationToken cancellationToken = default)
         {
             LockResponse response = new LockResponse();
             bool success = false;
@@ -127,7 +127,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -146,7 +146,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public UnlockResponse Unlock(string key, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             return Unlock(new UnlockRequest()
             {
@@ -165,7 +165,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public UnlockResponse Unlock(UnlockRequest request, Grpc.Core.Metadata headers = null,
-            DateTime? deadline = null, CancellationToken cancellationToken = default(CancellationToken))
+            DateTime? deadline = null, CancellationToken cancellationToken = default)
         {
             UnlockResponse response = new UnlockResponse();
             bool success = false;
@@ -183,7 +183,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -202,7 +202,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public async Task<UnlockResponse> UnlockAsync(string key, Grpc.Core.Metadata headers = null,
-            DateTime? deadline = null, CancellationToken cancellationToken = default(CancellationToken))
+            DateTime? deadline = null, CancellationToken cancellationToken = default)
         {
             return await UnlockAsync(new UnlockRequest()
             {
@@ -221,7 +221,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public async Task<UnlockResponse> UnlockAsync(UnlockRequest request, Grpc.Core.Metadata headers = null,
-            DateTime? deadline = null, CancellationToken cancellationToken = default(CancellationToken))
+            DateTime? deadline = null, CancellationToken cancellationToken = default)
         {
             UnlockResponse response = new UnlockResponse();
             bool success = false;
@@ -239,7 +239,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }

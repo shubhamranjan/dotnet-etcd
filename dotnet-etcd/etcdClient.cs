@@ -40,11 +40,15 @@ namespace dotnet_etcd
                 // discovery-srv://my-domain.local/ would expect entries for either _etcd-client-ssl._tcp.my-domain.local or _etcd-client._tcp.my-domain.local
                 // discovery-srv://my-domain.local/project1 would expect entries for either _etcd-client-ssl-project1._tcp.my-domain.local or _etcd-client-project1._tcp.my-domain.local
                 Uri discoverySrv = new Uri(connectionString);
-                LookupClient client = new LookupClient { UseCache = true };
+                LookupClient client = new LookupClient(new LookupClientOptions
+                {
+                    UseCache = true
+                });
+                
                 // SSL first ...
                 string serviceName = "/".Equals(discoverySrv.AbsolutePath)
                     ? ""
-                    : $"-{discoverySrv.AbsolutePath.Substring(1, discoverySrv.AbsolutePath.Length - 1)}";
+                    : $"-{discoverySrv.AbsolutePath.Substring(startIndex: 1, length: discoverySrv.AbsolutePath.Length - 1)}";
                 IDnsQueryResponse result = client.Query($"_etcd-client-ssl{serviceName}._tcp.{discoverySrv.Host}", QueryType.SRV);
                 string scheme = "https";
                 if (result.HasError)
@@ -79,7 +83,7 @@ namespace dotnet_etcd
 
                     if (host.EndsWith("."))
                     {
-                        host = host.Substring(0, host.Length - 1);
+                        host = host.Substring(startIndex: 0, host.Length - 1);
                     }
 
                     hosts[index] = $"{scheme}://{host}:{srvRecord.Port}";

@@ -19,7 +19,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>Alarm Response</returns>
         public AlarmResponse Alarm(AlarmRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AlarmResponse response = new AlarmResponse();
             bool success = false;
@@ -37,7 +37,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -55,7 +55,7 @@ namespace dotnet_etcd
         /// <returns>Alarm Response</returns>
         public async Task<AlarmResponse> AlarmAsync(AlarmRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AlarmResponse response = new AlarmResponse();
             bool success = false;
@@ -73,7 +73,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -91,7 +91,7 @@ namespace dotnet_etcd
         /// <returns>Status response</returns>
         public StatusResponse Status(StatusRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             StatusResponse response = new StatusResponse();
             bool success = false;
@@ -109,7 +109,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -127,7 +127,7 @@ namespace dotnet_etcd
         /// <returns>Status response</returns>
         public async Task<StatusResponse> StatusASync(StatusRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             StatusResponse response = new StatusResponse();
             bool success = false;
@@ -145,7 +145,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -163,7 +163,7 @@ namespace dotnet_etcd
         /// <returns>Defragment Response</returns>
         public DefragmentResponse Defragment(DefragmentRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             DefragmentResponse response = new DefragmentResponse();
             bool success = false;
@@ -181,7 +181,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -199,7 +199,7 @@ namespace dotnet_etcd
         /// <returns>Defragment Response</returns>
         public async Task<DefragmentResponse> DefragmentAsync(DefragmentRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             DefragmentResponse response = new DefragmentResponse();
             bool success = false;
@@ -217,7 +217,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -239,7 +239,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>Hash Response</returns>
         public HashResponse Hash(HashRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             HashResponse response = new HashResponse();
             bool success = false;
@@ -257,7 +257,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -280,7 +280,7 @@ namespace dotnet_etcd
         /// <returns>Hash Response</returns>
         public async Task<HashResponse> HashAsync(HashRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             HashResponse response = new HashResponse();
             bool success = false;
@@ -298,7 +298,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -317,7 +317,7 @@ namespace dotnet_etcd
         /// <returns>HashKV Response</returns>
         public HashKVResponse HashKV(HashKVRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             HashKVResponse response = new HashKVResponse();
             bool success = false;
@@ -335,7 +335,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -354,7 +354,7 @@ namespace dotnet_etcd
         /// <returns>HashKV Response</returns>
         public async Task<HashKVResponse> HashKVAsync(HashKVRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             HashKVResponse response = new HashKVResponse();
             bool success = false;
@@ -372,7 +372,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -419,7 +419,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -469,7 +469,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -486,7 +486,7 @@ namespace dotnet_etcd
         /// <returns>MoveLeader Response</returns>
         public MoveLeaderResponse MoveLeader(MoveLeaderRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             MoveLeaderResponse response = new MoveLeaderResponse();
             bool success = false;
@@ -504,7 +504,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -522,7 +522,7 @@ namespace dotnet_etcd
         /// <returns>MoveLeader Response</returns>
         public async Task<MoveLeaderResponse> MoveLeaderAsync(MoveLeaderRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             MoveLeaderResponse response = new MoveLeaderResponse();
             bool success = false;
@@ -540,7 +540,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }

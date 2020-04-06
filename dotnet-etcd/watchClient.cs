@@ -54,7 +54,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async void Watch(WatchRequest request, Action<WatchResponse> method, Grpc.Core.Metadata headers = null,
             Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             bool success = false;
             int retryCount = 0;
@@ -92,7 +92,7 @@ namespace dotnet_etcd
                         }
                         else
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                 }
@@ -104,7 +104,7 @@ namespace dotnet_etcd
                     }
                     else
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -122,7 +122,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async void Watch(WatchRequest request, Action<WatchResponse>[] methods,
             Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             bool success = false;
             int retryCount = 0;
@@ -166,7 +166,7 @@ namespace dotnet_etcd
                         }
                         else
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                 }
@@ -178,7 +178,7 @@ namespace dotnet_etcd
                     }
                     else
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -195,7 +195,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async void Watch(WatchRequest request, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null,
             Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             bool success = false;
             int retryCount = 0;
@@ -244,7 +244,7 @@ namespace dotnet_etcd
                         }
                         else
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                 }
@@ -256,7 +256,7 @@ namespace dotnet_etcd
                     }
                     else
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -273,7 +273,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async void Watch(WatchRequest request, Action<WatchEvent[]>[] methods, Grpc.Core.Metadata headers = null,
             Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             bool success = false;
             int retryCount = 0;
@@ -323,7 +323,7 @@ namespace dotnet_etcd
                         }
                         else
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                 }
@@ -335,7 +335,7 @@ namespace dotnet_etcd
                     }
                     else
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -352,7 +352,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async void Watch(WatchRequest[] requests, Action<WatchResponse> method,
             Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             bool success = false;
             int retryCount = 0;
@@ -394,7 +394,7 @@ namespace dotnet_etcd
                         }
                         else
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                 }
@@ -406,7 +406,7 @@ namespace dotnet_etcd
                     }
                     else
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -423,7 +423,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async void Watch(WatchRequest[] requests, Action<WatchResponse>[] methods,
             Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             bool success = false;
             int retryCount = 0;
@@ -468,7 +468,7 @@ namespace dotnet_etcd
                         }
                         else
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                 }
@@ -480,7 +480,7 @@ namespace dotnet_etcd
                     }
                     else
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -497,7 +497,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async void Watch(WatchRequest[] requests, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null,
             Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             bool success = false;
             int retryCount = 0;
@@ -549,7 +549,7 @@ namespace dotnet_etcd
                         }
                         else
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                 }
@@ -561,7 +561,7 @@ namespace dotnet_etcd
                     }
                     else
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -578,7 +578,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async void Watch(WatchRequest[] requests, Action<WatchEvent[]>[] methods,
             Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             bool success = false;
             int retryCount = 0;
@@ -632,7 +632,7 @@ namespace dotnet_etcd
                         }
                         else
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                 }
@@ -644,7 +644,7 @@ namespace dotnet_etcd
                     }
                     else
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -660,7 +660,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void Watch(string key, Action<WatchResponse> method, Grpc.Core.Metadata headers = null,
             Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             WatchRequest request = new WatchRequest()
             {
@@ -683,7 +683,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void Watch(string key, Action<WatchResponse>[] methods, Grpc.Core.Metadata headers = null,
             Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             WatchRequest request = new WatchRequest()
             {
@@ -706,7 +706,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void Watch(string key, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null,
             Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             WatchRequest request = new WatchRequest()
             {
@@ -729,7 +729,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void Watch(string key, Action<WatchEvent[]>[] methods, Grpc.Core.Metadata headers = null,
             Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             WatchRequest request = new WatchRequest()
             {
@@ -752,7 +752,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void Watch(string[] keys, Action<WatchResponse> method, Grpc.Core.Metadata headers = null,
             Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             List<WatchRequest> requests = new List<WatchRequest>();
 
@@ -781,7 +781,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void Watch(string[] keys, Action<WatchResponse>[] methods, Grpc.Core.Metadata headers = null,
             Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             List<WatchRequest> requests = new List<WatchRequest>();
 
@@ -810,7 +810,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void Watch(string[] keys, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null,
             Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             List<WatchRequest> requests = new List<WatchRequest>();
 
@@ -839,7 +839,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void Watch(string[] keys, Action<WatchEvent[]>[] methods, Grpc.Core.Metadata headers = null,
             Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             List<WatchRequest> requests = new List<WatchRequest>();
 
@@ -873,7 +873,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async void WatchRange(WatchRequest request, Action<WatchResponse> method,
             Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             bool success = false;
             int retryCount = 0;
@@ -911,7 +911,7 @@ namespace dotnet_etcd
                         }
                         else
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                 }
@@ -923,7 +923,7 @@ namespace dotnet_etcd
                     }
                     else
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -940,7 +940,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async void WatchRange(WatchRequest request, Action<WatchResponse>[] methods,
             Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             bool success = false;
             int retryCount = 0;
@@ -981,7 +981,7 @@ namespace dotnet_etcd
                         }
                         else
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                 }
@@ -993,7 +993,7 @@ namespace dotnet_etcd
                     }
                     else
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -1010,7 +1010,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async void WatchRange(WatchRequest request, Action<WatchEvent[]> method,
             Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             bool success = false;
             int retryCount = 0;
@@ -1057,7 +1057,7 @@ namespace dotnet_etcd
                         }
                         else
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                 }
@@ -1069,7 +1069,7 @@ namespace dotnet_etcd
                     }
                     else
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -1086,7 +1086,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async void WatchRange(WatchRequest request, Action<WatchEvent[]>[] methods,
             Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             bool success = false;
             int retryCount = 0;
@@ -1136,7 +1136,7 @@ namespace dotnet_etcd
                         }
                         else
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                 }
@@ -1148,7 +1148,7 @@ namespace dotnet_etcd
                     }
                     else
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -1165,7 +1165,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async void WatchRange(WatchRequest[] requests, Action<WatchResponse> method,
             Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             bool success = false;
             int retryCount = 0;
@@ -1207,7 +1207,7 @@ namespace dotnet_etcd
                         }
                         else
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                 }
@@ -1219,7 +1219,7 @@ namespace dotnet_etcd
                     }
                     else
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -1233,7 +1233,7 @@ namespace dotnet_etcd
         /// <param name="methods">Methods to which watch response should be passed on</param>
         public async void WatchRange(WatchRequest[] requests, Action<WatchResponse>[] methods,
             Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             bool success = false;
             int retryCount = 0;
@@ -1278,7 +1278,7 @@ namespace dotnet_etcd
                         }
                         else
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                 }
@@ -1290,7 +1290,7 @@ namespace dotnet_etcd
                     }
                     else
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -1307,7 +1307,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async void WatchRange(WatchRequest[] requests, Action<WatchEvent[]> method,
             Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             bool success = false;
             int retryCount = 0;
@@ -1358,7 +1358,7 @@ namespace dotnet_etcd
                         }
                         else
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                 }
@@ -1370,7 +1370,7 @@ namespace dotnet_etcd
                     }
                     else
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -1387,7 +1387,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async void WatchRange(WatchRequest[] requests, Action<WatchEvent[]>[] methods,
             Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             bool success = false;
             int retryCount = 0;
@@ -1441,7 +1441,7 @@ namespace dotnet_etcd
                         }
                         else
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                 }
@@ -1453,7 +1453,7 @@ namespace dotnet_etcd
                     }
                     else
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -1469,7 +1469,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string path, Action<WatchResponse> method, Grpc.Core.Metadata headers = null,
             Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             WatchRequest request = new WatchRequest()
             {
@@ -1493,7 +1493,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string path, Action<WatchResponse>[] methods, Grpc.Core.Metadata headers = null,
             Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             WatchRequest request = new WatchRequest()
             {
@@ -1517,7 +1517,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string path, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null,
             Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             WatchRequest request = new WatchRequest()
             {
@@ -1541,7 +1541,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string path, Action<WatchEvent[]>[] methods, Grpc.Core.Metadata headers = null,
             Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             WatchRequest request = new WatchRequest()
             {
@@ -1565,7 +1565,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string[] paths, Action<WatchResponse> method, Grpc.Core.Metadata headers = null,
             Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             List<WatchRequest> requests = new List<WatchRequest>();
 
@@ -1595,7 +1595,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string[] paths, Action<WatchResponse>[] methods, Grpc.Core.Metadata headers = null,
             Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             List<WatchRequest> requests = new List<WatchRequest>();
 
@@ -1625,7 +1625,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string[] paths, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null,
             Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             List<WatchRequest> requests = new List<WatchRequest>();
 
@@ -1655,7 +1655,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string[] paths, Action<WatchEvent[]>[] methods, Grpc.Core.Metadata headers = null,
             Action<Exception> exceptionHandler = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             List<WatchRequest> requests = new List<WatchRequest>();
 

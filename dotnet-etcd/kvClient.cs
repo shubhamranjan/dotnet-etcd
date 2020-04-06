@@ -23,7 +23,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The etcd response for the specified request</returns>
         public RangeResponse Get(RangeRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             RangeResponse rangeResponse = new RangeResponse();
             bool success = false;
@@ -41,7 +41,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -58,7 +58,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The etcd response for the specified key</returns>
         public RangeResponse Get(string key, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             return Get(new RangeRequest
             {
@@ -76,7 +76,7 @@ namespace dotnet_etcd
         /// <returns>The etcd response for the specified request</returns>
         public async Task<RangeResponse> GetAsync(RangeRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             RangeResponse rangeResponse = new RangeResponse();
             bool success = false;
@@ -94,7 +94,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -112,7 +112,7 @@ namespace dotnet_etcd
         /// <returns>The etcd response for the specified key</returns>
         public async Task<RangeResponse> GetAsync(string key, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             return await GetAsync(new RangeRequest
             {
@@ -129,7 +129,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The value for the specified key</returns>
         public string GetVal(string key, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             RangeResponse rangeResponse = Get(key, headers, deadline, cancellationToken);
 
@@ -145,7 +145,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The value for the specified key</returns>
         public async Task<string> GetValAsync(string key, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             RangeResponse rangeResponse = await GetAsync(key, headers, deadline, cancellationToken);
 
@@ -161,7 +161,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>RangeResponse containing range of key-values</returns>
         public RangeResponse GetRange(string prefixKey, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             string rangeEnd = GetRangeEnd(prefixKey);
 
@@ -183,7 +183,7 @@ namespace dotnet_etcd
         /// <returns>RangeResponse containing range of key-values</returns>
         public async Task<RangeResponse> GetRangeAsync(string prefixKey, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
 
             string rangeEnd = GetRangeEnd(prefixKey);
@@ -205,7 +205,7 @@ namespace dotnet_etcd
         /// <returns>Dictionary containing range of key-values</returns>
         public IDictionary<string, string> GetRangeVal(string prefixKey, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
 
             string rangeEnd = GetRangeEnd(prefixKey);
@@ -227,7 +227,7 @@ namespace dotnet_etcd
         /// <returns>Dictionary containing range of key-values</returns>
         public async Task<IDictionary<string, string>> GetRangeValAsync(string prefixKey,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
 
             string rangeEnd = GetRangeEnd(prefixKey);
@@ -248,7 +248,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public PutResponse Put(PutRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             PutResponse response = new PutResponse();
             bool success = false;
@@ -265,7 +265,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -283,7 +283,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public PutResponse Put(string key, string val, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
 
             return Put(new PutRequest
@@ -304,7 +304,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<PutResponse> PutAsync(PutRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             PutResponse response = new PutResponse();
             bool success = false;
@@ -322,7 +322,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -342,7 +342,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<PutResponse> PutAsync(string key, string val, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
 
             return await PutAsync(new PutRequest
@@ -363,7 +363,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public DeleteRangeResponse Delete(DeleteRangeRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             DeleteRangeResponse response = new DeleteRangeResponse();
             bool success = false;
@@ -381,7 +381,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -398,7 +398,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public DeleteRangeResponse Delete(string key, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
 
             return Delete(new DeleteRangeRequest
@@ -419,7 +419,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<DeleteRangeResponse> DeleteAsync(DeleteRangeRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             DeleteRangeResponse response = new DeleteRangeResponse();
             bool success = false;
@@ -437,7 +437,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -455,7 +455,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<DeleteRangeResponse> DeleteAsync(string key, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
 
             return await DeleteAsync(new DeleteRangeRequest
@@ -475,7 +475,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public DeleteRangeResponse DeleteRange(string prefixKey, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
 
             string rangeEnd = GetRangeEnd(prefixKey);
@@ -497,7 +497,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<DeleteRangeResponse> DeleteRangeAsync(string prefixKey, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
 
             string rangeEnd = GetRangeEnd(prefixKey);
@@ -521,7 +521,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public TxnResponse Transaction(TxnRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             TxnResponse response = new TxnResponse();
             bool success = false;
@@ -538,7 +538,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -560,7 +560,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<TxnResponse> TransactionAsync(TxnRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             TxnResponse response = new TxnResponse();
             bool success = false;
@@ -578,7 +578,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -598,7 +598,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public CompactionResponse Compact(CompactionRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             CompactionResponse response = new CompactionResponse();
             bool success = false;
@@ -616,7 +616,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -636,7 +636,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<CompactionResponse> CompactAsync(CompactionRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             CompactionResponse response = new CompactionResponse();
             bool success = false;
@@ -654,7 +654,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }

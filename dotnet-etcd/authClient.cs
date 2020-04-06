@@ -20,7 +20,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthenticateResponse Authenticate(AuthenticateRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthenticateResponse response = new AuthenticateResponse();
             bool success = false;
@@ -38,7 +38,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -56,7 +56,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthenticateResponse> AuthenticateAsync(AuthenticateRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthenticateResponse response = new AuthenticateResponse();
             bool success = false;
@@ -74,7 +74,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -92,7 +92,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthEnableResponse AuthEnable(AuthEnableRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthEnableResponse response = new AuthEnableResponse();
             bool success = false;
@@ -110,7 +110,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -128,7 +128,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthEnableResponse> AuthEnableAsync(AuthEnableRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthEnableResponse response = new AuthEnableResponse();
             bool success = false;
@@ -146,7 +146,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -164,7 +164,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthDisableResponse AuthDisable(AuthDisableRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthDisableResponse response = new AuthDisableResponse();
             bool success = false;
@@ -182,7 +182,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -200,7 +200,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthDisableResponse> AuthDisableAsync(AuthDisableRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthDisableResponse response = new AuthDisableResponse();
             bool success = false;
@@ -218,7 +218,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -236,7 +236,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthUserAddResponse UserAdd(AuthUserAddRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
 
             AuthUserAddResponse response = new AuthUserAddResponse();
@@ -255,7 +255,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -273,7 +273,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthUserAddResponse> UserAddAsync(AuthUserAddRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
 
             AuthUserAddResponse response = new AuthUserAddResponse();
@@ -292,7 +292,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -310,7 +310,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthUserGetResponse UserGet(AuthUserGetRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthUserGetResponse response = new AuthUserGetResponse();
             bool success = false;
@@ -328,7 +328,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -346,7 +346,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthUserGetResponse> UserGetAsync(AuthUserGetRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthUserGetResponse response = new AuthUserGetResponse();
             bool success = false;
@@ -364,7 +364,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -382,7 +382,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthUserListResponse UserList(AuthUserListRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthUserListResponse response = new AuthUserListResponse();
             bool success = false;
@@ -400,7 +400,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -418,7 +418,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthUserListResponse> UserListAsync(AuthUserListRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthUserListResponse response = new AuthUserListResponse();
             bool success = false;
@@ -436,7 +436,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -454,7 +454,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthUserDeleteResponse UserDelete(AuthUserDeleteRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthUserDeleteResponse response = new AuthUserDeleteResponse();
             bool success = false;
@@ -472,7 +472,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -490,7 +490,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthUserDeleteResponse> UserDeleteAsync(AuthUserDeleteRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthUserDeleteResponse response = new AuthUserDeleteResponse();
             bool success = false;
@@ -508,7 +508,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -526,7 +526,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthUserChangePasswordResponse UserChangePassword(AuthUserChangePasswordRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthUserChangePasswordResponse response = new AuthUserChangePasswordResponse();
             bool success = false;
@@ -544,7 +544,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -562,7 +562,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthUserChangePasswordResponse> UserChangePasswordAsync(AuthUserChangePasswordRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthUserChangePasswordResponse response = new AuthUserChangePasswordResponse();
             bool success = false;
@@ -580,7 +580,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -598,7 +598,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthUserGrantRoleResponse UserGrantRole(AuthUserGrantRoleRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthUserGrantRoleResponse response = new AuthUserGrantRoleResponse();
             bool success = false;
@@ -616,7 +616,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -634,7 +634,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthUserGrantRoleResponse> UserGrantRoleAsync(AuthUserGrantRoleRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthUserGrantRoleResponse response = new AuthUserGrantRoleResponse();
             bool success = false;
@@ -652,7 +652,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -670,7 +670,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthUserRevokeRoleResponse UserRevokeRole(AuthUserRevokeRoleRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthUserRevokeRoleResponse response = new AuthUserRevokeRoleResponse();
             bool success = false;
@@ -688,7 +688,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -706,7 +706,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthUserRevokeRoleResponse> UserRevokeRoleAsync(AuthUserRevokeRoleRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthUserRevokeRoleResponse response = new AuthUserRevokeRoleResponse();
             bool success = false;
@@ -724,7 +724,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -742,7 +742,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthRoleAddResponse RoleAdd(AuthRoleAddRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthRoleAddResponse response = new AuthRoleAddResponse();
             bool success = false;
@@ -760,7 +760,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -778,7 +778,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthRoleAddResponse> RoleAddAsync(AuthRoleAddRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthRoleAddResponse response = new AuthRoleAddResponse();
             bool success = false;
@@ -796,7 +796,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -814,7 +814,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthRoleGetResponse RoleGet(AuthRoleGetRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthRoleGetResponse response = new AuthRoleGetResponse();
 
@@ -833,7 +833,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -851,7 +851,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthRoleGetResponse> RoleGetASync(AuthRoleGetRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthRoleGetResponse response = new AuthRoleGetResponse();
             bool success = false;
@@ -869,7 +869,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -887,7 +887,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthRoleListResponse RoleList(AuthRoleListRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthRoleListResponse response = new AuthRoleListResponse();
             bool success = false;
@@ -905,7 +905,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -923,7 +923,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthRoleListResponse> RoleListAsync(AuthRoleListRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthRoleListResponse response = new AuthRoleListResponse();
             bool success = false;
@@ -941,7 +941,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -959,7 +959,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthRoleDeleteResponse RoleDelete(AuthRoleDeleteRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthRoleDeleteResponse response = new AuthRoleDeleteResponse();
             bool success = false;
@@ -977,7 +977,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -995,7 +995,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthRoleDeleteResponse> RoleDeleteAsync(AuthRoleDeleteRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthRoleDeleteResponse response = new AuthRoleDeleteResponse();
             bool success = false;
@@ -1013,7 +1013,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -1031,7 +1031,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthRoleGrantPermissionResponse RoleGrantPermission(AuthRoleGrantPermissionRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthRoleGrantPermissionResponse response = new AuthRoleGrantPermissionResponse();
             bool success = false;
@@ -1049,7 +1049,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -1067,7 +1067,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthRoleGrantPermissionResponse> RoleGrantPermissionAsync(
             AuthRoleGrantPermissionRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthRoleGrantPermissionResponse response = new AuthRoleGrantPermissionResponse();
             bool success = false;
@@ -1085,7 +1085,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -1103,7 +1103,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthRoleRevokePermissionResponse RoleRevokePermission(AuthRoleRevokePermissionRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthRoleRevokePermissionResponse response = new AuthRoleRevokePermissionResponse();
             bool success = false;
@@ -1121,7 +1121,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -1139,7 +1139,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthRoleRevokePermissionResponse> RoleRevokePermissionAsync(
             AuthRoleRevokePermissionRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             AuthRoleRevokePermissionResponse response = new AuthRoleRevokePermissionResponse();
             bool success = false;
@@ -1157,7 +1157,7 @@ namespace dotnet_etcd
                     retryCount++;
                     if (retryCount >= _balancer._numNodes)
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
