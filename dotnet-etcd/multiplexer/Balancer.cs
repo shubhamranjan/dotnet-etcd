@@ -69,6 +69,11 @@ namespace dotnet_etcd.multiplexer
         /// </summary>
         private int _lastNodeIndex;
 
+        /// <summary>
+        /// Random object for randomizing selected node
+        /// </summary>
+        private static Random random;
+
         internal Balancer(List<Uri> nodes, string username = "", string password = "", string caCert = "", string clientCert = "", string clientKey = "", bool publicRootCa = false)
         {
             _numNodes = nodes.Count;
@@ -86,6 +91,8 @@ namespace dotnet_etcd.multiplexer
 
             _HealthyCluster = new HashSet<Connection>();
             _UnHealthyCluster = new HashSet<Connection>();
+
+            random = new Random();
 
             foreach (Uri node in nodes)
             {
@@ -158,8 +165,7 @@ namespace dotnet_etcd.multiplexer
             do
             {
                 initial = _lastNodeIndex;
-                computed = initial + 1;
-                computed = computed >= _numNodes ? computed = 0 : computed;
+                computed = random.Next(0, _numNodes);
             }
             while (Interlocked.CompareExchange(ref _lastNodeIndex, computed, initial) != initial);
             return computed;
