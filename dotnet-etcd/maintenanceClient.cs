@@ -14,8 +14,12 @@ namespace dotnet_etcd
         ///  Alarm activates, deactivates, and queries alarms regarding cluster health
         /// </summary>
         /// <param name="request">Alarm request</param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>Alarm Response</returns>
-        public AlarmResponse Alarm(AlarmRequest request, Grpc.Core.Metadata headers = null)
+        public AlarmResponse Alarm(AlarmRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             AlarmResponse response = new AlarmResponse();
             bool success = false;
@@ -24,7 +28,8 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    response = _balancer.GetConnection().maintenanceClient.Alarm(request, headers);
+                    response = _balancer.GetConnection().maintenanceClient
+                        .Alarm(request, headers, deadline, cancellationToken);
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -36,6 +41,7 @@ namespace dotnet_etcd
                     }
                 }
             }
+
             return response;
         }
 
@@ -43,8 +49,13 @@ namespace dotnet_etcd
         ///  Alarm activates, deactivates, and queries alarms regarding cluster health in async
         /// </summary>
         /// <param name="request">Alarm request</param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>Alarm Response</returns>
-        public async Task<AlarmResponse> AlarmAsync(AlarmRequest request, Grpc.Core.Metadata headers = null)
+        public async Task<AlarmResponse> AlarmAsync(AlarmRequest request, Grpc.Core.Metadata headers = null,
+            DateTime? deadline = null,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             AlarmResponse response = new AlarmResponse();
             bool success = false;
@@ -53,7 +64,8 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    response = await _balancer.GetConnection().maintenanceClient.AlarmAsync(request, headers);
+                    response = await _balancer.GetConnection().maintenanceClient
+                        .AlarmAsync(request, headers, deadline, cancellationToken);
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -65,6 +77,7 @@ namespace dotnet_etcd
                     }
                 }
             }
+
             return response;
         }
 
@@ -72,8 +85,13 @@ namespace dotnet_etcd
         /// Status gets the status of the member.
         /// </summary>
         /// <param name="request">Status Request</param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>Status response</returns>
-        public StatusResponse Status(StatusRequest request, Grpc.Core.Metadata headers = null)
+        public StatusResponse Status(StatusRequest request, Grpc.Core.Metadata headers = null,
+            DateTime? deadline = null,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             StatusResponse response = new StatusResponse();
             bool success = false;
@@ -82,7 +100,8 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    response = _balancer.GetConnection().maintenanceClient.Status(request, headers);
+                    response = _balancer.GetConnection().maintenanceClient
+                        .Status(request, headers, deadline, cancellationToken);
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -94,6 +113,7 @@ namespace dotnet_etcd
                     }
                 }
             }
+
             return response;
         }
 
@@ -101,8 +121,13 @@ namespace dotnet_etcd
         /// Status gets the status of the member in async.
         /// </summary>
         /// <param name="request">Status Request</param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>Status response</returns>
-        public async Task<StatusResponse> StatusASync(StatusRequest request, Grpc.Core.Metadata headers = null)
+        public async Task<StatusResponse> StatusASync(StatusRequest request, Grpc.Core.Metadata headers = null,
+            DateTime? deadline = null,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             StatusResponse response = new StatusResponse();
             bool success = false;
@@ -111,7 +136,8 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    response = await _balancer.GetConnection().maintenanceClient.StatusAsync(request, headers);
+                    response = await _balancer.GetConnection().maintenanceClient
+                        .StatusAsync(request, headers, deadline, cancellationToken);
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -123,6 +149,7 @@ namespace dotnet_etcd
                     }
                 }
             }
+
             return response;
         }
 
@@ -130,8 +157,13 @@ namespace dotnet_etcd
         /// Defragment defragments a member's backend database to recover storage space.
         /// </summary>
         /// <param name="request">Defragment Request</param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>Defragment Response</returns>
-        public DefragmentResponse Defragment(DefragmentRequest request, Grpc.Core.Metadata headers = null)
+        public DefragmentResponse Defragment(DefragmentRequest request, Grpc.Core.Metadata headers = null,
+            DateTime? deadline = null,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             DefragmentResponse response = new DefragmentResponse();
             bool success = false;
@@ -140,7 +172,8 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    response = _balancer.GetConnection().maintenanceClient.Defragment(request, headers);
+                    response = _balancer.GetConnection().maintenanceClient
+                        .Defragment(request, headers, deadline, cancellationToken);
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -152,6 +185,7 @@ namespace dotnet_etcd
                     }
                 }
             }
+
             return response;
         }
 
@@ -159,8 +193,13 @@ namespace dotnet_etcd
         /// Defragment defragments a member's backend database to recover storage space in async.
         /// </summary>
         /// <param name="request">Defragment Request</param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>Defragment Response</returns>
-        public async Task<DefragmentResponse> DefragmentAsync(DefragmentRequest request, Grpc.Core.Metadata headers = null)
+        public async Task<DefragmentResponse> DefragmentAsync(DefragmentRequest request,
+            Grpc.Core.Metadata headers = null, DateTime? deadline = null,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             DefragmentResponse response = new DefragmentResponse();
             bool success = false;
@@ -169,7 +208,8 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    response = await _balancer.GetConnection().maintenanceClient.DefragmentAsync(request, headers);
+                    response = await _balancer.GetConnection().maintenanceClient
+                        .DefragmentAsync(request, headers, deadline, cancellationToken);
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -181,6 +221,7 @@ namespace dotnet_etcd
                     }
                 }
             }
+
             return response;
         }
 
@@ -193,8 +234,12 @@ namespace dotnet_etcd
         /// Use "HashKV" API instead for "key" bucket consistency checks.
         /// </summary>
         /// <param name="request">Hash Request</param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>Hash Response</returns>
-        public HashResponse Hash(HashRequest request, Grpc.Core.Metadata headers = null)
+        public HashResponse Hash(HashRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             HashResponse response = new HashResponse();
             bool success = false;
@@ -203,7 +248,8 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    response = _balancer.GetConnection().maintenanceClient.Hash(request, headers);
+                    response = _balancer.GetConnection().maintenanceClient
+                        .Hash(request, headers, deadline, cancellationToken);
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -215,6 +261,7 @@ namespace dotnet_etcd
                     }
                 }
             }
+
             return response;
         }
 
@@ -227,8 +274,13 @@ namespace dotnet_etcd
         /// Use "HashKV" API instead for "key" bucket consistency checks.
         /// </summary>
         /// <param name="request">Hash Request</param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>Hash Response</returns>
-        public async Task<HashResponse> HashAsync(HashRequest request, Grpc.Core.Metadata headers = null)
+        public async Task<HashResponse> HashAsync(HashRequest request, Grpc.Core.Metadata headers = null,
+            DateTime? deadline = null,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             HashResponse response = new HashResponse();
             bool success = false;
@@ -237,7 +289,8 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    response = await _balancer.GetConnection().maintenanceClient.HashAsync(request, headers);
+                    response = await _balancer.GetConnection().maintenanceClient
+                        .HashAsync(request, headers, deadline, cancellationToken);
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -249,6 +302,7 @@ namespace dotnet_etcd
                     }
                 }
             }
+
             return response;
         }
 
@@ -257,8 +311,13 @@ namespace dotnet_etcd
         /// It only iterates "key" bucket in backend storage.
         /// </summary>
         /// <param name="request">HashKV Request</param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>HashKV Response</returns>
-        public HashKVResponse HashKV(HashKVRequest request, Grpc.Core.Metadata headers = null)
+        public HashKVResponse HashKV(HashKVRequest request, Grpc.Core.Metadata headers = null,
+            DateTime? deadline = null,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             HashKVResponse response = new HashKVResponse();
             bool success = false;
@@ -267,7 +326,8 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    response = _balancer.GetConnection().maintenanceClient.HashKV(request, headers);
+                    response = _balancer.GetConnection().maintenanceClient
+                        .HashKV(request, headers, deadline, cancellationToken);
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -279,6 +339,7 @@ namespace dotnet_etcd
                     }
                 }
             }
+
             return response;
         }
 
@@ -287,8 +348,13 @@ namespace dotnet_etcd
         /// It only iterates "key" bucket in backend storage.
         /// </summary>
         /// <param name="request">HashKV Request</param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>HashKV Response</returns>
-        public async Task<HashKVResponse> HashKVAsync(HashKVRequest request, Grpc.Core.Metadata headers = null)
+        public async Task<HashKVResponse> HashKVAsync(HashKVRequest request, Grpc.Core.Metadata headers = null,
+            DateTime? deadline = null,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             HashKVResponse response = new HashKVResponse();
             bool success = false;
@@ -297,7 +363,8 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    response = await _balancer.GetConnection().maintenanceClient.HashKVAsync(request, headers);
+                    response = await _balancer.GetConnection().maintenanceClient
+                        .HashKVAsync(request, headers, deadline, cancellationToken);
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -309,16 +376,20 @@ namespace dotnet_etcd
                     }
                 }
             }
+
             return response;
         }
 
         /// <summary>
         /// Snapshot sends a snapshot of the entire backend from a member over a stream to a client.
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="request">The request to send to the server.</param>
         /// <param name="method"></param>
-        /// <param name="token"></param>
-        public async void Snapshot(SnapshotRequest request, Action<SnapshotResponse> method, CancellationToken token, Grpc.Core.Metadata headers = null)
+        /// <param name="cancellationToken"></param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        public async void Snapshot(SnapshotRequest request, Action<SnapshotResponse> method,
+            CancellationToken cancellationToken, Grpc.Core.Metadata headers = null, DateTime? deadline = null)
         {
             bool success = false;
             int retryCount = 0;
@@ -326,19 +397,21 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _balancer.GetConnection().maintenanceClient.Snapshot(request, headers))
+                    using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _balancer.GetConnection()
+                        .maintenanceClient.Snapshot(request, headers, deadline, cancellationToken))
                     {
                         Task snapshotTask = Task.Run(async () =>
                         {
-                            while (await snapshotter.ResponseStream.MoveNext(token))
+                            while (await snapshotter.ResponseStream.MoveNext(cancellationToken))
                             {
                                 SnapshotResponse update = snapshotter.ResponseStream.Current;
                                 method(update);
                             }
-                        });
+                        }, cancellationToken);
 
                         await snapshotTask;
                     }
+
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -357,10 +430,13 @@ namespace dotnet_etcd
         /// <summary>
         /// Snapshot sends a snapshot of the entire backend from a member over a stream to a client.
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="request">The request to send to the server.</param>
         /// <param name="methods"></param>
-        /// <param name="token"></param>
-        public async void Snapshot(SnapshotRequest request, Action<SnapshotResponse>[] methods, CancellationToken token, Grpc.Core.Metadata headers = null)
+        /// <param name="cancellationToken"></param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        public async void Snapshot(SnapshotRequest request, Action<SnapshotResponse>[] methods,
+            CancellationToken cancellationToken, Grpc.Core.Metadata headers = null, DateTime? deadline = null)
         {
             bool success = false;
             int retryCount = 0;
@@ -368,11 +444,12 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _balancer.GetConnection().maintenanceClient.Snapshot(request, headers))
+                    using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _balancer.GetConnection()
+                        .maintenanceClient.Snapshot(request, headers, deadline, cancellationToken))
                     {
                         Task snapshotTask = Task.Run(async () =>
                         {
-                            while (await snapshotter.ResponseStream.MoveNext(token))
+                            while (await snapshotter.ResponseStream.MoveNext(cancellationToken))
                             {
                                 SnapshotResponse update = snapshotter.ResponseStream.Current;
                                 foreach (Action<SnapshotResponse> method in methods)
@@ -380,10 +457,11 @@ namespace dotnet_etcd
                                     method(update);
                                 }
                             }
-                        });
+                        }, cancellationToken);
 
                         await snapshotTask;
                     }
+
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -402,8 +480,13 @@ namespace dotnet_etcd
         /// MoveLeader requests current leader node to transfer its leadership to transferee.
         /// </summary>
         /// <param name="request">MoveLeader Request</param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>MoveLeader Response</returns>
-        public MoveLeaderResponse MoveLeader(MoveLeaderRequest request, Grpc.Core.Metadata headers = null)
+        public MoveLeaderResponse MoveLeader(MoveLeaderRequest request, Grpc.Core.Metadata headers = null,
+            DateTime? deadline = null,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             MoveLeaderResponse response = new MoveLeaderResponse();
             bool success = false;
@@ -412,7 +495,8 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    response = _balancer.GetConnection().maintenanceClient.MoveLeader(request, headers);
+                    response = _balancer.GetConnection().maintenanceClient
+                        .MoveLeader(request, headers, deadline, cancellationToken);
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -424,6 +508,7 @@ namespace dotnet_etcd
                     }
                 }
             }
+
             return response;
         }
 
@@ -431,8 +516,13 @@ namespace dotnet_etcd
         /// MoveLeader requests current leader node to transfer its leadership to transferee in async.
         /// </summary>
         /// <param name="request">MoveLeader Request</param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>MoveLeader Response</returns>
-        public async Task<MoveLeaderResponse> MoveLeaderAsync(MoveLeaderRequest request, Grpc.Core.Metadata headers = null)
+        public async Task<MoveLeaderResponse> MoveLeaderAsync(MoveLeaderRequest request,
+            Grpc.Core.Metadata headers = null, DateTime? deadline = null,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             MoveLeaderResponse response = new MoveLeaderResponse();
             bool success = false;
@@ -441,7 +531,8 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    response = await _balancer.GetConnection().maintenanceClient.MoveLeaderAsync(request, headers);
+                    response = await _balancer.GetConnection().maintenanceClient
+                        .MoveLeaderAsync(request, headers, deadline, cancellationToken);
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -453,8 +544,8 @@ namespace dotnet_etcd
                     }
                 }
             }
+
             return response;
         }
-
     }
 }
