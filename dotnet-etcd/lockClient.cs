@@ -24,7 +24,7 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        /// <returns></returns>
+        /// <returns>The response received from the server.</returns>
         public LockResponse Lock(string name, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -46,7 +46,7 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        /// <returns></returns>
+        /// <returns>The response received from the server.</returns>
         public LockResponse Lock(LockRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -85,7 +85,7 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        /// <returns></returns>
+        /// <returns>The response received from the server.</returns>
         public async Task<LockResponse> LockAsync(string name, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null, CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -107,7 +107,7 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        /// <returns></returns>
+        /// <returns>The response received from the server.</returns>
         public async Task<LockResponse> LockAsync(LockRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null, CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -144,7 +144,7 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        /// <returns></returns>
+        /// <returns>The response received from the server.</returns>
         public UnlockResponse Unlock(string key, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -163,7 +163,7 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        /// <returns></returns>
+        /// <returns>The response received from the server.</returns>
         public UnlockResponse Unlock(UnlockRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null, CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -200,7 +200,7 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        /// <returns></returns>
+        /// <returns>The response received from the server.</returns>
         public async Task<UnlockResponse> UnlockAsync(string key, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null, CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -219,7 +219,7 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        /// <returns></returns>
+        /// <returns>The response received from the server.</returns>
         public async Task<UnlockResponse> UnlockAsync(UnlockRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null, CancellationToken cancellationToken = default(CancellationToken))
         {

@@ -16,9 +16,14 @@ namespace dotnet_etcd
         /// within a given time to live period. All keys attached to the lease will be expired and
         /// deleted if the lease expires. Each expired key generates a delete event in the event history.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        public LeaseGrantResponse LeaseGrant(LeaseGrantRequest request, Grpc.Core.Metadata headers = null)
+        /// <param name="request">The request to send to the server.</param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        /// <param name="cancellationToken">An optional token for canceling the call.</param>
+        /// <returns>The response received from the server.</returns>
+        public LeaseGrantResponse LeaseGrant(LeaseGrantRequest request, Grpc.Core.Metadata headers = null,
+            DateTime? deadline = null,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             LeaseGrantResponse response = new LeaseGrantResponse();
             bool success = false;
@@ -27,7 +32,8 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    response = _balancer.GetConnection().leaseClient.LeaseGrant(request, headers);
+                    response = _balancer.GetConnection().leaseClient
+                        .LeaseGrant(request, headers, deadline, cancellationToken);
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -39,6 +45,7 @@ namespace dotnet_etcd
                     }
                 }
             }
+
             return response;
         }
 
@@ -47,9 +54,14 @@ namespace dotnet_etcd
         /// within a given time to live period. All keys attached to the lease will be expired and
         /// deleted if the lease expires. Each expired key generates a delete event in the event history.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        public async Task<LeaseGrantResponse> LeaseGrantAsync(LeaseGrantRequest request, Grpc.Core.Metadata headers = null)
+        /// <param name="request">The request to send to the server.</param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        /// <param name="cancellationToken">An optional token for canceling the call.</param>
+        /// <returns>The response received from the server.</returns>
+        public async Task<LeaseGrantResponse> LeaseGrantAsync(LeaseGrantRequest request,
+            Grpc.Core.Metadata headers = null, DateTime? deadline = null,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             LeaseGrantResponse response = new LeaseGrantResponse();
             bool success = false;
@@ -58,7 +70,8 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    response = await _balancer.GetConnection().leaseClient.LeaseGrantAsync(request, headers);
+                    response = await _balancer.GetConnection().leaseClient
+                        .LeaseGrantAsync(request, headers, deadline, cancellationToken);
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -70,15 +83,21 @@ namespace dotnet_etcd
                     }
                 }
             }
+
             return response;
         }
 
         /// <summary>
         /// LeaseRevoke revokes a lease. All keys attached to the lease will expire and be deleted.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        public LeaseRevokeResponse LeaseRevoke(LeaseRevokeRequest request, Grpc.Core.Metadata headers = null)
+        /// <param name="request">The request to send to the server.</param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        /// <param name="cancellationToken">An optional token for canceling the call.</param>
+        /// <returns>The response received from the server.</returns>
+        public LeaseRevokeResponse LeaseRevoke(LeaseRevokeRequest request, Grpc.Core.Metadata headers = null,
+            DateTime? deadline = null,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             LeaseRevokeResponse response = new LeaseRevokeResponse();
             bool success = false;
@@ -87,7 +106,8 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    response = _balancer.GetConnection().leaseClient.LeaseRevoke(request, headers);
+                    response = _balancer.GetConnection().leaseClient
+                        .LeaseRevoke(request, headers, deadline, cancellationToken);
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -99,15 +119,21 @@ namespace dotnet_etcd
                     }
                 }
             }
+
             return response;
         }
 
         /// <summary>
         /// LeaseRevoke revokes a lease in async. All keys attached to the lease will expire and be deleted.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        public async Task<LeaseRevokeResponse> LeaseRevokeAsync(LeaseRevokeRequest request, Grpc.Core.Metadata headers = null)
+        /// <param name="request">The request to send to the server.</param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        /// <param name="cancellationToken">An optional token for canceling the call.</param>
+        /// <returns>The response received from the server.</returns>
+        public async Task<LeaseRevokeResponse> LeaseRevokeAsync(LeaseRevokeRequest request,
+            Grpc.Core.Metadata headers = null, DateTime? deadline = null,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             LeaseRevokeResponse response = new LeaseRevokeResponse();
             bool success = false;
@@ -116,7 +142,8 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    response = await _balancer.GetConnection().leaseClient.LeaseRevokeAsync(request, headers);
+                    response = await _balancer.GetConnection().leaseClient
+                        .LeaseRevokeAsync(request, headers, deadline, cancellationToken);
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -128,6 +155,7 @@ namespace dotnet_etcd
                     }
                 }
             }
+
             return response;
         }
 
@@ -136,38 +164,39 @@ namespace dotnet_etcd
         /// to the server and streaming keep alive responses from the server to the client.
         /// </summary>
         /// <param name="leaseId"></param>
-        /// <param name="token"></param>
-        public async Task LeaseKeepAlive(long leaseId, CancellationToken token)
+        /// <param name="cancellationToken"></param>
+        public async Task LeaseKeepAlive(long leaseId, CancellationToken cancellationToken)
         {
             int retryCount = 0;
             while (true)
             {
                 try
                 {
-                    using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser = _balancer.GetConnection().leaseClient.LeaseKeepAlive())
+                    using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser =
+                        _balancer.GetConnection().leaseClient.LeaseKeepAlive(cancellationToken: cancellationToken))
                     {
                         LeaseKeepAliveRequest request = new LeaseKeepAliveRequest();
                         request.ID = leaseId;
 
                         while (true)
                         {
-                            token.ThrowIfCancellationRequested();
+                            cancellationToken.ThrowIfCancellationRequested();
 
                             await leaser.RequestStream.WriteAsync(request);
-                            if (!await leaser.ResponseStream.MoveNext(token))
+                            if (!await leaser.ResponseStream.MoveNext(cancellationToken))
                             {
                                 await leaser.RequestStream.CompleteAsync();
                                 throw new EndOfStreamException();
                             }
 
                             LeaseKeepAliveResponse update = leaser.ResponseStream.Current;
-                            if (update.ID != leaseId || update.TTL == 0)  // expired
+                            if (update.ID != leaseId || update.TTL == 0) // expired
                             {
                                 await leaser.RequestStream.CompleteAsync();
                                 return;
                             }
 
-                            await Task.Delay(TimeSpan.FromMilliseconds(update.TTL * 1000 / 3), token);
+                            await Task.Delay(TimeSpan.FromMilliseconds(update.TTL * 1000 / 3), cancellationToken);
                         }
                     }
                 }
@@ -186,10 +215,12 @@ namespace dotnet_etcd
         /// LeaseKeepAlive keeps the lease alive by streaming keep alive requests from the client
         /// to the server and streaming keep alive responses from the server to the client.
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="request">The request to send to the server.</param>
         /// <param name="method"></param>
-        /// <param name="token"></param>
-        public async Task LeaseKeepAlive(LeaseKeepAliveRequest request, Action<LeaseKeepAliveResponse> method, CancellationToken token, Grpc.Core.Metadata headers = null)
+        /// <param name="cancellationToken"></param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        public async Task LeaseKeepAlive(LeaseKeepAliveRequest request, Action<LeaseKeepAliveResponse> method,
+            CancellationToken cancellationToken, Grpc.Core.Metadata headers = null)
         {
             bool success = false;
             int retryCount = 0;
@@ -197,21 +228,24 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser = _balancer.GetConnection().leaseClient.LeaseKeepAlive(headers))
+                    using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser =
+                        _balancer.GetConnection().leaseClient
+                            .LeaseKeepAlive(headers, cancellationToken: cancellationToken))
                     {
                         Task leaserTask = Task.Run(async () =>
                         {
-                            while (await leaser.ResponseStream.MoveNext(token))
+                            while (await leaser.ResponseStream.MoveNext(cancellationToken))
                             {
                                 LeaseKeepAliveResponse update = leaser.ResponseStream.Current;
                                 method(update);
                             }
-                        });
+                        }, cancellationToken);
 
                         await leaser.RequestStream.WriteAsync(request);
                         await leaser.RequestStream.CompleteAsync();
                         await leaserTask;
                     }
+
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -230,10 +264,12 @@ namespace dotnet_etcd
         /// LeaseKeepAlive keeps the lease alive by streaming keep alive requests from the client
         /// to the server and streaming keep alive responses from the server to the client.
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="request">The request to send to the server.</param>
         /// <param name="methods"></param>
-        /// <param name="token"></param>
-        public async Task LeaseKeepAlive(LeaseKeepAliveRequest request, Action<LeaseKeepAliveResponse>[] methods, CancellationToken token, Grpc.Core.Metadata headers = null)
+        /// <param name="cancellationToken"></param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        public async Task LeaseKeepAlive(LeaseKeepAliveRequest request, Action<LeaseKeepAliveResponse>[] methods,
+            CancellationToken cancellationToken, Grpc.Core.Metadata headers = null)
         {
 
             bool success = false;
@@ -242,11 +278,13 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser = _balancer.GetConnection().leaseClient.LeaseKeepAlive(headers))
+                    using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser =
+                        _balancer.GetConnection().leaseClient
+                            .LeaseKeepAlive(headers, cancellationToken: cancellationToken))
                     {
                         Task leaserTask = Task.Run(async () =>
                         {
-                            while (await leaser.ResponseStream.MoveNext(token))
+                            while (await leaser.ResponseStream.MoveNext(cancellationToken))
                             {
                                 LeaseKeepAliveResponse update = leaser.ResponseStream.Current;
                                 foreach (Action<LeaseKeepAliveResponse> method in methods)
@@ -255,12 +293,13 @@ namespace dotnet_etcd
                                 }
 
                             }
-                        });
+                        }, cancellationToken);
 
                         await leaser.RequestStream.WriteAsync(request);
                         await leaser.RequestStream.CompleteAsync();
                         await leaserTask;
                     }
+
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -282,8 +321,10 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests"></param>
         /// <param name="method"></param>
-        /// <param name="token"></param>
-        public async Task LeaseKeepAlive(LeaseKeepAliveRequest[] requests, Action<LeaseKeepAliveResponse> method, CancellationToken token, Grpc.Core.Metadata headers = null)
+        /// <param name="cancellationToken"></param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        public async Task LeaseKeepAlive(LeaseKeepAliveRequest[] requests, Action<LeaseKeepAliveResponse> method,
+            CancellationToken cancellationToken, Grpc.Core.Metadata headers = null)
         {
             bool success = false;
             int retryCount = 0;
@@ -292,16 +333,18 @@ namespace dotnet_etcd
                 try
                 {
 
-                    using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser = _balancer.GetConnection().leaseClient.LeaseKeepAlive(headers))
+                    using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser =
+                        _balancer.GetConnection().leaseClient
+                            .LeaseKeepAlive(headers, cancellationToken: cancellationToken))
                     {
                         Task leaserTask = Task.Run(async () =>
                         {
-                            while (await leaser.ResponseStream.MoveNext(token))
+                            while (await leaser.ResponseStream.MoveNext(cancellationToken))
                             {
                                 LeaseKeepAliveResponse update = leaser.ResponseStream.Current;
                                 method(update);
                             }
-                        });
+                        }, cancellationToken);
 
                         foreach (LeaseKeepAliveRequest request in requests)
                         {
@@ -311,6 +354,7 @@ namespace dotnet_etcd
                         await leaser.RequestStream.CompleteAsync();
                         await leaserTask;
                     }
+
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -333,7 +377,10 @@ namespace dotnet_etcd
         /// <param name="requests"></param>
         /// <param name="methods"></param>
         /// <param name="token"></param>
-        public async Task LeaseKeepAlive(LeaseKeepAliveRequest[] requests, Action<LeaseKeepAliveResponse>[] methods, CancellationToken token, Grpc.Core.Metadata headers = null)
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        public async Task LeaseKeepAlive(LeaseKeepAliveRequest[] requests, Action<LeaseKeepAliveResponse>[] methods,
+            CancellationToken cancellationToken, Grpc.Core.Metadata headers = null, DateTime? deadline = null)
         {
             bool success = false;
             int retryCount = 0;
@@ -341,11 +388,13 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser = _balancer.GetConnection().leaseClient.LeaseKeepAlive(headers))
+                    using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser =
+                        _balancer.GetConnection().leaseClient
+                            .LeaseKeepAlive(headers, cancellationToken: cancellationToken))
                     {
                         Task leaserTask = Task.Run(async () =>
                         {
-                            while (await leaser.ResponseStream.MoveNext(token))
+                            while (await leaser.ResponseStream.MoveNext(cancellationToken))
                             {
                                 LeaseKeepAliveResponse update = leaser.ResponseStream.Current;
                                 foreach (Action<LeaseKeepAliveResponse> method in methods)
@@ -354,7 +403,7 @@ namespace dotnet_etcd
                                 }
 
                             }
-                        });
+                        }, cancellationToken);
 
                         foreach (LeaseKeepAliveRequest request in requests)
                         {
@@ -364,6 +413,7 @@ namespace dotnet_etcd
                         await leaser.RequestStream.CompleteAsync();
                         await leaserTask;
                     }
+
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -378,7 +428,17 @@ namespace dotnet_etcd
 
         }
 
-        public LeaseTimeToLiveResponse LeaseTimeToLive(LeaseTimeToLiveRequest request, Grpc.Core.Metadata headers = null)
+        /// <summary>
+        /// LeaseTimeToLive retrieves lease information.
+        /// </summary>
+        /// <param name="request">The request to send to the server.</param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        /// <param name="cancellationToken">An optional token for canceling the call.</param>
+        /// <returns>The response received from the server.</returns>
+        public LeaseTimeToLiveResponse LeaseTimeToLive(LeaseTimeToLiveRequest request,
+            Grpc.Core.Metadata headers = null, DateTime? deadline = null,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             LeaseTimeToLiveResponse response = new LeaseTimeToLiveResponse();
             bool success = false;
@@ -387,7 +447,8 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    response = _balancer.GetConnection().leaseClient.LeaseTimeToLive(request, headers);
+                    response = _balancer.GetConnection().leaseClient
+                        .LeaseTimeToLive(request, headers, deadline, cancellationToken);
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -399,10 +460,21 @@ namespace dotnet_etcd
                     }
                 }
             }
+
             return response;
         }
 
-        public async Task<LeaseTimeToLiveResponse> LeaseTimeToLiveAsync(LeaseTimeToLiveRequest request, Grpc.Core.Metadata headers = null)
+        /// <summary>
+        /// LeaseTimeToLive retrieves lease information.
+        /// </summary>
+        /// <param name="request">The request to send to the server.</param>
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        /// <param name="cancellationToken">An optional token for canceling the call.</param>
+        /// <returns>The call object.</returns>
+        public async Task<LeaseTimeToLiveResponse> LeaseTimeToLiveAsync(LeaseTimeToLiveRequest request,
+            Grpc.Core.Metadata headers = null, DateTime? deadline = null,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             LeaseTimeToLiveResponse response = new LeaseTimeToLiveResponse();
             bool success = false;
@@ -411,7 +483,8 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    response = await _balancer.GetConnection().leaseClient.LeaseTimeToLiveAsync(request, headers);
+                    response = await _balancer.GetConnection().leaseClient
+                        .LeaseTimeToLiveAsync(request, headers, deadline, cancellationToken);
                     success = true;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -423,6 +496,7 @@ namespace dotnet_etcd
                     }
                 }
             }
+
             return response;
         }
     }
