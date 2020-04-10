@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-
 using Etcdserverpb;
-
-using Grpc.Core;
 
 namespace dotnet_etcd
 {
@@ -22,28 +19,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            MemberAddResponse response = new MemberAddResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().clusterClient
-                        .MemberAdd(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.clusterClient
+                .MemberAdd(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -58,28 +35,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            MemberAddResponse response = new MemberAddResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().clusterClient
-                        .MemberAddAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.clusterClient
+                .MemberAddAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -94,28 +51,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            MemberRemoveResponse response = new MemberRemoveResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().clusterClient
-                        .MemberRemove(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.clusterClient
+                .MemberRemove(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -130,28 +67,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            MemberRemoveResponse response = new MemberRemoveResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().clusterClient
-                        .MemberRemoveAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.clusterClient
+                .MemberRemoveAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -166,28 +83,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            MemberUpdateResponse response = new MemberUpdateResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().clusterClient
-                        .MemberUpdate(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.clusterClient
+                .MemberUpdate(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -202,28 +99,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            MemberUpdateResponse response = new MemberUpdateResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().clusterClient
-                        .MemberUpdateAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.clusterClient
+                .MemberUpdateAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -238,28 +115,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            MemberListResponse response = new MemberListResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().clusterClient
-                        .MemberList(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.clusterClient
+                .MemberList(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -274,28 +131,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            MemberListResponse response = new MemberListResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().clusterClient
-                        .MemberListAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.clusterClient
+                .MemberListAsync(request, headers, deadline, cancellationToken));
         }
     }
 }
