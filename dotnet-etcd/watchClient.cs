@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
+using dotnet_etcd.helper;
 using Etcdserverpb;
 
 using Google.Protobuf;
@@ -52,63 +52,29 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        public async void Watch(WatchRequest request, Action<WatchResponse> method, Grpc.Core.Metadata headers = null,
-            Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+        public async Task Watch(WatchRequest request, Action<WatchResponse> method, Grpc.Core.Metadata headers = null,
+            DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
+            await CallEtcdAsync(async (connection) =>
             {
-                try
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                    connection.watchClient.Watch(headers, deadline, cancellationToken))
                 {
-                    using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                        _balancer.GetConnection().watchClient.Watch(headers, deadline, cancellationToken))
+                    Task watcherTask = Task.Run(async () =>
                     {
-                        Task watcherTask = Task.Run(async () =>
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
                         {
-                            while (await watcher.ResponseStream.MoveNext(cancellationToken))
-                            {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                method(update);
-                            }
-                        }, cancellationToken);
-
-                        await watcher.RequestStream.WriteAsync(request);
-                        await watcher.RequestStream.CompleteAsync();
-                        await watcherTask;
-                    }
-
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        if (exceptionHandler != null)
-                        {
-                            exceptionHandler(ex);
+                            WatchResponse update = watcher.ResponseStream.Current;
+                            method(update);
                         }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (exceptionHandler != null)
-                    {
-                        exceptionHandler(ex);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
+                    }, cancellationToken);
 
+                    await watcher.RequestStream.WriteAsync(request);
+                    await watcher.RequestStream.CompleteAsync();
+                    await watcherTask;
+                }
+            });
         }
 
         /// <summary>
@@ -120,68 +86,32 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        public async void Watch(WatchRequest request, Action<WatchResponse>[] methods,
-            Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+        public async Task Watch(WatchRequest request, Action<WatchResponse>[] methods,
+            Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
+            await CallEtcdAsync(async (connection) =>
             {
-                try
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                    connection.watchClient.Watch(headers, deadline, cancellationToken))
                 {
-                    using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                        _balancer.GetConnection().watchClient.Watch(headers, deadline, cancellationToken))
+                    Task watcherTask = Task.Run(async () =>
                     {
-                        Task watcherTask = Task.Run(async () =>
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
                         {
-
-                            while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                            WatchResponse update = watcher.ResponseStream.Current;
+                            foreach (Action<WatchResponse> method in methods)
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                foreach (Action<WatchResponse> method in methods)
-                                {
-                                    method(update);
-                                }
-
+                                method(update);
                             }
-
-                        }, cancellationToken);
-
-                        await watcher.RequestStream.WriteAsync(request);
-                        await watcher.RequestStream.CompleteAsync();
-                        await watcherTask;
-                    }
-
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        if (exceptionHandler != null)
-                        {
-                            exceptionHandler(ex);
                         }
-                        else
-                        {
-                            throw;
-                        }
-                    }
+                    }, cancellationToken);
+
+                    await watcher.RequestStream.WriteAsync(request);
+                    await watcher.RequestStream.CompleteAsync();
+                    await watcherTask;
                 }
-                catch (Exception ex)
-                {
-                    if (exceptionHandler != null)
-                    {
-                        exceptionHandler(ex);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
+            });
         }
 
         /// <summary>
@@ -193,73 +123,38 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        public async void Watch(WatchRequest request, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null,
-            Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+        public async Task Watch(WatchRequest request, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null,
+            DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
+            await CallEtcdAsync(async (connection) =>
             {
-                try
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                    connection.watchClient.Watch(headers, deadline, cancellationToken))
                 {
-                    using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                        _balancer.GetConnection().watchClient.Watch(headers, deadline, cancellationToken))
+                    Task watcherTask = Task.Run(async () =>
                     {
-                        Task watcherTask = Task.Run(async () =>
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
                         {
-
-                            while (await watcher.ResponseStream.MoveNext(cancellationToken))
-                            {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                method(update.Events.Select(i =>
+                            WatchResponse update = watcher.ResponseStream.Current;
+                            method(update.Events.Select(i =>
+                                {
+                                    return new WatchEvent
                                     {
-                                        return new WatchEvent
-                                        {
-                                            Key = i.Kv.Key.ToStringUtf8(),
-                                            Value = i.Kv.Value.ToStringUtf8(),
-                                            Type = i.Type
-                                        };
-                                    }).ToArray()
-                                );
-                            }
-
-                        }, cancellationToken);
-
-                        await watcher.RequestStream.WriteAsync(request);
-                        await watcher.RequestStream.CompleteAsync();
-                        await watcherTask;
-                    }
-
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        if (exceptionHandler != null)
-                        {
-                            exceptionHandler(ex);
+                                        Key = i.Kv.Key.ToStringUtf8(),
+                                        Value = i.Kv.Value.ToStringUtf8(),
+                                        Type = i.Type
+                                    };
+                                }).ToArray()
+                            );
                         }
-                        else
-                        {
-                            throw;
-                        }
-                    }
+                    }, cancellationToken);
+
+                    await watcher.RequestStream.WriteAsync(request);
+                    await watcher.RequestStream.CompleteAsync();
+                    await watcherTask;
                 }
-                catch (Exception ex)
-                {
-                    if (exceptionHandler != null)
-                    {
-                        exceptionHandler(ex);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
+            });
         }
 
         /// <summary>
@@ -271,74 +166,41 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        public async void Watch(WatchRequest request, Action<WatchEvent[]>[] methods, Grpc.Core.Metadata headers = null,
-            Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+        public async Task Watch(WatchRequest request, Action<WatchEvent[]>[] methods, Grpc.Core.Metadata headers = null,
+            DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
+            await CallEtcdAsync(async (connection) =>
             {
-                try
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                    connection.watchClient.Watch(headers, deadline, cancellationToken))
                 {
-                    using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                        _balancer.GetConnection().watchClient.Watch(headers, deadline, cancellationToken))
+                    Task watcherTask = Task.Run(async () =>
                     {
-                        Task watcherTask = Task.Run(async () =>
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
                         {
-                            while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                            WatchResponse update = watcher.ResponseStream.Current;
+                            foreach (Action<WatchEvent[]> method in methods)
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                foreach (Action<WatchEvent[]> method in methods)
-                                {
-                                    method(update.Events.Select(i =>
+                                method(update.Events.Select(i =>
+                                    {
+                                        return new WatchEvent
                                         {
-                                            return new WatchEvent
-                                            {
-                                                Key = i.Kv.Key.ToStringUtf8(),
-                                                Value = i.Kv.Value.ToStringUtf8(),
-                                                Type = i.Type
-                                            };
-                                        }).ToArray()
-                                    );
-                                }
+                                            Key = i.Kv.Key.ToStringUtf8(),
+                                            Value = i.Kv.Value.ToStringUtf8(),
+                                            Type = i.Type
+                                        };
+                                    }).ToArray()
+                                );
                             }
-                        }, cancellationToken);
-
-                        await watcher.RequestStream.WriteAsync(request);
-                        await watcher.RequestStream.CompleteAsync();
-                        await watcherTask;
-                    }
-
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        if (exceptionHandler != null)
-                        {
-                            exceptionHandler(ex);
                         }
-                        else
-                        {
-                            throw;
-                        }
-                    }
+                    }, cancellationToken);
+
+                    await watcher.RequestStream.WriteAsync(request);
+                    await watcher.RequestStream.CompleteAsync();
+                    await watcherTask;
                 }
-                catch (Exception ex)
-                {
-                    if (exceptionHandler != null)
-                    {
-                        exceptionHandler(ex);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
+            });
         }
 
         /// <summary>
@@ -350,66 +212,33 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        public async void Watch(WatchRequest[] requests, Action<WatchResponse> method,
-            Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+        public async Task Watch(WatchRequest[] requests, Action<WatchResponse> method,
+            Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
+            await CallEtcdAsync(async (connection) =>
             {
-                try
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                    connection.watchClient.Watch(headers, deadline, cancellationToken))
                 {
-                    using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                        _balancer.GetConnection().watchClient.Watch(headers, deadline, cancellationToken))
+                    Task watcherTask = Task.Run(async () =>
                     {
-                        Task watcherTask = Task.Run(async () =>
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
                         {
-                            while (await watcher.ResponseStream.MoveNext(cancellationToken))
-                            {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                method(update);
-                            }
-                        }, cancellationToken);
-
-                        foreach (WatchRequest request in requests)
-                        {
-                            await watcher.RequestStream.WriteAsync(request);
+                            WatchResponse update = watcher.ResponseStream.Current;
+                            method(update);
                         }
+                    }, cancellationToken);
 
-                        await watcher.RequestStream.CompleteAsync();
-                        await watcherTask;
+                    foreach (WatchRequest request in requests)
+                    {
+                        await watcher.RequestStream.WriteAsync(request);
                     }
 
-                    success = true;
+                    await watcher.RequestStream.CompleteAsync();
+                    await watcherTask;
                 }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        if (exceptionHandler != null)
-                        {
-                            exceptionHandler(ex);
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (exceptionHandler != null)
-                    {
-                        exceptionHandler(ex);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
+            });
         }
 
         /// <summary>
@@ -421,69 +250,36 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        public async void Watch(WatchRequest[] requests, Action<WatchResponse>[] methods,
-            Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+        public async Task Watch(WatchRequest[] requests, Action<WatchResponse>[] methods,
+            Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
+            await CallEtcdAsync(async (connection) =>
             {
-                try
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                    connection.watchClient.Watch(headers, deadline, cancellationToken))
                 {
-                    using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                        _balancer.GetConnection().watchClient.Watch(headers, deadline, cancellationToken))
+                    Task watcherTask = Task.Run(async () =>
                     {
-                        Task watcherTask = Task.Run(async () =>
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
                         {
-                            while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                            WatchResponse update = watcher.ResponseStream.Current;
+                            foreach (Action<WatchResponse> method in methods)
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                foreach (Action<WatchResponse> method in methods)
-                                {
-                                    method(update);
-                                }
+                                method(update);
                             }
-                        }, cancellationToken);
-
-                        foreach (WatchRequest request in requests)
-                        {
-                            await watcher.RequestStream.WriteAsync(request);
                         }
+                    }, cancellationToken);
 
-                        await watcher.RequestStream.CompleteAsync();
-                        await watcherTask;
+                    foreach (WatchRequest request in requests)
+                    {
+                        await watcher.RequestStream.WriteAsync(request);
                     }
 
-                    success = true;
+                    await watcher.RequestStream.CompleteAsync();
+                    await watcherTask;
                 }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        if (exceptionHandler != null)
-                        {
-                            exceptionHandler(ex);
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (exceptionHandler != null)
-                    {
-                        exceptionHandler(ex);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
+            });
         }
 
         /// <summary>
@@ -495,76 +291,42 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        public async void Watch(WatchRequest[] requests, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null,
-            Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+        public async Task Watch(WatchRequest[] requests, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null,
+            DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
+            await CallEtcdAsync(async (connection) =>
             {
-                try
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                    connection.watchClient.Watch(headers, deadline, cancellationToken))
                 {
-                    using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                        _balancer.GetConnection().watchClient.Watch(headers, deadline, cancellationToken))
+                    Task watcherTask = Task.Run(async () =>
                     {
-                        Task watcherTask = Task.Run(async () =>
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
                         {
-                            while (await watcher.ResponseStream.MoveNext(cancellationToken))
-                            {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                method(update.Events.Select(i =>
+                            WatchResponse update = watcher.ResponseStream.Current;
+                            method(update.Events.Select(i =>
+                                {
+                                    return new WatchEvent
                                     {
-                                        return new WatchEvent
-                                        {
-                                            Key = i.Kv.Key.ToStringUtf8(),
-                                            Value = i.Kv.Value.ToStringUtf8(),
-                                            Type = i.Type
-                                        };
-                                    }).ToArray()
-                                );
-                            }
-                        }, cancellationToken);
-
-                        foreach (WatchRequest request in requests)
-                        {
-                            await watcher.RequestStream.WriteAsync(request);
+                                        Key = i.Kv.Key.ToStringUtf8(),
+                                        Value = i.Kv.Value.ToStringUtf8(),
+                                        Type = i.Type
+                                    };
+                                }).ToArray()
+                            );
                         }
+                    }, cancellationToken);
 
-                        await watcher.RequestStream.CompleteAsync();
-                        await watcherTask;
+                    foreach (WatchRequest request in requests)
+                    {
+                        await watcher.RequestStream.WriteAsync(request);
                     }
 
-                    success = true;
+                    await watcher.RequestStream.CompleteAsync();
+                    await watcherTask;
                 }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-
-                        if (exceptionHandler != null)
-                        {
-                            exceptionHandler(ex);
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (exceptionHandler != null)
-                    {
-                        exceptionHandler(ex);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
+            });
         }
 
         /// <summary>
@@ -576,78 +338,45 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        public async void Watch(WatchRequest[] requests, Action<WatchEvent[]>[] methods,
-            Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+        public async Task Watch(WatchRequest[] requests, Action<WatchEvent[]>[] methods,
+            Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
+            await CallEtcdAsync(async (connection) =>
             {
-                try
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                    connection.watchClient.Watch(headers, deadline, cancellationToken))
                 {
-                    using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                        _balancer.GetConnection().watchClient.Watch(headers, deadline, cancellationToken))
+                    Task watcherTask = Task.Run(async () =>
                     {
-                        Task watcherTask = Task.Run(async () =>
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
                         {
-                            while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                            WatchResponse update = watcher.ResponseStream.Current;
+                            foreach (Action<WatchEvent[]> method in methods)
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                foreach (Action<WatchEvent[]> method in methods)
-                                {
-                                    method(update.Events.Select(i =>
+                                method(update.Events.Select(i =>
+                                    {
+                                        return new WatchEvent
                                         {
-                                            return new WatchEvent
-                                            {
-                                                Key = i.Kv.Key.ToStringUtf8(),
-                                                Value = i.Kv.Value.ToStringUtf8(),
-                                                Type = i.Type
-                                            };
-                                        }).ToArray()
-                                    );
-                                }
+                                            Key = i.Kv.Key.ToStringUtf8(),
+                                            Value = i.Kv.Value.ToStringUtf8(),
+                                            Type = i.Type
+                                        };
+                                    }).ToArray()
+                                );
                             }
-                        }, cancellationToken);
-
-                        foreach (WatchRequest request in requests)
-                        {
-                            await watcher.RequestStream.WriteAsync(request);
                         }
+                    }, cancellationToken);
 
-                        await watcher.RequestStream.CompleteAsync();
-                        await watcherTask;
+                    foreach (WatchRequest request in requests)
+                    {
+                        await watcher.RequestStream.WriteAsync(request);
                     }
 
-                    success = true;
+                    await watcher.RequestStream.CompleteAsync();
+                    await watcherTask;
                 }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        if (exceptionHandler != null)
-                        {
-                            exceptionHandler(ex);
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (exceptionHandler != null)
-                    {
-                        exceptionHandler(ex);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
+            });
         }
 
         /// <summary>
@@ -659,7 +388,7 @@ namespace dotnet_etcd
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void Watch(string key, Action<WatchResponse> method, Grpc.Core.Metadata headers = null,
-            Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+            DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
             WatchRequest request = new WatchRequest()
@@ -670,7 +399,7 @@ namespace dotnet_etcd
                 }
             };
 
-            Watch(request, method, headers, exceptionHandler, deadline, cancellationToken);
+            AsyncHelper.RunSync(async () => await Watch(request, method, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -682,7 +411,7 @@ namespace dotnet_etcd
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void Watch(string key, Action<WatchResponse>[] methods, Grpc.Core.Metadata headers = null,
-            Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+            DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
             WatchRequest request = new WatchRequest()
@@ -693,7 +422,7 @@ namespace dotnet_etcd
                 }
             };
 
-            Watch(request, methods, headers, exceptionHandler, deadline, cancellationToken);
+            AsyncHelper.RunSync(async () => await Watch(request, methods, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -705,7 +434,7 @@ namespace dotnet_etcd
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void Watch(string key, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null,
-            Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+            DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
             WatchRequest request = new WatchRequest()
@@ -716,7 +445,7 @@ namespace dotnet_etcd
                 }
             };
 
-            Watch(request, method, headers, exceptionHandler, deadline, cancellationToken);
+            AsyncHelper.RunSync(async () => await Watch(request, method, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -728,7 +457,7 @@ namespace dotnet_etcd
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void Watch(string key, Action<WatchEvent[]>[] methods, Grpc.Core.Metadata headers = null,
-            Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+            DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
             WatchRequest request = new WatchRequest()
@@ -739,7 +468,7 @@ namespace dotnet_etcd
                 }
             };
 
-            Watch(request, methods, headers, exceptionHandler, deadline, cancellationToken);
+            AsyncHelper.RunSync(async () => await Watch(request, methods, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -751,7 +480,7 @@ namespace dotnet_etcd
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void Watch(string[] keys, Action<WatchResponse> method, Grpc.Core.Metadata headers = null,
-            Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+            DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
             List<WatchRequest> requests = new List<WatchRequest>();
@@ -768,7 +497,7 @@ namespace dotnet_etcd
                 requests.Add(request);
             }
 
-            Watch(requests.ToArray(), method, headers, exceptionHandler, deadline, cancellationToken);
+            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), method, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -780,7 +509,7 @@ namespace dotnet_etcd
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void Watch(string[] keys, Action<WatchResponse>[] methods, Grpc.Core.Metadata headers = null,
-            Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+            DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
             List<WatchRequest> requests = new List<WatchRequest>();
@@ -797,7 +526,7 @@ namespace dotnet_etcd
                 requests.Add(request);
             }
 
-            Watch(requests.ToArray(), methods, headers, exceptionHandler, deadline, cancellationToken);
+            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), methods, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -809,7 +538,7 @@ namespace dotnet_etcd
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void Watch(string[] keys, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null,
-            Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+            DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
             List<WatchRequest> requests = new List<WatchRequest>();
@@ -826,7 +555,7 @@ namespace dotnet_etcd
                 requests.Add(request);
             }
 
-            Watch(requests.ToArray(), method, headers, exceptionHandler, deadline, cancellationToken);
+            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), method, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -838,7 +567,7 @@ namespace dotnet_etcd
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void Watch(string[] keys, Action<WatchEvent[]>[] methods, Grpc.Core.Metadata headers = null,
-            Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+            DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
             List<WatchRequest> requests = new List<WatchRequest>();
@@ -855,7 +584,7 @@ namespace dotnet_etcd
                 requests.Add(request);
             }
 
-            Watch(requests.ToArray(), methods, headers, exceptionHandler, deadline, cancellationToken);
+            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), methods, headers, deadline, cancellationToken));
         }
 
         #endregion
@@ -871,62 +600,29 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        public async void WatchRange(WatchRequest request, Action<WatchResponse> method,
-            Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+        public async Task WatchRange(WatchRequest request, Action<WatchResponse> method,
+            Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
+            await CallEtcdAsync(async (connection) =>
             {
-                try
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                    connection.watchClient.Watch(headers, deadline, cancellationToken))
                 {
-                    using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                        _balancer.GetConnection().watchClient.Watch(headers, deadline, cancellationToken))
+                    Task watcherTask = Task.Run(async () =>
                     {
-                        Task watcherTask = Task.Run(async () =>
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
                         {
-                            while (await watcher.ResponseStream.MoveNext(cancellationToken))
-                            {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                method(update);
-                            }
-                        }, cancellationToken);
-
-                        await watcher.RequestStream.WriteAsync(request);
-                        await watcher.RequestStream.CompleteAsync();
-                        await watcherTask;
-                    }
-
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        if (exceptionHandler != null)
-                        {
-                            exceptionHandler(ex);
+                            WatchResponse update = watcher.ResponseStream.Current;
+                            method(update);
                         }
-                        else
-                        {
-                            throw;
-                        }
-                    }
+                    }, cancellationToken);
+
+                    await watcher.RequestStream.WriteAsync(request);
+                    await watcher.RequestStream.CompleteAsync();
+                    await watcherTask;
                 }
-                catch (Exception ex)
-                {
-                    if (exceptionHandler != null)
-                    {
-                        exceptionHandler(ex);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
+            });
         }
 
         /// <summary>
@@ -938,65 +634,32 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        public async void WatchRange(WatchRequest request, Action<WatchResponse>[] methods,
-            Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+        public async Task WatchRange(WatchRequest request, Action<WatchResponse>[] methods,
+            Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
+            await CallEtcdAsync(async (connection) =>
             {
-                try
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                    connection.watchClient.Watch(headers, deadline, cancellationToken))
                 {
-                    using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                        _balancer.GetConnection().watchClient.Watch(headers, deadline, cancellationToken))
+                    Task watcherTask = Task.Run(async () =>
                     {
-                        Task watcherTask = Task.Run(async () =>
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
                         {
-                            while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                            WatchResponse update = watcher.ResponseStream.Current;
+                            foreach (Action<WatchResponse> method in methods)
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                foreach (Action<WatchResponse> method in methods)
-                                {
-                                    method(update);
-                                }
+                                method(update);
                             }
-                        }, cancellationToken);
-
-                        await watcher.RequestStream.WriteAsync(request);
-                        await watcher.RequestStream.CompleteAsync();
-                        await watcherTask;
-                    }
-
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        if (exceptionHandler != null)
-                        {
-                            exceptionHandler(ex);
                         }
-                        else
-                        {
-                            throw;
-                        }
-                    }
+                    }, cancellationToken);
+
+                    await watcher.RequestStream.WriteAsync(request);
+                    await watcher.RequestStream.CompleteAsync();
+                    await watcherTask;
                 }
-                catch (Exception ex)
-                {
-                    if (exceptionHandler != null)
-                    {
-                        exceptionHandler(ex);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
+            });
         }
 
         /// <summary>
@@ -1008,71 +671,38 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        public async void WatchRange(WatchRequest request, Action<WatchEvent[]> method,
-            Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+        public async Task WatchRange(WatchRequest request, Action<WatchEvent[]> method,
+            Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
+            await CallEtcdAsync(async (connection) =>
             {
-                try
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                    connection.watchClient.Watch(headers, deadline, cancellationToken))
                 {
-                    using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                        _balancer.GetConnection().watchClient.Watch(headers, deadline, cancellationToken))
+                    Task watcherTask = Task.Run(async () =>
                     {
-                        Task watcherTask = Task.Run(async () =>
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
                         {
-                            while (await watcher.ResponseStream.MoveNext(cancellationToken))
-                            {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                method(update.Events.Select(i =>
+                            WatchResponse update = watcher.ResponseStream.Current;
+                            method(update.Events.Select(i =>
+                                {
+                                    return new WatchEvent
                                     {
-                                        return new WatchEvent
-                                        {
-                                            Key = i.Kv.Key.ToStringUtf8(),
-                                            Value = i.Kv.Value.ToStringUtf8(),
-                                            Type = i.Type
-                                        };
-                                    }).ToArray()
-                                );
-                            }
-                        }, cancellationToken);
-
-                        await watcher.RequestStream.WriteAsync(request);
-                        await watcher.RequestStream.CompleteAsync();
-                        await watcherTask;
-                    }
-
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        if (exceptionHandler != null)
-                        {
-                            exceptionHandler(ex);
+                                        Key = i.Kv.Key.ToStringUtf8(),
+                                        Value = i.Kv.Value.ToStringUtf8(),
+                                        Type = i.Type
+                                    };
+                                }).ToArray()
+                            );
                         }
-                        else
-                        {
-                            throw;
-                        }
-                    }
+                    }, cancellationToken);
+
+                    await watcher.RequestStream.WriteAsync(request);
+                    await watcher.RequestStream.CompleteAsync();
+                    await watcherTask;
                 }
-                catch (Exception ex)
-                {
-                    if (exceptionHandler != null)
-                    {
-                        exceptionHandler(ex);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
+            });
         }
 
         /// <summary>
@@ -1084,74 +714,41 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        public async void WatchRange(WatchRequest request, Action<WatchEvent[]>[] methods,
-            Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+        public async Task WatchRange(WatchRequest request, Action<WatchEvent[]>[] methods,
+            Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
+            await CallEtcdAsync(async (connection) =>
             {
-                try
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                    connection.watchClient.Watch(headers, deadline, cancellationToken))
                 {
-                    using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                        _balancer.GetConnection().watchClient.Watch(headers, deadline, cancellationToken))
+                    Task watcherTask = Task.Run(async () =>
                     {
-                        Task watcherTask = Task.Run(async () =>
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
                         {
-                            while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                            WatchResponse update = watcher.ResponseStream.Current;
+                            foreach (Action<WatchEvent[]> method in methods)
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                foreach (Action<WatchEvent[]> method in methods)
-                                {
-                                    method(update.Events.Select(i =>
+                                method(update.Events.Select(i =>
+                                    {
+                                        return new WatchEvent
                                         {
-                                            return new WatchEvent
-                                            {
-                                                Key = i.Kv.Key.ToStringUtf8(),
-                                                Value = i.Kv.Value.ToStringUtf8(),
-                                                Type = i.Type
-                                            };
-                                        }).ToArray()
-                                    );
-                                }
+                                            Key = i.Kv.Key.ToStringUtf8(),
+                                            Value = i.Kv.Value.ToStringUtf8(),
+                                            Type = i.Type
+                                        };
+                                    }).ToArray()
+                                );
                             }
-                        }, cancellationToken);
-
-                        await watcher.RequestStream.WriteAsync(request);
-                        await watcher.RequestStream.CompleteAsync();
-                        await watcherTask;
-                    }
-
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        if (exceptionHandler != null)
-                        {
-                            exceptionHandler(ex);
                         }
-                        else
-                        {
-                            throw;
-                        }
-                    }
+                    }, cancellationToken);
+
+                    await watcher.RequestStream.WriteAsync(request);
+                    await watcher.RequestStream.CompleteAsync();
+                    await watcherTask;
                 }
-                catch (Exception ex)
-                {
-                    if (exceptionHandler != null)
-                    {
-                        exceptionHandler(ex);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
+            });
         }
 
         /// <summary>
@@ -1163,66 +760,33 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        public async void WatchRange(WatchRequest[] requests, Action<WatchResponse> method,
-            Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+        public async Task WatchRange(WatchRequest[] requests, Action<WatchResponse> method,
+            Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
+            await CallEtcdAsync(async (connection) =>
             {
-                try
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                    connection.watchClient.Watch(headers, deadline, cancellationToken))
                 {
-                    using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                        _balancer.GetConnection().watchClient.Watch(headers, deadline, cancellationToken))
+                    Task watcherTask = Task.Run(async () =>
                     {
-                        Task watcherTask = Task.Run(async () =>
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
                         {
-                            while (await watcher.ResponseStream.MoveNext(cancellationToken))
-                            {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                method(update);
-                            }
-                        }, cancellationToken);
-
-                        foreach (WatchRequest request in requests)
-                        {
-                            await watcher.RequestStream.WriteAsync(request);
+                            WatchResponse update = watcher.ResponseStream.Current;
+                            method(update);
                         }
+                    }, cancellationToken);
 
-                        await watcher.RequestStream.CompleteAsync();
-                        await watcherTask;
+                    foreach (WatchRequest request in requests)
+                    {
+                        await watcher.RequestStream.WriteAsync(request);
                     }
 
-                    success = true;
+                    await watcher.RequestStream.CompleteAsync();
+                    await watcherTask;
                 }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        if (exceptionHandler != null)
-                        {
-                            exceptionHandler(ex);
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (exceptionHandler != null)
-                    {
-                        exceptionHandler(ex);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
+            });
         }
 
         /// <summary>
@@ -1231,69 +795,39 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="requests">Watch Requests containing keys to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
-        public async void WatchRange(WatchRequest[] requests, Action<WatchResponse>[] methods,
-            Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+        /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+        /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+        /// <param name="cancellationToken">An optional token for canceling the call.</param>
+        public async Task WatchRange(WatchRequest[] requests, Action<WatchResponse>[] methods,
+            Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
+            await CallEtcdAsync(async (connection) =>
             {
-                try
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                    connection.watchClient.Watch(headers, deadline, cancellationToken))
                 {
-                    using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                        _balancer.GetConnection().watchClient.Watch(headers, deadline, cancellationToken))
+                    Task watcherTask = Task.Run(async () =>
                     {
-                        Task watcherTask = Task.Run(async () =>
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
                         {
-                            while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                            WatchResponse update = watcher.ResponseStream.Current;
+                            foreach (Action<WatchResponse> method in methods)
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                foreach (Action<WatchResponse> method in methods)
-                                {
-                                    method(update);
-                                }
+                                method(update);
                             }
-                        }, cancellationToken);
-
-                        foreach (WatchRequest request in requests)
-                        {
-                            await watcher.RequestStream.WriteAsync(request);
                         }
+                    }, cancellationToken);
 
-                        await watcher.RequestStream.CompleteAsync();
-                        await watcherTask;
+                    foreach (WatchRequest request in requests)
+                    {
+                        await watcher.RequestStream.WriteAsync(request);
                     }
 
-                    success = true;
+                    await watcher.RequestStream.CompleteAsync();
+                    await watcherTask;
                 }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        if (exceptionHandler != null)
-                        {
-                            exceptionHandler(ex);
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (exceptionHandler != null)
-                    {
-                        exceptionHandler(ex);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
+            });
         }
 
         /// <summary>
@@ -1305,75 +839,42 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        public async void WatchRange(WatchRequest[] requests, Action<WatchEvent[]> method,
-            Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+        public async Task WatchRange(WatchRequest[] requests, Action<WatchEvent[]> method,
+            Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
+            await CallEtcdAsync(async (connection) =>
             {
-                try
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                    connection.watchClient.Watch(headers, deadline, cancellationToken))
                 {
-                    using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                        _balancer.GetConnection().watchClient.Watch(headers, deadline, cancellationToken))
+                    Task watcherTask = Task.Run(async () =>
                     {
-                        Task watcherTask = Task.Run(async () =>
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
                         {
-                            while (await watcher.ResponseStream.MoveNext(cancellationToken))
-                            {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                method(update.Events.Select(i =>
+                            WatchResponse update = watcher.ResponseStream.Current;
+                            method(update.Events.Select(i =>
+                                {
+                                    return new WatchEvent
                                     {
-                                        return new WatchEvent
-                                        {
-                                            Key = i.Kv.Key.ToStringUtf8(),
-                                            Value = i.Kv.Value.ToStringUtf8(),
-                                            Type = i.Type
-                                        };
-                                    }).ToArray()
-                                );
-                            }
-                        }, cancellationToken);
-
-                        foreach (WatchRequest request in requests)
-                        {
-                            await watcher.RequestStream.WriteAsync(request);
+                                        Key = i.Kv.Key.ToStringUtf8(),
+                                        Value = i.Kv.Value.ToStringUtf8(),
+                                        Type = i.Type
+                                    };
+                                }).ToArray()
+                            );
                         }
+                    }, cancellationToken);
 
-                        await watcher.RequestStream.CompleteAsync();
-                        await watcherTask;
+                    foreach (WatchRequest request in requests)
+                    {
+                        await watcher.RequestStream.WriteAsync(request);
                     }
 
-                    success = true;
+                    await watcher.RequestStream.CompleteAsync();
+                    await watcherTask;
                 }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        if (exceptionHandler != null)
-                        {
-                            exceptionHandler(ex);
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (exceptionHandler != null)
-                    {
-                        exceptionHandler(ex);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
+            });
         }
 
         /// <summary>
@@ -1385,90 +886,57 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
-        public async void WatchRange(WatchRequest[] requests, Action<WatchEvent[]>[] methods,
-            Grpc.Core.Metadata headers = null, Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+        public async Task WatchRange(WatchRequest[] requests, Action<WatchEvent[]>[] methods,
+            Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
+            await CallEtcdAsync(async (connection) =>
             {
-                try
+                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                    connection.watchClient.Watch(headers, deadline, cancellationToken))
                 {
-                    using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                        _balancer.GetConnection().watchClient.Watch(headers, deadline, cancellationToken))
+                    Task watcherTask = Task.Run(async () =>
                     {
-                        Task watcherTask = Task.Run(async () =>
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
                         {
-                            while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                            WatchResponse update = watcher.ResponseStream.Current;
+                            foreach (Action<WatchEvent[]> method in methods)
                             {
-                                WatchResponse update = watcher.ResponseStream.Current;
-                                foreach (Action<WatchEvent[]> method in methods)
-                                {
-                                    method(update.Events.Select(i =>
+                                method(update.Events.Select(i =>
+                                    {
+                                        return new WatchEvent
                                         {
-                                            return new WatchEvent
-                                            {
-                                                Key = i.Kv.Key.ToStringUtf8(),
-                                                Value = i.Kv.Value.ToStringUtf8(),
-                                                Type = i.Type
-                                            };
-                                        }).ToArray()
-                                    );
-                                }
+                                            Key = i.Kv.Key.ToStringUtf8(),
+                                            Value = i.Kv.Value.ToStringUtf8(),
+                                            Type = i.Type
+                                        };
+                                    }).ToArray()
+                                );
                             }
-                        }, cancellationToken);
-
-                        foreach (WatchRequest request in requests)
-                        {
-                            await watcher.RequestStream.WriteAsync(request);
                         }
+                    }, cancellationToken);
 
-                        await watcher.RequestStream.CompleteAsync();
-                        await watcherTask;
+                    foreach (WatchRequest request in requests)
+                    {
+                        await watcher.RequestStream.WriteAsync(request);
                     }
 
-                    success = true;
+                    await watcher.RequestStream.CompleteAsync();
+                    await watcherTask;
                 }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        if (exceptionHandler != null)
-                        {
-                            exceptionHandler(ex);
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (exceptionHandler != null)
-                    {
-                        exceptionHandler(ex);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
+            });
         }
 
         /// <summary>
         /// Watches the specified key range and passes the watch response to the method provided.
         /// </summary>
-        /// <param name="key">Key to be watched</param>
+        /// <param name="path">Path to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string path, Action<WatchResponse> method, Grpc.Core.Metadata headers = null,
-            Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+            DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
             WatchRequest request = new WatchRequest()
@@ -1480,19 +948,19 @@ namespace dotnet_etcd
                 }
             };
 
-            Watch(request, method, headers, exceptionHandler, deadline, cancellationToken);
+            AsyncHelper.RunSync(async () => await Watch(request, method, headers, deadline, cancellationToken));
         }
 
         /// <summary>
         /// Watches the specified key range and passes the watch response to the methods provided.
         /// </summary>
-        /// <param name="key">Key to be watched</param>
+        /// <param name="path">Path to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string path, Action<WatchResponse>[] methods, Grpc.Core.Metadata headers = null,
-            Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+            DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
             WatchRequest request = new WatchRequest()
@@ -1504,19 +972,19 @@ namespace dotnet_etcd
                 }
             };
 
-            Watch(request, methods, headers, exceptionHandler, deadline, cancellationToken);
+            AsyncHelper.RunSync(async () => await Watch(request, methods, headers, deadline, cancellationToken));
         }
 
         /// <summary>
         /// Watches the specified key range and passes the minimal watch events data to the method provided.
         /// </summary>
-        /// <param name="key">Key to be watched</param>
+        /// <param name="path">Path to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string path, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null,
-            Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+            DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
             WatchRequest request = new WatchRequest()
@@ -1528,19 +996,19 @@ namespace dotnet_etcd
                 }
             };
 
-            Watch(request, method, headers, exceptionHandler, deadline, cancellationToken);
+            AsyncHelper.RunSync(async () => await Watch(request, method, headers, deadline, cancellationToken));
         }
 
         /// <summary>
         /// Watches the specified key range and passes the minimal watch events data to the methods provided.
         /// </summary>
-        /// <param name="key">Key to be watched</param>
+        /// <param name="path">Path to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string path, Action<WatchEvent[]>[] methods, Grpc.Core.Metadata headers = null,
-            Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+            DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
             WatchRequest request = new WatchRequest()
@@ -1552,19 +1020,19 @@ namespace dotnet_etcd
                 }
             };
 
-            Watch(request, methods, headers, exceptionHandler, deadline, cancellationToken);
+            AsyncHelper.RunSync(async () => await Watch(request, methods, headers, deadline, cancellationToken));
         }
 
         /// <summary>
         /// Watches the specified key range and passes the watch response to the method provided.
         /// </summary>
-        /// <param name="keys">Keys to be watched</param>
+        /// <param name="paths">Paths to be watched</param>
         /// <param name="method">Method to which watch response should be passed on</param>
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string[] paths, Action<WatchResponse> method, Grpc.Core.Metadata headers = null,
-            Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+            DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
             List<WatchRequest> requests = new List<WatchRequest>();
@@ -1582,19 +1050,19 @@ namespace dotnet_etcd
                 requests.Add(request);
             }
 
-            Watch(requests.ToArray(), method, headers, exceptionHandler, deadline, cancellationToken);
+            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), method, headers, deadline, cancellationToken));
         }
 
         /// <summary>
         /// Watches the specified key range and passes the watch response to the method provided.
         /// </summary>
-        /// <param name="keys">Keys to be watched</param>
+        /// <param name="paths">Paths to be watched</param>
         /// <param name="methods">Methods to which watch response should be passed on</param>
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string[] paths, Action<WatchResponse>[] methods, Grpc.Core.Metadata headers = null,
-            Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+            DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
             List<WatchRequest> requests = new List<WatchRequest>();
@@ -1612,19 +1080,19 @@ namespace dotnet_etcd
                 requests.Add(request);
             }
 
-            Watch(requests.ToArray(), methods, headers, exceptionHandler, deadline, cancellationToken);
+            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), methods, headers, deadline, cancellationToken));
         }
 
         /// <summary>
         /// Watches the specified key range and passes the minimal watch events data to the method provided.
         /// </summary>
-        /// <param name="keys">Keys to be watched</param>
+        /// <param name="paths">Paths to be watched</param>
         /// <param name="method">Method to which minimal watch events data should be passed on</param>
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string[] paths, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null,
-            Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+            DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
             List<WatchRequest> requests = new List<WatchRequest>();
@@ -1642,19 +1110,19 @@ namespace dotnet_etcd
                 requests.Add(request);
             }
 
-            Watch(requests.ToArray(), method, headers, exceptionHandler, deadline, cancellationToken);
+            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), method, headers, deadline, cancellationToken));
         }
 
         /// <summary>
         /// Watches the specified key range and passes the minimal watch events data to the method provided.
         /// </summary>
-        /// <param name="keys">Keys to be watched</param>
+        /// <param name="paths">Paths to be watched</param>
         /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string[] paths, Action<WatchEvent[]>[] methods, Grpc.Core.Metadata headers = null,
-            Action<Exception> exceptionHandler = null, DateTime? deadline = null,
+            DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
             List<WatchRequest> requests = new List<WatchRequest>();
@@ -1672,7 +1140,7 @@ namespace dotnet_etcd
                 requests.Add(request);
             }
 
-            Watch(requests.ToArray(), methods, headers, exceptionHandler, deadline, cancellationToken);
+            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), methods, headers, deadline, cancellationToken));
         }
 
         #endregion

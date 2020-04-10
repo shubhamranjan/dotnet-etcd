@@ -101,5 +101,33 @@ namespace dotnet_etcd
 
             return response;
         }
+
+        /// <summary>
+        /// Generic helper for performing actions an a connection.
+        /// Gets the connection from the <seealso cref="Balancer"/>
+        /// Also implements a retry mechanism if the calling methods returns an <seealso cref="RpcException"/> with the <seealso cref="StatusCode"/> <seealso cref="StatusCode.Unavailable"/>
+        /// </summary>
+        /// <param name="etcdCallFunc">The function to perform actions with the <seealso cref="Connection"/> object</param>
+        /// <returns>The response from the the <paramref name="etcdCallFunc"/></returns>
+        private async Task CallEtcdAsync(Func<Connection, Task> etcdCallFunc)
+        {
+            var retryCount = 0;
+            while (true)
+            {
+                try
+                {
+                    await etcdCallFunc.Invoke(_balancer.GetConnection());
+                    break;
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                    {
+                        throw;
+                    }
+                }
+            }
+        }
     }
 }
