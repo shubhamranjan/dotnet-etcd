@@ -50,27 +50,7 @@ namespace dotnet_etcd
         public LockResponse Lock(LockRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            LockResponse response = new LockResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().lockClient.Lock(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.lockClient.Lock(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -111,28 +91,8 @@ namespace dotnet_etcd
         public async Task<LockResponse> LockAsync(LockRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null, CancellationToken cancellationToken = default)
         {
-            LockResponse response = new LockResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().lockClient
-                        .LockAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.lockClient
+                .LockAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -167,28 +127,8 @@ namespace dotnet_etcd
         public UnlockResponse Unlock(UnlockRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null, CancellationToken cancellationToken = default)
         {
-            UnlockResponse response = new UnlockResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().lockClient
-                        .Unlock(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.lockClient
+                .Unlock(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -223,28 +163,8 @@ namespace dotnet_etcd
         public async Task<UnlockResponse> UnlockAsync(UnlockRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null, CancellationToken cancellationToken = default)
         {
-            UnlockResponse response = new UnlockResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().lockClient
-                        .UnlockAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.lockClient
+                .UnlockAsync(request, headers, deadline, cancellationToken));
         }
     }
 }
