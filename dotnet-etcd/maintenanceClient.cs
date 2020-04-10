@@ -188,44 +188,22 @@ namespace dotnet_etcd
         /// <param name="cancellationToken"></param>
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
-        public async void Snapshot(SnapshotRequest request, Action<SnapshotResponse> method,
+        public async Task Snapshot(SnapshotRequest request, Action<SnapshotResponse> method,
             CancellationToken cancellationToken, Grpc.Core.Metadata headers = null, DateTime? deadline = null)
         {
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
+            await CallEtcdAsync(async (connection) =>
             {
-                try
+                using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = connection
+                    .maintenanceClient.Snapshot(request, headers, deadline, cancellationToken))
                 {
-                    using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _balancer.GetConnection()
-                        .maintenanceClient.Snapshot(request, headers, deadline, cancellationToken))
+                    while (await snapshotter.ResponseStream.MoveNext(cancellationToken))
                     {
-                        Task snapshotTask = Task.Run(async () =>
-                        {
-                            while (await snapshotter.ResponseStream.MoveNext(cancellationToken))
-                            {
-                                SnapshotResponse update = snapshotter.ResponseStream.Current;
-                                method(update);
-                            }
-                        }, cancellationToken);
-
-                        await snapshotTask;
-                    }
-
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
+                        SnapshotResponse update = snapshotter.ResponseStream.Current;
+                        method(update);
                     }
                 }
-            }
-
+            });
         }
-
 
         /// <summary>
         /// Snapshot sends a snapshot of the entire backend from a member over a stream to a client.
@@ -235,45 +213,24 @@ namespace dotnet_etcd
         /// <param name="cancellationToken"></param>
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
-        public async void Snapshot(SnapshotRequest request, Action<SnapshotResponse>[] methods,
+        public async Task Snapshot(SnapshotRequest request, Action<SnapshotResponse>[] methods,
             CancellationToken cancellationToken, Grpc.Core.Metadata headers = null, DateTime? deadline = null)
         {
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
+            await CallEtcdAsync(async (connection) =>
             {
-                try
+                using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = connection
+                    .maintenanceClient.Snapshot(request, headers, deadline, cancellationToken))
                 {
-                    using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = _balancer.GetConnection()
-                        .maintenanceClient.Snapshot(request, headers, deadline, cancellationToken))
+                    while (await snapshotter.ResponseStream.MoveNext(cancellationToken))
                     {
-                        Task snapshotTask = Task.Run(async () =>
+                        SnapshotResponse update = snapshotter.ResponseStream.Current;
+                        foreach (Action<SnapshotResponse> method in methods)
                         {
-                            while (await snapshotter.ResponseStream.MoveNext(cancellationToken))
-                            {
-                                SnapshotResponse update = snapshotter.ResponseStream.Current;
-                                foreach (Action<SnapshotResponse> method in methods)
-                                {
-                                    method(update);
-                                }
-                            }
-                        }, cancellationToken);
-
-                        await snapshotTask;
-                    }
-
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
+                            method(update);
+                        }
                     }
                 }
-            }
-
+            });
         }
 
         /// <summary>
