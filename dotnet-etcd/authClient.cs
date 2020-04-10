@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-
 using Etcdserverpb;
-
-using Grpc.Core;
 
 namespace dotnet_etcd
 {
@@ -22,30 +19,10 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthenticateResponse response = new AuthenticateResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().authClient
-                        .Authenticate(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.authClient
+                .Authenticate(request, headers, deadline, cancellationToken));
         }
-        
+
         /// <summary>
         /// Authenticate processes an authenticate request.
         /// </summary>
@@ -58,28 +35,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthenticateResponse response = new AuthenticateResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().authClient
-                        .AuthenticateAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.authClient
+                .AuthenticateAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -94,28 +51,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthEnableResponse response = new AuthEnableResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().authClient
-                        .AuthEnable(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.authClient
+                .AuthEnable(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -130,28 +67,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthEnableResponse response = new AuthEnableResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().authClient
-                        .AuthEnableAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.authClient
+                .AuthEnableAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -166,28 +83,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthDisableResponse response = new AuthDisableResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().authClient
-                        .AuthDisable(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.authClient
+                .AuthDisable(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -202,28 +99,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthDisableResponse response = new AuthDisableResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().authClient
-                        .AuthDisableAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.authClient
+                .AuthDisableAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -238,29 +115,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-
-            AuthUserAddResponse response = new AuthUserAddResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().authClient
-                        .UserAdd(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.authClient
+                .UserAdd(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -275,29 +131,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-
-            AuthUserAddResponse response = new AuthUserAddResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().authClient
-                        .UserAddAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.authClient
+                .UserAddAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -312,28 +147,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthUserGetResponse response = new AuthUserGetResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().authClient
-                        .UserGet(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.authClient
+                .UserGet(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -348,28 +163,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthUserGetResponse response = new AuthUserGetResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().authClient
-                        .UserGetAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.authClient
+                .UserGetAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -384,28 +179,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthUserListResponse response = new AuthUserListResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().authClient
-                        .UserList(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.authClient
+                .UserList(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -420,28 +195,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthUserListResponse response = new AuthUserListResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().authClient
-                        .UserListAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.authClient
+                .UserListAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -456,28 +211,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthUserDeleteResponse response = new AuthUserDeleteResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().authClient
-                        .UserDelete(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.authClient
+                .UserDelete(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -492,28 +227,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthUserDeleteResponse response = new AuthUserDeleteResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().authClient
-                        .UserDeleteAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.authClient
+                .UserDeleteAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -528,28 +243,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthUserChangePasswordResponse response = new AuthUserChangePasswordResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().authClient
-                        .UserChangePassword(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.authClient
+                .UserChangePassword(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -564,28 +259,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthUserChangePasswordResponse response = new AuthUserChangePasswordResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().authClient
-                        .UserChangePasswordAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.authClient
+                .UserChangePasswordAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -600,28 +275,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthUserGrantRoleResponse response = new AuthUserGrantRoleResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().authClient
-                        .UserGrantRole(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.authClient
+                .UserGrantRole(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -636,28 +291,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthUserGrantRoleResponse response = new AuthUserGrantRoleResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().authClient
-                        .UserGrantRoleAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.authClient
+                .UserGrantRoleAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -672,28 +307,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthUserRevokeRoleResponse response = new AuthUserRevokeRoleResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().authClient
-                        .UserRevokeRole(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.authClient
+                .UserRevokeRole(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -708,28 +323,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthUserRevokeRoleResponse response = new AuthUserRevokeRoleResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().authClient
-                        .UserRevokeRoleAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.authClient
+                .UserRevokeRoleAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -744,28 +339,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthRoleAddResponse response = new AuthRoleAddResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().authClient
-                        .RoleAdd(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.authClient
+                .RoleAdd(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -780,28 +355,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthRoleAddResponse response = new AuthRoleAddResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().authClient
-                        .RoleAddAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.authClient
+                .RoleAddAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -816,29 +371,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthRoleGetResponse response = new AuthRoleGetResponse();
-
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().authClient
-                        .RoleGet(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.authClient
+                .RoleGet(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -853,28 +387,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthRoleGetResponse response = new AuthRoleGetResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().authClient
-                        .RoleGetAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.authClient
+                .RoleGetAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -889,28 +403,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthRoleListResponse response = new AuthRoleListResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().authClient
-                        .RoleList(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.authClient
+                .RoleList(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -925,28 +419,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthRoleListResponse response = new AuthRoleListResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().authClient
-                        .RoleListAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.authClient
+                .RoleListAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -961,28 +435,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthRoleDeleteResponse response = new AuthRoleDeleteResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().authClient
-                        .RoleDelete(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.authClient
+                .RoleDelete(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -997,28 +451,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthRoleDeleteResponse response = new AuthRoleDeleteResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().authClient
-                        .RoleDeleteAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.authClient
+                .RoleDeleteAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -1033,28 +467,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthRoleGrantPermissionResponse response = new AuthRoleGrantPermissionResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().authClient
-                        .RoleGrantPermission(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.authClient
+                .RoleGrantPermission(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -1069,28 +483,8 @@ namespace dotnet_etcd
             AuthRoleGrantPermissionRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthRoleGrantPermissionResponse response = new AuthRoleGrantPermissionResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().authClient
-                        .RoleGrantPermissionAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.authClient
+                .RoleGrantPermissionAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -1105,28 +499,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthRoleRevokePermissionResponse response = new AuthRoleRevokePermissionResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().authClient
-                        .RoleRevokePermission(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.authClient
+                .RoleRevokePermission(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -1141,28 +515,8 @@ namespace dotnet_etcd
             AuthRoleRevokePermissionRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AuthRoleRevokePermissionResponse response = new AuthRoleRevokePermissionResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().authClient
-                        .RoleRevokePermissionAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.authClient
+                .RoleRevokePermissionAsync(request, headers, deadline, cancellationToken));
         }
     }
 }
