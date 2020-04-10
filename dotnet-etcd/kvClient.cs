@@ -2,18 +2,13 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-
 using Etcdserverpb;
-
 using Google.Protobuf;
-
-using Grpc.Core;
 
 namespace dotnet_etcd
 {
     public partial class EtcdClient : IDisposable
     {
-
         /// <summary>
         /// Get the etcd response for a specified RangeRequest
         /// </summary>
@@ -25,28 +20,8 @@ namespace dotnet_etcd
         public RangeResponse Get(RangeRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            RangeResponse rangeResponse = new RangeResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    rangeResponse = _balancer.GetConnection().kvClient
-                        .Range(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return rangeResponse;
+            return CallEtcd((connection) => connection.kvClient
+                .Range(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -78,28 +53,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            RangeResponse rangeResponse = new RangeResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    rangeResponse = await _balancer.GetConnection().kvClient
-                        .RangeAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return rangeResponse;
+            return await CallEtcdAsync(async (connection) => await connection.kvClient
+                .RangeAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -132,7 +87,6 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             RangeResponse rangeResponse = Get(key, headers, deadline, cancellationToken);
-
             return rangeResponse.Count != 0 ? rangeResponse.Kvs[0].Value.ToStringUtf8().Trim() : string.Empty;
         }
 
@@ -148,7 +102,6 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             RangeResponse rangeResponse = await GetAsync(key, headers, deadline, cancellationToken);
-
             return rangeResponse.Count != 0 ? rangeResponse.Kvs[0].Value.ToStringUtf8().Trim() : string.Empty;
         }
 
@@ -164,13 +117,11 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             string rangeEnd = GetRangeEnd(prefixKey);
-
             return Get(new RangeRequest
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
                 RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
             }, headers, deadline, cancellationToken);
-
         }
 
         /// <summary>
@@ -185,9 +136,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-
             string rangeEnd = GetRangeEnd(prefixKey);
-
             return await GetAsync(new RangeRequest
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
@@ -207,9 +156,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-
             string rangeEnd = GetRangeEnd(prefixKey);
-
             return RangeRespondToDictionary(Get(new RangeRequest
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
@@ -229,9 +176,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-
             string rangeEnd = GetRangeEnd(prefixKey);
-
             return RangeRespondToDictionary(await GetAsync(new RangeRequest
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
@@ -250,27 +195,7 @@ namespace dotnet_etcd
         public PutResponse Put(PutRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            PutResponse response = new PutResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().kvClient.Put(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.kvClient.Put(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -285,13 +210,11 @@ namespace dotnet_etcd
         public PutResponse Put(string key, string val, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-
             return Put(new PutRequest
             {
                 Key = ByteString.CopyFromUtf8(key),
                 Value = ByteString.CopyFromUtf8(val)
             }, headers, deadline, cancellationToken);
-
         }
 
         /// <summary>
@@ -306,28 +229,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            PutResponse response = new PutResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().kvClient
-                        .PutAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.kvClient
+                .PutAsync(request, headers, deadline, cancellationToken));
         }
 
 
@@ -344,13 +247,11 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-
             return await PutAsync(new PutRequest
             {
                 Key = ByteString.CopyFromUtf8(key),
                 Value = ByteString.CopyFromUtf8(val)
             }, headers, deadline, cancellationToken);
-
         }
 
         /// <summary>
@@ -365,28 +266,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            DeleteRangeResponse response = new DeleteRangeResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().kvClient
-                        .DeleteRange(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.kvClient
+                .DeleteRange(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -400,12 +281,10 @@ namespace dotnet_etcd
         public DeleteRangeResponse Delete(string key, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-
             return Delete(new DeleteRangeRequest
             {
                 Key = ByteString.CopyFromUtf8(key)
             }, headers, deadline, cancellationToken);
-
         }
 
 
@@ -421,28 +300,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            DeleteRangeResponse response = new DeleteRangeResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().kvClient
-                        .DeleteRangeAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.kvClient
+                .DeleteRangeAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -457,12 +316,10 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-
             return await DeleteAsync(new DeleteRangeRequest
             {
                 Key = ByteString.CopyFromUtf8(key)
             }, headers, deadline, cancellationToken);
-
         }
 
         /// <summary>
@@ -477,14 +334,12 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-
             string rangeEnd = GetRangeEnd(prefixKey);
             return Delete(new DeleteRangeRequest
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
                 RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
             }, headers, deadline, cancellationToken);
-
         }
 
         /// <summary>
@@ -499,14 +354,12 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-
             string rangeEnd = GetRangeEnd(prefixKey);
             return await DeleteAsync(new DeleteRangeRequest
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
                 RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
             }, headers, deadline, cancellationToken);
-
         }
 
         /// <summary>
@@ -523,28 +376,7 @@ namespace dotnet_etcd
         public TxnResponse Transaction(TxnRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            TxnResponse response = new TxnResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().kvClient.Txn(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
-
+            return CallEtcd((connection) => connection.kvClient.Txn(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -562,28 +394,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            TxnResponse response = new TxnResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().kvClient
-                        .TxnAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.kvClient
+                .TxnAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -600,28 +412,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            CompactionResponse response = new CompactionResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().kvClient
-                        .Compact(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.kvClient
+                .Compact(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -638,28 +430,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            CompactionResponse response = new CompactionResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().kvClient
-                        .CompactAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.kvClient
+                .CompactAsync(request, headers, deadline, cancellationToken));
         }
     }
 }
