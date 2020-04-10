@@ -21,28 +21,8 @@ namespace dotnet_etcd
         public AlarmResponse Alarm(AlarmRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AlarmResponse response = new AlarmResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().maintenanceClient
-                        .Alarm(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.maintenanceClient
+                .Alarm(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -57,28 +37,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            AlarmResponse response = new AlarmResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().maintenanceClient
-                        .AlarmAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.maintenanceClient
+                .AlarmAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -93,28 +53,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            StatusResponse response = new StatusResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().maintenanceClient
-                        .Status(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.maintenanceClient
+                .Status(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -129,28 +69,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            StatusResponse response = new StatusResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().maintenanceClient
-                        .StatusAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.maintenanceClient
+                .StatusAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -165,28 +85,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            DefragmentResponse response = new DefragmentResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().maintenanceClient
-                        .Defragment(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.maintenanceClient
+                .Defragment(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -201,28 +101,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            DefragmentResponse response = new DefragmentResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().maintenanceClient
-                        .DefragmentAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.maintenanceClient
+                .DefragmentAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -241,28 +121,8 @@ namespace dotnet_etcd
         public HashResponse Hash(HashRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            HashResponse response = new HashResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().maintenanceClient
-                        .Hash(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.maintenanceClient
+                .Hash(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -282,28 +142,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            HashResponse response = new HashResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().maintenanceClient
-                        .HashAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.maintenanceClient
+                .HashAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -319,28 +159,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            HashKVResponse response = new HashKVResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().maintenanceClient
-                        .HashKV(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.maintenanceClient
+                .HashKV(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -356,28 +176,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            HashKVResponse response = new HashKVResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().maintenanceClient
-                        .HashKVAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.maintenanceClient
+                .HashKVAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -488,28 +288,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            MoveLeaderResponse response = new MoveLeaderResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().maintenanceClient
-                        .MoveLeader(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.maintenanceClient
+                .MoveLeader(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -524,28 +304,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            MoveLeaderResponse response = new MoveLeaderResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().maintenanceClient
-                        .MoveLeaderAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.maintenanceClient
+                .MoveLeaderAsync(request, headers, deadline, cancellationToken));
         }
     }
 }
