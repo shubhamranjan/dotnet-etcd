@@ -25,28 +25,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            LeaseGrantResponse response = new LeaseGrantResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().leaseClient
-                        .LeaseGrant(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.leaseClient
+                .LeaseGrant(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -63,28 +43,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            LeaseGrantResponse response = new LeaseGrantResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().leaseClient
-                        .LeaseGrantAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.leaseClient
+                .LeaseGrantAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -99,28 +59,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            LeaseRevokeResponse response = new LeaseRevokeResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().leaseClient
-                        .LeaseRevoke(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.leaseClient
+                .LeaseRevoke(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -135,28 +75,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            LeaseRevokeResponse response = new LeaseRevokeResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().leaseClient
-                        .LeaseRevokeAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.leaseClient
+                .LeaseRevokeAsync(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -442,28 +362,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            LeaseTimeToLiveResponse response = new LeaseTimeToLiveResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = _balancer.GetConnection().leaseClient
-                        .LeaseTimeToLive(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return CallEtcd((connection) => connection.leaseClient
+                .LeaseTimeToLive(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -478,28 +378,8 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            LeaseTimeToLiveResponse response = new LeaseTimeToLiveResponse();
-            bool success = false;
-            int retryCount = 0;
-            while (!success)
-            {
-                try
-                {
-                    response = await _balancer.GetConnection().leaseClient
-                        .LeaseTimeToLiveAsync(request, headers, deadline, cancellationToken);
-                    success = true;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return await CallEtcdAsync(async (connection) => await connection.leaseClient
+                .LeaseTimeToLiveAsync(request, headers, deadline, cancellationToken));
         }
     }
 }
