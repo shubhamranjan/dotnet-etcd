@@ -83,7 +83,7 @@ namespace dotnet_etcd.multiplexer
             _username = username;
             _password = password;
             _publicRootCa = publicRootCa;
-            _lastNodeIndex = -1;
+            _lastNodeIndex = random.Next(-1, _numNodes);
 
             _basicAuth = (!string.IsNullOrWhiteSpace(_username) && !(string.IsNullOrWhiteSpace(_password)));
             _ssl = !_publicRootCa && !string.IsNullOrWhiteSpace(_caCert);
@@ -165,7 +165,8 @@ namespace dotnet_etcd.multiplexer
             do
             {
                 initial = _lastNodeIndex;
-                computed = random.Next(0, _numNodes);
+                computed = initial + 1;
+                computed = computed >= _numNodes ? computed = 0 : computed;
             }
             while (Interlocked.CompareExchange(ref _lastNodeIndex, computed, initial) != initial);
             return computed;
