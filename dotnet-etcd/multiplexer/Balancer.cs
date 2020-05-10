@@ -15,16 +15,6 @@ namespace dotnet_etcd.multiplexer
         private readonly HashSet<Connection> _UnHealthyCluster;
 
         /// <summary>
-        /// The username for etcd server for basic auth
-        /// </summary>
-        private readonly string _username;
-
-        /// <summary>
-        /// The password for etcd server for basic auth
-        /// </summary>
-        private readonly string _password;
-
-        /// <summary>
         /// CA Certificate contents to be used to connect to etcd.
         /// </summary>
         private readonly string _caCert;
@@ -38,11 +28,6 @@ namespace dotnet_etcd.multiplexer
         /// Client key contents to be used to connect to etcd.
         /// </summary>
         private readonly string _clientKey;
-
-        /// <summary>
-        /// Depicts whether basic auth is enabled or not
-        /// </summary>
-        private readonly bool _basicAuth;
 
         /// <summary>
         /// Depicts whether ssl is enabled or not
@@ -74,18 +59,15 @@ namespace dotnet_etcd.multiplexer
         /// </summary>
         private static Random random;
 
-        internal Balancer(List<Uri> nodes, string username = "", string password = "", string caCert = "", string clientCert = "", string clientKey = "", bool publicRootCa = false)
+        internal Balancer(List<Uri> nodes, string caCert = "", string clientCert = "", string clientKey = "", bool publicRootCa = false)
         {
             _numNodes = nodes.Count;
             _caCert = caCert;
             _clientCert = clientCert;
             _clientKey = clientKey;
-            _username = username;
-            _password = password;
             _publicRootCa = publicRootCa;
             _lastNodeIndex = random.Next(-1, _numNodes);
 
-            _basicAuth = (!string.IsNullOrWhiteSpace(_username) && !(string.IsNullOrWhiteSpace(_password)));
             _ssl = !_publicRootCa && !string.IsNullOrWhiteSpace(_caCert);
             _clientSSL = _ssl && (!string.IsNullOrWhiteSpace(_clientCert) && !(string.IsNullOrWhiteSpace(_clientKey)));
 

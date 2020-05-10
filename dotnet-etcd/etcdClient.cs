@@ -23,7 +23,7 @@ namespace dotnet_etcd
 
         #region Initializers
 
-        public EtcdClient(string connectionString, int port = 2379, string username = "", string password = "",
+        public EtcdClient(string connectionString, int port = 2379, 
             string caCert = "", string clientCert = "", string clientKey = "", bool publicRootCa = false)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
@@ -107,7 +107,7 @@ namespace dotnet_etcd
                 nodes.Add(new Uri(host));
             }
 
-            _balancer = new Balancer(nodes, username, password, caCert, clientCert, clientKey, publicRootCa);
+            _balancer = new Balancer(nodes, caCert, clientCert, clientKey, publicRootCa);
         }
 
         #endregion
