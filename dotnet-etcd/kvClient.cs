@@ -7,7 +7,7 @@ using Google.Protobuf;
 
 namespace dotnet_etcd
 {
-    public partial class EtcdClient : IDisposable
+    public partial class EtcdClient
     {
         /// <summary>
         /// Get the etcd response for a specified RangeRequest

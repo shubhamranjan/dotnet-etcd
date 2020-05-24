@@ -8,7 +8,7 @@ using Grpc.Core;
 
 namespace dotnet_etcd
 {
-    public partial class EtcdClient : IDisposable
+    public partial class EtcdClient
     {
         /// <summary>
         ///  Alarm activates, deactivates, and queries alarms regarding cluster health

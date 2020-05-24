@@ -5,7 +5,7 @@ using Etcdserverpb;
 
 namespace dotnet_etcd
 {
-    public partial class EtcdClient : IDisposable
+    public partial class EtcdClient
     {
         /// <summary>
         /// MemberAdd adds a member into the cluster

@@ -5,6 +5,7 @@ using System.Linq;
 using DnsClient;
 using DnsClient.Protocol;
 
+using dotnet_etcd.interfaces;
 using dotnet_etcd.multiplexer;
 
 namespace dotnet_etcd
@@ -13,7 +14,7 @@ namespace dotnet_etcd
     /// Etcd client is the entrypoint for this library.
     /// It contains all the functions required to perform operations on etcd.
     /// </summary>
-    public partial class EtcdClient : IDisposable
+    public partial class EtcdClient : IDisposable, IEtcdClient
     {
         #region Variables
 
@@ -23,7 +24,7 @@ namespace dotnet_etcd
 
         #region Initializers
 
-        public EtcdClient(string connectionString, int port = 2379, 
+        public EtcdClient(string connectionString, int port = 2379,
             string caCert = "", string clientCert = "", string clientKey = "", bool publicRootCa = false)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
@@ -44,7 +45,7 @@ namespace dotnet_etcd
                 {
                     UseCache = true
                 });
-                
+
                 // SSL first ...
                 string serviceName = "/".Equals(discoverySrv.AbsolutePath)
                     ? ""

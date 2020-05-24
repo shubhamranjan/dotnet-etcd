@@ -9,7 +9,7 @@ using Grpc.Core;
 
 namespace dotnet_etcd
 {
-    public partial class EtcdClient : IDisposable
+    public partial class EtcdClient
     {
         /// <summary>
         /// LeaseGrant creates a lease which expires if the server does not receive a keepAlive
