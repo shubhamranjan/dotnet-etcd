@@ -57,7 +57,7 @@ namespace dotnet_etcd.multiplexer
         /// <summary>
         /// Random object for randomizing selected node
         /// </summary>
-        private static Random random;
+        private static Random random = new Random();
 
         internal Balancer(List<Uri> nodes, string caCert = "", string clientCert = "", string clientKey = "", bool publicRootCa = false)
         {
@@ -74,7 +74,6 @@ namespace dotnet_etcd.multiplexer
             _HealthyCluster = new HashSet<Connection>();
             _UnHealthyCluster = new HashSet<Connection>();
 
-            random = new Random();
 
             foreach (Uri node in nodes)
             {
