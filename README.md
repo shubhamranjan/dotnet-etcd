@@ -23,9 +23,6 @@ A C# .NET (dotnet) GRPC client for etcd v3+
 * .NETFramework 4.6.2
 * .NETFramework 4.6.1
 * .NETFramework 4.6
-* .NETFramework 4.5.2
-* .NETFramework 4.5.1
-* .NETFramework 4.5
 
 
 ## Installing Package

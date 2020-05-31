@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">
-      netcoreapp2.0;netcoreapp2.1;netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;netstandard2.0;netstandard2.1;net45;net451;net452;net46;net461;net462;net47;net471;net472;net48
+      netcoreapp2.0;netcoreapp2.1;netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;netstandard2.0;netstandard2.1;net46;net461;net462;net47;net471;net472;net48
     </TargetFrameworks>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
     <RootNamespace>dotnet_etcd</RootNamespace>
@@ -10,9 +10,8 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryUrl>https://github.com/shubhamranjan/dotnet-etcd</RepositoryUrl>
     <PackageProjectUrl>https://github.com/shubhamranjan/dotnet-etcd</PackageProjectUrl>
-    <PackageReleaseNotes>Breaking Change:
-1. Change constructor input params.
-2. Remove basic auth handling from lib as authenticate api call is provided and the response token can be passed on in further api calls</PackageReleaseNotes>
+    <PackageReleaseNotes>1. Fix random object
+2. Remove support for net 4.5</PackageReleaseNotes>
     <Authors>Shubham Ranjan</Authors>
     <Company />
     <Product />
@@ -25,7 +24,7 @@ Your applications can read and write data into etcd. A simple use-case is to sto
 Advanced uses take advantage of the consistency guarantees to implement database leader elections or do distributed locking across a cluster of workers.</Description>
     <PackageTags>etcd grpc etcdv3 etcd3</PackageTags>
     <SignAssembly>false</SignAssembly>
-    <Version>4.0.0-beta</Version>
+    <Version>4.1.0-beta</Version>
     <AutoGenerateBindingRedirects>False</AutoGenerateBindingRedirects>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageIconUrl />
@@ -48,12 +47,18 @@ Advanced uses take advantage of the consistency guarantees to implement database
 
   <ItemGroup>
     <PackageReference Include="DnsClient" Version="1.3.2" />
-    <PackageReference Include="Google.Protobuf" Version="3.12.1" />
+    <PackageReference Include="Google.Protobuf" Version="3.12.2" />
     <PackageReference Include="Grpc.Core" Version="2.29.0" />
     <PackageReference Include="Grpc.Tools" Version="2.29.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
+
+    <Protobuf Include="grpc/proto/auth.proto" GrpcServices="Client" />
+    <Protobuf Include="grpc/proto/election.proto" GrpcServices="Client" />
+    <Protobuf Include="grpc/proto/kv.proto" GrpcServices="Client" />
+    <Protobuf Include="grpc/proto/lock.proto" GrpcServices="Client" />
+    <Protobuf Include="grpc/proto/rpc.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>
