@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">
-      netcoreapp2.0;netcoreapp2.1;netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;netstandard2.0;netstandard2.1;net46;net461;net462;net47;net471;net472;net48
+      netcoreapp2.0;netcoreapp2.1;netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;netstandard2.0;netstandard2.1
     </TargetFrameworks>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
     <RootNamespace>dotnet_etcd</RootNamespace>
