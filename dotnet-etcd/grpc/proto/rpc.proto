@@ -57,7 +57,8 @@ service Lease {
   // LeaseTimeToLive retrieves lease information.
   rpc LeaseTimeToLive(LeaseTimeToLiveRequest) returns (LeaseTimeToLiveResponse) {}
 
-  // TODO(xiangli) List all existing Leases?
+  // LeaseLeases lists all existing leases.
+  rpc LeaseLeases(LeaseLeasesRequest) returns (LeaseLeasesResponse) {}
 }
 
 service Cluster {
@@ -72,6 +73,9 @@ service Cluster {
 
   // MemberList lists all the members in the cluster.
   rpc MemberList(MemberListRequest) returns (MemberListResponse) {}
+
+  // MemberPromote promotes a member from raft learner (non-voting) to raft voting member.
+  rpc MemberPromote(MemberPromoteRequest) returns (MemberPromoteResponse) {}
 }
 
 service Maintenance {
@@ -84,12 +88,16 @@ service Maintenance {
   // Defragment defragments a member's backend database to recover storage space.
   rpc Defragment(DefragmentRequest) returns (DefragmentResponse) {}
 
-  // Hash returns the hash of the local KV state for consistency checking purpose.
-  // This is designed for testing; do not use this in production when there
-  // are ongoing transactions.
+  // Hash computes the hash of whole backend keyspace,
+  // including key, lease, and other buckets in storage.
+  // This is designed for testing ONLY!
+  // Do not rely on this in production with ongoing transactions,
+  // since Hash operation does not hold MVCC locks.
+  // Use "HashKV" API instead for "key" bucket consistency checks.
   rpc Hash(HashRequest) returns (HashResponse) {}
 
   // HashKV computes the hash of all MVCC keys up to a given revision.
+  // It only iterates "key" bucket in backend storage.
   rpc HashKV(HashKVRequest) returns (HashKVResponse) {}
 
   // Snapshot sends a snapshot of the entire backend from a member over a stream to a client.
@@ -97,6 +105,9 @@ service Maintenance {
 
   // MoveLeader requests current leader node to transfer its leadership to transferee.
   rpc MoveLeader(MoveLeaderRequest) returns (MoveLeaderResponse) {}
+
+  // Downgrade requests downgrade, cancel downgrade on the cluster version.
+  rpc Downgrade(DowngradeRequest) returns (DowngradeResponse) {}
 }
 
 service Auth {
@@ -106,10 +117,13 @@ service Auth {
   // AuthDisable disables authentication.
   rpc AuthDisable(AuthDisableRequest) returns (AuthDisableResponse) {}
 
+  // AuthStatus displays authentication status.
+  rpc AuthStatus(AuthStatusRequest) returns (AuthStatusResponse) {}
+
   // Authenticate processes an authenticate request.
   rpc Authenticate(AuthenticateRequest) returns (AuthenticateResponse) {}
 
-  // UserAdd adds a new user.
+  // UserAdd adds a new user. User name cannot be empty.
   rpc UserAdd(AuthUserAddRequest) returns (AuthUserAddResponse) {}
 
   // UserGet gets detailed user information.
@@ -130,7 +144,7 @@ service Auth {
   // UserRevokeRole revokes a role of specified user.
   rpc UserRevokeRole(AuthUserRevokeRoleRequest) returns (AuthUserRevokeRoleResponse) {}
 
-  // RoleAdd adds a new role.
+  // RoleAdd adds a new role. Role name cannot be empty.
   rpc RoleAdd(AuthRoleAddRequest) returns (AuthRoleAddResponse) {}
 
   // RoleGet gets detailed role information.
@@ -155,6 +169,9 @@ message ResponseHeader {
   // member_id is the ID of the member which sent the response.
   uint64 member_id = 2;
   // revision is the key-value store revision when the request was applied.
+  // For watch progress responses, the header.revision indicates progress. All future events
+  // recieved in this stream are guaranteed to have a higher revision number than the
+  // header.revision number.
   int64 revision = 3;
   // raft_term is the raft term when the request was applied.
   uint64 raft_term = 4;
@@ -162,16 +179,16 @@ message ResponseHeader {
 
 message RangeRequest {
   enum SortOrder {
-    NONE = 0; // default, no sorting
-    ASCEND = 1; // lowest target value first
-    DESCEND = 2; // highest target value first
+	NONE = 0; // default, no sorting
+	ASCEND = 1; // lowest target value first
+	DESCEND = 2; // highest target value first
   }
   enum SortTarget {
-    KEY = 0;
-    VERSION = 1;
-    CREATE = 2;
-    MOD = 3;
-    VALUE = 4;
+	KEY = 0;
+	VERSION = 1;
+	CREATE = 2;
+	MOD = 3;
+	VALUE = 4;
   }
 
   // key is the first key for the range. If range_end is not given, the request only looks up key.
@@ -219,7 +236,7 @@ message RangeRequest {
   int64 max_mod_revision = 11;
 
   // min_create_revision is the lower bound for returned key create revisions; all keys with
-  // lesser create trevisions will be filtered away.
+  // lesser create revisions will be filtered away.
   int64 min_create_revision = 12;
 
   // max_create_revision is the upper bound for returned key create revisions; all keys with
@@ -320,7 +337,8 @@ message Compare {
     VERSION = 0;
     CREATE = 1;
     MOD = 2;
-    VALUE= 3;
+    VALUE = 3;
+    LEASE = 4;
   }
   // result is logical comparison operation for this comparison.
   CompareResult result = 1;
@@ -337,10 +355,14 @@ message Compare {
     int64 mod_revision = 6;
     // value is the value of the given key, in bytes.
     bytes value = 7;
+    // lease is the lease id of the given key.
+    int64 lease = 8;
+    // leave room for more target_union field tags, jump to 64
   }
+
   // range_end compares the given target to all keys in the range [key, range_end).
   // See RangeRequest for more details on key ranges.
-  bytes range_end = 8;
+  bytes range_end = 64;
   // TODO: fill out with most of the rest of RangeRequest fields when needed.
 }
 
@@ -399,12 +421,6 @@ message CompactionResponse {
 message HashRequest {
 }
 
-message HashResponse {
-  ResponseHeader header = 1;
-  // hash is the hash value computed from the responding member's key-value store.
-  uint32 hash = 2;
-}
-
 message HashKVRequest {
   // revision is the key-value store revision for the hash operation.
   int64 revision = 1;
@@ -416,6 +432,12 @@ message HashKVResponse {
   uint32 hash = 2;
   // compact_revision is the compacted revision of key-value store when hash begins.
   int64 compact_revision = 3;
+}
+
+message HashResponse {
+  ResponseHeader header = 1;
+  // hash is the hash value computed from the responding member's KV's backend.
+  uint32 hash = 2;
 }
 
 message SnapshotRequest {
@@ -438,20 +460,24 @@ message WatchRequest {
   oneof request_union {
     WatchCreateRequest create_request = 1;
     WatchCancelRequest cancel_request = 2;
+    WatchProgressRequest progress_request = 3;
   }
 }
 
 message WatchCreateRequest {
   // key is the key to register for watching.
   bytes key = 1;
+
   // range_end is the end of the range [key, range_end) to watch. If range_end is not given,
   // only the key argument is watched. If range_end is equal to '\0', all keys greater than
   // or equal to the key argument are watched.
   // If the range_end is one bit larger than the given key,
   // then all keys with the prefix (the given key) will be watched.
   bytes range_end = 2;
+
   // start_revision is an optional revision to watch from (inclusive). No start_revision is "now".
   int64 start_revision = 3;
+
   // progress_notify is set so that the etcd server will periodically send a WatchResponse with
   // no events to the new watcher if there are no recent events. It is useful when clients
   // wish to recover a disconnected watcher starting from a recent known revision.
@@ -464,12 +490,23 @@ message WatchCreateRequest {
     // filter out delete event.
     NODELETE = 1;
   }
+
   // filters filter the events at server side before it sends back to the watcher.
   repeated FilterType filters = 5;
 
   // If prev_kv is set, created watcher gets the previous KV before the event happens.
   // If the previous KV is already compacted, nothing will be returned.
   bool prev_kv = 6;
+
+  // If watch_id is provided and non-zero, it will be assigned to this watcher.
+  // Since creating a watcher in etcd is not a synchronous operation,
+  // this can be used ensure that ordering is correct when creating multiple
+  // watchers on the same stream. Creating a watcher with an ID already in
+  // use on the stream will cause an error to be returned.
+  int64 watch_id = 7;
+
+  // fragment enables splitting large revisions into multiple watch responses.
+  bool fragment = 8;
 }
 
 message WatchCancelRequest {
@@ -477,18 +514,26 @@ message WatchCancelRequest {
   int64 watch_id = 1;
 }
 
+// Requests the a watch stream progress status be sent in the watch response stream as soon as
+// possible.
+message WatchProgressRequest {
+}
+
 message WatchResponse {
   ResponseHeader header = 1;
   // watch_id is the ID of the watcher that corresponds to the response.
   int64 watch_id = 2;
+
   // created is set to true if the response is for a create watch request.
   // The client should record the watch_id and expect to receive events for
   // the created watcher from the same stream.
   // All events sent to the created watcher will attach with the same watch_id.
   bool created = 3;
+
   // canceled is set to true if the response is for a cancel watch request.
   // No further events will be sent to the canceled watcher.
   bool canceled = 4;
+
   // compact_revision is set to the minimum index if a watcher tries to watch
   // at a compacted index.
   //
@@ -497,16 +542,19 @@ message WatchResponse {
   //
   // The client should treat the watcher as canceled and should not try to create any
   // watcher with the same start_revision again.
-  int64 compact_revision  = 5;
+  int64 compact_revision = 5;
 
   // cancel_reason indicates the reason for canceling the watcher.
   string cancel_reason = 6;
+
+  // framgment is true if large watch response was split over multiple responses.
+  bool fragment = 7;
 
   repeated mvccpb.Event events = 11;
 }
 
 message LeaseGrantRequest {
-  // TTL is the advisory time-to-live in seconds.
+  // TTL is the advisory time-to-live in seconds. Expired lease will return -1.
   int64 TTL = 1;
   // ID is the requested ID for the lease. If ID is set to 0, the lessor chooses an ID.
   int64 ID = 2;
@@ -527,6 +575,22 @@ message LeaseRevokeRequest {
 }
 
 message LeaseRevokeResponse {
+  ResponseHeader header = 1;
+}
+
+message LeaseCheckpoint {
+    // ID is the lease ID to checkpoint.
+  int64 ID = 1;
+
+  // Remaining_TTL is the remaining time until expiry of the lease.
+  int64 remaining_TTL = 2;
+}
+
+message LeaseCheckpointRequest {
+  repeated LeaseCheckpoint checkpoints = 1;
+}
+
+message LeaseCheckpointResponse {
   ResponseHeader header = 1;
 }
 
@@ -562,6 +626,19 @@ message LeaseTimeToLiveResponse {
   repeated bytes keys = 5;
 }
 
+message LeaseLeasesRequest {
+}
+
+message LeaseStatus {
+  int64 ID = 1;
+  // TODO: int64 TTL = 2;
+}
+
+message LeaseLeasesResponse {
+  ResponseHeader header = 1;
+  repeated LeaseStatus leases = 2;
+}
+
 message Member {
   // ID is the member ID for this member.
   uint64 ID = 1;
@@ -571,11 +648,15 @@ message Member {
   repeated string peerURLs = 3;
   // clientURLs is the list of URLs the member exposes to clients for communication. If the member is not started, clientURLs will be empty.
   repeated string clientURLs = 4;
+  // isLearner indicates if the member is raft learner.
+  bool isLearner = 5;
 }
 
 message MemberAddRequest {
   // peerURLs is the list of URLs the added member will use to communicate with the cluster.
   repeated string peerURLs = 1;
+  // isLearner indicates if the added member is raft learner.
+  bool isLearner = 2;
 }
 
 message MemberAddResponse {
@@ -611,11 +692,23 @@ message MemberUpdateResponse{
 }
 
 message MemberListRequest {
+  bool linearizable = 1;
 }
 
 message MemberListResponse {
   ResponseHeader header = 1;
   // members is a list of all members associated with the cluster.
+  repeated Member members = 2;
+}
+
+message MemberPromoteRequest {
+  // ID is the member ID of the member to promote.
+  uint64 ID = 1;
+}
+
+message MemberPromoteResponse {
+  ResponseHeader header = 1;
+  // members is a list of all members after promoting the member.
   repeated Member members = 2;
 }
 
@@ -636,15 +729,16 @@ message MoveLeaderResponse {
 }
 
 enum AlarmType {
-  NONE = 0; // default, used to query if any alarm is active
-  NOSPACE = 1; // space quota is exhausted
+	NONE = 0; // default, used to query if any alarm is active
+	NOSPACE = 1; // space quota is exhausted
+	CORRUPT = 2; // kv store corruption detected
 }
 
 message AlarmRequest {
   enum AlarmAction {
-    GET = 0;
-    ACTIVATE = 1;
-    DEACTIVATE = 2;
+	GET = 0;
+	ACTIVATE = 1;
+	DEACTIVATE = 2;
   }
   // action is the kind of alarm request to issue. The action
   // may GET alarm statuses, ACTIVATE an alarm, or DEACTIVATE a
@@ -670,6 +764,27 @@ message AlarmResponse {
   repeated AlarmMember alarms = 2;
 }
 
+message DowngradeRequest {
+  enum DowngradeAction {
+    VALIDATE = 0;
+    ENABLE = 1;
+    CANCEL = 2;
+  }
+
+  // action is the kind of downgrade request to issue. The action may
+  // VALIDATE the target version, DOWNGRADE the cluster version,
+  // or CANCEL the current downgrading job.
+  DowngradeAction action = 1;
+  // version is the target version to downgrade.
+  string version = 2;
+}
+
+message DowngradeResponse {
+  ResponseHeader header = 1;
+  // version is the current cluster version.
+  string version = 2;
+}
+
 message StatusRequest {
 }
 
@@ -677,20 +792,31 @@ message StatusResponse {
   ResponseHeader header = 1;
   // version is the cluster protocol version used by the responding member.
   string version = 2;
-  // dbSize is the size of the backend database, in bytes, of the responding member.
+  // dbSize is the size of the backend database physically allocated, in bytes, of the responding member.
   int64 dbSize = 3;
   // leader is the member ID which the responding member believes is the current leader.
   uint64 leader = 4;
-  // raftIndex is the current raft index of the responding member.
+  // raftIndex is the current raft committed index of the responding member.
   uint64 raftIndex = 5;
   // raftTerm is the current raft term of the responding member.
   uint64 raftTerm = 6;
+  // raftAppliedIndex is the current raft applied index of the responding member.
+  uint64 raftAppliedIndex = 7;
+  // errors contains alarm/health information and status.
+  repeated string errors = 8;
+  // dbSizeInUse is the size of the backend database logically in use, in bytes, of the responding member.
+  int64 dbSizeInUse = 9;
+  // isLearner indicates if the member is raft learner.
+  bool isLearner = 10;
 }
 
 message AuthEnableRequest {
 }
 
 message AuthDisableRequest {
+}
+
+message AuthStatusRequest {
 }
 
 message AuthenticateRequest {
@@ -701,6 +827,7 @@ message AuthenticateRequest {
 message AuthUserAddRequest {
   string name = 1;
   string password = 2;
+  authpb.UserAddOptions options = 3;
 }
 
 message AuthUserGetRequest {
@@ -759,8 +886,8 @@ message AuthRoleGrantPermissionRequest {
 
 message AuthRoleRevokePermissionRequest {
   string role = 1;
-  string key = 2;
-  string range_end = 3;
+  bytes key = 2;
+  bytes range_end = 3;
 }
 
 message AuthEnableResponse {
@@ -769,6 +896,13 @@ message AuthEnableResponse {
 
 message AuthDisableResponse {
   ResponseHeader header = 1;
+}
+
+message AuthStatusResponse {
+  ResponseHeader header = 1;
+  bool enabled = 2;
+  // authRevision is the current revision of auth store
+  uint64 authRevision = 3;
 }
 
 message AuthenticateResponse {
