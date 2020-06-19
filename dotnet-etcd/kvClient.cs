@@ -116,11 +116,11 @@ namespace dotnet_etcd
         public RangeResponse GetRange(string prefixKey, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            string rangeEnd = GetRangeEnd(prefixKey);
+            string rangeEnd = GetRangeEnd();
             return Get(new RangeRequest
             {
-                Key = ByteString.CopyFromUtf8(prefixKey),
-                RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
+                Key = GetStringByteForRangeRequests(prefixKey),
+                RangeEnd = ByteString.CopyFromUtf8(rangeEnd),
             }, headers, deadline, cancellationToken);
         }
 
@@ -136,10 +136,10 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            string rangeEnd = GetRangeEnd(prefixKey);
+            string rangeEnd = GetRangeEnd();
             return await GetAsync(new RangeRequest
             {
-                Key = ByteString.CopyFromUtf8(prefixKey),
+                Key = GetStringByteForRangeRequests(prefixKey),
                 RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
             }, headers, deadline, cancellationToken);
         }
@@ -156,10 +156,10 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            string rangeEnd = GetRangeEnd(prefixKey);
+            string rangeEnd = GetRangeEnd();
             return RangeRespondToDictionary(Get(new RangeRequest
             {
-                Key = ByteString.CopyFromUtf8(prefixKey),
+                Key = GetStringByteForRangeRequests(prefixKey),
                 RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
             }, headers, deadline, cancellationToken));
         }
@@ -176,10 +176,10 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            string rangeEnd = GetRangeEnd(prefixKey);
+            string rangeEnd = GetRangeEnd();
             return RangeRespondToDictionary(await GetAsync(new RangeRequest
             {
-                Key = ByteString.CopyFromUtf8(prefixKey),
+                Key = GetStringByteForRangeRequests(prefixKey),
                 RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
             }, headers, deadline, cancellationToken));
         }
@@ -334,7 +334,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            string rangeEnd = GetRangeEnd(prefixKey);
+            string rangeEnd = GetRangeEnd();
             return Delete(new DeleteRangeRequest
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
@@ -354,7 +354,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            string rangeEnd = GetRangeEnd(prefixKey);
+            string rangeEnd = GetRangeEnd();
             return await DeleteAsync(new DeleteRangeRequest
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),

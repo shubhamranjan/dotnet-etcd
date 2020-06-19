@@ -4,12 +4,16 @@ using System.Text;
 using System.Threading.Tasks;
 using dotnet_etcd.multiplexer;
 using Etcdserverpb;
+
+using Google.Protobuf;
+
 using Grpc.Core;
 
 namespace dotnet_etcd
 {
     public partial class EtcdClient
     {
+        private static readonly string rangeEndString = "\x00" ;
         /// <summary>
         /// Converts RangeResponse to Dictionary
         /// </summary>
@@ -31,11 +35,24 @@ namespace dotnet_etcd
         /// </summary>
         /// <returns>The range end for prefix</returns>
         /// <param name="prefixKey">Prefix key</param>
-        public static string GetRangeEnd(string prefixKey)
+        public static string GetRangeEnd()
         {
-            StringBuilder rangeEnd = new StringBuilder(prefixKey);
-            rangeEnd[rangeEnd.Length - 1] = ++rangeEnd[rangeEnd.Length - 1];
-            return rangeEnd.ToString();
+            return rangeEndString;
+        }
+
+        /// <summary>
+        /// Gets the byte string for range requests
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static ByteString GetStringByteForRangeRequests(string key)
+        {
+            if (key.Length == 0)
+            {
+               return  ByteString.CopyFrom(0);
+            }
+
+            return ByteString.CopyFromUtf8(key);
         }
 
         /// <summary>
