@@ -48,8 +48,6 @@ Add using statement at the top of your class file
     using dotnet_etcd;
 
 ### Client Initialization
-
-#### No Basic auth or SSL
     
     EtcdClient client = new EtcdClient("host1:port1:,...., hostN:portN");
     // E.g.
@@ -57,8 +55,6 @@ Add using statement at the top of your class file
 
 #### Available Constructor Parameters
 
-* username - String containing username for etcd basic auth. Default : Empty String 
-* password - String containing password for etcd basic auth. Default : Empty String 
 * caCert - String containing ca cert when using self signed certificates with etcd. Default : EmptyString 
 * clientCert - String containing client cert when using self signed certificates with client auth enabled in etcd. Default : EmptyString 
 * clientKey - String containing client key when using self signed certificates with client auth enabled in etcd. Default : EmptyString 
@@ -103,6 +99,9 @@ Add using statement at the top of your class file
     await client.GetRangeAsync(<PREFIX_STRING>);
     // E.g. Get all keys with pattern "foo/*" in async
     await client.GetRangeAsync("foo/");
+
+    // E.g. Get all keys
+    await client.GetRangeAsync("");
 
 ##### Delete a key
 
