@@ -944,7 +944,7 @@ namespace dotnet_etcd
                 CreateRequest = new WatchCreateRequest()
                 {
                     Key = GetStringByteForRangeRequests(path),
-                    RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd())
+                    RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
                 }
             };
 
@@ -968,7 +968,7 @@ namespace dotnet_etcd
                 CreateRequest = new WatchCreateRequest()
                 {
                     Key = GetStringByteForRangeRequests(path),
-                    RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd())
+                    RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
                 }
             };
 
@@ -992,7 +992,7 @@ namespace dotnet_etcd
                 CreateRequest = new WatchCreateRequest()
                 {
                     Key = GetStringByteForRangeRequests(path),
-                    RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd())
+                    RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
                 }
             };
 
@@ -1016,7 +1016,7 @@ namespace dotnet_etcd
                 CreateRequest = new WatchCreateRequest()
                 {
                     Key = GetStringByteForRangeRequests(path),
-                    RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd())
+                    RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
                 }
             };
 
@@ -1044,7 +1044,7 @@ namespace dotnet_etcd
                     CreateRequest = new WatchCreateRequest()
                     {
                         Key = GetStringByteForRangeRequests(path),
-                        RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd())
+                        RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
                     }
                 };
                 requests.Add(request);
@@ -1074,7 +1074,7 @@ namespace dotnet_etcd
                     CreateRequest = new WatchCreateRequest()
                     {
                         Key = GetStringByteForRangeRequests(path),
-                        RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd())
+                        RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
                     }
                 };
                 requests.Add(request);
@@ -1104,7 +1104,7 @@ namespace dotnet_etcd
                     CreateRequest = new WatchCreateRequest()
                     {
                         Key = GetStringByteForRangeRequests(path),
-                        RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd())
+                        RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
                     }
                 };
                 requests.Add(request);
@@ -1134,7 +1134,7 @@ namespace dotnet_etcd
                     CreateRequest = new WatchCreateRequest()
                     {
                         Key = GetStringByteForRangeRequests(path),
-                        RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd())
+                        RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path))
                     }
                 };
                 requests.Add(request);

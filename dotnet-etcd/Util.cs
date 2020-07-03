@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+
 using dotnet_etcd.multiplexer;
+
 using Etcdserverpb;
 
 using Google.Protobuf;
@@ -13,7 +15,7 @@ namespace dotnet_etcd
 {
     public partial class EtcdClient
     {
-        private static readonly string rangeEndString = "\x00" ;
+        private const string rangeEndString = "\x00";
         /// <summary>
         /// Converts RangeResponse to Dictionary
         /// </summary>
@@ -35,9 +37,16 @@ namespace dotnet_etcd
         /// </summary>
         /// <returns>The range end for prefix</returns>
         /// <param name="prefixKey">Prefix key</param>
-        public static string GetRangeEnd()
+        public static string GetRangeEnd(string prefixKey)
         {
-            return rangeEndString;
+            if (prefixKey.Length == 0)
+            {
+                return rangeEndString;
+            }
+
+            StringBuilder rangeEnd = new StringBuilder(prefixKey);
+            rangeEnd[index: rangeEnd.Length - 1] = ++rangeEnd[rangeEnd.Length - 1];
+            return rangeEnd.ToString();
         }
 
         /// <summary>
@@ -49,7 +58,7 @@ namespace dotnet_etcd
         {
             if (key.Length == 0)
             {
-               return  ByteString.CopyFrom(0);
+                return ByteString.CopyFrom(0);
             }
 
             return ByteString.CopyFromUtf8(key);
@@ -66,7 +75,7 @@ namespace dotnet_etcd
         private TResponse CallEtcd<TResponse>(Func<Connection, TResponse> etcdCallFunc)
         {
             TResponse response;
-            var retryCount = 0;
+            int retryCount = 0;
             while (true)
             {
                 try
@@ -98,7 +107,7 @@ namespace dotnet_etcd
         private async Task<TResponse> CallEtcdAsync<TResponse>(Func<Connection, Task<TResponse>> etcdCallFunc)
         {
             TResponse response;
-            var retryCount = 0;
+            int retryCount = 0;
             while (true)
             {
                 try
@@ -128,7 +137,7 @@ namespace dotnet_etcd
         /// <returns>The response from the the <paramref name="etcdCallFunc"/></returns>
         private async Task CallEtcdAsync(Func<Connection, Task> etcdCallFunc)
         {
-            var retryCount = 0;
+            int retryCount = 0;
             while (true)
             {
                 try
