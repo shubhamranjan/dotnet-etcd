@@ -10,7 +10,7 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryUrl>https://github.com/shubhamranjan/dotnet-etcd</RepositoryUrl>
     <PackageProjectUrl>https://github.com/shubhamranjan/dotnet-etcd</PackageProjectUrl>
-    <PackageReleaseNotes>Performance Improvements and Bug Fixes</PackageReleaseNotes>
+    <PackageReleaseNotes>Range Get fix</PackageReleaseNotes>
     <Authors>Shubham Ranjan</Authors>
     <Company />
     <Product />
@@ -23,7 +23,7 @@ Your applications can read and write data into etcd. A simple use-case is to sto
 Advanced uses take advantage of the consistency guarantees to implement database leader elections or do distributed locking across a cluster of workers.</Description>
     <PackageTags>etcd grpc etcdv3 etcd3</PackageTags>
     <SignAssembly>false</SignAssembly>
-    <Version>4.1.0</Version>
+    <Version>4.1.1</Version>
     <AutoGenerateBindingRedirects>False</AutoGenerateBindingRedirects>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageIconUrl />
