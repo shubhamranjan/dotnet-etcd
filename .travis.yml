@@ -2,7 +2,7 @@ language: csharp
 mono: none
 sudo: required
 dist: xenial
-dotnet: 3.1
+dotnet: 5.0
 global:
     - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
     - DOTNET_CLI_TELEMETRY_OPTOUT=1
@@ -14,3 +14,4 @@ script:
  - dotnet build -f netcoreapp2.2
  - dotnet build -f netcoreapp3.0
  - dotnet build -f netcoreapp3.1
+ - dotnet build -f net5.0
