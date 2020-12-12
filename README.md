@@ -45,14 +45,32 @@ Nuget package is published on [nuget.org](https://www.nuget.org/packages/dotnet-
 ## Usage :
 
 Add using statement at the top of your class file
-
+```C#
     using dotnet_etcd;
-
+```
 ### Client Initialization
     
+```C#
     EtcdClient client = new EtcdClient("host1:port1:,...., hostN:portN");
     // E.g.
     EtcdClient etcdClient = new EtcdClient("https://localhost:23790,https://localhost:23791,https://localhost:23792");
+```
+
+### Client With user and password
+    
+```C#
+    EtcdClient client = new EtcdClient("https://localhost:23790");
+    var authRes = client.Authenticate(new Etcdserverpb.AuthenticateRequest()
+    {
+        Name = "name",
+        Password = "password",
+    });
+    //  Put key "foo/bar" with value "foobar" with authenticated token
+    client.Put("foo/bar", "barfoo", new Grpc.Core.Metadata() {
+        new Grpc.Core.Metadata.Entry("token",authRes.Token)
+    });
+```
+
 
 #### Available Constructor Parameters
 
@@ -69,6 +87,7 @@ Add using statement at the top of your class file
 #### Key-Value Operations
 ##### Put a key
 
+```C#
     client.Put(<KEY_STRING>,<VALUE_STRING>);
     // E.g Put key "foo/bar" with value "foobar"
     client.Put("foo/bar","barfoo");
@@ -76,9 +95,11 @@ Add using statement at the top of your class file
     await client.PutAsync(<KEY_STRING>,<VALUE_STRING>);
     // E.g Put key "foo/bar" with value "foobar" in async
     await client.PutAsync("foo/bar","barfoo");
+```
 
 ##### Get a key
     
+```C#
     client.GetVal(<KEY_STRING>);
     // E.g Get key "foo/bar"
     client.GetVal("foo/bar");
@@ -90,9 +111,11 @@ Add using statement at the top of your class file
     await client.GetValAsync("foo/bar");
     // To get full etcd response
     await client.GetAsync("foo/bar");
+```
 
 ##### Get multiple keys with a common prefix
 
+```C#
     client.GetRange(<PREFIX_STRING>);
     // E.g. Get all keys with pattern "foo/*"
     client.GetRange("foo/"); 
@@ -103,9 +126,11 @@ Add using statement at the top of your class file
 
     // E.g. Get all keys
     await client.GetRangeAsync("");
+```
 
 ##### Delete a key
 
+```C#
     client.Delete(<KEY_STRING>);
     // E.g. Delete key "foo/bar"
     client.Delete("foo/bar");
@@ -113,9 +138,11 @@ Add using statement at the top of your class file
     await client.DeleteAsync(<KEY_STRING>);
     // E.g. Delete key "foo/bar" in async
     await client.DeleteAsync("foo/bar");
+```
 
 ##### Delete multiple keys with a common prefix
 
+```C#
     client.DeleteRange(<PREFIX_STRING>);
     // E.g. Delete all keys with pattern "foo/*"
     client.DeleteRange("foo/"); 
@@ -123,10 +150,12 @@ Add using statement at the top of your class file
     await client.DeleteRangeAsync(<PREFIX_STRING>);
     // E.g. Delete all keys with pattern "foo/*" in async
     await client.DeleteRangeAsync("foo/");
+```
 
 ### Watch Operations
 ##### Watch a key
 
+```C#
     WatchRequest request = new WatchRequest()
     {
         CreateRequest = new WatchCreateRequest()
@@ -136,7 +165,7 @@ Add using statement at the top of your class file
     };
     etcdClient.Watch(request, print);
 
-    -------------------------------
+    // -------------------------------
     // Print function that prints key and value from the watch response
     private static void print(WatchResponse response)
     {   
@@ -150,7 +179,7 @@ Add using statement at the top of your class file
         }
     }
 
-    ----------------------------------
+    // ----------------------------------
     // Print function that prints key and value from the minimal watch
     // response data 
     private static void print(WatchEvent[] response)
@@ -160,9 +189,12 @@ Add using statement at the top of your class file
             Console.WriteLine($"{e1.Key}:{e1.Value}:{e1.Type}");
         }
     }
+```
 >Watch also has a simple overload as follows
 
+```C#
     etcdClient.Watch("foo", print);
+```
 
 > More overloads are also available. You can check them using IntelliSense (Ctrl+Shift+Space). Detailed documentation coming soon.
 
@@ -170,6 +202,7 @@ Add using statement at the top of your class file
 
 #### Add a member into the cluster
 
+```C#
      MemberAddRequest request = new MemberAddRequest();
      request.PeerURLs.Add("http://example.com:2380");
      request.PeerURLs.Add("http://10.0.0.1:2380");
@@ -179,9 +212,11 @@ Add using statement at the top of your class file
      MemberAddResponse res = await etcdClient.MemberAddAsync(request);
 
      // Do something with response
+```
 
 #### Remove an existing member from the cluster
 
+```C#
     MemberRemoveRequest request = new MemberRemoveRequest
     {
         // ID of member to be removed
@@ -193,9 +228,11 @@ Add using statement at the top of your class file
     MemberRemoveResponse res = await etcdClient.MemberRemoveAsync(request);
 
     // Do something with response
+```
 
 ### Update the member configuration
 
+```C#
     MemberUpdateRequest request = new MemberUpdateRequest
     {
         // ID of member to be updated
@@ -208,8 +245,10 @@ Add using statement at the top of your class file
     MemberUpdateResponse res = await etcdClient.MemberUpdateAsync(request);
 
     // Do something with response
+```
 ###  List all the members in the cluster
 
+```C#
     MemberListRequest request = new MemberListRequest();
     etcdClient.MemberList(request);
     MemberListResponse res = etcdClient.MemberList(request);
@@ -222,3 +261,18 @@ Add using statement at the top of your class file
     {
         Console.WriteLine($"{member.ID} - {member.Name} - {member.PeerURLs}");
     }
+```
+
+###  Modify data with transaction   https://etcd.io/docs/v3.4.0/learning/api/#transaction
+```C#
+    var txr = new Etcdserverpb.TxnRequest();
+    txr.Success.Add(new Etcdserverpb.RequestOp()
+    {
+        RequestPut = new Etcdserverpb.PutRequest()
+        {
+            Key = Google.Protobuf.ByteString.CopyFrom("transaction-key", System.Text.Encoding.UTF8),
+            Value = Google.Protobuf.ByteString.CopyFrom("tv", System.Text.Encoding.UTF8),
+        }
+    });
+    client.Transaction(txr);
+```
