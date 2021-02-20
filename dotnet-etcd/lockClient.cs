@@ -72,7 +72,7 @@ namespace dotnet_etcd
             return await LockAsync(new LockRequest()
             {
                 Name = ByteString.CopyFromUtf8(name),
-            }, headers, deadline, cancellationToken);
+            }, headers, deadline, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace dotnet_etcd
             DateTime? deadline = null, CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.lockClient
-                .LockAsync(request, headers, deadline, cancellationToken));
+                .LockAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace dotnet_etcd
             return await UnlockAsync(new UnlockRequest()
             {
                 Key = ByteString.CopyFromUtf8(key),
-            }, headers, deadline, cancellationToken);
+            }, headers, deadline, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace dotnet_etcd
             DateTime? deadline = null, CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.lockClient
-                .UnlockAsync(request, headers, deadline, cancellationToken));
+                .UnlockAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
     }
 }

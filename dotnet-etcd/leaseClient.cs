@@ -44,7 +44,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.leaseClient
-                .LeaseGrantAsync(request, headers, deadline, cancellationToken));
+                .LeaseGrantAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.leaseClient
-                .LeaseRevokeAsync(request, headers, deadline, cancellationToken));
+                .LeaseRevokeAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -101,24 +101,24 @@ namespace dotnet_etcd
                     {
                         cancellationToken.ThrowIfCancellationRequested();
 
-                        await leaser.RequestStream.WriteAsync(request);
-                        if (!await leaser.ResponseStream.MoveNext(cancellationToken))
+                        await leaser.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                        if (!await leaser.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                         {
-                            await leaser.RequestStream.CompleteAsync();
+                            await leaser.RequestStream.CompleteAsync().ConfigureAwait(false);
                             throw new EndOfStreamException();
                         }
 
                         LeaseKeepAliveResponse update = leaser.ResponseStream.Current;
                         if (update.ID != leaseId || update.TTL == 0) // expired
                         {
-                            await leaser.RequestStream.CompleteAsync();
+                            await leaser.RequestStream.CompleteAsync().ConfigureAwait(false);
                             return;
                         }
 
-                        await Task.Delay(TimeSpan.FromMilliseconds(update.TTL * 1000 / 3), cancellationToken);
+                        await Task.Delay(TimeSpan.FromMilliseconds(update.TTL * 1000 / 3), cancellationToken).ConfigureAwait(false);
                     }
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -140,18 +140,18 @@ namespace dotnet_etcd
                 {
                     Task leaserTask = Task.Run(async () =>
                     {
-                        while (await leaser.ResponseStream.MoveNext(cancellationToken))
+                        while (await leaser.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                         {
                             LeaseKeepAliveResponse update = leaser.ResponseStream.Current;
                             method(update);
                         }
                     }, cancellationToken);
 
-                    await leaser.RequestStream.WriteAsync(request);
-                    await leaser.RequestStream.CompleteAsync();
-                    await leaserTask;
+                    await leaser.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                    await leaser.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    await leaserTask.ConfigureAwait(false);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -173,7 +173,7 @@ namespace dotnet_etcd
                 {
                     Task leaserTask = Task.Run(async () =>
                     {
-                        while (await leaser.ResponseStream.MoveNext(cancellationToken))
+                        while (await leaser.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                         {
                             LeaseKeepAliveResponse update = leaser.ResponseStream.Current;
                             foreach (Action<LeaseKeepAliveResponse> method in methods)
@@ -184,11 +184,11 @@ namespace dotnet_etcd
                         }
                     }, cancellationToken);
 
-                    await leaser.RequestStream.WriteAsync(request);
-                    await leaser.RequestStream.CompleteAsync();
-                    await leaserTask;
+                    await leaser.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                    await leaser.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    await leaserTask.ConfigureAwait(false);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
 
@@ -211,7 +211,7 @@ namespace dotnet_etcd
                 {
                     Task leaserTask = Task.Run(async () =>
                     {
-                        while (await leaser.ResponseStream.MoveNext(cancellationToken))
+                        while (await leaser.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                         {
                             LeaseKeepAliveResponse update = leaser.ResponseStream.Current;
                             method(update);
@@ -220,13 +220,13 @@ namespace dotnet_etcd
 
                     foreach (LeaseKeepAliveRequest request in requests)
                     {
-                        await leaser.RequestStream.WriteAsync(request);
+                        await leaser.RequestStream.WriteAsync(request).ConfigureAwait(false);
                     }
 
-                    await leaser.RequestStream.CompleteAsync();
-                    await leaserTask;
+                    await leaser.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    await leaserTask.ConfigureAwait(false);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -249,7 +249,7 @@ namespace dotnet_etcd
                 {
                     Task leaserTask = Task.Run(async () =>
                     {
-                        while (await leaser.ResponseStream.MoveNext(cancellationToken))
+                        while (await leaser.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                         {
                             LeaseKeepAliveResponse update = leaser.ResponseStream.Current;
                             foreach (Action<LeaseKeepAliveResponse> method in methods)
@@ -262,13 +262,13 @@ namespace dotnet_etcd
 
                     foreach (LeaseKeepAliveRequest request in requests)
                     {
-                        await leaser.RequestStream.WriteAsync(request);
+                        await leaser.RequestStream.WriteAsync(request).ConfigureAwait(false);
                     }
 
-                    await leaser.RequestStream.CompleteAsync();
-                    await leaserTask;
+                    await leaser.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    await leaserTask.ConfigureAwait(false);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -300,7 +300,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.leaseClient
-                .LeaseTimeToLiveAsync(request, headers, deadline, cancellationToken));
+                .LeaseTimeToLiveAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
     }
 }

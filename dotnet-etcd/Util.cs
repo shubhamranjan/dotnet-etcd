@@ -112,7 +112,7 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    response = await etcdCallFunc.Invoke(_balancer.GetConnection());
+                    response = await etcdCallFunc.Invoke(_balancer.GetConnection()).ConfigureAwait(false);
                     break;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
@@ -142,7 +142,7 @@ namespace dotnet_etcd
             {
                 try
                 {
-                    await etcdCallFunc.Invoke(_balancer.GetConnection());
+                    await etcdCallFunc.Invoke(_balancer.GetConnection()).ConfigureAwait(false);
                     break;
                 }
                 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)

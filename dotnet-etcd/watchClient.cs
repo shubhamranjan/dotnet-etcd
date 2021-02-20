@@ -63,18 +63,18 @@ namespace dotnet_etcd
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                         {
                             WatchResponse update = watcher.ResponseStream.Current;
                             method(update);
                         }
                     }, cancellationToken);
 
-                    await watcher.RequestStream.WriteAsync(request);
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    await watcherTask.ConfigureAwait(false);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace dotnet_etcd
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                         {
                             WatchResponse update = watcher.ResponseStream.Current;
                             foreach (Action<WatchResponse> method in methods)
@@ -107,11 +107,11 @@ namespace dotnet_etcd
                         }
                     }, cancellationToken);
 
-                    await watcher.RequestStream.WriteAsync(request);
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    await watcherTask.ConfigureAwait(false);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace dotnet_etcd
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                         {
                             WatchResponse update = watcher.ResponseStream.Current;
                             method(update.Events.Select(i =>
@@ -150,11 +150,11 @@ namespace dotnet_etcd
                         }
                     }, cancellationToken);
 
-                    await watcher.RequestStream.WriteAsync(request);
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    await watcherTask.ConfigureAwait(false);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace dotnet_etcd
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                         {
                             WatchResponse update = watcher.ResponseStream.Current;
                             foreach (Action<WatchEvent[]> method in methods)
@@ -196,11 +196,11 @@ namespace dotnet_etcd
                         }
                     }, cancellationToken);
 
-                    await watcher.RequestStream.WriteAsync(request);
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    await watcherTask.ConfigureAwait(false);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -223,7 +223,7 @@ namespace dotnet_etcd
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                         {
                             WatchResponse update = watcher.ResponseStream.Current;
                             method(update);
@@ -232,13 +232,13 @@ namespace dotnet_etcd
 
                     foreach (WatchRequest request in requests)
                     {
-                        await watcher.RequestStream.WriteAsync(request);
+                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
                     }
 
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    await watcherTask.ConfigureAwait(false);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -261,7 +261,7 @@ namespace dotnet_etcd
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                         {
                             WatchResponse update = watcher.ResponseStream.Current;
                             foreach (Action<WatchResponse> method in methods)
@@ -273,13 +273,13 @@ namespace dotnet_etcd
 
                     foreach (WatchRequest request in requests)
                     {
-                        await watcher.RequestStream.WriteAsync(request);
+                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
                     }
 
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    await watcherTask.ConfigureAwait(false);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -302,7 +302,7 @@ namespace dotnet_etcd
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                         {
                             WatchResponse update = watcher.ResponseStream.Current;
                             method(update.Events.Select(i =>
@@ -320,13 +320,13 @@ namespace dotnet_etcd
 
                     foreach (WatchRequest request in requests)
                     {
-                        await watcher.RequestStream.WriteAsync(request);
+                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
                     }
 
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    await watcherTask.ConfigureAwait(false);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -349,7 +349,7 @@ namespace dotnet_etcd
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                         {
                             WatchResponse update = watcher.ResponseStream.Current;
                             foreach (Action<WatchEvent[]> method in methods)
@@ -370,13 +370,13 @@ namespace dotnet_etcd
 
                     foreach (WatchRequest request in requests)
                     {
-                        await watcher.RequestStream.WriteAsync(request);
+                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
                     }
 
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    await watcherTask.ConfigureAwait(false);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -399,7 +399,7 @@ namespace dotnet_etcd
                 }
             };
 
-            AsyncHelper.RunSync(async () => await Watch(request, method, headers, deadline, cancellationToken));
+            AsyncHelper.RunSync(async () => await Watch(request, method, headers, deadline, cancellationToken).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -422,7 +422,7 @@ namespace dotnet_etcd
                 }
             };
 
-            AsyncHelper.RunSync(async () => await Watch(request, methods, headers, deadline, cancellationToken));
+            AsyncHelper.RunSync(async () => await Watch(request, methods, headers, deadline, cancellationToken).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -445,7 +445,7 @@ namespace dotnet_etcd
                 }
             };
 
-            AsyncHelper.RunSync(async () => await Watch(request, method, headers, deadline, cancellationToken));
+            AsyncHelper.RunSync(async () => await Watch(request, method, headers, deadline, cancellationToken).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -468,7 +468,7 @@ namespace dotnet_etcd
                 }
             };
 
-            AsyncHelper.RunSync(async () => await Watch(request, methods, headers, deadline, cancellationToken));
+            AsyncHelper.RunSync(async () => await Watch(request, methods, headers, deadline, cancellationToken).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -497,7 +497,7 @@ namespace dotnet_etcd
                 requests.Add(request);
             }
 
-            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), method, headers, deadline, cancellationToken));
+            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), method, headers, deadline, cancellationToken).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -526,7 +526,7 @@ namespace dotnet_etcd
                 requests.Add(request);
             }
 
-            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), methods, headers, deadline, cancellationToken));
+            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), methods, headers, deadline, cancellationToken).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -555,7 +555,7 @@ namespace dotnet_etcd
                 requests.Add(request);
             }
 
-            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), method, headers, deadline, cancellationToken));
+            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), method, headers, deadline, cancellationToken).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -584,7 +584,7 @@ namespace dotnet_etcd
                 requests.Add(request);
             }
 
-            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), methods, headers, deadline, cancellationToken));
+            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), methods, headers, deadline, cancellationToken).ConfigureAwait(false));
         }
 
         #endregion
@@ -611,18 +611,18 @@ namespace dotnet_etcd
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                         {
                             WatchResponse update = watcher.ResponseStream.Current;
                             method(update);
                         }
                     }, cancellationToken);
 
-                    await watcher.RequestStream.WriteAsync(request);
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    await watcherTask.ConfigureAwait(false);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -645,7 +645,7 @@ namespace dotnet_etcd
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                         {
                             WatchResponse update = watcher.ResponseStream.Current;
                             foreach (Action<WatchResponse> method in methods)
@@ -655,11 +655,11 @@ namespace dotnet_etcd
                         }
                     }, cancellationToken);
 
-                    await watcher.RequestStream.WriteAsync(request);
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    await watcherTask.ConfigureAwait(false);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -682,7 +682,7 @@ namespace dotnet_etcd
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                         {
                             WatchResponse update = watcher.ResponseStream.Current;
                             method(update.Events.Select(i =>
@@ -698,11 +698,11 @@ namespace dotnet_etcd
                         }
                     }, cancellationToken);
 
-                    await watcher.RequestStream.WriteAsync(request);
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    await watcherTask.ConfigureAwait(false);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -725,7 +725,7 @@ namespace dotnet_etcd
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                         {
                             WatchResponse update = watcher.ResponseStream.Current;
                             foreach (Action<WatchEvent[]> method in methods)
@@ -744,11 +744,11 @@ namespace dotnet_etcd
                         }
                     }, cancellationToken);
 
-                    await watcher.RequestStream.WriteAsync(request);
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    await watcherTask.ConfigureAwait(false);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -771,7 +771,7 @@ namespace dotnet_etcd
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                         {
                             WatchResponse update = watcher.ResponseStream.Current;
                             method(update);
@@ -780,13 +780,13 @@ namespace dotnet_etcd
 
                     foreach (WatchRequest request in requests)
                     {
-                        await watcher.RequestStream.WriteAsync(request);
+                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
                     }
 
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    await watcherTask.ConfigureAwait(false);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -809,7 +809,7 @@ namespace dotnet_etcd
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                         {
                             WatchResponse update = watcher.ResponseStream.Current;
                             foreach (Action<WatchResponse> method in methods)
@@ -821,13 +821,13 @@ namespace dotnet_etcd
 
                     foreach (WatchRequest request in requests)
                     {
-                        await watcher.RequestStream.WriteAsync(request);
+                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
                     }
 
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    await watcherTask.ConfigureAwait(false);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -850,7 +850,7 @@ namespace dotnet_etcd
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                         {
                             WatchResponse update = watcher.ResponseStream.Current;
                             method(update.Events.Select(i =>
@@ -868,13 +868,13 @@ namespace dotnet_etcd
 
                     foreach (WatchRequest request in requests)
                     {
-                        await watcher.RequestStream.WriteAsync(request);
+                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
                     }
 
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    await watcherTask.ConfigureAwait(false);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -897,7 +897,7 @@ namespace dotnet_etcd
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken))
+                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                         {
                             WatchResponse update = watcher.ResponseStream.Current;
                             foreach (Action<WatchEvent[]> method in methods)
@@ -918,13 +918,13 @@ namespace dotnet_etcd
 
                     foreach (WatchRequest request in requests)
                     {
-                        await watcher.RequestStream.WriteAsync(request);
+                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
                     }
 
-                    await watcher.RequestStream.CompleteAsync();
-                    await watcherTask;
+                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    await watcherTask.ConfigureAwait(false);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -948,7 +948,7 @@ namespace dotnet_etcd
                 }
             };
 
-            AsyncHelper.RunSync(async () => await Watch(request, method, headers, deadline, cancellationToken));
+            AsyncHelper.RunSync(async () => await Watch(request, method, headers, deadline, cancellationToken).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -972,7 +972,7 @@ namespace dotnet_etcd
                 }
             };
 
-            AsyncHelper.RunSync(async () => await Watch(request, methods, headers, deadline, cancellationToken));
+            AsyncHelper.RunSync(async () => await Watch(request, methods, headers, deadline, cancellationToken).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -996,7 +996,7 @@ namespace dotnet_etcd
                 }
             };
 
-            AsyncHelper.RunSync(async () => await Watch(request, method, headers, deadline, cancellationToken));
+            AsyncHelper.RunSync(async () => await Watch(request, method, headers, deadline, cancellationToken).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -1020,7 +1020,7 @@ namespace dotnet_etcd
                 }
             };
 
-            AsyncHelper.RunSync(async () => await Watch(request, methods, headers, deadline, cancellationToken));
+            AsyncHelper.RunSync(async () => await Watch(request, methods, headers, deadline, cancellationToken).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -1050,7 +1050,7 @@ namespace dotnet_etcd
                 requests.Add(request);
             }
 
-            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), method, headers, deadline, cancellationToken));
+            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), method, headers, deadline, cancellationToken).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -1080,7 +1080,7 @@ namespace dotnet_etcd
                 requests.Add(request);
             }
 
-            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), methods, headers, deadline, cancellationToken));
+            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), methods, headers, deadline, cancellationToken).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -1110,7 +1110,7 @@ namespace dotnet_etcd
                 requests.Add(request);
             }
 
-            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), method, headers, deadline, cancellationToken));
+            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), method, headers, deadline, cancellationToken).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -1140,7 +1140,7 @@ namespace dotnet_etcd
                 requests.Add(request);
             }
 
-            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), methods, headers, deadline, cancellationToken));
+            AsyncHelper.RunSync(async () => await Watch(requests.ToArray(), methods, headers, deadline, cancellationToken).ConfigureAwait(false));
         }
 
         #endregion

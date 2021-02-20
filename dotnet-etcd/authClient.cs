@@ -36,7 +36,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.authClient
-                .AuthenticateAsync(request, headers, deadline, cancellationToken));
+                .AuthenticateAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.authClient
-                .AuthEnableAsync(request, headers, deadline, cancellationToken));
+                .AuthEnableAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.authClient
-                .AuthDisableAsync(request, headers, deadline, cancellationToken));
+                .AuthDisableAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.authClient
-                .UserAddAsync(request, headers, deadline, cancellationToken));
+                .UserAddAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.authClient
-                .UserGetAsync(request, headers, deadline, cancellationToken));
+                .UserGetAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -196,7 +196,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.authClient
-                .UserListAsync(request, headers, deadline, cancellationToken));
+                .UserListAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -228,7 +228,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.authClient
-                .UserDeleteAsync(request, headers, deadline, cancellationToken));
+                .UserDeleteAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -260,7 +260,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.authClient
-                .UserChangePasswordAsync(request, headers, deadline, cancellationToken));
+                .UserChangePasswordAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -292,7 +292,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.authClient
-                .UserGrantRoleAsync(request, headers, deadline, cancellationToken));
+                .UserGrantRoleAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -324,7 +324,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.authClient
-                .UserRevokeRoleAsync(request, headers, deadline, cancellationToken));
+                .UserRevokeRoleAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -356,7 +356,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.authClient
-                .RoleAddAsync(request, headers, deadline, cancellationToken));
+                .RoleAddAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -388,7 +388,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.authClient
-                .RoleGetAsync(request, headers, deadline, cancellationToken));
+                .RoleGetAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -420,7 +420,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.authClient
-                .RoleListAsync(request, headers, deadline, cancellationToken));
+                .RoleListAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -452,7 +452,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.authClient
-                .RoleDeleteAsync(request, headers, deadline, cancellationToken));
+                .RoleDeleteAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -484,7 +484,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.authClient
-                .RoleGrantPermissionAsync(request, headers, deadline, cancellationToken));
+                .RoleGrantPermissionAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -516,7 +516,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.authClient
-                .RoleRevokePermissionAsync(request, headers, deadline, cancellationToken));
+                .RoleRevokePermissionAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
     }
 }

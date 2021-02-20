@@ -38,7 +38,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.maintenanceClient
-                .AlarmAsync(request, headers, deadline, cancellationToken));
+                .AlarmAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.maintenanceClient
-                .StatusAsync(request, headers, deadline, cancellationToken));
+                .StatusAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.maintenanceClient
-                .DefragmentAsync(request, headers, deadline, cancellationToken));
+                .DefragmentAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.maintenanceClient
-                .HashAsync(request, headers, deadline, cancellationToken));
+                .HashAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.maintenanceClient
-                .HashKVAsync(request, headers, deadline, cancellationToken));
+                .HashKVAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -196,13 +196,13 @@ namespace dotnet_etcd
                 using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = connection
                     .maintenanceClient.Snapshot(request, headers, deadline, cancellationToken))
                 {
-                    while (await snapshotter.ResponseStream.MoveNext(cancellationToken))
+                    while (await snapshotter.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                     {
                         SnapshotResponse update = snapshotter.ResponseStream.Current;
                         method(update);
                     }
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -221,7 +221,7 @@ namespace dotnet_etcd
                 using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = connection
                     .maintenanceClient.Snapshot(request, headers, deadline, cancellationToken))
                 {
-                    while (await snapshotter.ResponseStream.MoveNext(cancellationToken))
+                    while (await snapshotter.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                     {
                         SnapshotResponse update = snapshotter.ResponseStream.Current;
                         foreach (Action<SnapshotResponse> method in methods)
@@ -230,7 +230,7 @@ namespace dotnet_etcd
                         }
                     }
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -262,7 +262,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.maintenanceClient
-                .MoveLeaderAsync(request, headers, deadline, cancellationToken));
+                .MoveLeaderAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
     }
 }

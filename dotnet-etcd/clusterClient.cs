@@ -36,7 +36,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.clusterClient
-                .MemberAddAsync(request, headers, deadline, cancellationToken));
+                .MemberAddAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.clusterClient
-                .MemberRemoveAsync(request, headers, deadline, cancellationToken));
+                .MemberRemoveAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.clusterClient
-                .MemberUpdateAsync(request, headers, deadline, cancellationToken));
+                .MemberUpdateAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.clusterClient
-                .MemberListAsync(request, headers, deadline, cancellationToken));
+                .MemberListAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
     }
 }

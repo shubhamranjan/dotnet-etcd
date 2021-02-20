@@ -54,7 +54,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.kvClient
-                .RangeAsync(request, headers, deadline, cancellationToken));
+                .RangeAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace dotnet_etcd
             return await GetAsync(new RangeRequest
             {
                 Key = ByteString.CopyFromUtf8(key)
-            }, headers, deadline, cancellationToken);
+            }, headers, deadline, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace dotnet_etcd
         public async Task<string> GetValAsync(string key, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            RangeResponse rangeResponse = await GetAsync(key, headers, deadline, cancellationToken);
+            RangeResponse rangeResponse = await GetAsync(key, headers, deadline, cancellationToken).ConfigureAwait(false);
             return rangeResponse.Count != 0 ? rangeResponse.Kvs[0].Value.ToStringUtf8().Trim() : string.Empty;
         }
 
@@ -141,7 +141,7 @@ namespace dotnet_etcd
             {
                 Key = GetStringByteForRangeRequests(prefixKey),
                 RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
-            }, headers, deadline, cancellationToken);
+            }, headers, deadline, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -181,7 +181,7 @@ namespace dotnet_etcd
             {
                 Key = GetStringByteForRangeRequests(prefixKey),
                 RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
-            }, headers, deadline, cancellationToken));
+            }, headers, deadline, cancellationToken).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -230,7 +230,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.kvClient
-                .PutAsync(request, headers, deadline, cancellationToken));
+                .PutAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
 
@@ -251,7 +251,7 @@ namespace dotnet_etcd
             {
                 Key = ByteString.CopyFromUtf8(key),
                 Value = ByteString.CopyFromUtf8(val)
-            }, headers, deadline, cancellationToken);
+            }, headers, deadline, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -301,7 +301,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.kvClient
-                .DeleteRangeAsync(request, headers, deadline, cancellationToken));
+                .DeleteRangeAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -319,7 +319,7 @@ namespace dotnet_etcd
             return await DeleteAsync(new DeleteRangeRequest
             {
                 Key = ByteString.CopyFromUtf8(key)
-            }, headers, deadline, cancellationToken);
+            }, headers, deadline, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -359,7 +359,7 @@ namespace dotnet_etcd
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
                 RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
-            }, headers, deadline, cancellationToken);
+            }, headers, deadline, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -395,7 +395,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.kvClient
-                .TxnAsync(request, headers, deadline, cancellationToken));
+                .TxnAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -431,7 +431,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default)
         {
             return await CallEtcdAsync(async (connection) => await connection.kvClient
-                .CompactAsync(request, headers, deadline, cancellationToken));
+                .CompactAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
     }
 }
