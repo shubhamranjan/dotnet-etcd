@@ -47,7 +47,7 @@ Advanced uses take advantage of the consistency guarantees to implement database
 
   <ItemGroup>
     <PackageReference Include="DnsClient" Version="1.4.0" />
-    <PackageReference Include="Google.Protobuf" Version="3.15.1" />
+    <PackageReference Include="Google.Protobuf" Version="3.17.3" />
     <PackageReference Include="Grpc.Core" Version="2.35.0" />
     <PackageReference Include="Grpc.Tools" Version="2.35.0">
       <PrivateAssets>all</PrivateAssets>
