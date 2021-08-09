@@ -1,10 +1,14 @@
 ﻿syntax = "proto3";
-
-import "grpc/proto/rpc.proto";
-
 package v3lockpb;
 
+import "grpc/proto/gogoproto/gogo.proto";
+import "grpc/proto/etcd/rpc.proto";
 
+// for grpc-gateway
+import "grpc/proto/google/api/annotations.proto";
+
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
 
 // The lock service exposes client-side locking facilities as a gRPC interface.
 service Lock {
@@ -14,12 +18,22 @@ service Lock {
   // transactions to safely ensure updates to etcd only occur while holding
   // lock ownership. The lock is held until Unlock is called on the key or the
   // lease associate with the owner expires.
-  rpc Lock(LockRequest) returns (LockResponse) {}
+  rpc Lock(LockRequest) returns (LockResponse) {
+      option (google.api.http) = {
+        post: "/v3/lock/lock"
+        body: "*"
+    };
+  }
 
   // Unlock takes a key returned by Lock and releases the hold on lock. The
   // next Lock caller waiting for the lock will then be woken up and given
   // ownership of the lock.
-  rpc Unlock(UnlockRequest) returns (UnlockResponse) {}
+  rpc Unlock(UnlockRequest) returns (UnlockResponse) {
+      option (google.api.http) = {
+        post: "/v3/lock/unlock"
+        body: "*"
+    };
+  }
 }
 
 message LockRequest {

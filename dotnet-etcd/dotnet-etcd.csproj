@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">
@@ -33,6 +33,7 @@ Advanced uses take advantage of the consistency guarantees to implement database
 
   <ItemGroup>
     <None Remove="etcd-logo-rectangle.png" />
+    <None Remove="grpc\proto\google\api\annotations.proto" />
     <None Remove="LICENSE.md" />
     <None Include="etcd-logo-rectangle.png">
       <Pack>True</Pack>
@@ -54,11 +55,18 @@ Advanced uses take advantage of the consistency guarantees to implement database
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
 
-    <Protobuf Include="grpc/proto/auth.proto" GrpcServices="Client" />
-    <Protobuf Include="grpc/proto/election.proto" GrpcServices="Client" />
-    <Protobuf Include="grpc/proto/kv.proto" GrpcServices="Client" />
-    <Protobuf Include="grpc/proto/lock.proto" GrpcServices="Client" />
-    <Protobuf Include="grpc/proto/rpc.proto" GrpcServices="Client" />
+    <Protobuf Include="grpc\proto\etcd\auth.proto" GrpcServices="Client" />
+    <Protobuf Include="grpc\proto\etcd\election.proto" GrpcServices="Client" />
+    <Protobuf Include="grpc\proto\etcd\kv.proto" GrpcServices="Client" />
+    <Protobuf Include="grpc\proto\etcd\lock.proto" GrpcServices="Client" />
+    <Protobuf Include="grpc\proto\etcd\rpc.proto" GrpcServices="Client" />
+    <Protobuf Include="grpc\proto\etcd\version.proto" GrpcServices="Client" />
+
+    <Protobuf Include="grpc\proto\gogoproto\gogo.proto" GrpcServices="Client" />
+
+    <Protobuf Include="grpc\proto\google\api\annotations.proto" GrpcServices="Client" />
+    <Protobuf Include="grpc\proto\google\api\http.proto" GrpcServices="Client" />
+    <Protobuf Include="grpc\proto\google\protobuf\descriptor.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>
