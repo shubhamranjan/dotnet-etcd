@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 
 using Etcdserverpb;
@@ -117,10 +118,15 @@ namespace dotnet_etcd.multiplexer
                 }
                 else
                 {
-                    channel = GrpcChannel.ForAddress(uri, new GrpcChannelOptions
+#if NETCOREAPP3_1 || NETCOREAPP3_0
+                    AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+#endif
+                    var options = new GrpcChannelOptions
                     {
                         Credentials = ChannelCredentials.Insecure
-                    });
+                    };
+
+                    channel = GrpcChannel.ForAddress(uri, options);
                 }
 
                 Connection connection = new Connection
