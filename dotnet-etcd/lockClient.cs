@@ -50,7 +50,7 @@ namespace dotnet_etcd
         public LockResponse Lock(LockRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.lockClient.Lock(request, headers, deadline, cancellationToken));
+            return CallEtcd((connection) => connection._lockClient.Lock(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace dotnet_etcd
         public async Task<LockResponse> LockAsync(LockRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null, CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.lockClient
+            return await CallEtcdAsync(async (connection) => await connection._lockClient
                 .LockAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -127,7 +127,7 @@ namespace dotnet_etcd
         public UnlockResponse Unlock(UnlockRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null, CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.lockClient
+            return CallEtcd((connection) => connection._lockClient
                 .Unlock(request, headers, deadline, cancellationToken));
         }
 
@@ -163,7 +163,7 @@ namespace dotnet_etcd
         public async Task<UnlockResponse> UnlockAsync(UnlockRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null, CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.lockClient
+            return await CallEtcdAsync(async (connection) => await connection._lockClient
                 .UnlockAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
     }

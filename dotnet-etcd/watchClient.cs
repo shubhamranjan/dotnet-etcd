@@ -59,7 +59,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection.watchClient.Watch(headers, deadline, cancellationToken))
+                    connection._watchClient.Watch(headers, deadline, cancellationToken))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -93,7 +93,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection.watchClient.Watch(headers, deadline, cancellationToken))
+                    connection._watchClient.Watch(headers, deadline, cancellationToken))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -130,7 +130,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection.watchClient.Watch(headers, deadline, cancellationToken))
+                    connection._watchClient.Watch(headers, deadline, cancellationToken))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -173,7 +173,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection.watchClient.Watch(headers, deadline, cancellationToken))
+                    connection._watchClient.Watch(headers, deadline, cancellationToken))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -219,7 +219,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection.watchClient.Watch(headers, deadline, cancellationToken))
+                    connection._watchClient.Watch(headers, deadline, cancellationToken))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -257,7 +257,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection.watchClient.Watch(headers, deadline, cancellationToken))
+                    connection._watchClient.Watch(headers, deadline, cancellationToken))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -298,7 +298,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection.watchClient.Watch(headers, deadline, cancellationToken))
+                    connection._watchClient.Watch(headers, deadline, cancellationToken))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -345,7 +345,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection.watchClient.Watch(headers, deadline, cancellationToken))
+                    connection._watchClient.Watch(headers, deadline, cancellationToken))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -607,7 +607,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection.watchClient.Watch(headers, deadline, cancellationToken))
+                    connection._watchClient.Watch(headers, deadline, cancellationToken))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -641,7 +641,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection.watchClient.Watch(headers, deadline, cancellationToken))
+                    connection._watchClient.Watch(headers, deadline, cancellationToken))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -678,7 +678,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection.watchClient.Watch(headers, deadline, cancellationToken))
+                    connection._watchClient.Watch(headers, deadline, cancellationToken))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -721,7 +721,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection.watchClient.Watch(headers, deadline, cancellationToken))
+                    connection._watchClient.Watch(headers, deadline, cancellationToken))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -767,7 +767,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection.watchClient.Watch(headers, deadline, cancellationToken))
+                    connection._watchClient.Watch(headers, deadline, cancellationToken))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -805,7 +805,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection.watchClient.Watch(headers, deadline, cancellationToken))
+                    connection._watchClient.Watch(headers, deadline, cancellationToken))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -846,7 +846,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection.watchClient.Watch(headers, deadline, cancellationToken))
+                    connection._watchClient.Watch(headers, deadline, cancellationToken))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {
@@ -893,7 +893,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection.watchClient.Watch(headers, deadline, cancellationToken))
+                    connection._watchClient.Watch(headers, deadline, cancellationToken))
                 {
                     Task watcherTask = Task.Run(async () =>
                     {

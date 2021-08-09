@@ -21,7 +21,7 @@ namespace dotnet_etcd
         public AlarmResponse Alarm(AlarmRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.maintenanceClient
+            return CallEtcd((connection) => connection._maintenanceClient
                 .Alarm(request, headers, deadline, cancellationToken));
         }
 
@@ -37,7 +37,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.maintenanceClient
+            return await CallEtcdAsync(async (connection) => await connection._maintenanceClient
                 .AlarmAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -53,7 +53,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.maintenanceClient
+            return CallEtcd((connection) => connection._maintenanceClient
                 .Status(request, headers, deadline, cancellationToken));
         }
 
@@ -69,7 +69,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.maintenanceClient
+            return await CallEtcdAsync(async (connection) => await connection._maintenanceClient
                 .StatusAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -85,7 +85,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.maintenanceClient
+            return CallEtcd((connection) => connection._maintenanceClient
                 .Defragment(request, headers, deadline, cancellationToken));
         }
 
@@ -101,7 +101,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.maintenanceClient
+            return await CallEtcdAsync(async (connection) => await connection._maintenanceClient
                 .DefragmentAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -121,7 +121,7 @@ namespace dotnet_etcd
         public HashResponse Hash(HashRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.maintenanceClient
+            return CallEtcd((connection) => connection._maintenanceClient
                 .Hash(request, headers, deadline, cancellationToken));
         }
 
@@ -142,7 +142,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.maintenanceClient
+            return await CallEtcdAsync(async (connection) => await connection._maintenanceClient
                 .HashAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -159,7 +159,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.maintenanceClient
+            return CallEtcd((connection) => connection._maintenanceClient
                 .HashKV(request, headers, deadline, cancellationToken));
         }
 
@@ -176,7 +176,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.maintenanceClient
+            return await CallEtcdAsync(async (connection) => await connection._maintenanceClient
                 .HashKVAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -194,7 +194,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = connection
-                    .maintenanceClient.Snapshot(request, headers, deadline, cancellationToken))
+                    ._maintenanceClient.Snapshot(request, headers, deadline, cancellationToken))
                 {
                     while (await snapshotter.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                     {
@@ -219,7 +219,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = connection
-                    .maintenanceClient.Snapshot(request, headers, deadline, cancellationToken))
+                    ._maintenanceClient.Snapshot(request, headers, deadline, cancellationToken))
                 {
                     while (await snapshotter.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                     {
@@ -245,7 +245,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.maintenanceClient
+            return CallEtcd((connection) => connection._maintenanceClient
                 .MoveLeader(request, headers, deadline, cancellationToken));
         }
 
@@ -261,7 +261,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.maintenanceClient
+            return await CallEtcdAsync(async (connection) => await connection._maintenanceClient
                 .MoveLeaderAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
     }

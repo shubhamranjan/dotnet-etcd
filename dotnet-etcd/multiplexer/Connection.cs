@@ -5,18 +5,18 @@ namespace dotnet_etcd.multiplexer
 {
     internal class Connection
     {
-        internal KV.KVClient kvClient;
+        internal KV.KVClient _kvClient;
 
-        internal Watch.WatchClient watchClient;
+        internal Watch.WatchClient _watchClient;
 
-        internal Lease.LeaseClient leaseClient;
+        internal Lease.LeaseClient _leaseClient;
 
-        internal Lock.LockClient lockClient;
+        internal Lock.LockClient _lockClient;
 
-        internal Cluster.ClusterClient clusterClient;
+        internal Cluster.ClusterClient _clusterClient;
 
-        internal Maintenance.MaintenanceClient maintenanceClient;
+        internal Maintenance.MaintenanceClient _maintenanceClient;
 
-        internal Auth.AuthClient authClient;
+        internal Auth.AuthClient _authClient;
     }
 }

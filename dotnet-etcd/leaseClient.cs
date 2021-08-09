@@ -25,7 +25,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.leaseClient
+            return CallEtcd((connection) => connection._leaseClient
                 .LeaseGrant(request, headers, deadline, cancellationToken));
         }
 
@@ -43,7 +43,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.leaseClient
+            return await CallEtcdAsync(async (connection) => await connection._leaseClient
                 .LeaseGrantAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -59,7 +59,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.leaseClient
+            return CallEtcd((connection) => connection._leaseClient
                 .LeaseRevoke(request, headers, deadline, cancellationToken));
         }
 
@@ -75,7 +75,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.leaseClient
+            return await CallEtcdAsync(async (connection) => await connection._leaseClient
                 .LeaseRevokeAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -90,7 +90,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser =
-                    connection.leaseClient.LeaseKeepAlive(cancellationToken: cancellationToken))
+                    connection._leaseClient.LeaseKeepAlive(cancellationToken: cancellationToken))
                 {
                     LeaseKeepAliveRequest request = new LeaseKeepAliveRequest
                     {
@@ -135,7 +135,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser =
-                    connection.leaseClient
+                    connection._leaseClient
                         .LeaseKeepAlive(headers, cancellationToken: cancellationToken))
                 {
                     Task leaserTask = Task.Run(async () =>
@@ -168,7 +168,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser =
-                    connection.leaseClient
+                    connection._leaseClient
                         .LeaseKeepAlive(headers, cancellationToken: cancellationToken))
                 {
                     Task leaserTask = Task.Run(async () =>
@@ -206,7 +206,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser =
-                    connection.leaseClient
+                    connection._leaseClient
                         .LeaseKeepAlive(headers, cancellationToken: cancellationToken))
                 {
                     Task leaserTask = Task.Run(async () =>
@@ -244,7 +244,7 @@ namespace dotnet_etcd
             await CallEtcdAsync(async (connection) =>
             {
                 using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser =
-                    connection.leaseClient
+                    connection._leaseClient
                         .LeaseKeepAlive(headers, deadline, cancellationToken))
                 {
                     Task leaserTask = Task.Run(async () =>
@@ -283,7 +283,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.leaseClient
+            return CallEtcd((connection) => connection._leaseClient
                 .LeaseTimeToLive(request, headers, deadline, cancellationToken));
         }
 
@@ -299,7 +299,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.leaseClient
+            return await CallEtcdAsync(async (connection) => await connection._leaseClient
                 .LeaseTimeToLiveAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
     }
