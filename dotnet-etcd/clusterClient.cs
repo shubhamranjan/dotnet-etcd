@@ -19,7 +19,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.clusterClient
+            return CallEtcd((connection) => connection._clusterClient
                 .MemberAdd(request, headers, deadline, cancellationToken));
         }
 
@@ -35,7 +35,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.clusterClient
+            return await CallEtcdAsync(async (connection) => await connection._clusterClient
                 .MemberAddAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -51,7 +51,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.clusterClient
+            return CallEtcd((connection) => connection._clusterClient
                 .MemberRemove(request, headers, deadline, cancellationToken));
         }
 
@@ -67,7 +67,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.clusterClient
+            return await CallEtcdAsync(async (connection) => await connection._clusterClient
                 .MemberRemoveAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -83,7 +83,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.clusterClient
+            return CallEtcd((connection) => connection._clusterClient
                 .MemberUpdate(request, headers, deadline, cancellationToken));
         }
 
@@ -99,7 +99,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.clusterClient
+            return await CallEtcdAsync(async (connection) => await connection._clusterClient
                 .MemberUpdateAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -115,7 +115,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.clusterClient
+            return CallEtcd((connection) => connection._clusterClient
                 .MemberList(request, headers, deadline, cancellationToken));
         }
 
@@ -131,7 +131,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.clusterClient
+            return await CallEtcdAsync(async (connection) => await connection._clusterClient
                 .MemberListAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
     }

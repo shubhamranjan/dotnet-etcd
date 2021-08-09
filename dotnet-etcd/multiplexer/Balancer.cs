@@ -1,18 +1,24 @@
-﻿using System;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+
 using Etcdserverpb;
+
 using Grpc.Core;
+using Grpc.Net.Client;
 
 namespace dotnet_etcd.multiplexer
 {
 
     internal class Balancer
     {
-        private readonly HashSet<Connection> _HealthyCluster;
+        private readonly HashSet<Connection> _healthyNode;
 
-        private readonly HashSet<Connection> _UnHealthyCluster;
+        private readonly HashSet<Connection> _unHealthyNode;
 
         /// <summary>
         /// CA Certificate contents to be used to connect to etcd.
@@ -57,7 +63,11 @@ namespace dotnet_etcd.multiplexer
         /// <summary>
         /// Random object for randomizing selected node
         /// </summary>
-        private static Random random = new Random();
+        private static readonly Random s_random = new Random();
+
+
+        private const string InsecurePrefix = "http://";
+        private const string SecurePrefix = "https://";
 
         internal Balancer(List<Uri> nodes, string caCert = "", string clientCert = "", string clientKey = "", bool publicRootCa = false)
         {
@@ -66,78 +76,106 @@ namespace dotnet_etcd.multiplexer
             _clientCert = clientCert;
             _clientKey = clientKey;
             _publicRootCa = publicRootCa;
-            _lastNodeIndex = random.Next(-1, _numNodes);
+            _lastNodeIndex = s_random.Next(-1, _numNodes);
 
             _ssl = !_publicRootCa && !string.IsNullOrWhiteSpace(_caCert);
             _clientSSL = _ssl && (!string.IsNullOrWhiteSpace(_clientCert) && !(string.IsNullOrWhiteSpace(_clientKey)));
 
-            _HealthyCluster = new HashSet<Connection>();
-            _UnHealthyCluster = new HashSet<Connection>();
+            _healthyNode = new HashSet<Connection>();
+            _unHealthyNode = new HashSet<Connection>();
 
 
             foreach (Uri node in nodes)
             {
-                Channel channel;
+                GrpcChannel channel;
+
+                Uri uri = GetCleanUri(node.Host, node.Port, _publicRootCa || _clientSSL || _ssl);
+
                 if (_publicRootCa)
                 {
-                    channel = new Channel(node.Host, node.Port, new SslCredentials());
+                    channel = GrpcChannel.ForAddress(uri, new GrpcChannelOptions
+                    {
+                        Credentials = new SslCredentials()
+                    });
                 }
                 else if (_clientSSL)
                 {
-                    channel = new Channel(
-                        node.Host,
-                        node.Port,
-                        new SslCredentials(
+                    channel = GrpcChannel.ForAddress(uri, new GrpcChannelOptions
+                    {
+                        Credentials = new SslCredentials(
                             _caCert,
                             new KeyCertificatePair(_clientCert, _clientKey)
                         )
-                    );
+                    });
                 }
                 else if (_ssl)
                 {
-                    channel = new Channel(node.Host, node.Port, new SslCredentials(_caCert));
+                    channel = GrpcChannel.ForAddress(uri, new GrpcChannelOptions
+                    {
+                        Credentials = new SslCredentials(_caCert)
+                    });
                 }
                 else
                 {
-                    channel = new Channel(node.Host, node.Port, ChannelCredentials.Insecure);
+                    channel = GrpcChannel.ForAddress(uri, new GrpcChannelOptions
+                    {
+                        Credentials = ChannelCredentials.Insecure
+                    });
                 }
 
                 Connection connection = new Connection
                 {
-                    kvClient = new KV.KVClient(channel),
-                    watchClient = new Watch.WatchClient(channel),
-                    leaseClient = new Lease.LeaseClient(channel),
-                    lockClient = new V3Lockpb.Lock.LockClient(channel),
-                    clusterClient = new Cluster.ClusterClient(channel),
-                    maintenanceClient = new Maintenance.MaintenanceClient(channel),
-                    authClient = new Auth.AuthClient(channel)
+                    _kvClient = new KV.KVClient(channel),
+                    _watchClient = new Watch.WatchClient(channel),
+                    _leaseClient = new Lease.LeaseClient(channel),
+                    _lockClient = new V3Lockpb.Lock.LockClient(channel),
+                    _clusterClient = new Cluster.ClusterClient(channel),
+                    _maintenanceClient = new Maintenance.MaintenanceClient(channel),
+                    _authClient = new Auth.AuthClient(channel)
                 };
 
-                _HealthyCluster.Add(connection);
+                _healthyNode.Add(connection);
             }
+        }
 
+        private static Uri GetCleanUri(string host, int port, bool needsSsl)
+        {
+            if (!(host.StartsWith(InsecurePrefix) || host.StartsWith(SecurePrefix)))
+            {
+                if (needsSsl)
+                {
+                    host = $"{SecurePrefix}{host}";
+                }
+                else
+                {
+                    host = $"{InsecurePrefix}{host}";
+                }
+            }
+            host = $"{host}:{port}";
+
+            return new Uri(host);
         }
 
         internal Connection GetConnection()
         {
-            return _HealthyCluster.ElementAt(GetNextNodeIndex());
+            return _healthyNode.ElementAt(GetNextNodeIndex());
         }
 
         internal Connection GetConnection(int index)
         {
-            return _HealthyCluster.ElementAt(index);
+            return _healthyNode.ElementAt(index);
         }
 
         internal void MarkUnHealthy(Connection connection)
         {
-            _HealthyCluster.Remove(connection);
-            _UnHealthyCluster.Add(connection);
+            _healthyNode.Remove(connection);
+            _unHealthyNode.Add(connection);
         }
 
         internal void MarkHealthy(Connection connection)
         {
-            _UnHealthyCluster.Remove(connection);
-            _HealthyCluster.Add(connection);
+            _unHealthyNode.Remove(connection);
+            _healthyNode.Add(connection);
         }
 
         internal int GetNextNodeIndex()

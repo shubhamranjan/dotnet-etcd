@@ -19,7 +19,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.authClient
+            return CallEtcd((connection) => connection._authClient
                 .Authenticate(request, headers, deadline, cancellationToken));
         }
 
@@ -35,7 +35,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.authClient
+            return await CallEtcdAsync(async (connection) => await connection._authClient
                 .AuthenticateAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -51,7 +51,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.authClient
+            return CallEtcd((connection) => connection._authClient
                 .AuthEnable(request, headers, deadline, cancellationToken));
         }
 
@@ -67,7 +67,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.authClient
+            return await CallEtcdAsync(async (connection) => await connection._authClient
                 .AuthEnableAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -83,7 +83,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.authClient
+            return CallEtcd((connection) => connection._authClient
                 .AuthDisable(request, headers, deadline, cancellationToken));
         }
 
@@ -99,7 +99,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.authClient
+            return await CallEtcdAsync(async (connection) => await connection._authClient
                 .AuthDisableAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -115,7 +115,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.authClient
+            return CallEtcd((connection) => connection._authClient
                 .UserAdd(request, headers, deadline, cancellationToken));
         }
 
@@ -131,7 +131,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.authClient
+            return await CallEtcdAsync(async (connection) => await connection._authClient
                 .UserAddAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -147,7 +147,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.authClient
+            return CallEtcd((connection) => connection._authClient
                 .UserGet(request, headers, deadline, cancellationToken));
         }
 
@@ -163,7 +163,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.authClient
+            return await CallEtcdAsync(async (connection) => await connection._authClient
                 .UserGetAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -179,7 +179,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.authClient
+            return CallEtcd((connection) => connection._authClient
                 .UserList(request, headers, deadline, cancellationToken));
         }
 
@@ -195,7 +195,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.authClient
+            return await CallEtcdAsync(async (connection) => await connection._authClient
                 .UserListAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -211,7 +211,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.authClient
+            return CallEtcd((connection) => connection._authClient
                 .UserDelete(request, headers, deadline, cancellationToken));
         }
 
@@ -227,7 +227,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.authClient
+            return await CallEtcdAsync(async (connection) => await connection._authClient
                 .UserDeleteAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -243,7 +243,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.authClient
+            return CallEtcd((connection) => connection._authClient
                 .UserChangePassword(request, headers, deadline, cancellationToken));
         }
 
@@ -259,7 +259,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.authClient
+            return await CallEtcdAsync(async (connection) => await connection._authClient
                 .UserChangePasswordAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -275,7 +275,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.authClient
+            return CallEtcd((connection) => connection._authClient
                 .UserGrantRole(request, headers, deadline, cancellationToken));
         }
 
@@ -291,7 +291,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.authClient
+            return await CallEtcdAsync(async (connection) => await connection._authClient
                 .UserGrantRoleAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -307,7 +307,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.authClient
+            return CallEtcd((connection) => connection._authClient
                 .UserRevokeRole(request, headers, deadline, cancellationToken));
         }
 
@@ -323,7 +323,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.authClient
+            return await CallEtcdAsync(async (connection) => await connection._authClient
                 .UserRevokeRoleAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -339,7 +339,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.authClient
+            return CallEtcd((connection) => connection._authClient
                 .RoleAdd(request, headers, deadline, cancellationToken));
         }
 
@@ -355,7 +355,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.authClient
+            return await CallEtcdAsync(async (connection) => await connection._authClient
                 .RoleAddAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -371,7 +371,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.authClient
+            return CallEtcd((connection) => connection._authClient
                 .RoleGet(request, headers, deadline, cancellationToken));
         }
 
@@ -387,7 +387,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.authClient
+            return await CallEtcdAsync(async (connection) => await connection._authClient
                 .RoleGetAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -403,7 +403,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.authClient
+            return CallEtcd((connection) => connection._authClient
                 .RoleList(request, headers, deadline, cancellationToken));
         }
 
@@ -419,7 +419,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.authClient
+            return await CallEtcdAsync(async (connection) => await connection._authClient
                 .RoleListAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -435,7 +435,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.authClient
+            return CallEtcd((connection) => connection._authClient
                 .RoleDelete(request, headers, deadline, cancellationToken));
         }
 
@@ -451,7 +451,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.authClient
+            return await CallEtcdAsync(async (connection) => await connection._authClient
                 .RoleDeleteAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -467,7 +467,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.authClient
+            return CallEtcd((connection) => connection._authClient
                 .RoleGrantPermission(request, headers, deadline, cancellationToken));
         }
 
@@ -483,7 +483,7 @@ namespace dotnet_etcd
             AuthRoleGrantPermissionRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.authClient
+            return await CallEtcdAsync(async (connection) => await connection._authClient
                 .RoleGrantPermissionAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -499,7 +499,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.authClient
+            return CallEtcd((connection) => connection._authClient
                 .RoleRevokePermission(request, headers, deadline, cancellationToken));
         }
 
@@ -515,7 +515,7 @@ namespace dotnet_etcd
             AuthRoleRevokePermissionRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.authClient
+            return await CallEtcdAsync(async (connection) => await connection._authClient
                 .RoleRevokePermissionAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
     }

@@ -20,7 +20,7 @@ namespace dotnet_etcd
         public RangeResponse Get(RangeRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.kvClient
+            return CallEtcd((connection) => connection._kvClient
                 .Range(request, headers, deadline, cancellationToken));
         }
 
@@ -53,7 +53,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.kvClient
+            return await CallEtcdAsync(async (connection) => await connection._kvClient
                 .RangeAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -195,7 +195,7 @@ namespace dotnet_etcd
         public PutResponse Put(PutRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.kvClient.Put(request, headers, deadline, cancellationToken));
+            return CallEtcd((connection) => connection._kvClient.Put(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.kvClient
+            return await CallEtcdAsync(async (connection) => await connection._kvClient
                 .PutAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -266,7 +266,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.kvClient
+            return CallEtcd((connection) => connection._kvClient
                 .DeleteRange(request, headers, deadline, cancellationToken));
         }
 
@@ -300,7 +300,7 @@ namespace dotnet_etcd
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.kvClient
+            return await CallEtcdAsync(async (connection) => await connection._kvClient
                 .DeleteRangeAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -376,7 +376,7 @@ namespace dotnet_etcd
         public TxnResponse Transaction(TxnRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.kvClient.Txn(request, headers, deadline, cancellationToken));
+            return CallEtcd((connection) => connection._kvClient.Txn(request, headers, deadline, cancellationToken));
         }
 
         /// <summary>
@@ -394,7 +394,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.kvClient
+            return await CallEtcdAsync(async (connection) => await connection._kvClient
                 .TxnAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
 
@@ -412,7 +412,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return CallEtcd((connection) => connection.kvClient
+            return CallEtcd((connection) => connection._kvClient
                 .Compact(request, headers, deadline, cancellationToken));
         }
 
@@ -430,7 +430,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            return await CallEtcdAsync(async (connection) => await connection.kvClient
+            return await CallEtcdAsync(async (connection) => await connection._kvClient
                 .CompactAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
         }
     }
