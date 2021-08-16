@@ -22,36 +22,6 @@ namespace dotnet_etcd.multiplexer
         private readonly HashSet<Connection> _unHealthyNode;
 
         /// <summary>
-        /// CA Certificate contents to be used to connect to etcd.
-        /// </summary>
-        private readonly string _caCert;
-
-        /// <summary>
-        /// Client Certificate contents to be used to connect to etcd.
-        /// </summary>
-        private readonly string _clientCert;
-
-        /// <summary>
-        /// Client key contents to be used to connect to etcd.
-        /// </summary>
-        private readonly string _clientKey;
-
-        /// <summary>
-        /// Depicts whether ssl is enabled or not
-        /// </summary>
-        private readonly bool _ssl;
-
-        /// <summary>
-        /// Depicts whether ssl auth is enabled or not
-        /// </summary>
-        private readonly bool _clientSSL;
-
-        /// <summary>
-        /// Depicts whether to connect using publicly trusted roots.
-        /// </summary>
-        private readonly bool _publicRootCa;
-
-        /// <summary>
         /// No of etcd nodes
         /// </summary>
         internal readonly int _numNodes;
@@ -67,20 +37,10 @@ namespace dotnet_etcd.multiplexer
         private static readonly Random s_random = new Random();
 
 
-        private const string InsecurePrefix = "http://";
-        private const string SecurePrefix = "https://";
-
-        internal Balancer(List<Uri> nodes, string caCert = "", string clientCert = "", string clientKey = "", bool publicRootCa = false)
+        internal Balancer(List<Uri> nodes, HttpClientHandler handler = null, bool ssl = false)
         {
             _numNodes = nodes.Count;
-            _caCert = caCert;
-            _clientCert = clientCert;
-            _clientKey = clientKey;
-            _publicRootCa = publicRootCa;
             _lastNodeIndex = s_random.Next(-1, _numNodes);
-
-            _ssl = !_publicRootCa && !string.IsNullOrWhiteSpace(_caCert);
-            _clientSSL = _ssl && (!string.IsNullOrWhiteSpace(_clientCert) && !(string.IsNullOrWhiteSpace(_clientKey)));
 
             _healthyNode = new HashSet<Connection>();
             _unHealthyNode = new HashSet<Connection>();
@@ -90,30 +50,12 @@ namespace dotnet_etcd.multiplexer
             {
                 GrpcChannel channel;
 
-                Uri uri = GetCleanUri(node.Host, node.Port, _publicRootCa || _clientSSL || _ssl);
-
-                if (_publicRootCa)
+                if (ssl)
                 {
-                    channel = GrpcChannel.ForAddress(uri, new GrpcChannelOptions
+                    channel = GrpcChannel.ForAddress(node, new GrpcChannelOptions
                     {
-                        Credentials = new SslCredentials()
-                    });
-                }
-                else if (_clientSSL)
-                {
-                    channel = GrpcChannel.ForAddress(uri, new GrpcChannelOptions
-                    {
-                        Credentials = new SslCredentials(
-                            _caCert,
-                            new KeyCertificatePair(_clientCert, _clientKey)
-                        )
-                    });
-                }
-                else if (_ssl)
-                {
-                    channel = GrpcChannel.ForAddress(uri, new GrpcChannelOptions
-                    {
-                        Credentials = new SslCredentials(_caCert)
+                        Credentials = new SslCredentials(),
+                        HttpHandler = handler
                     });
                 }
                 else
@@ -123,10 +65,11 @@ namespace dotnet_etcd.multiplexer
 #endif
                     var options = new GrpcChannelOptions
                     {
-                        Credentials = ChannelCredentials.Insecure
+                        Credentials = ChannelCredentials.Insecure,
+                        HttpHandler = handler
                     };
 
-                    channel = GrpcChannel.ForAddress(uri, options);
+                    channel = GrpcChannel.ForAddress(node, options);
                 }
 
                 Connection connection = new Connection
@@ -142,24 +85,6 @@ namespace dotnet_etcd.multiplexer
 
                 _healthyNode.Add(connection);
             }
-        }
-
-        private static Uri GetCleanUri(string host, int port, bool needsSsl)
-        {
-            if (!(host.StartsWith(InsecurePrefix) || host.StartsWith(SecurePrefix)))
-            {
-                if (needsSsl)
-                {
-                    host = $"{SecurePrefix}{host}";
-                }
-                else
-                {
-                    host = $"{InsecurePrefix}{host}";
-                }
-            }
-            host = $"{host}:{port}";
-
-            return new Uri(host);
         }
 
         internal Connection GetConnection()
