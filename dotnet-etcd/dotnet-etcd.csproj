@@ -10,7 +10,8 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryUrl>https://github.com/shubhamranjan/dotnet-etcd</RepositoryUrl>
     <PackageProjectUrl>https://github.com/shubhamranjan/dotnet-etcd</PackageProjectUrl>
-    <PackageReleaseNotes>Switch to Grpc.Net.Client</PackageReleaseNotes>
+    <PackageReleaseNotes>Breaking Change: 
+- Clients using certs with ssl will break. The lib now accepts a http handler as an argument which users can utilize to manage various aspects of the grpc client like ssl.</PackageReleaseNotes>
     <Authors>Shubham Ranjan</Authors>
     <Company />
     <Product />
@@ -23,7 +24,7 @@ Your applications can read and write data into etcd. A simple use-case is to sto
 Advanced uses take advantage of the consistency guarantees to implement database leader elections or do distributed locking across a cluster of workers.</Description>
     <PackageTags>etcd grpc etcdv3 etcd3</PackageTags>
     <SignAssembly>false</SignAssembly>
-    <Version>5.0.0-alpha</Version>
+    <Version>5.0.1-alpha</Version>
     <AutoGenerateBindingRedirects>False</AutoGenerateBindingRedirects>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageIconUrl />
@@ -50,7 +51,7 @@ Advanced uses take advantage of the consistency guarantees to implement database
     <PackageReference Include="DnsClient" Version="1.5.0" />
     <PackageReference Include="Google.Protobuf" Version="3.17.3" />
     <PackageReference Include="Grpc.Net.Client" Version="2.38.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.38.1">
+    <PackageReference Include="Grpc.Tools" Version="2.39.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>

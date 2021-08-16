@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 
 using DnsClient;
 using DnsClient.Protocol;
@@ -19,13 +20,14 @@ namespace dotnet_etcd
         #region Variables
 
         private readonly Balancer _balancer;
-
+        private const string InsecurePrefix = "http://";
+        private const string SecurePrefix = "https://";
         #endregion
 
         #region Initializers
 
         public EtcdClient(string connectionString, int port = 2379,
-            string caCert = "", string clientCert = "", string clientKey = "", bool publicRootCa = false)
+            HttpClientHandler handler = null, bool ssl = false)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
             {
@@ -105,10 +107,22 @@ namespace dotnet_etcd
                     host += $":{Convert.ToString(port)}";
                 }
 
+                if (!(host.StartsWith(InsecurePrefix) || host.StartsWith(SecurePrefix)))
+                {
+                    if (ssl)
+                    {
+                        host = $"{SecurePrefix}{host}";
+                    }
+                    else
+                    {
+                        host = $"{InsecurePrefix}{host}";
+                    }
+                }
+
                 nodes.Add(new Uri(host));
             }
 
-            _balancer = new Balancer(nodes, caCert, clientCert, clientKey, publicRootCa);
+            _balancer = new Balancer(nodes, handler, ssl);
         }
 
         #endregion
