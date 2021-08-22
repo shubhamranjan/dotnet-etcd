@@ -64,10 +64,8 @@ Add using statement at the top of your class file
 
 #### Available Constructor Parameters
 
-* caCert - String containing ca cert when using self signed certificates with etcd. Default : EmptyString 
-* clientCert - String containing client cert when using self signed certificates with client auth enabled in etcd. Default : EmptyString 
-* clientKey - String containing client key when using self signed certificates with client auth enabled in etcd. Default : EmptyString 
-* publicRootCa - Bool depicting whether to use publicy trusted roots to connect to etcd. Default : false.
+* handler - Http Handler that can be used by the underlying grpc client. This can be used for variouse use cases, for e.g. configuring client certifcates . Default : null
+* ssl - Bool depicting whether to configure a secure or unsecure connection. Default : false.
     
 
 ### Operations
