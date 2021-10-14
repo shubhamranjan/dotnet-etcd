@@ -51,7 +51,8 @@ namespace dotnet_etcd.multiplexer
                     channel = GrpcChannel.ForAddress(node, new GrpcChannelOptions
                     {
                         Credentials = new SslCredentials(),
-                        HttpHandler = handler
+                        HttpHandler = handler,
+                        ThrowOperationCanceledOnCancellation = true
                     });
                 }
                 else
@@ -62,7 +63,8 @@ namespace dotnet_etcd.multiplexer
                     var options = new GrpcChannelOptions
                     {
                         Credentials = ChannelCredentials.Insecure,
-                        HttpHandler = handler
+                        HttpHandler = handler,
+                        ThrowOperationCanceledOnCancellation = true
                     };
 
                     channel = GrpcChannel.ForAddress(node, options);
