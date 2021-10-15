@@ -66,7 +66,7 @@ Add using statement at the top of your class file
 
 * handler - Http Handler that can be used by the underlying grpc client. This can be used for variouse use cases, for e.g. configuring client certifcates . Default : null
 * ssl - Bool depicting whether to configure a secure or unsecure connection. Default : false.
-    
+* useLegacyRpcExceptionForCancellation - Bool setting to revert task cancellations back to throwing gRPC's RpcException with a StatusCode=Cancelled. The default behavior now is to throw an OperationCanceledException, which integrates better with .net Tasks. Default : false.
 
 ### Operations
 
@@ -263,4 +263,56 @@ Add using statement at the top of your class file
         }
     });
     client.Transaction(txr);
+```
+### Canceling an operation
+
+#### Handling cancellations with OperationCanceledException
+This is the default behavior selected when creating the EtcdClient with the useLegacyRpcExceptionForCancellation parameter set to false.
+
+```C#
+    CancellationTokenSource cts = new CancellationTokenSource();
+    CancellationToken cancellationToken = cts.Token;
+
+    try
+    {
+        cts.Cancel();
+        StatusRequest request = new StatusRequest();
+        StatusResponse response = client.Status(request, cancellationToken: cancellationToken);
+        bool isOK = response.Errors.Count == 0;
+        Console.WriteLine(isOK ? "Status OK" : "Status not OK");
+    }
+    catch (OperationCanceledException)
+    {
+        Console.WriteLine("Operation was canceled.");
+    }
+```
+
+#### Legacy cancellation with RpcException and StatusCode=Cancelled
+The next sample shows the behavior when gRPC throws an RpcException with Cancelled StatusCode. To enable this legacy feature, create the EtcdClient with the useLegacyRpcExceptionForCancellation set to true.
+
+
+```C#
+    using EtcdClient client = new EtcdClient(
+        "https://localhost:2379",
+        useLegacyRpcExceptionForCancellation: true);
+
+    CancellationTokenSource cts = new CancellationTokenSource();
+    CancellationToken cancellationToken = cts.Token;
+
+    try
+    {
+        cts.Cancel();
+        StatusRequest request = new StatusRequest();
+        StatusResponse response = client.Status(request, cancellationToken: cancellationToken);
+        bool isOK = response.Errors.Count == 0;
+        Console.WriteLine(isOK ? "Status OK" : "Status not OK");
+    }
+    catch (RpcException rpc) // useLegacyRpcExceptionForCancellation: true
+    {
+        if (rpc.StatusCode == StatusCode.Cancelled)
+        {
+            Console.WriteLine("Operation was canceled.");
+        }
+        else throw;
+    }
 ```

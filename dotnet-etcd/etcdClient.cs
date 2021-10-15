@@ -27,7 +27,8 @@ namespace dotnet_etcd
         #region Initializers
 
         public EtcdClient(string connectionString, int port = 2379,
-            HttpClientHandler handler = null, bool ssl = false)
+            HttpClientHandler handler = null, bool ssl = false,
+            bool useLegacyRpcExceptionForCancellation = false)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
             {
@@ -122,7 +123,7 @@ namespace dotnet_etcd
                 nodes.Add(new Uri(host));
             }
 
-            _balancer = new Balancer(nodes, handler, ssl);
+            _balancer = new Balancer(nodes, handler, ssl, useLegacyRpcExceptionForCancellation);
         }
 
         #endregion

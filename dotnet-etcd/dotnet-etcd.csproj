@@ -10,8 +10,12 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryUrl>https://github.com/shubhamranjan/dotnet-etcd</RepositoryUrl>
     <PackageProjectUrl>https://github.com/shubhamranjan/dotnet-etcd</PackageProjectUrl>
-    <PackageReleaseNotes>Breaking Change: 
-- Clients using certs with ssl will break. The lib now accepts a http handler as an argument which users can utilize to manage various aspects of the grpc client like ssl.</PackageReleaseNotes>
+    <PackageReleaseNotesBreaking>
+      Change:
+      - Clients using certs with ssl will break. The lib now accepts a http handler as an argument which users can utilize to manage various aspects of the grpc client like ssl.
+      - Cancellations raise an OperationCanceledException instead of the GRPC's RpcException with a 'Cancelled' StatusCode.
+      This improves integration with the standard .net Tasks. To continue using the legacy RpcException, pass 'useLegacyRpcExceptionForCancellation=true' to the EtcdClient constructor.
+    </PackageReleaseNotesBreaking>
     <Authors>Shubham Ranjan</Authors>
     <Company />
     <Product />
@@ -24,7 +28,7 @@ Your applications can read and write data into etcd. A simple use-case is to sto
 Advanced uses take advantage of the consistency guarantees to implement database leader elections or do distributed locking across a cluster of workers.</Description>
     <PackageTags>etcd grpc etcdv3 etcd3</PackageTags>
     <SignAssembly>false</SignAssembly>
-    <Version>5.0.2</Version>
+    <Version>5.1.0</Version>
     <AutoGenerateBindingRedirects>False</AutoGenerateBindingRedirects>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageIconUrl />
