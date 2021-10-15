@@ -35,7 +35,8 @@ namespace dotnet_etcd.multiplexer
         private static readonly Random s_random = new Random();
 
 
-        internal Balancer(List<Uri> nodes, HttpClientHandler handler = null, bool ssl = false)
+        internal Balancer(List<Uri> nodes, HttpClientHandler handler = null, bool ssl = false,
+            bool useLegacyRpcExceptionForCancellation = false)
         {
             _numNodes = nodes.Count;
             _lastNodeIndex = s_random.Next(-1, _numNodes);
@@ -52,7 +53,7 @@ namespace dotnet_etcd.multiplexer
                     {
                         Credentials = new SslCredentials(),
                         HttpHandler = handler,
-                        ThrowOperationCanceledOnCancellation = true
+                        ThrowOperationCanceledOnCancellation = !useLegacyRpcExceptionForCancellation
                     });
                 }
                 else
@@ -64,7 +65,7 @@ namespace dotnet_etcd.multiplexer
                     {
                         Credentials = ChannelCredentials.Insecure,
                         HttpHandler = handler,
-                        ThrowOperationCanceledOnCancellation = true
+                        ThrowOperationCanceledOnCancellation = !useLegacyRpcExceptionForCancellation
                     };
 
                     channel = GrpcChannel.ForAddress(node, options);
