@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Etcdserverpb;
+
 using Google.Protobuf;
 
 namespace dotnet_etcd
@@ -18,11 +20,8 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The etcd response for the specified request</returns>
         public RangeResponse Get(RangeRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return CallEtcd((connection) => connection._kvClient
-                .Range(request, headers, deadline, cancellationToken));
-        }
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._kvClient
+                                                                            .Range(request, headers, deadline, cancellationToken));
 
         /// <summary>
         /// Get the etcd response for a specified key
@@ -33,13 +32,10 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The etcd response for the specified key</returns>
         public RangeResponse Get(string key, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return Get(new RangeRequest
+            CancellationToken cancellationToken = default) => Get(new RangeRequest
             {
                 Key = ByteString.CopyFromUtf8(key)
             }, headers, deadline, cancellationToken);
-        }
 
         /// <summary>
         /// Get the etcd response for a specified key in async
@@ -51,11 +47,8 @@ namespace dotnet_etcd
         /// <returns>The etcd response for the specified request</returns>
         public async Task<RangeResponse> GetAsync(RangeRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return await CallEtcdAsync(async (connection) => await connection._kvClient
-                .RangeAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
-        }
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._kvClient
+                                                                            .RangeAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
         /// Get the etcd response for a specified key in async
@@ -67,13 +60,10 @@ namespace dotnet_etcd
         /// <returns>The etcd response for the specified key</returns>
         public async Task<RangeResponse> GetAsync(string key, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return await GetAsync(new RangeRequest
+            CancellationToken cancellationToken = default) => await GetAsync(new RangeRequest
             {
                 Key = ByteString.CopyFromUtf8(key)
             }, headers, deadline, cancellationToken).ConfigureAwait(false);
-        }
 
         /// <summary>
         /// Get the value for a specified key
@@ -193,10 +183,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public PutResponse Put(PutRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return CallEtcd((connection) => connection._kvClient.Put(request, headers, deadline, cancellationToken));
-        }
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._kvClient.Put(request, headers, deadline, cancellationToken));
 
         /// <summary>
         /// Sets the key value in etcd
@@ -208,14 +195,11 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public PutResponse Put(string key, string val, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return Put(new PutRequest
+            CancellationToken cancellationToken = default) => Put(new PutRequest
             {
                 Key = ByteString.CopyFromUtf8(key),
                 Value = ByteString.CopyFromUtf8(val)
             }, headers, deadline, cancellationToken);
-        }
 
         /// <summary>
         /// Sets the key value in etcd in async
@@ -227,11 +211,8 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<PutResponse> PutAsync(PutRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return await CallEtcdAsync(async (connection) => await connection._kvClient
-                .PutAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
-        }
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._kvClient
+                                                                            .PutAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
 
         /// <summary>
@@ -245,14 +226,11 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<PutResponse> PutAsync(string key, string val, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return await PutAsync(new PutRequest
+            CancellationToken cancellationToken = default) => await PutAsync(new PutRequest
             {
                 Key = ByteString.CopyFromUtf8(key),
                 Value = ByteString.CopyFromUtf8(val)
             }, headers, deadline, cancellationToken).ConfigureAwait(false);
-        }
 
         /// <summary>
         /// Delete the specified key in etcd
@@ -264,11 +242,8 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public DeleteRangeResponse Delete(DeleteRangeRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return CallEtcd((connection) => connection._kvClient
-                .DeleteRange(request, headers, deadline, cancellationToken));
-        }
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._kvClient
+                                                                            .DeleteRange(request, headers, deadline, cancellationToken));
 
         /// <summary>
         /// Delete the specified key in etcd
@@ -279,13 +254,10 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public DeleteRangeResponse Delete(string key, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return Delete(new DeleteRangeRequest
+            CancellationToken cancellationToken = default) => Delete(new DeleteRangeRequest
             {
                 Key = ByteString.CopyFromUtf8(key)
             }, headers, deadline, cancellationToken);
-        }
 
 
         /// <summary>
@@ -298,11 +270,8 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<DeleteRangeResponse> DeleteAsync(DeleteRangeRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return await CallEtcdAsync(async (connection) => await connection._kvClient
-                .DeleteRangeAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
-        }
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._kvClient
+                                                                            .DeleteRangeAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
         /// Delete the specified key in etcd in async
@@ -314,13 +283,10 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<DeleteRangeResponse> DeleteAsync(string key, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return await DeleteAsync(new DeleteRangeRequest
+            CancellationToken cancellationToken = default) => await DeleteAsync(new DeleteRangeRequest
             {
                 Key = ByteString.CopyFromUtf8(key)
             }, headers, deadline, cancellationToken).ConfigureAwait(false);
-        }
 
         /// <summary>
         /// Deletes all keys with the specified prefix
@@ -374,10 +340,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public TxnResponse Transaction(TxnRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return CallEtcd((connection) => connection._kvClient.Txn(request, headers, deadline, cancellationToken));
-        }
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._kvClient.Txn(request, headers, deadline, cancellationToken));
 
         /// <summary>
         ///  Txn processes multiple requests in a single transaction in async.
@@ -392,11 +355,8 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<TxnResponse> TransactionAsync(TxnRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return await CallEtcdAsync(async (connection) => await connection._kvClient
-                .TxnAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
-        }
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._kvClient
+                                                                            .TxnAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
         /// Compact compacts the event history in the etcd key-value store. The key-value
@@ -410,11 +370,8 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public CompactionResponse Compact(CompactionRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return CallEtcd((connection) => connection._kvClient
-                .Compact(request, headers, deadline, cancellationToken));
-        }
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._kvClient
+                                                                            .Compact(request, headers, deadline, cancellationToken));
 
         /// <summary>
         /// Compact compacts the event history in the etcd key-value store in async. The key-value
@@ -428,10 +385,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<CompactionResponse> CompactAsync(CompactionRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return await CallEtcdAsync(async (connection) => await connection._kvClient
-                .CompactAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
-        }
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._kvClient
+                                                                            .CompactAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
     }
 }

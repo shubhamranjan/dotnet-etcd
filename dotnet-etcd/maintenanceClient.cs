@@ -19,11 +19,8 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>Alarm Response</returns>
         public AlarmResponse Alarm(AlarmRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return CallEtcd((connection) => connection._maintenanceClient
-                .Alarm(request, headers, deadline, cancellationToken));
-        }
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._maintenanceClient
+                                                                            .Alarm(request, headers, deadline, cancellationToken));
 
         /// <summary>
         ///  Alarm activates, deactivates, and queries alarms regarding cluster health in async
@@ -35,11 +32,8 @@ namespace dotnet_etcd
         /// <returns>Alarm Response</returns>
         public async Task<AlarmResponse> AlarmAsync(AlarmRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return await CallEtcdAsync(async (connection) => await connection._maintenanceClient
-                .AlarmAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
-        }
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._maintenanceClient
+                                                                            .AlarmAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
         /// Status gets the status of the member.
@@ -51,11 +45,8 @@ namespace dotnet_etcd
         /// <returns>Status response</returns>
         public StatusResponse Status(StatusRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return CallEtcd((connection) => connection._maintenanceClient
-                .Status(request, headers, deadline, cancellationToken));
-        }
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._maintenanceClient
+                                                                            .Status(request, headers, deadline, cancellationToken));
 
         /// <summary>
         /// Status gets the status of the member in async.
@@ -67,11 +58,8 @@ namespace dotnet_etcd
         /// <returns>Status response</returns>
         public async Task<StatusResponse> StatusASync(StatusRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return await CallEtcdAsync(async (connection) => await connection._maintenanceClient
-                .StatusAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
-        }
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._maintenanceClient
+                                                                            .StatusAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
         /// Defragment defragments a member's backend database to recover storage space.
@@ -83,11 +71,8 @@ namespace dotnet_etcd
         /// <returns>Defragment Response</returns>
         public DefragmentResponse Defragment(DefragmentRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return CallEtcd((connection) => connection._maintenanceClient
-                .Defragment(request, headers, deadline, cancellationToken));
-        }
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._maintenanceClient
+                                                                            .Defragment(request, headers, deadline, cancellationToken));
 
         /// <summary>
         /// Defragment defragments a member's backend database to recover storage space in async.
@@ -99,11 +84,8 @@ namespace dotnet_etcd
         /// <returns>Defragment Response</returns>
         public async Task<DefragmentResponse> DefragmentAsync(DefragmentRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return await CallEtcdAsync(async (connection) => await connection._maintenanceClient
-                .DefragmentAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
-        }
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._maintenanceClient
+                                                                            .DefragmentAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
         /// Hash computes the hash of whole backend keyspace,
@@ -119,11 +101,8 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>Hash Response</returns>
         public HashResponse Hash(HashRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return CallEtcd((connection) => connection._maintenanceClient
-                .Hash(request, headers, deadline, cancellationToken));
-        }
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._maintenanceClient
+                                                                            .Hash(request, headers, deadline, cancellationToken));
 
         /// <summary>
         /// Hash computes the hash of whole backend keyspace,
@@ -140,11 +119,8 @@ namespace dotnet_etcd
         /// <returns>Hash Response</returns>
         public async Task<HashResponse> HashAsync(HashRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return await CallEtcdAsync(async (connection) => await connection._maintenanceClient
-                .HashAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
-        }
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._maintenanceClient
+                                                                            .HashAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
         /// HashKV computes the hash of all MVCC keys up to a given revision.
@@ -157,11 +133,8 @@ namespace dotnet_etcd
         /// <returns>HashKV Response</returns>
         public HashKVResponse HashKV(HashKVRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return CallEtcd((connection) => connection._maintenanceClient
-                .HashKV(request, headers, deadline, cancellationToken));
-        }
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._maintenanceClient
+                                                                            .HashKV(request, headers, deadline, cancellationToken));
 
         /// <summary>
         /// HashKV computes the hash of all MVCC keys up to a given revision in async.
@@ -174,11 +147,8 @@ namespace dotnet_etcd
         /// <returns>HashKV Response</returns>
         public async Task<HashKVResponse> HashKVAsync(HashKVRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return await CallEtcdAsync(async (connection) => await connection._maintenanceClient
-                .HashKVAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
-        }
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._maintenanceClient
+                                                                            .HashKVAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
         /// Snapshot sends a snapshot of the entire backend from a member over a stream to a client.
@@ -189,21 +159,18 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         public async Task Snapshot(SnapshotRequest request, Action<SnapshotResponse> method,
-            CancellationToken cancellationToken, Grpc.Core.Metadata headers = null, DateTime? deadline = null)
-        {
-            await CallEtcdAsync(async (connection) =>
-            {
-                using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = connection
-                    ._maintenanceClient.Snapshot(request, headers, deadline, cancellationToken))
-                {
-                    while (await snapshotter.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
-                    {
-                        SnapshotResponse update = snapshotter.ResponseStream.Current;
-                        method(update);
-                    }
-                }
-            }).ConfigureAwait(false);
-        }
+            CancellationToken cancellationToken, Grpc.Core.Metadata headers = null, DateTime? deadline = null) => await CallEtcdAsync(async (connection) =>
+                                                                                                                {
+                                                                                                                    using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = connection
+                                                                                                                        ._maintenanceClient.Snapshot(request, headers, deadline, cancellationToken))
+                                                                                                                    {
+                                                                                                                        while (await snapshotter.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
+                                                                                                                        {
+                                                                                                                            SnapshotResponse update = snapshotter.ResponseStream.Current;
+                                                                                                                            method(update);
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                }).ConfigureAwait(false);
 
         /// <summary>
         /// Snapshot sends a snapshot of the entire backend from a member over a stream to a client.
@@ -214,24 +181,21 @@ namespace dotnet_etcd
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         public async Task Snapshot(SnapshotRequest request, Action<SnapshotResponse>[] methods,
-            CancellationToken cancellationToken, Grpc.Core.Metadata headers = null, DateTime? deadline = null)
-        {
-            await CallEtcdAsync(async (connection) =>
-            {
-                using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = connection
-                    ._maintenanceClient.Snapshot(request, headers, deadline, cancellationToken))
-                {
-                    while (await snapshotter.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
-                    {
-                        SnapshotResponse update = snapshotter.ResponseStream.Current;
-                        foreach (Action<SnapshotResponse> method in methods)
-                        {
-                            method(update);
-                        }
-                    }
-                }
-            }).ConfigureAwait(false);
-        }
+            CancellationToken cancellationToken, Grpc.Core.Metadata headers = null, DateTime? deadline = null) => await CallEtcdAsync(async (connection) =>
+                                                                                                                {
+                                                                                                                    using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = connection
+                                                                                                                        ._maintenanceClient.Snapshot(request, headers, deadline, cancellationToken))
+                                                                                                                    {
+                                                                                                                        while (await snapshotter.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
+                                                                                                                        {
+                                                                                                                            SnapshotResponse update = snapshotter.ResponseStream.Current;
+                                                                                                                            foreach (Action<SnapshotResponse> method in methods)
+                                                                                                                            {
+                                                                                                                                method(update);
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                }).ConfigureAwait(false);
 
         /// <summary>
         /// MoveLeader requests current leader node to transfer its leadership to transferee.
@@ -243,11 +207,8 @@ namespace dotnet_etcd
         /// <returns>MoveLeader Response</returns>
         public MoveLeaderResponse MoveLeader(MoveLeaderRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return CallEtcd((connection) => connection._maintenanceClient
-                .MoveLeader(request, headers, deadline, cancellationToken));
-        }
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._maintenanceClient
+                                                                            .MoveLeader(request, headers, deadline, cancellationToken));
 
         /// <summary>
         /// MoveLeader requests current leader node to transfer its leadership to transferee in async.
@@ -259,10 +220,7 @@ namespace dotnet_etcd
         /// <returns>MoveLeader Response</returns>
         public async Task<MoveLeaderResponse> MoveLeaderAsync(MoveLeaderRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return await CallEtcdAsync(async (connection) => await connection._maintenanceClient
-                .MoveLeaderAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
-        }
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._maintenanceClient
+                                                                            .MoveLeaderAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
     }
 }

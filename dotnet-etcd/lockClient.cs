@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 
 using Google.Protobuf;
 
-using Grpc.Core;
-
 using V3Lockpb;
 
 namespace dotnet_etcd
@@ -26,13 +24,10 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public LockResponse Lock(string name, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return Lock(new LockRequest()
+            CancellationToken cancellationToken = default) => Lock(new LockRequest()
             {
                 Name = ByteString.CopyFromUtf8(name),
             }, headers, deadline, cancellationToken);
-        }
 
         /// <summary>
         /// Lock acquires a distributed shared lock on a given named lock.
@@ -48,10 +43,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public LockResponse Lock(LockRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return CallEtcd((connection) => connection._lockClient.Lock(request, headers, deadline, cancellationToken));
-        }
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._lockClient.Lock(request, headers, deadline, cancellationToken));
 
         /// <summary>
         /// LockAsync acquires a distributed shared lock on a given named lock.
@@ -67,13 +59,10 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public async Task<LockResponse> LockAsync(string name, Grpc.Core.Metadata headers = null,
-            DateTime? deadline = null, CancellationToken cancellationToken = default)
-        {
-            return await LockAsync(new LockRequest()
+            DateTime? deadline = null, CancellationToken cancellationToken = default) => await LockAsync(new LockRequest()
             {
                 Name = ByteString.CopyFromUtf8(name),
             }, headers, deadline, cancellationToken).ConfigureAwait(false);
-        }
 
         /// <summary>
         /// LockAsync acquires a distributed shared lock on a given named lock.
@@ -89,11 +78,8 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public async Task<LockResponse> LockAsync(LockRequest request, Grpc.Core.Metadata headers = null,
-            DateTime? deadline = null, CancellationToken cancellationToken = default)
-        {
-            return await CallEtcdAsync(async (connection) => await connection._lockClient
-                .LockAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
-        }
+            DateTime? deadline = null, CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._lockClient
+                                                                                                       .LockAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
         /// Unlock takes a key returned by Lock and releases the hold on lock. The
@@ -106,13 +92,10 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public UnlockResponse Unlock(string key, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            return Unlock(new UnlockRequest()
+            CancellationToken cancellationToken = default) => Unlock(new UnlockRequest()
             {
                 Key = ByteString.CopyFromUtf8(key),
             }, headers, deadline, cancellationToken);
-        }
 
         /// <summary>
         /// Unlock takes a key returned by Lock and releases the hold on lock. The
@@ -125,11 +108,8 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public UnlockResponse Unlock(UnlockRequest request, Grpc.Core.Metadata headers = null,
-            DateTime? deadline = null, CancellationToken cancellationToken = default)
-        {
-            return CallEtcd((connection) => connection._lockClient
-                .Unlock(request, headers, deadline, cancellationToken));
-        }
+            DateTime? deadline = null, CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._lockClient
+                                                                                                       .Unlock(request, headers, deadline, cancellationToken));
 
         /// <summary>
         /// UnlockAsync takes a key returned by Lock and releases the hold on lock. The
@@ -142,13 +122,10 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public async Task<UnlockResponse> UnlockAsync(string key, Grpc.Core.Metadata headers = null,
-            DateTime? deadline = null, CancellationToken cancellationToken = default)
-        {
-            return await UnlockAsync(new UnlockRequest()
+            DateTime? deadline = null, CancellationToken cancellationToken = default) => await UnlockAsync(new UnlockRequest()
             {
                 Key = ByteString.CopyFromUtf8(key),
             }, headers, deadline, cancellationToken).ConfigureAwait(false);
-        }
 
         /// <summary>
         /// UnlockAsync takes a key returned by Lock and releases the hold on lock. The
@@ -161,10 +138,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public async Task<UnlockResponse> UnlockAsync(UnlockRequest request, Grpc.Core.Metadata headers = null,
-            DateTime? deadline = null, CancellationToken cancellationToken = default)
-        {
-            return await CallEtcdAsync(async (connection) => await connection._lockClient
-                .UnlockAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
-        }
+            DateTime? deadline = null, CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._lockClient
+                                                                                                       .UnlockAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
     }
 }

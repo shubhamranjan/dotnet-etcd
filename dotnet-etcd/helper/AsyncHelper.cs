@@ -34,8 +34,8 @@ namespace dotnet_etcd.helper
         /// </example>
         public static TResult RunSync<TResult>(Func<Task<TResult>> func)
         {
-            var cultureUi = CultureInfo.CurrentUICulture;
-            var culture = CultureInfo.CurrentCulture;
+            CultureInfo cultureUi = CultureInfo.CurrentUICulture;
+            CultureInfo culture = CultureInfo.CurrentCulture;
             return MyTaskFactory.StartNew(() =>
             {
                 Thread.CurrentThread.CurrentCulture = culture;
@@ -59,8 +59,8 @@ namespace dotnet_etcd.helper
         /// </example>
         public static void RunSync(Func<Task> func)
         {
-            var cultureUi = CultureInfo.CurrentUICulture;
-            var culture = CultureInfo.CurrentCulture;
+            CultureInfo cultureUi = CultureInfo.CurrentUICulture;
+            CultureInfo culture = CultureInfo.CurrentCulture;
             MyTaskFactory.StartNew(() =>
             {
                 Thread.CurrentThread.CurrentCulture = culture;

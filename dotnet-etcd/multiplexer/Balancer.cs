@@ -86,15 +86,9 @@ namespace dotnet_etcd.multiplexer
             }
         }
 
-        internal Connection GetConnection()
-        {
-            return _healthyNode.ElementAt(GetNextNodeIndex());
-        }
+        internal Connection GetConnection() => _healthyNode.ElementAt(GetNextNodeIndex());
 
-        internal Connection GetConnection(int index)
-        {
-            return _healthyNode.ElementAt(index);
-        }
+        internal Connection GetConnection(int index) => _healthyNode.ElementAt(index);
 
         internal int GetNextNodeIndex()
         {

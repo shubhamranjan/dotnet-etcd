@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 using dotnet_etcd.helper;
+
 using Etcdserverpb;
 
 using Google.Protobuf;
@@ -54,28 +56,25 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async Task Watch(WatchRequest request, Action<WatchResponse> method, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            await CallEtcdAsync(async (connection) =>
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection._watchClient.Watch(headers, deadline, cancellationToken))
-                {
-                    Task watcherTask = Task.Run(async () =>
-                    {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
-                        {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            method(update);
-                        }
-                    }, cancellationToken);
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) =>
+                                                            {
+                                                                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                                                                    connection._watchClient.Watch(headers, deadline, cancellationToken))
+                                                                {
+                                                                    Task watcherTask = Task.Run(async () =>
+                                                                    {
+                                                                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
+                                                                        {
+                                                                            WatchResponse update = watcher.ResponseStream.Current;
+                                                                            method(update);
+                                                                        }
+                                                                    }, cancellationToken);
 
-                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
-                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
-                    await watcherTask.ConfigureAwait(false);
-                }
-            }).ConfigureAwait(false);
-        }
+                                                                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                                                                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                                                                    await watcherTask.ConfigureAwait(false);
+                                                                }
+                                                            }).ConfigureAwait(false);
 
         /// <summary>
         /// Watches a key according to the specified watch request and
@@ -88,31 +87,28 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async Task Watch(WatchRequest request, Action<WatchResponse>[] methods,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            await CallEtcdAsync(async (connection) =>
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection._watchClient.Watch(headers, deadline, cancellationToken))
-                {
-                    Task watcherTask = Task.Run(async () =>
-                    {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
-                        {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            foreach (Action<WatchResponse> method in methods)
-                            {
-                                method(update);
-                            }
-                        }
-                    }, cancellationToken);
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) =>
+                                                            {
+                                                                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                                                                    connection._watchClient.Watch(headers, deadline, cancellationToken))
+                                                                {
+                                                                    Task watcherTask = Task.Run(async () =>
+                                                                    {
+                                                                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
+                                                                        {
+                                                                            WatchResponse update = watcher.ResponseStream.Current;
+                                                                            foreach (Action<WatchResponse> method in methods)
+                                                                            {
+                                                                                method(update);
+                                                                            }
+                                                                        }
+                                                                    }, cancellationToken);
 
-                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
-                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
-                    await watcherTask.ConfigureAwait(false);
-                }
-            }).ConfigureAwait(false);
-        }
+                                                                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                                                                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                                                                    await watcherTask.ConfigureAwait(false);
+                                                                }
+                                                            }).ConfigureAwait(false);
 
         /// <summary>
         /// Watches a key according to the specified watch request and
@@ -125,37 +121,34 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async Task Watch(WatchRequest request, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            await CallEtcdAsync(async (connection) =>
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection._watchClient.Watch(headers, deadline, cancellationToken))
-                {
-                    Task watcherTask = Task.Run(async () =>
-                    {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
-                        {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            method(update.Events.Select(i =>
-                                {
-                                    return new WatchEvent
-                                    {
-                                        Key = i.Kv.Key.ToStringUtf8(),
-                                        Value = i.Kv.Value.ToStringUtf8(),
-                                        Type = i.Type
-                                    };
-                                }).ToArray()
-                            );
-                        }
-                    }, cancellationToken);
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) =>
+                                                            {
+                                                                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                                                                    connection._watchClient.Watch(headers, deadline, cancellationToken))
+                                                                {
+                                                                    Task watcherTask = Task.Run(async () =>
+                                                                    {
+                                                                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
+                                                                        {
+                                                                            WatchResponse update = watcher.ResponseStream.Current;
+                                                                            method(update.Events.Select(i =>
+                                                                                {
+                                                                                    return new WatchEvent
+                                                                                    {
+                                                                                        Key = i.Kv.Key.ToStringUtf8(),
+                                                                                        Value = i.Kv.Value.ToStringUtf8(),
+                                                                                        Type = i.Type
+                                                                                    };
+                                                                                }).ToArray()
+                                                                            );
+                                                                        }
+                                                                    }, cancellationToken);
 
-                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
-                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
-                    await watcherTask.ConfigureAwait(false);
-                }
-            }).ConfigureAwait(false);
-        }
+                                                                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                                                                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                                                                    await watcherTask.ConfigureAwait(false);
+                                                                }
+                                                            }).ConfigureAwait(false);
 
         /// <summary>
         /// Watches a key according to the specified watch request and
@@ -168,40 +161,37 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async Task Watch(WatchRequest request, Action<WatchEvent[]>[] methods, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            await CallEtcdAsync(async (connection) =>
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection._watchClient.Watch(headers, deadline, cancellationToken))
-                {
-                    Task watcherTask = Task.Run(async () =>
-                    {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
-                        {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            foreach (Action<WatchEvent[]> method in methods)
-                            {
-                                method(update.Events.Select(i =>
-                                    {
-                                        return new WatchEvent
-                                        {
-                                            Key = i.Kv.Key.ToStringUtf8(),
-                                            Value = i.Kv.Value.ToStringUtf8(),
-                                            Type = i.Type
-                                        };
-                                    }).ToArray()
-                                );
-                            }
-                        }
-                    }, cancellationToken);
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) =>
+                                                            {
+                                                                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                                                                    connection._watchClient.Watch(headers, deadline, cancellationToken))
+                                                                {
+                                                                    Task watcherTask = Task.Run(async () =>
+                                                                    {
+                                                                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
+                                                                        {
+                                                                            WatchResponse update = watcher.ResponseStream.Current;
+                                                                            foreach (Action<WatchEvent[]> method in methods)
+                                                                            {
+                                                                                method(update.Events.Select(i =>
+                                                                                    {
+                                                                                        return new WatchEvent
+                                                                                        {
+                                                                                            Key = i.Kv.Key.ToStringUtf8(),
+                                                                                            Value = i.Kv.Value.ToStringUtf8(),
+                                                                                            Type = i.Type
+                                                                                        };
+                                                                                    }).ToArray()
+                                                                                );
+                                                                            }
+                                                                        }
+                                                                    }, cancellationToken);
 
-                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
-                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
-                    await watcherTask.ConfigureAwait(false);
-                }
-            }).ConfigureAwait(false);
-        }
+                                                                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                                                                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                                                                    await watcherTask.ConfigureAwait(false);
+                                                                }
+                                                            }).ConfigureAwait(false);
 
         /// <summary>
         /// Watches the keys according to the specified watch requests and
@@ -214,32 +204,29 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async Task Watch(WatchRequest[] requests, Action<WatchResponse> method,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            await CallEtcdAsync(async (connection) =>
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection._watchClient.Watch(headers, deadline, cancellationToken))
-                {
-                    Task watcherTask = Task.Run(async () =>
-                    {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
-                        {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            method(update);
-                        }
-                    }, cancellationToken);
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) =>
+                                                            {
+                                                                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                                                                    connection._watchClient.Watch(headers, deadline, cancellationToken))
+                                                                {
+                                                                    Task watcherTask = Task.Run(async () =>
+                                                                    {
+                                                                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
+                                                                        {
+                                                                            WatchResponse update = watcher.ResponseStream.Current;
+                                                                            method(update);
+                                                                        }
+                                                                    }, cancellationToken);
 
-                    foreach (WatchRequest request in requests)
-                    {
-                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
-                    }
+                                                                    foreach (WatchRequest request in requests)
+                                                                    {
+                                                                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                                                                    }
 
-                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
-                    await watcherTask.ConfigureAwait(false);
-                }
-            }).ConfigureAwait(false);
-        }
+                                                                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                                                                    await watcherTask.ConfigureAwait(false);
+                                                                }
+                                                            }).ConfigureAwait(false);
 
         /// <summary>
         /// Watches a key according to the specified watch requests and
@@ -252,35 +239,32 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async Task Watch(WatchRequest[] requests, Action<WatchResponse>[] methods,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            await CallEtcdAsync(async (connection) =>
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection._watchClient.Watch(headers, deadline, cancellationToken))
-                {
-                    Task watcherTask = Task.Run(async () =>
-                    {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
-                        {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            foreach (Action<WatchResponse> method in methods)
-                            {
-                                method(update);
-                            }
-                        }
-                    }, cancellationToken);
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) =>
+                                                            {
+                                                                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                                                                    connection._watchClient.Watch(headers, deadline, cancellationToken))
+                                                                {
+                                                                    Task watcherTask = Task.Run(async () =>
+                                                                    {
+                                                                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
+                                                                        {
+                                                                            WatchResponse update = watcher.ResponseStream.Current;
+                                                                            foreach (Action<WatchResponse> method in methods)
+                                                                            {
+                                                                                method(update);
+                                                                            }
+                                                                        }
+                                                                    }, cancellationToken);
 
-                    foreach (WatchRequest request in requests)
-                    {
-                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
-                    }
+                                                                    foreach (WatchRequest request in requests)
+                                                                    {
+                                                                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                                                                    }
 
-                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
-                    await watcherTask.ConfigureAwait(false);
-                }
-            }).ConfigureAwait(false);
-        }
+                                                                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                                                                    await watcherTask.ConfigureAwait(false);
+                                                                }
+                                                            }).ConfigureAwait(false);
 
         /// <summary>
         /// Watches a key according to the specified watch request and
@@ -293,41 +277,38 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async Task Watch(WatchRequest[] requests, Action<WatchEvent[]> method, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            await CallEtcdAsync(async (connection) =>
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection._watchClient.Watch(headers, deadline, cancellationToken))
-                {
-                    Task watcherTask = Task.Run(async () =>
-                    {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
-                        {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            method(update.Events.Select(i =>
-                                {
-                                    return new WatchEvent
-                                    {
-                                        Key = i.Kv.Key.ToStringUtf8(),
-                                        Value = i.Kv.Value.ToStringUtf8(),
-                                        Type = i.Type
-                                    };
-                                }).ToArray()
-                            );
-                        }
-                    }, cancellationToken);
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) =>
+                                                            {
+                                                                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                                                                    connection._watchClient.Watch(headers, deadline, cancellationToken))
+                                                                {
+                                                                    Task watcherTask = Task.Run(async () =>
+                                                                    {
+                                                                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
+                                                                        {
+                                                                            WatchResponse update = watcher.ResponseStream.Current;
+                                                                            method(update.Events.Select(i =>
+                                                                                {
+                                                                                    return new WatchEvent
+                                                                                    {
+                                                                                        Key = i.Kv.Key.ToStringUtf8(),
+                                                                                        Value = i.Kv.Value.ToStringUtf8(),
+                                                                                        Type = i.Type
+                                                                                    };
+                                                                                }).ToArray()
+                                                                            );
+                                                                        }
+                                                                    }, cancellationToken);
 
-                    foreach (WatchRequest request in requests)
-                    {
-                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
-                    }
+                                                                    foreach (WatchRequest request in requests)
+                                                                    {
+                                                                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                                                                    }
 
-                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
-                    await watcherTask.ConfigureAwait(false);
-                }
-            }).ConfigureAwait(false);
-        }
+                                                                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                                                                    await watcherTask.ConfigureAwait(false);
+                                                                }
+                                                            }).ConfigureAwait(false);
 
         /// <summary>
         /// Watches a key according to the specified watch requests and
@@ -340,44 +321,41 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async Task Watch(WatchRequest[] requests, Action<WatchEvent[]>[] methods,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            await CallEtcdAsync(async (connection) =>
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection._watchClient.Watch(headers, deadline, cancellationToken))
-                {
-                    Task watcherTask = Task.Run(async () =>
-                    {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
-                        {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            foreach (Action<WatchEvent[]> method in methods)
-                            {
-                                method(update.Events.Select(i =>
-                                    {
-                                        return new WatchEvent
-                                        {
-                                            Key = i.Kv.Key.ToStringUtf8(),
-                                            Value = i.Kv.Value.ToStringUtf8(),
-                                            Type = i.Type
-                                        };
-                                    }).ToArray()
-                                );
-                            }
-                        }
-                    }, cancellationToken);
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) =>
+                                                            {
+                                                                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                                                                    connection._watchClient.Watch(headers, deadline, cancellationToken))
+                                                                {
+                                                                    Task watcherTask = Task.Run(async () =>
+                                                                    {
+                                                                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
+                                                                        {
+                                                                            WatchResponse update = watcher.ResponseStream.Current;
+                                                                            foreach (Action<WatchEvent[]> method in methods)
+                                                                            {
+                                                                                method(update.Events.Select(i =>
+                                                                                    {
+                                                                                        return new WatchEvent
+                                                                                        {
+                                                                                            Key = i.Kv.Key.ToStringUtf8(),
+                                                                                            Value = i.Kv.Value.ToStringUtf8(),
+                                                                                            Type = i.Type
+                                                                                        };
+                                                                                    }).ToArray()
+                                                                                );
+                                                                            }
+                                                                        }
+                                                                    }, cancellationToken);
 
-                    foreach (WatchRequest request in requests)
-                    {
-                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
-                    }
+                                                                    foreach (WatchRequest request in requests)
+                                                                    {
+                                                                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                                                                    }
 
-                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
-                    await watcherTask.ConfigureAwait(false);
-                }
-            }).ConfigureAwait(false);
-        }
+                                                                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                                                                    await watcherTask.ConfigureAwait(false);
+                                                                }
+                                                            }).ConfigureAwait(false);
 
         /// <summary>
         /// Watches the specified key and passes the watch response to the method provided.
@@ -602,28 +580,25 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async Task WatchRange(WatchRequest request, Action<WatchResponse> method,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            await CallEtcdAsync(async (connection) =>
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection._watchClient.Watch(headers, deadline, cancellationToken))
-                {
-                    Task watcherTask = Task.Run(async () =>
-                    {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
-                        {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            method(update);
-                        }
-                    }, cancellationToken);
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) =>
+                                                            {
+                                                                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                                                                    connection._watchClient.Watch(headers, deadline, cancellationToken))
+                                                                {
+                                                                    Task watcherTask = Task.Run(async () =>
+                                                                    {
+                                                                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
+                                                                        {
+                                                                            WatchResponse update = watcher.ResponseStream.Current;
+                                                                            method(update);
+                                                                        }
+                                                                    }, cancellationToken);
 
-                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
-                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
-                    await watcherTask.ConfigureAwait(false);
-                }
-            }).ConfigureAwait(false);
-        }
+                                                                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                                                                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                                                                    await watcherTask.ConfigureAwait(false);
+                                                                }
+                                                            }).ConfigureAwait(false);
 
         /// <summary>
         /// Watches a key range according to the specified watch request and
@@ -636,31 +611,28 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async Task WatchRange(WatchRequest request, Action<WatchResponse>[] methods,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            await CallEtcdAsync(async (connection) =>
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection._watchClient.Watch(headers, deadline, cancellationToken))
-                {
-                    Task watcherTask = Task.Run(async () =>
-                    {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
-                        {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            foreach (Action<WatchResponse> method in methods)
-                            {
-                                method(update);
-                            }
-                        }
-                    }, cancellationToken);
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) =>
+                                                            {
+                                                                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                                                                    connection._watchClient.Watch(headers, deadline, cancellationToken))
+                                                                {
+                                                                    Task watcherTask = Task.Run(async () =>
+                                                                    {
+                                                                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
+                                                                        {
+                                                                            WatchResponse update = watcher.ResponseStream.Current;
+                                                                            foreach (Action<WatchResponse> method in methods)
+                                                                            {
+                                                                                method(update);
+                                                                            }
+                                                                        }
+                                                                    }, cancellationToken);
 
-                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
-                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
-                    await watcherTask.ConfigureAwait(false);
-                }
-            }).ConfigureAwait(false);
-        }
+                                                                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                                                                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                                                                    await watcherTask.ConfigureAwait(false);
+                                                                }
+                                                            }).ConfigureAwait(false);
 
         /// <summary>
         /// Watches a key range according to the specified watch request and
@@ -673,37 +645,34 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async Task WatchRange(WatchRequest request, Action<WatchEvent[]> method,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            await CallEtcdAsync(async (connection) =>
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection._watchClient.Watch(headers, deadline, cancellationToken))
-                {
-                    Task watcherTask = Task.Run(async () =>
-                    {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
-                        {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            method(update.Events.Select(i =>
-                                {
-                                    return new WatchEvent
-                                    {
-                                        Key = i.Kv.Key.ToStringUtf8(),
-                                        Value = i.Kv.Value.ToStringUtf8(),
-                                        Type = i.Type
-                                    };
-                                }).ToArray()
-                            );
-                        }
-                    }, cancellationToken);
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) =>
+                                                            {
+                                                                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                                                                    connection._watchClient.Watch(headers, deadline, cancellationToken))
+                                                                {
+                                                                    Task watcherTask = Task.Run(async () =>
+                                                                    {
+                                                                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
+                                                                        {
+                                                                            WatchResponse update = watcher.ResponseStream.Current;
+                                                                            method(update.Events.Select(i =>
+                                                                                {
+                                                                                    return new WatchEvent
+                                                                                    {
+                                                                                        Key = i.Kv.Key.ToStringUtf8(),
+                                                                                        Value = i.Kv.Value.ToStringUtf8(),
+                                                                                        Type = i.Type
+                                                                                    };
+                                                                                }).ToArray()
+                                                                            );
+                                                                        }
+                                                                    }, cancellationToken);
 
-                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
-                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
-                    await watcherTask.ConfigureAwait(false);
-                }
-            }).ConfigureAwait(false);
-        }
+                                                                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                                                                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                                                                    await watcherTask.ConfigureAwait(false);
+                                                                }
+                                                            }).ConfigureAwait(false);
 
         /// <summary>
         /// Watches a key range according to the specified watch request and
@@ -716,40 +685,37 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async Task WatchRange(WatchRequest request, Action<WatchEvent[]>[] methods,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            await CallEtcdAsync(async (connection) =>
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection._watchClient.Watch(headers, deadline, cancellationToken))
-                {
-                    Task watcherTask = Task.Run(async () =>
-                    {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
-                        {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            foreach (Action<WatchEvent[]> method in methods)
-                            {
-                                method(update.Events.Select(i =>
-                                    {
-                                        return new WatchEvent
-                                        {
-                                            Key = i.Kv.Key.ToStringUtf8(),
-                                            Value = i.Kv.Value.ToStringUtf8(),
-                                            Type = i.Type
-                                        };
-                                    }).ToArray()
-                                );
-                            }
-                        }
-                    }, cancellationToken);
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) =>
+                                                            {
+                                                                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                                                                    connection._watchClient.Watch(headers, deadline, cancellationToken))
+                                                                {
+                                                                    Task watcherTask = Task.Run(async () =>
+                                                                    {
+                                                                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
+                                                                        {
+                                                                            WatchResponse update = watcher.ResponseStream.Current;
+                                                                            foreach (Action<WatchEvent[]> method in methods)
+                                                                            {
+                                                                                method(update.Events.Select(i =>
+                                                                                    {
+                                                                                        return new WatchEvent
+                                                                                        {
+                                                                                            Key = i.Kv.Key.ToStringUtf8(),
+                                                                                            Value = i.Kv.Value.ToStringUtf8(),
+                                                                                            Type = i.Type
+                                                                                        };
+                                                                                    }).ToArray()
+                                                                                );
+                                                                            }
+                                                                        }
+                                                                    }, cancellationToken);
 
-                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
-                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
-                    await watcherTask.ConfigureAwait(false);
-                }
-            }).ConfigureAwait(false);
-        }
+                                                                    await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                                                                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                                                                    await watcherTask.ConfigureAwait(false);
+                                                                }
+                                                            }).ConfigureAwait(false);
 
         /// <summary>
         /// Watches the key range according to the specified watch requests and
@@ -762,32 +728,29 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async Task WatchRange(WatchRequest[] requests, Action<WatchResponse> method,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            await CallEtcdAsync(async (connection) =>
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection._watchClient.Watch(headers, deadline, cancellationToken))
-                {
-                    Task watcherTask = Task.Run(async () =>
-                    {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
-                        {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            method(update);
-                        }
-                    }, cancellationToken);
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) =>
+                                                            {
+                                                                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                                                                    connection._watchClient.Watch(headers, deadline, cancellationToken))
+                                                                {
+                                                                    Task watcherTask = Task.Run(async () =>
+                                                                    {
+                                                                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
+                                                                        {
+                                                                            WatchResponse update = watcher.ResponseStream.Current;
+                                                                            method(update);
+                                                                        }
+                                                                    }, cancellationToken);
 
-                    foreach (WatchRequest request in requests)
-                    {
-                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
-                    }
+                                                                    foreach (WatchRequest request in requests)
+                                                                    {
+                                                                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                                                                    }
 
-                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
-                    await watcherTask.ConfigureAwait(false);
-                }
-            }).ConfigureAwait(false);
-        }
+                                                                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                                                                    await watcherTask.ConfigureAwait(false);
+                                                                }
+                                                            }).ConfigureAwait(false);
 
         /// <summary>
         /// Watches a key range according to the specified watch requests and
@@ -800,35 +763,32 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async Task WatchRange(WatchRequest[] requests, Action<WatchResponse>[] methods,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            await CallEtcdAsync(async (connection) =>
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection._watchClient.Watch(headers, deadline, cancellationToken))
-                {
-                    Task watcherTask = Task.Run(async () =>
-                    {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
-                        {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            foreach (Action<WatchResponse> method in methods)
-                            {
-                                method(update);
-                            }
-                        }
-                    }, cancellationToken);
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) =>
+                                                            {
+                                                                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                                                                    connection._watchClient.Watch(headers, deadline, cancellationToken))
+                                                                {
+                                                                    Task watcherTask = Task.Run(async () =>
+                                                                    {
+                                                                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
+                                                                        {
+                                                                            WatchResponse update = watcher.ResponseStream.Current;
+                                                                            foreach (Action<WatchResponse> method in methods)
+                                                                            {
+                                                                                method(update);
+                                                                            }
+                                                                        }
+                                                                    }, cancellationToken);
 
-                    foreach (WatchRequest request in requests)
-                    {
-                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
-                    }
+                                                                    foreach (WatchRequest request in requests)
+                                                                    {
+                                                                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                                                                    }
 
-                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
-                    await watcherTask.ConfigureAwait(false);
-                }
-            }).ConfigureAwait(false);
-        }
+                                                                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                                                                    await watcherTask.ConfigureAwait(false);
+                                                                }
+                                                            }).ConfigureAwait(false);
 
         /// <summary>
         /// Watches a key range according to the specified watch request and
@@ -841,41 +801,38 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async Task WatchRange(WatchRequest[] requests, Action<WatchEvent[]> method,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            await CallEtcdAsync(async (connection) =>
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection._watchClient.Watch(headers, deadline, cancellationToken))
-                {
-                    Task watcherTask = Task.Run(async () =>
-                    {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
-                        {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            method(update.Events.Select(i =>
-                                {
-                                    return new WatchEvent
-                                    {
-                                        Key = i.Kv.Key.ToStringUtf8(),
-                                        Value = i.Kv.Value.ToStringUtf8(),
-                                        Type = i.Type
-                                    };
-                                }).ToArray()
-                            );
-                        }
-                    }, cancellationToken);
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) =>
+                                                            {
+                                                                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                                                                    connection._watchClient.Watch(headers, deadline, cancellationToken))
+                                                                {
+                                                                    Task watcherTask = Task.Run(async () =>
+                                                                    {
+                                                                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
+                                                                        {
+                                                                            WatchResponse update = watcher.ResponseStream.Current;
+                                                                            method(update.Events.Select(i =>
+                                                                                {
+                                                                                    return new WatchEvent
+                                                                                    {
+                                                                                        Key = i.Kv.Key.ToStringUtf8(),
+                                                                                        Value = i.Kv.Value.ToStringUtf8(),
+                                                                                        Type = i.Type
+                                                                                    };
+                                                                                }).ToArray()
+                                                                            );
+                                                                        }
+                                                                    }, cancellationToken);
 
-                    foreach (WatchRequest request in requests)
-                    {
-                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
-                    }
+                                                                    foreach (WatchRequest request in requests)
+                                                                    {
+                                                                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                                                                    }
 
-                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
-                    await watcherTask.ConfigureAwait(false);
-                }
-            }).ConfigureAwait(false);
-        }
+                                                                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                                                                    await watcherTask.ConfigureAwait(false);
+                                                                }
+                                                            }).ConfigureAwait(false);
 
         /// <summary>
         /// Watches a key range according to the specified watch requests and
@@ -888,44 +845,41 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public async Task WatchRange(WatchRequest[] requests, Action<WatchEvent[]>[] methods,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            await CallEtcdAsync(async (connection) =>
-            {
-                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                    connection._watchClient.Watch(headers, deadline, cancellationToken))
-                {
-                    Task watcherTask = Task.Run(async () =>
-                    {
-                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
-                        {
-                            WatchResponse update = watcher.ResponseStream.Current;
-                            foreach (Action<WatchEvent[]> method in methods)
-                            {
-                                method(update.Events.Select(i =>
-                                    {
-                                        return new WatchEvent
-                                        {
-                                            Key = i.Kv.Key.ToStringUtf8(),
-                                            Value = i.Kv.Value.ToStringUtf8(),
-                                            Type = i.Type
-                                        };
-                                    }).ToArray()
-                                );
-                            }
-                        }
-                    }, cancellationToken);
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) =>
+                                                            {
+                                                                using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
+                                                                    connection._watchClient.Watch(headers, deadline, cancellationToken))
+                                                                {
+                                                                    Task watcherTask = Task.Run(async () =>
+                                                                    {
+                                                                        while (await watcher.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
+                                                                        {
+                                                                            WatchResponse update = watcher.ResponseStream.Current;
+                                                                            foreach (Action<WatchEvent[]> method in methods)
+                                                                            {
+                                                                                method(update.Events.Select(i =>
+                                                                                    {
+                                                                                        return new WatchEvent
+                                                                                        {
+                                                                                            Key = i.Kv.Key.ToStringUtf8(),
+                                                                                            Value = i.Kv.Value.ToStringUtf8(),
+                                                                                            Type = i.Type
+                                                                                        };
+                                                                                    }).ToArray()
+                                                                                );
+                                                                            }
+                                                                        }
+                                                                    }, cancellationToken);
 
-                    foreach (WatchRequest request in requests)
-                    {
-                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
-                    }
+                                                                    foreach (WatchRequest request in requests)
+                                                                    {
+                                                                        await watcher.RequestStream.WriteAsync(request).ConfigureAwait(false);
+                                                                    }
 
-                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
-                    await watcherTask.ConfigureAwait(false);
-                }
-            }).ConfigureAwait(false);
-        }
+                                                                    await watcher.RequestStream.CompleteAsync().ConfigureAwait(false);
+                                                                    await watcherTask.ConfigureAwait(false);
+                                                                }
+                                                            }).ConfigureAwait(false);
 
         /// <summary>
         /// Watches the specified key range and passes the watch response to the method provided.

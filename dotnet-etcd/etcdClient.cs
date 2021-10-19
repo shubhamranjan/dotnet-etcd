@@ -43,7 +43,7 @@ namespace dotnet_etcd
                 // Examples:
                 // discovery-srv://my-domain.local/ would expect entries for either _etcd-client-ssl._tcp.my-domain.local or _etcd-client._tcp.my-domain.local
                 // discovery-srv://my-domain.local/project1 would expect entries for either _etcd-client-ssl-project1._tcp.my-domain.local or _etcd-client-project1._tcp.my-domain.local
-                Uri discoverySrv = new Uri(connectionString);
+                Uri discoverySrv = new(connectionString);
                 LookupClient client = new LookupClient(new LookupClientOptions
                 {
                     UseCache = true
