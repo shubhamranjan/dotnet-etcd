@@ -55,7 +55,7 @@ Add using statement at the top of your class file
         Name = "name",
         Password = "password",
     });
-    //  Put key "foo/bar" with value "foobar" with authenticated token
+    //  Put key "foo/bar" with value "barfoo" with authenticated token
     client.Put("foo/bar", "barfoo", new Grpc.Core.Metadata() {
         new Grpc.Core.Metadata.Entry("token",authRes.Token)
     });
