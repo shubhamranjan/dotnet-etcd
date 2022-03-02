@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">
-     netcoreapp3.1;netstandard2.1;net5.0
+     netcoreapp3.1;netstandard2.1;net5.0;net6.0
     </TargetFrameworks>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
     <RootNamespace>dotnet_etcd</RootNamespace>
@@ -53,10 +53,10 @@ Advanced uses take advantage of the consistency guarantees to implement database
 
 
   <ItemGroup>
-    <PackageReference Include="DnsClient" Version="1.5.0" />
-    <PackageReference Include="Google.Protobuf" Version="3.18.1" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.40.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.41.0">
+    <PackageReference Include="DnsClient" Version="1.6.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.19.4" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.43.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.44.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
@@ -72,7 +72,6 @@ Advanced uses take advantage of the consistency guarantees to implement database
 
     <Protobuf Include="grpc\proto\google\api\annotations.proto" GrpcServices="Client" />
     <Protobuf Include="grpc\proto\google\api\http.proto" GrpcServices="Client" />
-    <Protobuf Include="grpc\proto\google\protobuf\descriptor.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>
