@@ -11,6 +11,7 @@ using DnsClient.Protocol;
 
 using dotnet_etcd.interfaces;
 using dotnet_etcd.multiplexer;
+using Grpc.Core.Interceptors;
 
 namespace dotnet_etcd
 {
@@ -31,7 +32,7 @@ namespace dotnet_etcd
 
         public EtcdClient(string connectionString, int port = 2379,
             HttpClientHandler handler = null, bool ssl = false,
-            bool useLegacyRpcExceptionForCancellation = false)
+            bool useLegacyRpcExceptionForCancellation = false, params Interceptor[] interceptors)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
             {
@@ -126,7 +127,7 @@ namespace dotnet_etcd
                 nodes.Add(new Uri(host));
             }
 
-            _balancer = new Balancer(nodes, handler, ssl, useLegacyRpcExceptionForCancellation);
+            _balancer = new Balancer(nodes, handler, ssl, useLegacyRpcExceptionForCancellation, interceptors);
         }
 
         #endregion
