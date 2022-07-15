@@ -10,6 +10,7 @@ using System.Threading;
 using Etcdserverpb;
 
 using Grpc.Core;
+using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
 
 namespace dotnet_etcd.multiplexer
@@ -36,7 +37,7 @@ namespace dotnet_etcd.multiplexer
 
 
         internal Balancer(List<Uri> nodes, HttpClientHandler handler = null, bool ssl = false,
-            bool useLegacyRpcExceptionForCancellation = false)
+            bool useLegacyRpcExceptionForCancellation = false, params Interceptor[] interceptors)
         {
             _numNodes = nodes.Count;
             _lastNodeIndex = s_random.Next(-1, _numNodes);
@@ -71,15 +72,27 @@ namespace dotnet_etcd.multiplexer
                     channel = GrpcChannel.ForAddress(node, options);
                 }
 
+                CallInvoker callInvoker;// = channel.CreateCallInvoker();
+
+                if (interceptors?.Length > 0)
+                {
+                    callInvoker = channel.Intercept(interceptors);
+                }
+                else
+                {
+                    callInvoker = channel.CreateCallInvoker();
+                }
+
+
                 Connection connection = new Connection
                 {
-                    _kvClient = new KV.KVClient(channel),
-                    _watchClient = new Watch.WatchClient(channel),
-                    _leaseClient = new Lease.LeaseClient(channel),
-                    _lockClient = new V3Lockpb.Lock.LockClient(channel),
-                    _clusterClient = new Cluster.ClusterClient(channel),
-                    _maintenanceClient = new Maintenance.MaintenanceClient(channel),
-                    _authClient = new Auth.AuthClient(channel)
+                    _kvClient = new KV.KVClient(callInvoker),
+                    _watchClient = new Watch.WatchClient(callInvoker),
+                    _leaseClient = new Lease.LeaseClient(callInvoker),
+                    _lockClient = new V3Lockpb.Lock.LockClient(callInvoker),
+                    _clusterClient = new Cluster.ClusterClient(callInvoker),
+                    _maintenanceClient = new Maintenance.MaintenanceClient(callInvoker),
+                    _authClient = new Auth.AuthClient(callInvoker)
                 };
 
                 _healthyNode.Add(connection);
