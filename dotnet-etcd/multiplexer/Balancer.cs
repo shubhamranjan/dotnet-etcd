@@ -72,7 +72,7 @@ namespace dotnet_etcd.multiplexer
                     channel = GrpcChannel.ForAddress(node, options);
                 }
 
-                CallInvoker callInvoker;// = channel.CreateCallInvoker();
+                CallInvoker callInvoker;
 
                 if (interceptors?.Length > 0)
                 {
