@@ -74,7 +74,7 @@ namespace dotnet_etcd.multiplexer
 
                 CallInvoker callInvoker;
 
-                if (interceptors?.Length > 0)
+                if (interceptors !=null && interceptors.Length > 0)
                 {
                     callInvoker = channel.Intercept(interceptors);
                 }
