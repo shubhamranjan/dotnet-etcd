@@ -65,6 +65,7 @@ Advanced uses take advantage of the consistency guarantees to implement database
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="System.Threading.Channels" Version="6.0.0" />
 
     <Protobuf Include="grpc\proto\etcd\auth.proto" GrpcServices="Client" />
     <Protobuf Include="grpc\proto\etcd\election.proto" GrpcServices="Client" />

@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 using Etcdserverpb;
@@ -108,6 +109,111 @@ namespace dotnet_etcd
                                                                                                      }
                                                                                                  }
                                                                                              }).ConfigureAwait(false);
+
+
+        /// <summary>
+        /// LeaseKeepAlive keeps the lease alive by streaming keep alive requests from the client
+        /// to the server and streaming keep alive responses from the server to the client.
+        /// </summary>
+        /// <param name="leaseId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <exception cref="LeaseExpiredException">throws an exception if no response
+        /// is received within the lease TTL or <paramref name="leaseRemainigTTL"></paramref> </exception>
+        public async Task LeaseKeepAlive(long leaseId, long leaseRemainigTTL, CancellationToken cancellationToken)
+        {
+            int retryCount = 0;
+            while (true)
+            {
+                var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                var attemptCancellationToken = cts.Token;
+                try
+                {
+                    var connection = _balancer.GetConnection();
+                    using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser =
+                           connection._leaseClient.LeaseKeepAlive(cancellationToken: attemptCancellationToken))
+                    {
+                        var requestsChannel = Channel.CreateUnbounded<LeaseKeepAliveRequest>();
+                        await requestsChannel.Writer.WriteAsync(
+                            new LeaseKeepAliveRequest() { ID = leaseId },
+                            attemptCancellationToken);
+                        var requestsTask = Task.Run(
+                            async
+                                () =>
+                            {
+                                await foreach (LeaseKeepAliveRequest lkReq in requestsChannel.Reader.ReadAllAsync(
+                                                   attemptCancellationToken))
+                                {
+                                    await leaser.RequestStream.WriteAsync(lkReq);
+                                }
+                            },
+                            attemptCancellationToken);
+                        var responsesTask = Task.Run(
+                            async
+                                () =>
+                            {
+                                var leaseEndOfLiveAlert = Task.Delay(
+                                    (int)leaseRemainigTTL * 1000,
+                                    attemptCancellationToken);
+                                while (true)
+                                {
+                                    var nextResponsePromise = leaser.ResponseStream.MoveNext(attemptCancellationToken);
+
+                                    await Task.WhenAny(
+                                        leaseEndOfLiveAlert,
+                                        nextResponsePromise).Unwrap();
+                                    attemptCancellationToken.ThrowIfCancellationRequested();
+                                    if (leaseEndOfLiveAlert.IsCompleted)
+                                    {
+                                        throw new LeaseExpiredException();
+                                    }
+
+                                    if (nextResponsePromise.IsCompleted)
+                                    {
+                                        if (nextResponsePromise.Result == false)
+                                        {
+                                            break;
+                                        }
+
+                                        retryCount = 0;
+
+                                        var rsp = leaser.ResponseStream.Current;
+                                        leaseEndOfLiveAlert = Task.Delay(
+                                            (int)rsp.TTL * 1000,
+                                            attemptCancellationToken);
+
+                                        var never = Task.Delay(
+                                            (int)rsp.TTL * 1000 / 3,
+                                            cancellationToken).ContinueWith(
+                                            async t =>
+                                            {
+                                                await requestsChannel.Writer.WriteAsync(
+                                                    new LeaseKeepAliveRequest() { ID = rsp.ID },
+                                                    cancellationToken);
+                                            },
+                                            cancellationToken);
+                                    }
+                                }
+                            },
+                            attemptCancellationToken);
+
+                        await Task.WhenAny(
+                            requestsTask,
+                            responsesTask).Unwrap().ConfigureAwait(false);
+                        await leaser.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    }
+                }
+                catch (RpcException ex)
+                {
+                    retryCount++;
+                    if (retryCount >= _balancer._numNodes)
+                    {
+                        throw;
+                    }
+
+                    cts.Cancel();
+                }
+            }
+        }
 
         /// <summary>
         /// LeaseKeepAlive keeps the lease alive by streaming keep alive requests from the client
