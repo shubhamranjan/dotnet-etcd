@@ -18,7 +18,7 @@ namespace dotnet_etcd.multiplexer
 
     internal class Balancer
     {
-        private readonly HashSet<Connection> _healthyNode;
+        internal readonly HashSet<Connection> _healthyNode;
 
         /// <summary>
         /// No of etcd nodes

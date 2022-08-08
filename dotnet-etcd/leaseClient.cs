@@ -2,11 +2,13 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-
+using dotnet_etcd.multiplexer;
 using Etcdserverpb;
 
 using Grpc.Core;
@@ -352,6 +354,179 @@ namespace dotnet_etcd
                                                                                                                         await leaserTask.ConfigureAwait(false);
                                                                                                                     }
                                                                                                                 }).ConfigureAwait(false);
+
+        /// <summary>
+        /// HighlyReliableLeaseKeepAlive keeps lease alive by sending keep alive requests and receiving keep alive responses.
+        /// Reliability is achieved by sequentially sending keep alive requests at short intervals to all etcd nodes
+        /// </summary>
+        /// <param name="leaseId">lease identifier</param>
+        /// <param name="leaseRemainigTTL">the remaining TTL at the time the method was called. used to determine initial deadlines</param>
+        /// <param name="cancellationToken"></param>
+        /// <exception cref="LeaseExpiredOrNotFoundException">throws an exception if no response
+        /// is received within the lease TTL or <paramref name="leaseRemainigTTL"></paramref> </exception>
+        public async Task HighlyReliableLeaseKeepAlive(long leaseId, long leaseRemainigTTL,
+            CancellationToken cancellationToken)
+        {
+            int startNodeIndex = (new Random()).Next(_balancer._numNodes);
+            while (true)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                int retryCount = 0;
+                startNodeIndex = ++startNodeIndex >= _balancer._numNodes ? 0 : startNodeIndex;
+                DateTime leaseExpiredAt = DateTime.Now.ToUniversalTime().AddSeconds(leaseRemainigTTL);
+                double attemptPeriodCoefficient = 0.8;
+                int attemptPeriodMs = (int)(leaseRemainigTTL * attemptPeriodCoefficient * 1000 / _balancer._numNodes);
+                IEnumerable<Task<LeaseKeepAliveResponse>> calls = new List<Task<LeaseKeepAliveResponse>>();
+                bool hasSuccessAttempt = false;
+                while (retryCount < _balancer._numNodes)
+                {
+                    retryCount++;
+                    cancellationToken.ThrowIfCancellationRequested();
+                    int currentNodeIndex = startNodeIndex + retryCount;
+                    currentNodeIndex = currentNodeIndex >= _balancer._numNodes
+                        ? currentNodeIndex - _balancer._numNodes
+                        : currentNodeIndex;
+                    Connection connection = _balancer._healthyNode.ElementAt(currentNodeIndex);
+                    calls = await NewLeaseTimeToLiveAttempt(
+                            calls,
+                            leaseId,
+                            connection,
+                            leaseExpiredAt,
+                            attemptPeriodMs,
+                            cancellationToken)
+                        .ConfigureAwait(false);
+
+                    if (IsAnyCallCompletedSuccessfully(
+                            calls,
+                            out LeaseKeepAliveResponse response))
+                    {
+                        if (response.TTL < 1)
+                        {
+                            throw new LeaseExpiredOrNotFoundException(leaseId);
+                        }
+
+                        hasSuccessAttempt = true;
+                        leaseRemainigTTL = response.TTL;
+                        break;
+                    }
+                }
+
+                if (!hasSuccessAttempt)
+                {
+                    TimeSpan leaseExpiredDuration =
+                        leaseExpiredAt.Subtract(DateTime.Now.ToUniversalTime());
+                    Task waitLeaseExpired = leaseExpiredDuration.TotalMilliseconds <= 0
+                        ? Task.CompletedTask
+                        : Task.Delay(
+                            leaseExpiredDuration,
+                            cancellationToken);
+                    Func<IEnumerable<Task<LeaseKeepAliveResponse>>> getRemainigCalls = () => calls.Where(
+                        c => c.IsCompleted == false
+                             || c.IsCompletedSuccessfully);
+                    var remainingCalls = getRemainigCalls();
+                    LeaseKeepAliveResponse response;
+                    while (!IsAnyCallCompletedSuccessfully(
+                               remainingCalls,
+                               out response))
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        if (waitLeaseExpired.IsCompleted || !remainingCalls.Any())
+                        {
+                            var exceptions = calls
+                                .Where(c => c.IsFaulted)
+                                .SelectMany(c => c.Exception!.InnerExceptions);
+                            if (waitLeaseExpired.IsCompleted)
+                            {
+                                exceptions = exceptions.Append(new LeaseExpiredOrNotFoundException(leaseId));
+                            }
+
+                            throw new AggregateException(exceptions);
+                        }
+
+                        await Task.WhenAny(
+                            remainingCalls
+                                .Append(waitLeaseExpired)).ConfigureAwait(false);
+                        remainingCalls = getRemainigCalls();
+
+                    }
+
+                    hasSuccessAttempt = true;
+                    leaseRemainigTTL = response.TTL;
+                }
+
+                double sleepСoefficient = 1.0 / 3;
+                int sleepDelay = (int)(leaseRemainigTTL * sleepСoefficient * 1000);
+                await Task.Delay(
+                    sleepDelay,
+                    cancellationToken).ConfigureAwait(false);
+                leaseRemainigTTL -= sleepDelay / 1000;
+            }
+
+            async Task<LeaseKeepAliveResponse> OneTimeKeepAlive(long leaseId, Connection connection,
+                DateTime deadline, CancellationToken cancellationToken)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser =
+                       connection._leaseClient
+                           .LeaseKeepAlive(
+                               deadline: deadline,
+                               cancellationToken: cancellationToken))
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    await leaser.RequestStream.WriteAsync(
+                        new LeaseKeepAliveRequest() { ID = leaseId },
+                        cancellationToken: cancellationToken).ConfigureAwait(false);
+                    bool result = await leaser.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false);
+                    if (!result)
+                    {
+                        throw new RpcException(
+                            new Status(
+                                StatusCode.Aborted,
+                                "didnt receive keepAlive response"));
+                    }
+
+                    await leaser.RequestStream.CompleteAsync().ConfigureAwait(false);
+                    return leaser.ResponseStream.Current;
+                }
+            }
+
+            async Task<IEnumerable<Task<LeaseKeepAliveResponse>>> NewLeaseTimeToLiveAttempt(
+                IEnumerable<Task<LeaseKeepAliveResponse>> calls,
+                long leaseId, Connection connection,
+                DateTime deadline,
+                int attemptPeriodMs, CancellationToken cancellationToken)
+            {
+                var callResponse = OneTimeKeepAlive(
+                    leaseId,
+                    connection,
+                    deadline,
+                    cancellationToken);
+                calls = calls.Append(callResponse);
+                Task attemptDelay = Task.Delay(
+                    attemptPeriodMs,
+                    cancellationToken);
+                await Task.WhenAny(
+                    calls.Where(c => c.IsCompletedSuccessfully)
+                        .Append(attemptDelay)).ConfigureAwait(false);
+                return calls;
+            }
+
+            bool IsAnyCallCompletedSuccessfully(IEnumerable<Task<LeaseKeepAliveResponse>> calls,
+                out LeaseKeepAliveResponse response)
+            {
+                foreach (Task<LeaseKeepAliveResponse> call in calls)
+                {
+                    if (call.IsCompletedSuccessfully)
+                    {
+                        response = call.Result;
+                        return true;
+                    }
+                }
+
+                response = null;
+                return false;
+            }
+        }
 
         /// <summary>
         /// LeaseTimeToLive retrieves lease information.
