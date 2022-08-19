@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.29503.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotnet-etcd", "dotnet-etcd\dotnet-etcd.csproj", "{E4AEC985-B8FC-498D-B173-0ADFCFBD82BA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{678F48FA-E1D5-4473-B709-4B829CF95688}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "integration", "tests\integration\integration.csproj", "{BF3872C6-2001-4C58-9628-F31702E0E6BA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,11 +19,18 @@ Global
 		{E4AEC985-B8FC-498D-B173-0ADFCFBD82BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4AEC985-B8FC-498D-B173-0ADFCFBD82BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4AEC985-B8FC-498D-B173-0ADFCFBD82BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF3872C6-2001-4C58-9628-F31702E0E6BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF3872C6-2001-4C58-9628-F31702E0E6BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF3872C6-2001-4C58-9628-F31702E0E6BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF3872C6-2001-4C58-9628-F31702E0E6BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EAB8A37D-B932-4DD3-A44E-8F68DE5669C9}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BF3872C6-2001-4C58-9628-F31702E0E6BA} = {678F48FA-E1D5-4473-B709-4B829CF95688}
 	EndGlobalSection
 EndGlobal
