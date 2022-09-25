@@ -11,7 +11,10 @@ using DnsClient.Protocol;
 
 using dotnet_etcd.interfaces;
 using dotnet_etcd.multiplexer;
+
+using Grpc.Core;
 using Grpc.Core.Interceptors;
+using Grpc.Net.Client.Configuration;
 
 namespace dotnet_etcd
 {
@@ -23,16 +26,38 @@ namespace dotnet_etcd
     {
         #region Variables
 
-        private readonly Balancer _balancer;
         private const string InsecurePrefix = "http://";
         private const string SecurePrefix = "https://";
+
+        private readonly Balancer _balancer;
+
+        // https://learn.microsoft.com/en-us/aspnet/core/grpc/retries?view=aspnetcore-6.0#configure-a-grpc-retry-policy
+        private static readonly MethodConfig _defaultGrpcMethodConfig = new MethodConfig
+        {
+            Names = { MethodName.Default },
+            RetryPolicy = new RetryPolicy
+            {
+                MaxAttempts = 100,
+                InitialBackoff = TimeSpan.FromSeconds(1),
+                MaxBackoff = TimeSpan.FromSeconds(5),
+                BackoffMultiplier = 1.5,
+                RetryableStatusCodes = { StatusCode.Unavailable }
+            }
+        };
+
+        // https://github.com/grpc/proposal/blob/master/A6-client-retries.md#throttling-retry-attempts-and-hedged-rpcs
+        private static readonly RetryThrottlingPolicy _defaultRetryThrottlingPolicy = new RetryThrottlingPolicy
+        {
+            MaxTokens = 10,
+            TokenRatio = 0.1
+        };
         #endregion
 
         #region Initializers
 
         public EtcdClient(string connectionString, int port = 2379,
             HttpClientHandler handler = null, bool ssl = false,
-            bool useLegacyRpcExceptionForCancellation = false, params Interceptor[] interceptors)
+            bool useLegacyRpcExceptionForCancellation = false, Interceptor[] interceptors = null, MethodConfig grpcMethodConfig = null, RetryThrottlingPolicy grpcRetryThrottlingPolicy = null)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
             {
@@ -40,6 +65,8 @@ namespace dotnet_etcd
             }
 
             string[] hosts;
+            grpcMethodConfig ??= _defaultGrpcMethodConfig;
+            grpcRetryThrottlingPolicy ??= _defaultRetryThrottlingPolicy;
 
             if (connectionString.ToLowerInvariant().StartsWith("discovery-srv://"))
             {
@@ -127,7 +154,7 @@ namespace dotnet_etcd
                 nodes.Add(new Uri(host));
             }
 
-            _balancer = new Balancer(nodes, handler, ssl, useLegacyRpcExceptionForCancellation, interceptors);
+            _balancer = new Balancer(nodes, handler, ssl, useLegacyRpcExceptionForCancellation, interceptors, grpcMethodConfig, grpcRetryThrottlingPolicy);
         }
 
         #endregion
@@ -147,7 +174,6 @@ namespace dotnet_etcd
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
                 // TODO: set large fields to null.
-
                 _disposed = true;
             }
         }

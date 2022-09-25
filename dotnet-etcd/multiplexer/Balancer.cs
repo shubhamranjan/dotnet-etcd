@@ -12,6 +12,7 @@ using Etcdserverpb;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
+using Grpc.Net.Client.Configuration;
 
 namespace dotnet_etcd.multiplexer
 {
@@ -37,41 +38,42 @@ namespace dotnet_etcd.multiplexer
 
 
         internal Balancer(List<Uri> nodes, HttpClientHandler handler = null, bool ssl = false,
-            bool useLegacyRpcExceptionForCancellation = false, params Interceptor[] interceptors)
+            bool useLegacyRpcExceptionForCancellation = false, Interceptor[] interceptors = null, MethodConfig grpcMethodConfig = null, RetryThrottlingPolicy grpcRetryThrottlingPolicy = null)
         {
             _numNodes = nodes.Count;
             _lastNodeIndex = s_random.Next(-1, _numNodes);
 
             _healthyNode = new HashSet<Connection>();
 
+            interceptors ??= Array.Empty<Interceptor>();
+
             foreach (Uri node in nodes)
             {
                 GrpcChannel channel;
 
+                var options = new GrpcChannelOptions
+                {
+                    HttpHandler = handler,
+                    ThrowOperationCanceledOnCancellation = !useLegacyRpcExceptionForCancellation,
+                    ServiceConfig = new ServiceConfig
+                    {
+                        MethodConfigs = { grpcMethodConfig },
+                        RetryThrottling = grpcRetryThrottlingPolicy,
+                    }
+                };
+
                 if (ssl)
                 {
-                    channel = GrpcChannel.ForAddress(node, new GrpcChannelOptions
-                    {
-                        Credentials = new SslCredentials(),
-                        HttpHandler = handler,
-                        ThrowOperationCanceledOnCancellation = !useLegacyRpcExceptionForCancellation
-                    });
+                    options.Credentials = new SslCredentials();
                 }
                 else
                 {
 #if NETCOREAPP3_1 || NETCOREAPP3_0
                     AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 #endif
-                    var options = new GrpcChannelOptions
-                    {
-                        Credentials = ChannelCredentials.Insecure,
-                        HttpHandler = handler,
-                        ThrowOperationCanceledOnCancellation = !useLegacyRpcExceptionForCancellation
-                    };
-
-                    channel = GrpcChannel.ForAddress(node, options);
                 }
 
+                channel = GrpcChannel.ForAddress(node, options);
                 CallInvoker callInvoker;
 
                 if (interceptors !=null && interceptors.Length > 0)
