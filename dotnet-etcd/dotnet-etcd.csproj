@@ -60,8 +60,8 @@ Advanced uses take advantage of the consistency guarantees to implement database
   <ItemGroup>
     <PackageReference Include="DnsClient" Version="1.6.1" />
     <PackageReference Include="Google.Protobuf" Version="3.21.6" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.48.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.48.1">
+    <PackageReference Include="Grpc.Net.Client" Version="2.49.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.49.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
