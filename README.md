@@ -11,8 +11,6 @@ A C# .NET (dotnet) GRPC client for etcd v3+
 
 * .NET 6
 * .NET 5
-* .NETCoreApp 3.1
-* .NETStandard 2.1
 
 **For older dotnet versions, use lib version < 5.x**
 
