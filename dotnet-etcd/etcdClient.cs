@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 
@@ -73,7 +74,7 @@ namespace dotnet_etcd
             // Param check
             if (string.IsNullOrWhiteSpace(connectionString))
             {
-                throw new Exception("etcd connection string is empty.");
+                throw new ArgumentNullException(nameof(connectionString));
             }
 
             // Param sanitization
@@ -82,7 +83,7 @@ namespace dotnet_etcd
             grpcRetryThrottlingPolicy ??= _defaultRetryThrottlingPolicy;
             interceptors ??= Array.Empty<Interceptor>();
 
-            if (connectionString.ToLowerInvariant().StartsWith(AlternateDnsPrefix))
+            if (connectionString.StartsWith(AlternateDnsPrefix, StringComparison.InvariantCultureIgnoreCase))
             {
                 connectionString = connectionString.Substring(AlternateDnsPrefix.Length);
                 connectionString = DnsPrefix + connectionString;
@@ -115,7 +116,7 @@ namespace dotnet_etcd
 
             // Channel Configuration
             GrpcChannel channel = null;
-            if (connectionString.StartsWith(DnsPrefix))
+            if (connectionString.StartsWith(DnsPrefix, StringComparison.InvariantCultureIgnoreCase))
             {
                 channel = GrpcChannel.ForAddress(connectionString, options);
             }
@@ -128,10 +129,10 @@ namespace dotnet_etcd
                     string host = hosts[i];
                     if (host.Split(':').Length < 3)
                     {
-                        host += $":{Convert.ToString(port)}";
+                        host += $":{Convert.ToString(port, CultureInfo.InvariantCulture)}";
                     }
 
-                    if (!(host.StartsWith(InsecurePrefix) || host.StartsWith(SecurePrefix)))
+                    if (!(host.StartsWith(InsecurePrefix, StringComparison.InvariantCultureIgnoreCase) || host.StartsWith(SecurePrefix, StringComparison.InvariantCultureIgnoreCase)))
                     {
                         if (ssl)
                         {
@@ -182,7 +183,7 @@ namespace dotnet_etcd
 
         #region IDisposable Support
 
-        private bool _disposed = false; // To detect redundant calls
+        private bool _disposed; // To detect redundant calls
 
         protected virtual void Dispose(bool disposing)
         {

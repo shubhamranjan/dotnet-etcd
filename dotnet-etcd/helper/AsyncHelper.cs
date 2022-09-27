@@ -18,33 +18,6 @@ namespace dotnet_etcd.helper
             TaskCreationOptions.None, TaskContinuationOptions.None, TaskScheduler.Default);
 
         /// <summary>
-        /// Run the provided <paramref name="func"/> async method synchronously 
-        /// </summary>
-        /// <typeparam name="TResult">The type that is returned in the Task of the <paramref name="func"/></typeparam>
-        /// <param name="func">A call to the async method</param>
-        /// <returns>The result of the task created by the <paramref name="func"/></returns>
-        /// <example>
-        /// <code>
-        /// AsyncHelper.RunSync(SomeFunctionAsync)
-        /// </code>
-        /// or
-        /// <code>
-        /// AsyncHelper.RunSync(async () => await SomeFunctionAsync())
-        /// </code>
-        /// </example>
-        public static TResult RunSync<TResult>(Func<Task<TResult>> func)
-        {
-            CultureInfo cultureUi = CultureInfo.CurrentUICulture;
-            CultureInfo culture = CultureInfo.CurrentCulture;
-            return MyTaskFactory.StartNew(() =>
-            {
-                Thread.CurrentThread.CurrentCulture = culture;
-                Thread.CurrentThread.CurrentUICulture = cultureUi;
-                return func();
-            }).Unwrap().GetAwaiter().GetResult();
-        }
-
-        /// <summary>
         /// Runs the provided async function provided in <paramref name="func"/> in a synchronous way
         /// </summary>
         /// <param name="func">A call to the async method</param>

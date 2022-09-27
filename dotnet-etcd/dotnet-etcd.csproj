@@ -80,4 +80,10 @@ Advanced uses take advantage of the consistency guarantees to implement database
     <Protobuf Include="grpc\proto\google\api\http.proto" GrpcServices="Client" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AssemblyAttribute Include="System.CLSCompliantAttribute">
+      <_Parameter1>false</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
 </Project>
