@@ -170,6 +170,9 @@ file_header_template = Licensed to the .NET Foundation under one or more agreeme
 # IDE1006: Naming Styles
 dotnet_diagnostic.IDE1006.severity = none
 
+# CA1062: Validate arguments of public methods
+dotnet_diagnostic.CA1062.severity = none
+
 [*.{cpp,h,in}]
 curly_bracket_next_line = true
 indent_brace_style = Allman

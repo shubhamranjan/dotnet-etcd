@@ -134,7 +134,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public Task WatchAsync(WatchRequest request, Action<WatchEvent[]> method, Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => WatchAsync(new WatchRequest[1] { request }, new Action<WatchEvent[]>[1] { method }, headers, deadline);
+            CancellationToken cancellationToken = default) => WatchAsync(new WatchRequest[1] { request }, new Action<WatchEvent[]>[1] { method }, headers, deadline, cancellationToken);
 
         /// <summary>
         /// Watches a key according to the specified watch request and
@@ -147,7 +147,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public Task WatchAsync(WatchRequest request, Action<WatchEvent[]>[] methods, Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => WatchAsync(new WatchRequest[1] { request }, methods, headers, deadline);
+            CancellationToken cancellationToken = default) => WatchAsync(new WatchRequest[1] { request }, methods, headers, deadline, cancellationToken);
 
         /// <summary>
         /// Watches a key according to the specified watch request and
@@ -160,7 +160,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public Task WatchAsync(WatchRequest[] requests, Action<WatchEvent[]> method, Metadata headers = null,
         DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => WatchAsync(requests, new Action<WatchEvent[]>[1] { method }, headers, deadline);
+            CancellationToken cancellationToken = default) => WatchAsync(requests, new Action<WatchEvent[]>[1] { method }, headers, deadline, cancellationToken);
 
         /// <summary>
         /// Watches a key according to the specified watch requests and
@@ -276,7 +276,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void Watch(WatchRequest request, Action<WatchEvent[]> method, Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => Watch(new WatchRequest[1] { request }, new Action<WatchEvent[]>[1] { method }, headers, deadline);
+            CancellationToken cancellationToken = default) => Watch(new WatchRequest[1] { request }, new Action<WatchEvent[]>[1] { method }, headers, deadline, cancellationToken);
 
         /// <summary>
         /// Watches a key according to the specified watch request and
@@ -289,7 +289,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void Watch(WatchRequest request, Action<WatchEvent[]>[] methods, Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => Watch(new WatchRequest[1] { request }, methods, headers, deadline);
+            CancellationToken cancellationToken = default) => Watch(new WatchRequest[1] { request }, methods, headers, deadline, cancellationToken);
 
         /// <summary>
         /// Watches a key according to the specified watch request and
@@ -302,7 +302,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void Watch(WatchRequest[] requests, Action<WatchEvent[]> method, Metadata headers = null,
         DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => Watch(requests, new Action<WatchEvent[]>[1] { method }, headers, deadline);
+            CancellationToken cancellationToken = default) => Watch(requests, new Action<WatchEvent[]>[1] { method }, headers, deadline, cancellationToken);
 
         /// <summary>
         /// Watches a key according to the specified watch requests and
@@ -605,7 +605,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public Task WatchRangeAsync(string path, Action<WatchResponse> method, Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => WatchRangeAsync(new string[1] { path }, new Action<WatchResponse>[1] { method }, headers);
+            CancellationToken cancellationToken = default) => WatchRangeAsync(new string[1] { path }, new Action<WatchResponse>[1] { method }, headers, deadline, cancellationToken);
 
         /// <summary>
         /// Watches the specified key range and passes the watch response to the methods provided.
@@ -617,7 +617,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public Task WatchRangeAsync(string path, Action<WatchResponse>[] methods, Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => WatchRangeAsync(new string[1] { path }, methods, headers);
+            CancellationToken cancellationToken = default) => WatchRangeAsync(new string[1] { path }, methods, headers, deadline, cancellationToken);
 
         /// <summary>
         /// Watches the specified key range and passes the watch response to the method provided.
@@ -629,7 +629,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public Task WatchRangeAsync(string[] paths, Action<WatchResponse> method, Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => WatchRangeAsync(paths, new Action<WatchResponse>[1] { method }, headers);
+            CancellationToken cancellationToken = default) => WatchRangeAsync(paths, new Action<WatchResponse>[1] { method }, headers, deadline, cancellationToken);
 
         /// <summary>
         /// Watches the specified key range and passes the watch response to the method provided.
@@ -673,7 +673,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public Task WatchRangeAsync(string path, Action<WatchEvent[]> method, Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => WatchRangeAsync(new string[1] { path }, new Action<WatchEvent[]>[1] { method }, headers);
+            CancellationToken cancellationToken = default) => WatchRangeAsync(new string[1] { path }, new Action<WatchEvent[]>[1] { method }, headers, deadline, cancellationToken);
 
         /// <summary>
         /// Watches the specified key range and passes the minimal watch events data to the methods provided.
@@ -685,7 +685,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public Task WatchRangeAsync(string path, Action<WatchEvent[]>[] methods, Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => WatchRangeAsync(new string[1] { path }, methods, headers);
+            CancellationToken cancellationToken = default) => WatchRangeAsync(new string[1] { path }, methods, headers, deadline, cancellationToken);
 
         /// <summary>
         /// Watches the specified key range and passes the minimal watch events data to the method provided.
@@ -697,7 +697,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public Task WatchRangeAsync(string[] paths, Action<WatchEvent[]> method, Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => WatchRangeAsync(paths, new Action<WatchEvent[]>[1] { method }, headers);
+            CancellationToken cancellationToken = default) => WatchRangeAsync(paths, new Action<WatchEvent[]>[1] { method }, headers, deadline, cancellationToken);
 
         /// <summary>
         /// Watches the specified key range and passes the minimal watch events data to the method provided.
@@ -741,7 +741,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string path, Action<WatchResponse> method, Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => WatchRange(new string[1] { path }, new Action<WatchResponse>[1] { method }, headers);
+            CancellationToken cancellationToken = default) => WatchRange(new string[1] { path }, new Action<WatchResponse>[1] { method }, headers, deadline, cancellationToken);
 
         /// <summary>
         /// Watches the specified key range and passes the watch response to the methods provided.
@@ -753,7 +753,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string path, Action<WatchResponse>[] methods, Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => WatchRange(new string[1] { path }, methods, headers);
+            CancellationToken cancellationToken = default) => WatchRange(new string[1] { path }, methods, headers, deadline, cancellationToken);
 
         /// <summary>
         /// Watches the specified key range and passes the watch response to the method provided.
@@ -765,7 +765,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string[] paths, Action<WatchResponse> method, Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => WatchRange(paths, new Action<WatchResponse>[1] { method }, headers);
+            CancellationToken cancellationToken = default) => WatchRange(paths, new Action<WatchResponse>[1] { method }, headers, deadline, cancellationToken);
 
         /// <summary>
         /// Watches the specified key range and passes the watch response to the method provided.
@@ -809,7 +809,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string path, Action<WatchEvent[]> method, Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => WatchRange(new string[1] { path }, new Action<WatchEvent[]>[1] { method }, headers);
+            CancellationToken cancellationToken = default) => WatchRange(new string[1] { path }, new Action<WatchEvent[]>[1] { method }, headers, deadline, cancellationToken);
 
         /// <summary>
         /// Watches the specified key range and passes the minimal watch events data to the methods provided.
@@ -821,7 +821,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string path, Action<WatchEvent[]>[] methods, Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => WatchRange(new string[1] { path }, methods, headers);
+            CancellationToken cancellationToken = default) => WatchRange(new string[1] { path }, methods, headers, deadline, cancellationToken);
 
         /// <summary>
         /// Watches the specified key range and passes the minimal watch events data to the method provided.
@@ -833,7 +833,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void WatchRange(string[] paths, Action<WatchEvent[]> method, Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => WatchRange(paths, new Action<WatchEvent[]>[1] { method }, headers);
+            CancellationToken cancellationToken = default) => WatchRange(paths, new Action<WatchEvent[]>[1] { method }, headers, deadline, cancellationToken);
 
         /// <summary>
         /// Watches the specified key range and passes the minimal watch events data to the method provided.
