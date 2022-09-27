@@ -26,7 +26,7 @@ namespace dotnet_etcd
         /// <param name="resp">RangeResponse received from etcd server</param>
         private static IDictionary<string, string> RangeRespondToDictionary(RangeResponse resp)
         {
-            Dictionary<string, string> resDictionary = new Dictionary<string, string>();
+            Dictionary<string, string> resDictionary = new();
             foreach (Mvccpb.KeyValue kv in resp.Kvs)
             {
                 resDictionary.Add(kv.Key.ToStringUtf8(), kv.Value.ToStringUtf8());
@@ -47,7 +47,7 @@ namespace dotnet_etcd
                 return rangeEndString;
             }
 
-            StringBuilder rangeEnd = new StringBuilder(prefixKey);
+            StringBuilder rangeEnd = new(prefixKey);
             rangeEnd[index: rangeEnd.Length - 1] = ++rangeEnd[rangeEnd.Length - 1];
             return rangeEnd.ToString();
         }
@@ -77,26 +77,7 @@ namespace dotnet_etcd
         /// <returns>The response from the the <paramref name="etcdCallFunc"/></returns>
         private TResponse CallEtcd<TResponse>(Func<Connection, TResponse> etcdCallFunc)
         {
-            TResponse response;
-            int retryCount = 0;
-            while (true)
-            {
-                try
-                {
-                    response = etcdCallFunc.Invoke(_balancer.GetConnection());
-                    break;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return etcdCallFunc.Invoke(_connection);
         }
 
         /// <summary>
@@ -107,28 +88,9 @@ namespace dotnet_etcd
         /// <typeparam name="TResponse">The type of the response that is returned from the call to etcd</typeparam>
         /// <param name="etcdCallFunc">The function to perform actions with the <seealso cref="Connection"/> object</param>
         /// <returns>The response from the the <paramref name="etcdCallFunc"/></returns>
-        private async Task<TResponse> CallEtcdAsync<TResponse>(Func<Connection, Task<TResponse>> etcdCallFunc)
+        private Task<TResponse> CallEtcdAsync<TResponse>(Func<Connection, Task<TResponse>> etcdCallFunc)
         {
-            TResponse response;
-            int retryCount = 0;
-            while (true)
-            {
-                try
-                {
-                    response = await etcdCallFunc.Invoke(_balancer.GetConnection()).ConfigureAwait(false);
-                    break;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
-
-            return response;
+            return etcdCallFunc.Invoke(_connection);
         }
 
         /// <summary>
@@ -138,25 +100,9 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="etcdCallFunc">The function to perform actions with the <seealso cref="Connection"/> object</param>
         /// <returns>The response from the the <paramref name="etcdCallFunc"/></returns>
-        private async Task CallEtcdAsync(Func<Connection, Task> etcdCallFunc)
+        private Task CallEtcdAsync(Func<Connection, Task> etcdCallFunc)
         {
-            int retryCount = 0;
-            while (true)
-            {
-                try
-                {
-                    await etcdCallFunc.Invoke(_balancer.GetConnection()).ConfigureAwait(false);
-                    break;
-                }
-                catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
-                {
-                    retryCount++;
-                    if (retryCount >= _balancer._numNodes)
-                    {
-                        throw;
-                    }
-                }
-            }
+            return etcdCallFunc.Invoke(_connection);
         }
     }
 }

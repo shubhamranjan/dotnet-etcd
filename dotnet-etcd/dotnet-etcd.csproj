@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">
-     netcoreapp3.1;netstandard2.1;net5.0;net6.0
+     net5.0;net6.0
     </TargetFrameworks>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
     <RootNamespace>dotnet_etcd</RootNamespace>
@@ -58,13 +58,13 @@ Advanced uses take advantage of the consistency guarantees to implement database
 
 
   <ItemGroup>
-    <PackageReference Include="DnsClient" Version="1.6.1" />
     <PackageReference Include="Google.Protobuf" Version="3.21.6" />
     <PackageReference Include="Grpc.Net.Client" Version="2.49.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.49.0">
+    <PackageReference Include="Grpc.Tools" Version="2.49.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
 
     <Protobuf Include="grpc\proto\etcd\auth.proto" GrpcServices="Client" />
     <Protobuf Include="grpc\proto\etcd\election.proto" GrpcServices="Client" />

@@ -369,11 +369,11 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            List<WatchRequest> requests = new List<WatchRequest>();
+            List<WatchRequest> requests = new();
 
             foreach (string key in keys)
             {
-                WatchRequest request = new WatchRequest()
+                WatchRequest request = new()
                 {
                     CreateRequest = new WatchCreateRequest()
                     {
@@ -437,11 +437,11 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            List<WatchRequest> requests = new List<WatchRequest>();
+            List<WatchRequest> requests = new();
 
             foreach (string key in keys)
             {
-                WatchRequest request = new WatchRequest()
+                WatchRequest request = new()
                 {
                     CreateRequest = new WatchCreateRequest()
                     {
@@ -504,11 +504,11 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            List<WatchRequest> requests = new List<WatchRequest>();
+            List<WatchRequest> requests = new();
 
             foreach (string key in keys)
             {
-                WatchRequest request = new WatchRequest()
+                WatchRequest request = new()
                 {
                     CreateRequest = new WatchCreateRequest()
                     {
@@ -572,11 +572,11 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            List<WatchRequest> requests = new List<WatchRequest>();
+            List<WatchRequest> requests = new();
 
             foreach (string key in keys)
             {
-                WatchRequest request = new WatchRequest()
+                WatchRequest request = new()
                 {
                     CreateRequest = new WatchCreateRequest()
                     {
@@ -643,11 +643,11 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            List<WatchRequest> requests = new List<WatchRequest>();
+            List<WatchRequest> requests = new();
 
             foreach (string path in paths)
             {
-                WatchRequest request = new WatchRequest()
+                WatchRequest request = new()
                 {
                     CreateRequest = new WatchCreateRequest()
                     {
@@ -711,11 +711,11 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            List<WatchRequest> requests = new List<WatchRequest>();
+            List<WatchRequest> requests = new();
 
             foreach (string path in paths)
             {
-                WatchRequest request = new WatchRequest()
+                WatchRequest request = new()
                 {
                     CreateRequest = new WatchCreateRequest()
                     {
@@ -779,11 +779,11 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            List<WatchRequest> requests = new List<WatchRequest>();
+            List<WatchRequest> requests = new();
 
             foreach (string path in paths)
             {
-                WatchRequest request = new WatchRequest()
+                WatchRequest request = new()
                 {
                     CreateRequest = new WatchCreateRequest()
                     {
@@ -847,11 +847,11 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
         {
-            List<WatchRequest> requests = new List<WatchRequest>();
+            List<WatchRequest> requests = new();
 
             foreach (string path in paths)
             {
-                WatchRequest request = new WatchRequest()
+                WatchRequest request = new()
                 {
                     CreateRequest = new WatchCreateRequest()
                     {

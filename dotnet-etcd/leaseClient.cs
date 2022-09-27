@@ -81,7 +81,7 @@ namespace dotnet_etcd
                                                                                                  using (AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser =
                                                                                                      connection._leaseClient.LeaseKeepAlive(cancellationToken: cancellationToken))
                                                                                                  {
-                                                                                                     LeaseKeepAliveRequest request = new LeaseKeepAliveRequest
+                                                                                                     LeaseKeepAliveRequest request = new()
                                                                                                      {
                                                                                                          ID = leaseId
                                                                                                      };

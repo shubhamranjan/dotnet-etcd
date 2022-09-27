@@ -14,7 +14,7 @@ namespace dotnet_etcd.helper
     /// <remarks>Based on the AsyncHelper of the Microsoft.AspNet.Identity project (https://web.archive.org/web/20200411071640/https://github.com/aspnet/AspNetIdentity/blob/master/src/Microsoft.AspNet.Identity.Core/AsyncHelper.cs)</remarks>
     public static class AsyncHelper
     {
-        private static readonly TaskFactory MyTaskFactory = new TaskFactory(CancellationToken.None,
+        private static readonly TaskFactory MyTaskFactory = new(CancellationToken.None,
             TaskCreationOptions.None, TaskContinuationOptions.None, TaskScheduler.Default);
 
         /// <summary>
