@@ -260,10 +260,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void Watch(WatchRequest[] requests, Action<WatchResponse>[] methods,
             Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            AsyncHelper.RunSync(async () => await WatchAsync(requests.ToArray(), methods, headers, deadline, cancellationToken).ConfigureAwait(false));
-        }
+            CancellationToken cancellationToken = default) => AsyncHelper.RunSync(async () => await WatchAsync(requests.ToArray(), methods, headers, deadline, cancellationToken).ConfigureAwait(false));
 
         /// <summary>
         /// Watches a key according to the specified watch request and
@@ -315,10 +312,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         public void Watch(WatchRequest[] requests, Action<WatchEvent[]>[] methods,
             Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default)
-        {
-            AsyncHelper.RunSync(async () => await WatchAsync(requests.ToArray(), methods, headers, deadline, cancellationToken).ConfigureAwait(false));
-        }
+            CancellationToken cancellationToken = default) => AsyncHelper.RunSync(async () => await WatchAsync(requests.ToArray(), methods, headers, deadline, cancellationToken).ConfigureAwait(false));
 
         /// <summary>
         /// Watches the specified key and passes the watch response to the method provided.

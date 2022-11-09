@@ -134,14 +134,7 @@ namespace dotnet_etcd
 
                     if (!(host.StartsWith(InsecurePrefix, StringComparison.InvariantCultureIgnoreCase) || host.StartsWith(SecurePrefix, StringComparison.InvariantCultureIgnoreCase)))
                     {
-                        if (ssl)
-                        {
-                            host = $"{SecurePrefix}{host}";
-                        }
-                        else
-                        {
-                            host = $"{InsecurePrefix}{host}";
-                        }
+                        host = ssl ? $"{SecurePrefix}{host}" : $"{InsecurePrefix}{host}";
                     }
 
                     nodes.Add(new Uri(host));
@@ -155,15 +148,7 @@ namespace dotnet_etcd
                 channel = GrpcChannel.ForAddress($"{StaticHostsPrefix}{serverName}", options);
             }
 
-            CallInvoker callInvoker;
-            if (interceptors != null && interceptors.Length > 0)
-            {
-                callInvoker = channel.Intercept(interceptors);
-            }
-            else
-            {
-                callInvoker = channel.CreateCallInvoker();
-            }
+            CallInvoker callInvoker = interceptors != null && interceptors.Length > 0 ? channel.Intercept(interceptors) : channel.CreateCallInvoker();
 
 
             // Setup Connection
