@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">
-      net5.0;net6.0;net7.0
+      net6.0;net7.0
     </TargetFrameworks>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
     <RootNamespace>dotnet_etcd</RootNamespace>
@@ -28,14 +28,13 @@ Your applications can read and write data into etcd. A simple use-case is to sto
 Advanced uses take advantage of the consistency guarantees to implement database leader elections or do distributed locking across a cluster of workers.</Description>
     <PackageTags>etcd grpc etcdv3 etcd3</PackageTags>
     <SignAssembly>false</SignAssembly>
-    <Version>6.0.1</Version>
+    <Version>6.1.0</Version>
     <AutoGenerateBindingRedirects>False</AutoGenerateBindingRedirects>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageIconUrl />
     <PackageIcon>etcd-logo-rectangle.png</PackageIcon>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <PackageReleaseNotes>* Revamp ETCD connection logic
-* Add Support for .NET 7</PackageReleaseNotes>
+    <PackageReleaseNotes>* Drop Support for EOL .NET 5 </PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <AnalysisLevel>5.0-all</AnalysisLevel>
   </PropertyGroup>
