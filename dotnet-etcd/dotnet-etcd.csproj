@@ -34,7 +34,8 @@ Advanced uses take advantage of the consistency guarantees to implement database
     <PackageIconUrl />
     <PackageIcon>etcd-logo-rectangle.png</PackageIcon>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <PackageReleaseNotes>Throw Operation Cancelled Exception</PackageReleaseNotes>
+    <PackageReleaseNotes>* Revamp ETCD connection logic
+* Add Support for .NET 7</PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <AnalysisLevel>5.0-all</AnalysisLevel>
   </PropertyGroup>
