@@ -66,11 +66,9 @@ namespace dotnet_etcd
 
         #region Initializers
 
-        public EtcdClient(string connectionString, int port = 2379, string serverName = DefaultServerName,
-            HttpClientHandler handler = null, bool ssl = false,
-            bool useLegacyRpcExceptionForCancellation = false, Interceptor[] interceptors = null,
-            MethodConfig grpcMethodConfig = null, RetryThrottlingPolicy grpcRetryThrottlingPolicy = null)
+        public EtcdClient(string connectionString, int port = 2379, string serverName = DefaultServerName, Action<GrpcChannelOptions> configureChannelOptions = null, Interceptor[] interceptors = null)
         {
+
             // Param check
             if (string.IsNullOrWhiteSpace(connectionString))
             {
@@ -78,9 +76,7 @@ namespace dotnet_etcd
             }
 
             // Param sanitization
-            string[] hosts = Array.Empty<string>();
-            grpcMethodConfig ??= _defaultGrpcMethodConfig;
-            grpcRetryThrottlingPolicy ??= _defaultRetryThrottlingPolicy;
+
             interceptors ??= Array.Empty<Interceptor>();
 
             if (connectionString.StartsWith(AlternateDnsPrefix, StringComparison.InvariantCultureIgnoreCase))
@@ -92,27 +88,15 @@ namespace dotnet_etcd
             // Connection Configuration
             var options = new GrpcChannelOptions
             {
-                HttpHandler = handler,
-                ThrowOperationCanceledOnCancellation = !useLegacyRpcExceptionForCancellation,
                 ServiceConfig = new ServiceConfig
                 {
-                    MethodConfigs = { grpcMethodConfig },
-                    RetryThrottling = grpcRetryThrottlingPolicy,
+                    MethodConfigs = { _defaultGrpcMethodConfig },
+                    RetryThrottling = _defaultRetryThrottlingPolicy,
                     LoadBalancingConfigs = { new RoundRobinConfig() },
                 }
             };
 
-            if (ssl)
-            {
-                options.Credentials = new SslCredentials();
-            }
-            else
-            {
-#if NETCOREAPP3_1 || NETCOREAPP3_0
-                AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-#endif
-                options.Credentials = ChannelCredentials.Insecure;
-            }
+            configureChannelOptions.Invoke(options);
 
             // Channel Configuration
             GrpcChannel channel = null;
@@ -122,6 +106,7 @@ namespace dotnet_etcd
             }
             else
             {
+                string[] hosts = Array.Empty<string>();
                 hosts = connectionString.Split(',');
                 List<Uri> nodes = new();
                 for (int i = 0; i < hosts.Length; i++)
@@ -134,7 +119,7 @@ namespace dotnet_etcd
 
                     if (!(host.StartsWith(InsecurePrefix, StringComparison.InvariantCultureIgnoreCase) || host.StartsWith(SecurePrefix, StringComparison.InvariantCultureIgnoreCase)))
                     {
-                        host = ssl ? $"{SecurePrefix}{host}" : $"{InsecurePrefix}{host}";
+                        host = options.Credentials == ChannelCredentials.Insecure ? $"{InsecurePrefix}{host}" : $"{SecurePrefix}{host}";
                     }
 
                     nodes.Add(new Uri(host));
@@ -162,6 +147,42 @@ namespace dotnet_etcd
                 _maintenanceClient = new Maintenance.MaintenanceClient(callInvoker),
                 _authClient = new Auth.AuthClient(callInvoker)
             };
+        }
+
+        [Obsolete("Use constructor accepting  Action<GrpcChannelOptions> configureChannelOptions instead.")]
+        public EtcdClient(string connectionString, int port = 2379, string serverName = DefaultServerName,
+            HttpClientHandler handler = null, bool ssl = false,
+            bool useLegacyRpcExceptionForCancellation = false, Interceptor[] interceptors = null,
+            MethodConfig grpcMethodConfig = null, RetryThrottlingPolicy grpcRetryThrottlingPolicy = null) : this(connectionString, port, serverName, (options) =>
+            {
+                grpcMethodConfig ??= _defaultGrpcMethodConfig;
+                grpcRetryThrottlingPolicy ??= _defaultRetryThrottlingPolicy;
+                interceptors ??= Array.Empty<Interceptor>();
+
+                options.HttpHandler = handler;
+                options.ThrowOperationCanceledOnCancellation = !useLegacyRpcExceptionForCancellation;
+                options.ServiceConfig = new ServiceConfig
+                {
+                    MethodConfigs = { grpcMethodConfig },
+                    RetryThrottling = grpcRetryThrottlingPolicy,
+                    LoadBalancingConfigs = { new RoundRobinConfig() },
+                };
+
+                if (ssl)
+                {
+                    options.Credentials = new SslCredentials();
+                }
+                else
+                {
+#if NETCOREAPP3_1 || NETCOREAPP3_0
+                AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+#endif
+                    options.Credentials = ChannelCredentials.Insecure;
+                }
+
+            }, interceptors)
+        {
+
         }
 
         #endregion
