@@ -9,7 +9,7 @@ A C# .NET (dotnet) GRPC client for etcd v3+
 
 ## Supported .NET Versions
 
-* .NET 6
+* .NET 7
 * .NET 6
 
 **For older dotnet versions, use lib version < 5.x**
