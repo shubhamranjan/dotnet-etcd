@@ -96,7 +96,7 @@ namespace dotnet_etcd
                 }
             };
 
-            configureChannelOptions.Invoke(options);
+            configureChannelOptions?.Invoke(options);
 
             // Channel Configuration
             GrpcChannel channel = null;
