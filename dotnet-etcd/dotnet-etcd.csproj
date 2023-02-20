@@ -60,7 +60,7 @@ Advanced uses take advantage of the consistency guarantees to implement database
 
 
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.21.10" />
+    <PackageReference Include="Google.Protobuf" Version="3.22.0" />
     <PackageReference Include="Grpc.Net.Client" Version="2.50.0" />
     <PackageReference Include="Grpc.Tools" Version="2.51.0">
       <PrivateAssets>all</PrivateAssets>
