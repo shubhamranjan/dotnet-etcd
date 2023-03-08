@@ -7,7 +7,6 @@ using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 
-
 using dotnet_etcd.interfaces;
 using dotnet_etcd.multiplexer;
 
@@ -16,7 +15,9 @@ using Etcdserverpb;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
+#if NET6_0 || NET5_0
 using Grpc.Net.Client.Balancer;
+#endif
 using Grpc.Net.Client.Configuration;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -43,7 +44,7 @@ namespace dotnet_etcd
         private readonly Connection _connection;
 
         // https://learn.microsoft.com/en-us/aspnet/core/grpc/retries?view=aspnetcore-6.0#configure-a-grpc-retry-policy
-        private static readonly MethodConfig _defaultGrpcMethodConfig = new()
+        private static readonly MethodConfig _defaultGrpcMethodConfig = new MethodConfig()
         {
             Names = { MethodName.Default },
             RetryPolicy = new RetryPolicy
@@ -57,7 +58,7 @@ namespace dotnet_etcd
         };
 
         // https://github.com/grpc/proposal/blob/master/A6-client-retries.md#throttling-retry-attempts-and-hedged-rpcs
-        private static readonly RetryThrottlingPolicy _defaultRetryThrottlingPolicy = new()
+        private static readonly RetryThrottlingPolicy _defaultRetryThrottlingPolicy = new RetryThrottlingPolicy()
         {
             MaxTokens = 10,
             TokenRatio = 0.1
@@ -108,7 +109,7 @@ namespace dotnet_etcd
             {
                 string[] hosts = Array.Empty<string>();
                 hosts = connectionString.Split(',');
-                List<Uri> nodes = new();
+                List<Uri> nodes = new List<Uri>();
                 for (int i = 0; i < hosts.Length; i++)
                 {
                     string host = hosts[i];
@@ -124,13 +125,16 @@ namespace dotnet_etcd
 
                     nodes.Add(new Uri(host));
                 }
-
-                var factory = new StaticResolverFactory(addr => nodes.Select(i => new BalancerAddress(i.Host, i.Port)).ToArray());
                 var services = new ServiceCollection();
+#if NET6_0 || NET5_0
+                var factory = new StaticResolverFactory(addr => nodes.Select(i => new BalancerAddress(i.Host, i.Port)).ToArray());
                 services.AddSingleton<ResolverFactory>(factory);
                 options.ServiceProvider = services.BuildServiceProvider();
-
                 channel = GrpcChannel.ForAddress($"{StaticHostsPrefix}{serverName}", options);
+#else
+                options.ServiceProvider = services.BuildServiceProvider();
+                channel = GrpcChannel.ForAddress(nodes[0], options);
+#endif
             }
 
             CallInvoker callInvoker = interceptors != null && interceptors.Length > 0 ? channel.Intercept(interceptors) : channel.CreateCallInvoker();
@@ -155,8 +159,8 @@ namespace dotnet_etcd
             bool useLegacyRpcExceptionForCancellation = false, Interceptor[] interceptors = null,
             MethodConfig grpcMethodConfig = null, RetryThrottlingPolicy grpcRetryThrottlingPolicy = null) : this(connectionString, port, serverName, (options) =>
             {
-                grpcMethodConfig ??= _defaultGrpcMethodConfig;
-                grpcRetryThrottlingPolicy ??= _defaultRetryThrottlingPolicy;
+                grpcMethodConfig = grpcMethodConfig ?? _defaultGrpcMethodConfig;
+                grpcRetryThrottlingPolicy = grpcRetryThrottlingPolicy ?? _defaultRetryThrottlingPolicy;
                 interceptors ??= Array.Empty<Interceptor>();
 
                 options.HttpHandler = handler;
