@@ -44,7 +44,7 @@ namespace dotnet_etcd
         private readonly Connection _connection;
 
         // https://learn.microsoft.com/en-us/aspnet/core/grpc/retries?view=aspnetcore-6.0#configure-a-grpc-retry-policy
-        private static readonly MethodConfig _defaultGrpcMethodConfig = new MethodConfig()
+        private static readonly MethodConfig _defaultGrpcMethodConfig = new ()
         {
             Names = { MethodName.Default },
             RetryPolicy = new RetryPolicy
@@ -58,7 +58,7 @@ namespace dotnet_etcd
         };
 
         // https://github.com/grpc/proposal/blob/master/A6-client-retries.md#throttling-retry-attempts-and-hedged-rpcs
-        private static readonly RetryThrottlingPolicy _defaultRetryThrottlingPolicy = new RetryThrottlingPolicy()
+        private static readonly RetryThrottlingPolicy _defaultRetryThrottlingPolicy = new ()
         {
             MaxTokens = 10,
             TokenRatio = 0.1
@@ -109,7 +109,7 @@ namespace dotnet_etcd
             {
                 string[] hosts = Array.Empty<string>();
                 hosts = connectionString.Split(',');
-                List<Uri> nodes = new List<Uri>();
+                List<Uri> nodes = new ();
                 for (int i = 0; i < hosts.Length; i++)
                 {
                     string host = hosts[i];
@@ -159,8 +159,8 @@ namespace dotnet_etcd
             bool useLegacyRpcExceptionForCancellation = false, Interceptor[] interceptors = null,
             MethodConfig grpcMethodConfig = null, RetryThrottlingPolicy grpcRetryThrottlingPolicy = null) : this(connectionString, port, serverName, (options) =>
             {
-                grpcMethodConfig = grpcMethodConfig ?? _defaultGrpcMethodConfig;
-                grpcRetryThrottlingPolicy = grpcRetryThrottlingPolicy ?? _defaultRetryThrottlingPolicy;
+                grpcMethodConfig ??= _defaultGrpcMethodConfig;
+                grpcRetryThrottlingPolicy ??= _defaultRetryThrottlingPolicy;
                 interceptors ??= Array.Empty<Interceptor>();
 
                 options.HttpHandler = handler;
