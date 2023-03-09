@@ -15,7 +15,7 @@ using Etcdserverpb;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
-#if NET6_0 || NET5_0
+#if NET5_0_OR_GREATER
 using Grpc.Net.Client.Balancer;
 #endif
 using Grpc.Net.Client.Configuration;
@@ -126,7 +126,7 @@ namespace dotnet_etcd
                     nodes.Add(new Uri(host));
                 }
                 var services = new ServiceCollection();
-#if NET6_0 || NET5_0
+#if NET5_0_OR_GREATER
                 var factory = new StaticResolverFactory(addr => nodes.Select(i => new BalancerAddress(i.Host, i.Port)).ToArray());
                 services.AddSingleton<ResolverFactory>(factory);
                 options.ServiceProvider = services.BuildServiceProvider();
