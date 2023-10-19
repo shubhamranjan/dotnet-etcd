@@ -37,7 +37,8 @@ Advanced uses take advantage of the consistency guarantees to implement database
     <PackageReleaseNotes>* Package Updates
 * Bug fixes</PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <AnalysisLevel>5.0-all</AnalysisLevel>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>

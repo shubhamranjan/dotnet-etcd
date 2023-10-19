@@ -7,7 +7,7 @@ using V3Lockpb;
 
 namespace dotnet_etcd.multiplexer
 {
-    internal class Connection
+    internal sealed class Connection
     {
         internal KV.KVClient _kvClient;
 
