@@ -311,14 +311,14 @@ namespace dotnet_etcd
                                                                             .RoleGet(request, headers, deadline, cancellationToken));
 
         /// <summary>
-        /// RoleGetASync gets detailed role information in async
+        /// RoleGetAsync gets detailed role information in async
         /// </summary>
         /// <param name="request">The request to send to the server.</param>
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
-        public async Task<AuthRoleGetResponse> RoleGetASync(AuthRoleGetRequest request,
+        public async Task<AuthRoleGetResponse> RoleGetAsync(AuthRoleGetRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._authClient
                                                                             .RoleGetAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
