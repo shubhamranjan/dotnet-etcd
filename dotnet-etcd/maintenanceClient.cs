@@ -59,7 +59,7 @@ namespace dotnet_etcd
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>Status response</returns>
-        public async Task<StatusResponse> StatusASync(StatusRequest request, Grpc.Core.Metadata headers = null,
+        public async Task<StatusResponse> StatusAsync(StatusRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
             CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._maintenanceClient
                                                                             .StatusAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);

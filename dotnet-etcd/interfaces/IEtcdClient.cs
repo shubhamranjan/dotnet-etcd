@@ -81,7 +81,7 @@ namespace dotnet_etcd.interfaces
         AuthRoleDeleteResponse RoleDelete(AuthRoleDeleteRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         Task<AuthRoleDeleteResponse> RoleDeleteAsync(AuthRoleDeleteRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         AuthRoleGetResponse RoleGet(AuthRoleGetRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
-        Task<AuthRoleGetResponse> RoleGetASync(AuthRoleGetRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+        Task<AuthRoleGetResponse> RoleGetAsync(AuthRoleGetRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         AuthRoleGrantPermissionResponse RoleGrantPermission(AuthRoleGrantPermissionRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         Task<AuthRoleGrantPermissionResponse> RoleGrantPermissionAsync(AuthRoleGrantPermissionRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         AuthRoleListResponse RoleList(AuthRoleListRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
@@ -91,7 +91,7 @@ namespace dotnet_etcd.interfaces
         Task Snapshot(SnapshotRequest request, Action<SnapshotResponse> method, CancellationToken cancellationToken, Grpc.Core.Metadata headers = null, DateTime? deadline = null);
         Task Snapshot(SnapshotRequest request, Action<SnapshotResponse>[] methods, CancellationToken cancellationToken, Grpc.Core.Metadata headers = null, DateTime? deadline = null);
         StatusResponse Status(StatusRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
-        Task<StatusResponse> StatusASync(StatusRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+        Task<StatusResponse> StatusAsync(StatusRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         TxnResponse Transaction(TxnRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         Task<TxnResponse> TransactionAsync(TxnRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         UnlockResponse Unlock(string key, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
