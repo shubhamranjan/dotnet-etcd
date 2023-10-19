@@ -149,42 +149,6 @@ namespace dotnet_etcd
             };
         }
 
-        [Obsolete("Use constructor accepting  Action<GrpcChannelOptions> configureChannelOptions instead.")]
-        public EtcdClient(string connectionString, int port = 2379, string serverName = DefaultServerName,
-            HttpClientHandler handler = null, bool ssl = false,
-            bool useLegacyRpcExceptionForCancellation = false, Interceptor[] interceptors = null,
-            MethodConfig grpcMethodConfig = null, RetryThrottlingPolicy grpcRetryThrottlingPolicy = null) : this(connectionString, port, serverName, (options) =>
-            {
-                grpcMethodConfig ??= _defaultGrpcMethodConfig;
-                grpcRetryThrottlingPolicy ??= _defaultRetryThrottlingPolicy;
-                interceptors ??= Array.Empty<Interceptor>();
-
-                options.HttpHandler = handler;
-                options.ThrowOperationCanceledOnCancellation = !useLegacyRpcExceptionForCancellation;
-                options.ServiceConfig = new ServiceConfig
-                {
-                    MethodConfigs = { grpcMethodConfig },
-                    RetryThrottling = grpcRetryThrottlingPolicy,
-                    LoadBalancingConfigs = { new RoundRobinConfig() },
-                };
-
-                if (ssl)
-                {
-                    options.Credentials = new SslCredentials();
-                }
-                else
-                {
-#if NETCOREAPP3_1 || NETCOREAPP3_0
-                AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-#endif
-                    options.Credentials = ChannelCredentials.Insecure;
-                }
-
-            }, interceptors)
-        {
-
-        }
-
         #endregion
 
         #region IDisposable Support
