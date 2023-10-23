@@ -63,7 +63,7 @@ Advanced uses take advantage of the consistency guarantees to implement database
   <ItemGroup>
     <PackageReference Include="Google.Api.CommonProtos" Version="2.12.0" />
     <PackageReference Include="Google.Protobuf" Version="3.24.4" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.57.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.58.0" />
     <PackageReference Include="Grpc.Tools" Version="2.59.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
