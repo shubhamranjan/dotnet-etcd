@@ -10,12 +10,6 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryUrl>https://github.com/shubhamranjan/dotnet-etcd</RepositoryUrl>
     <PackageProjectUrl>https://github.com/shubhamranjan/dotnet-etcd</PackageProjectUrl>
-    <PackageReleaseNotesBreaking>
-      Change:
-      - Clients using certs with ssl will break. The lib now accepts a http handler as an argument which users can utilize to manage various aspects of the grpc client like ssl.
-      - Cancellations raise an OperationCanceledException instead of the GRPC's RpcException with a 'Cancelled' StatusCode.
-      This improves integration with the standard .net Tasks. To continue using the legacy RpcException, pass 'useLegacyRpcExceptionForCancellation=true' to the EtcdClient constructor.
-    </PackageReleaseNotesBreaking>
     <Authors>Shubham Ranjan</Authors>
     <Company />
     <Product />
