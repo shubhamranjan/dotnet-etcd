@@ -2,7 +2,7 @@
 package versionpb;
 
 import "grpc/proto/gogoproto/gogo.proto";
-import "grpc/proto/google/protobuf/descriptor.proto";
+import "google/protobuf/descriptor.proto";
 
 option (gogoproto.marshaler_all) = true;
 option (gogoproto.unmarshaler_all) = true;
