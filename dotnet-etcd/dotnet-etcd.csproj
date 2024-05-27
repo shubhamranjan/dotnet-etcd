@@ -25,7 +25,7 @@ Advanced uses take advantage of the consistency guarantees to implement database
     <SignAssembly>false</SignAssembly>
     <Version>7.0.0-beta</Version>
     <AutoGenerateBindingRedirects>False</AutoGenerateBindingRedirects>
-    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIconUrl />
     <PackageIcon>etcd-logo-rectangle.png</PackageIcon>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
@@ -40,19 +40,8 @@ Advanced uses take advantage of the consistency guarantees to implement database
   <ItemGroup>
     <None Remove="etcd-logo-rectangle.png" />
     <None Remove="grpc\proto\google\api\annotations.proto" />
-    <None Remove="LICENSE.md" />
-    <None Include="..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="etcd-logo-rectangle.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Include="LICENSE.md">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
+    <None Include="..\README.md" Pack ="True" PackagePath="\" />
+    <None Include="etcd-logo-rectangle.png" Pack ="True" PackagePath="\" />
   </ItemGroup>
 
 
