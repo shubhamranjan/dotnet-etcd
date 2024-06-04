@@ -40,15 +40,16 @@ Advanced uses take advantage of the consistency guarantees to implement database
   <ItemGroup>
     <None Remove="etcd-logo-rectangle.png" />
     <None Remove="grpc\proto\google\api\annotations.proto" />
-    <None Include="..\README.md" Pack ="True" PackagePath="\" />
-    <None Include="etcd-logo-rectangle.png" Pack ="True" PackagePath="\" />
+    <None Include="..\README.md" Pack="True" PackagePath="\" />
+    <None Include="etcd-logo-rectangle.png" Pack="True" PackagePath="\" />
   </ItemGroup>
 
 
   <ItemGroup>
-    <PackageReference Include="Google.Api.CommonProtos" Version="2.13.0" />
+    <PackageReference Include="Google.Api.CommonProtos" Version="2.13.0" /> 
     <PackageReference Include="Google.Protobuf" Version="3.25.1" />
     <PackageReference Include="Grpc.Net.Client" Version="2.60.0" />
+    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.60.0" />
     <PackageReference Include="Grpc.Tools" Version="2.60.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>

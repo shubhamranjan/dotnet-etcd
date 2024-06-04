@@ -12,7 +12,7 @@ using Grpc.Core;
 
 namespace dotnet_etcd
 {
-    public partial class EtcdClient
+    internal partial class EtcdClient
     {
         /// <summary>
         /// LeaseGrant creates a lease which expires if the server does not receive a keepAlive
@@ -104,7 +104,7 @@ namespace dotnet_etcd
                                                                                                              return;
                                                                                                          }
 
-                                                                                                         await Task.Delay(TimeSpan.FromMilliseconds(update.TTL * 1000 / 3), cancellationToken).ConfigureAwait(false);
+                                                                                                         await Task.Delay(TimeSpan.FromMilliseconds(update.TTL * 1000d / 3), cancellationToken).ConfigureAwait(false);
                                                                                                      }
                                                                                                  }
                                                                                              }).ConfigureAwait(false);

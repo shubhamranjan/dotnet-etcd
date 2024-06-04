@@ -32,7 +32,6 @@ namespace dotnet_etcd.interfaces
         Task<DeleteRangeResponse> DeleteAsync(string key, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         DeleteRangeResponse DeleteRange(string prefixKey, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         Task<DeleteRangeResponse> DeleteRangeAsync(string prefixKey, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
-        void Dispose();
         RangeResponse Get(RangeRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         RangeResponse Get(string key, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         Task<RangeResponse> GetAsync(RangeRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);

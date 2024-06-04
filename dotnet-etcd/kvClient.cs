@@ -12,7 +12,7 @@ using Google.Protobuf;
 
 namespace dotnet_etcd
 {
-    public partial class EtcdClient
+    internal partial class EtcdClient
     {
         /// <summary>
         /// Get the etcd response for a specified RangeRequest
