@@ -11,7 +11,7 @@ using V3Lockpb;
 
 namespace dotnet_etcd
 {
-    public partial class EtcdClient
+    internal partial class EtcdClient
     {
         /// <summary>
         /// Lock acquires a distributed shared lock on a given named lock.

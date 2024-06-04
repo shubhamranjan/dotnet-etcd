@@ -16,7 +16,7 @@ using Grpc.Core;
 
 namespace dotnet_etcd
 {
-    public partial class EtcdClient
+    internal partial class EtcdClient
     {
         private const string rangeEndString = "\x00";
         /// <summary>

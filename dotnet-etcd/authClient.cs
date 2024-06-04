@@ -9,7 +9,7 @@ using Etcdserverpb;
 
 namespace dotnet_etcd
 {
-    public partial class EtcdClient
+    internal partial class EtcdClient
     {
         /// <summary>
         /// Authenticate processes an authenticate request.
