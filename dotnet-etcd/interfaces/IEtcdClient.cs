@@ -25,9 +25,9 @@ namespace dotnet_etcd.interfaces
         CompactionResponse Compact(CompactionRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         Task<CompactionResponse> CompactAsync(CompactionRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         CampaignResponse Campaign(CampaignRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
-        CampaignResponse Campaign(string name, long lease, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+        CampaignResponse Campaign(string name, string value, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         Task<CampaignResponse> CampaignAsync(CampaignRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
-        Task<CampaignResponse> CampaignAsync(string name, long lease, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+        Task<CampaignResponse> CampaignAsync(string name, string value, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         DefragmentResponse Defragment(DefragmentRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         Task<DefragmentResponse> DefragmentAsync(DefragmentRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         DeleteRangeResponse Delete(DeleteRangeRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);

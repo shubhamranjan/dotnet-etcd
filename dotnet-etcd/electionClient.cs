@@ -46,14 +46,14 @@ namespace dotnet_etcd
         /// leadership still being held, and resign from the election.
         /// </summary>
         /// <param name="name">The name is the election’s identifier for the campaign.</param>
-        /// <param name="lease">The lease is the ID of the lease attached to leadership of the election. If the lease expires or is revoked before resigning leadership, then the leadership is transferred to the next campaigner, if any.</param>
+        /// <param name="value">The value is the initial proclaimed value set when the campaigner wins the election.</param>
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public CampaignResponse Campaign(
             string name,
-            long lease,
+            string value = null,
             Metadata headers = null,
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
@@ -61,8 +61,8 @@ namespace dotnet_etcd
                 new CampaignRequest() {
 #pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one
                     Name = ByteString.CopyFromUtf8(name ?? throw new ArgumentNullException(nameof(name))),
+                    Value = value == null ? null : ByteString.CopyFromUtf8(value),
 #pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one
-                    Lease = lease,
                 },
                 headers,
                 deadline,
@@ -99,14 +99,14 @@ namespace dotnet_etcd
         /// leadership still being held, and resign from the election.
         /// </summary>
         /// <param name="name">The name is the election’s identifier for the campaign.</param>
-        /// <param name="lease">The lease is the ID of the lease attached to leadership of the election. If the lease expires or is revoked before resigning leadership, then the leadership is transferred to the next campaigner, if any.</param>
+        /// <param name="value">The value is the initial proclaimed value set when the campaigner wins the election.</param>
         /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
         /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public async Task<CampaignResponse> CampaignAsync(
             string name,
-            long lease,
+            string value,
             Metadata headers = null,
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
@@ -115,8 +115,8 @@ namespace dotnet_etcd
                 {
 #pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one
                     Name = ByteString.CopyFromUtf8(name ?? throw new ArgumentNullException(nameof(name))),
+                    Value = value == null ? null : ByteString.CopyFromUtf8(value),
 #pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one
-                    Lease = lease,
                 },
                 headers,
                 deadline,
