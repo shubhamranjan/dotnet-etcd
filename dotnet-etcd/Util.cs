@@ -24,7 +24,7 @@ namespace dotnet_etcd
         /// </summary>
         /// <returns>IDictionary corresponding the RangeResponse</returns>
         /// <param name="resp">RangeResponse received from etcd server</param>
-        private static IDictionary<string, string> RangeRespondToDictionary(RangeResponse resp)
+        private static Dictionary<string, string> RangeRespondToDictionary(RangeResponse resp)
         {
             Dictionary<string, string> resDictionary = new();
             foreach (Mvccpb.KeyValue kv in resp.Kvs)
