@@ -2,7 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Etcdserverpb;
-
+using V3Electionpb;
 using V3Lockpb;
 
 namespace dotnet_etcd.multiplexer
@@ -22,5 +22,7 @@ namespace dotnet_etcd.multiplexer
         internal Maintenance.MaintenanceClient _maintenanceClient;
 
         internal Auth.AuthClient _authClient;
+
+        internal Election.ElectionClient _electionClient;
     }
 }

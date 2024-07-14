@@ -145,7 +145,8 @@ namespace dotnet_etcd
                 _lockClient = new V3Lockpb.Lock.LockClient(callInvoker),
                 _clusterClient = new Cluster.ClusterClient(callInvoker),
                 _maintenanceClient = new Maintenance.MaintenanceClient(callInvoker),
-                _authClient = new Auth.AuthClient(callInvoker)
+                _authClient = new Auth.AuthClient(callInvoker),
+                _electionClient = new V3Electionpb.Election.ElectionClient(callInvoker)
             };
         }
 

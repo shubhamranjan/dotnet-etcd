@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Etcdserverpb;
-
+using V3Electionpb;
 using V3Lockpb;
 
 namespace dotnet_etcd.interfaces
@@ -24,6 +24,10 @@ namespace dotnet_etcd.interfaces
         Task<AuthenticateResponse> AuthenticateAsync(AuthenticateRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         CompactionResponse Compact(CompactionRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         Task<CompactionResponse> CompactAsync(CompactionRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+        CampaignResponse Campaign(CampaignRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+        CampaignResponse Campaign(string name, string value, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+        Task<CampaignResponse> CampaignAsync(CampaignRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+        Task<CampaignResponse> CampaignAsync(string name, string value, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         DefragmentResponse Defragment(DefragmentRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         Task<DefragmentResponse> DefragmentAsync(DefragmentRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         DeleteRangeResponse Delete(DeleteRangeRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
@@ -62,6 +66,10 @@ namespace dotnet_etcd.interfaces
         LockResponse Lock(string name, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         Task<LockResponse> LockAsync(LockRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         Task<LockResponse> LockAsync(string name, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+        LeaderResponse Leader(LeaderRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+        LeaderResponse Leader(string name, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+        Task<LeaderResponse> LeaderAsync(LeaderRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+        Task<LeaderResponse> LeaderAsync(string name, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         MemberAddResponse MemberAdd(MemberAddRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         Task<MemberAddResponse> MemberAddAsync(MemberAddRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         MemberListResponse MemberList(MemberListRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
@@ -72,6 +80,16 @@ namespace dotnet_etcd.interfaces
         Task<MemberUpdateResponse> MemberUpdateAsync(MemberUpdateRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         MoveLeaderResponse MoveLeader(MoveLeaderRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         Task<MoveLeaderResponse> MoveLeaderAsync(MoveLeaderRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+        IAsyncEnumerable<LeaderResponse> ObserveAsync(LeaderRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+        IAsyncEnumerable<LeaderResponse> ObserveAsync(string name, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+        ProclaimResponse Proclaim(ProclaimRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+        ProclaimResponse Proclaim(LeaderKey leader, string value, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+        Task<ProclaimResponse> ProclaimAsync(ProclaimRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,  CancellationToken cancellationToken = default);
+        Task<ProclaimResponse> ProclaimAsync(LeaderKey leader, string value, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+        ResignResponse Resign(ResignRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+        ResignResponse Resign(LeaderKey leader, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+        Task<ResignResponse> ResignAsync(ResignRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
+        Task<ResignResponse> ResignAsync(LeaderKey leader, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         PutResponse Put(PutRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         PutResponse Put(string key, string val, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         Task<PutResponse> PutAsync(PutRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
