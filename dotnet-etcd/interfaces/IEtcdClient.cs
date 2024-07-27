@@ -57,6 +57,7 @@ namespace dotnet_etcd.interfaces
         Task LeaseKeepAlive(LeaseKeepAliveRequest request, Action<LeaseKeepAliveResponse>[] methods, CancellationToken cancellationToken, Grpc.Core.Metadata headers = null);
         Task LeaseKeepAlive(LeaseKeepAliveRequest[] requests, Action<LeaseKeepAliveResponse> method, CancellationToken cancellationToken, Grpc.Core.Metadata headers = null);
         Task LeaseKeepAlive(LeaseKeepAliveRequest[] requests, Action<LeaseKeepAliveResponse>[] methods, CancellationToken cancellationToken, Grpc.Core.Metadata headers = null, DateTime? deadline = null);
+        Task LeaseKeepAlive(CancellationTokenSource cancellationTokenSource, long leaseId, int keepAliveTimeout = 1000, int? communicationTimeout = null, Grpc.Core.Metadata headers = null, DateTime? deadline = null);
         Task LeaseKeepAlive(long leaseId, CancellationToken cancellationToken);
         LeaseRevokeResponse LeaseRevoke(LeaseRevokeRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         Task<LeaseRevokeResponse> LeaseRevokeAsync(LeaseRevokeRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
