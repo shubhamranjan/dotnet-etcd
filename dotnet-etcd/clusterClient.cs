@@ -21,7 +21,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public MemberAddResponse MemberAdd(MemberAddRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._clusterClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.ClusterClient
                                                                             .MemberAdd(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<MemberAddResponse> MemberAddAsync(MemberAddRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._clusterClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.ClusterClient
                                                                             .MemberAddAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public MemberRemoveResponse MemberRemove(MemberRemoveRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._clusterClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.ClusterClient
                                                                             .MemberRemove(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<MemberRemoveResponse> MemberRemoveAsync(MemberRemoveRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._clusterClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.ClusterClient
                                                                             .MemberRemoveAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public MemberUpdateResponse MemberUpdate(MemberUpdateRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._clusterClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.ClusterClient
                                                                             .MemberUpdate(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<MemberUpdateResponse> MemberUpdateAsync(MemberUpdateRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._clusterClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.ClusterClient
                                                                             .MemberUpdateAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public MemberListResponse MemberList(MemberListRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._clusterClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.ClusterClient
                                                                             .MemberList(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<MemberListResponse> MemberListAsync(MemberListRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._clusterClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.ClusterClient
                                                                             .MemberListAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
     }
 }

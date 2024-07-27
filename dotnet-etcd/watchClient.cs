@@ -99,7 +99,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default) => CallEtcdAsync(async (connection) =>
                                                             {
                                                                 using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                                                                    connection._watchClient.Watch(headers, deadline, cancellationToken))
+                                                                    connection.WatchClient.Watch(headers, deadline, cancellationToken))
                                                                 {
                                                                     Task watcherTask = Task.Run(async () =>
                                                                     {
@@ -176,7 +176,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken = default) => CallEtcdAsync(async (connection) =>
                                                             {
                                                                 using (AsyncDuplexStreamingCall<WatchRequest, WatchResponse> watcher =
-                                                                    connection._watchClient.Watch(headers, deadline, cancellationToken))
+                                                                    connection.WatchClient.Watch(headers, deadline, cancellationToken))
                                                                 {
                                                                     Task watcherTask = Task.Run(async () =>
                                                                     {

@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Etcdserverpb;
+using Grpc.Core;
 using V3Electionpb;
 using V3Lockpb;
 
@@ -9,20 +10,43 @@ namespace dotnet_etcd.multiplexer
 {
     internal sealed class Connection
     {
-        internal KV.KVClient _kvClient;
+        private readonly CallInvoker _callInvoker;
 
-        internal Watch.WatchClient _watchClient;
+        internal Connection(CallInvoker callInvoker)
+        {
+            _callInvoker = callInvoker;
+        }
 
-        internal Lease.LeaseClient _leaseClient;
+        private KV.KVClient _kvClient;
 
-        internal Lock.LockClient _lockClient;
+        private Watch.WatchClient _watchClient;
 
-        internal Cluster.ClusterClient _clusterClient;
+        private Lease.LeaseClient _leaseClient;
 
-        internal Maintenance.MaintenanceClient _maintenanceClient;
+        private Lock.LockClient _lockClient;
 
-        internal Auth.AuthClient _authClient;
+        private Cluster.ClusterClient _clusterClient;
 
-        internal Election.ElectionClient _electionClient;
+        private Maintenance.MaintenanceClient _maintenanceClient;
+
+        private Auth.AuthClient _authClient;
+
+        private Election.ElectionClient _electionClient;
+
+        internal KV.KVClient KVClient => _kvClient ??= new KV.KVClient(_callInvoker);
+
+        internal Watch.WatchClient WatchClient => _watchClient ??= new Watch.WatchClient(_callInvoker);
+
+        internal Lease.LeaseClient LeaseClient => _leaseClient ??= new Lease.LeaseClient(_callInvoker);
+
+        internal Lock.LockClient LockClient => _lockClient ??= new Lock.LockClient(_callInvoker);
+
+        internal Cluster.ClusterClient ClusterClient => _clusterClient ??= new Cluster.ClusterClient(_callInvoker);
+
+        internal Maintenance.MaintenanceClient MaintenanceClient => _maintenanceClient ??= new Maintenance.MaintenanceClient(_callInvoker);
+
+        internal Auth.AuthClient AuthClient => _authClient ??= new Auth.AuthClient(_callInvoker);
+
+        internal Election.ElectionClient ElectionClient => _electionClient ??= new Election.ElectionClient(_callInvoker);
     }
 }

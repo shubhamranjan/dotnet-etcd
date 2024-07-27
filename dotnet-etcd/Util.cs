@@ -67,7 +67,7 @@ namespace dotnet_etcd
         /// <typeparam name="TResponse">The type of the response that is returned from the call to etcd</typeparam>
         /// <param name="etcdCallFunc">The function to perform actions with the <seealso cref="Connection"/> object</param>
         /// <returns>The response from the the <paramref name="etcdCallFunc"/></returns>
-        private TResponse CallEtcd<TResponse>(Func<Connection, TResponse> etcdCallFunc) => etcdCallFunc.Invoke(_connection);
+        private TResponse CallEtcd<TResponse>(Func<Connection, TResponse> etcdCallFunc) => etcdCallFunc(_connection);
 
         /// <summary>
         /// Generic helper for performing actions an a connection.
@@ -77,7 +77,7 @@ namespace dotnet_etcd
         /// <typeparam name="TResponse">The type of the response that is returned from the call to etcd</typeparam>
         /// <param name="etcdCallFunc">The function to perform actions with the <seealso cref="Connection"/> object</param>
         /// <returns>The response from the the <paramref name="etcdCallFunc"/></returns>
-        private Task<TResponse> CallEtcdAsync<TResponse>(Func<Connection, Task<TResponse>> etcdCallFunc) => etcdCallFunc.Invoke(_connection);
+        private Task<TResponse> CallEtcdAsync<TResponse>(Func<Connection, Task<TResponse>> etcdCallFunc) => etcdCallFunc(_connection);
 
         /// <summary>
         /// Generic helper for performing actions an a connection.
@@ -86,6 +86,6 @@ namespace dotnet_etcd
         /// </summary>
         /// <param name="etcdCallFunc">The function to perform actions with the <seealso cref="Connection"/> object</param>
         /// <returns>The response from the the <paramref name="etcdCallFunc"/></returns>
-        private Task CallEtcdAsync(Func<Connection, Task> etcdCallFunc) => etcdCallFunc.Invoke(_connection);
+        private Task CallEtcdAsync(Func<Connection, Task> etcdCallFunc) => etcdCallFunc(_connection);
     }
 }

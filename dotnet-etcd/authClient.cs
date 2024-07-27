@@ -21,7 +21,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthenticateResponse Authenticate(AuthenticateRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._authClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.AuthClient
                                                                             .Authenticate(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthenticateResponse> AuthenticateAsync(AuthenticateRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._authClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.AuthClient
                                                                             .AuthenticateAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthEnableResponse AuthEnable(AuthEnableRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._authClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.AuthClient
                                                                             .AuthEnable(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthEnableResponse> AuthEnableAsync(AuthEnableRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._authClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.AuthClient
                                                                             .AuthEnableAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthDisableResponse AuthDisable(AuthDisableRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._authClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.AuthClient
                                                                             .AuthDisable(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthDisableResponse> AuthDisableAsync(AuthDisableRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._authClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.AuthClient
                                                                             .AuthDisableAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthUserAddResponse UserAdd(AuthUserAddRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._authClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.AuthClient
                                                                             .UserAdd(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthUserAddResponse> UserAddAsync(AuthUserAddRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._authClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.AuthClient
                                                                             .UserAddAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthUserGetResponse UserGet(AuthUserGetRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._authClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.AuthClient
                                                                             .UserGet(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthUserGetResponse> UserGetAsync(AuthUserGetRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._authClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.AuthClient
                                                                             .UserGetAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthUserListResponse UserList(AuthUserListRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._authClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.AuthClient
                                                                             .UserList(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthUserListResponse> UserListAsync(AuthUserListRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._authClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.AuthClient
                                                                             .UserListAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthUserDeleteResponse UserDelete(AuthUserDeleteRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._authClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.AuthClient
                                                                             .UserDelete(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -190,7 +190,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthUserDeleteResponse> UserDeleteAsync(AuthUserDeleteRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._authClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.AuthClient
                                                                             .UserDeleteAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthUserChangePasswordResponse UserChangePassword(AuthUserChangePasswordRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._authClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.AuthClient
                                                                             .UserChangePassword(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -216,7 +216,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthUserChangePasswordResponse> UserChangePasswordAsync(AuthUserChangePasswordRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._authClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.AuthClient
                                                                             .UserChangePasswordAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthUserGrantRoleResponse UserGrantRole(AuthUserGrantRoleRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._authClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.AuthClient
                                                                             .UserGrantRole(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -242,7 +242,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthUserGrantRoleResponse> UserGrantRoleAsync(AuthUserGrantRoleRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._authClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.AuthClient
                                                                             .UserGrantRoleAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -255,7 +255,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthUserRevokeRoleResponse UserRevokeRole(AuthUserRevokeRoleRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._authClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.AuthClient
                                                                             .UserRevokeRole(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -268,7 +268,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthUserRevokeRoleResponse> UserRevokeRoleAsync(AuthUserRevokeRoleRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._authClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.AuthClient
                                                                             .UserRevokeRoleAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -281,7 +281,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthRoleAddResponse RoleAdd(AuthRoleAddRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._authClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.AuthClient
                                                                             .RoleAdd(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -294,7 +294,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthRoleAddResponse> RoleAddAsync(AuthRoleAddRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._authClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.AuthClient
                                                                             .RoleAddAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -307,7 +307,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthRoleGetResponse RoleGet(AuthRoleGetRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._authClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.AuthClient
                                                                             .RoleGet(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -320,7 +320,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthRoleGetResponse> RoleGetAsync(AuthRoleGetRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._authClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.AuthClient
                                                                             .RoleGetAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -333,7 +333,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthRoleListResponse RoleList(AuthRoleListRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._authClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.AuthClient
                                                                             .RoleList(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -346,7 +346,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthRoleListResponse> RoleListAsync(AuthRoleListRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._authClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.AuthClient
                                                                             .RoleListAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -359,7 +359,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthRoleDeleteResponse RoleDelete(AuthRoleDeleteRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._authClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.AuthClient
                                                                             .RoleDelete(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -372,7 +372,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthRoleDeleteResponse> RoleDeleteAsync(AuthRoleDeleteRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._authClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.AuthClient
                                                                             .RoleDeleteAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -385,7 +385,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthRoleGrantPermissionResponse RoleGrantPermission(AuthRoleGrantPermissionRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._authClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.AuthClient
                                                                             .RoleGrantPermission(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -398,7 +398,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthRoleGrantPermissionResponse> RoleGrantPermissionAsync(
             AuthRoleGrantPermissionRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._authClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.AuthClient
                                                                             .RoleGrantPermissionAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -411,7 +411,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public AuthRoleRevokePermissionResponse RoleRevokePermission(AuthRoleRevokePermissionRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._authClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.AuthClient
                                                                             .RoleRevokePermission(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -424,7 +424,7 @@ namespace dotnet_etcd
         /// <returns>The response received from the server.</returns>
         public async Task<AuthRoleRevokePermissionResponse> RoleRevokePermissionAsync(
             AuthRoleRevokePermissionRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._authClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.AuthClient
                                                                             .RoleRevokePermissionAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
     }
 }
