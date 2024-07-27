@@ -46,7 +46,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public LockResponse Lock(LockRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._lockClient.Lock(request, headers, deadline, cancellationToken));
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.LockClient.Lock(request, headers, deadline, cancellationToken));
 
         /// <summary>
         /// LockAsync acquires a distributed shared lock on a given named lock.
@@ -81,7 +81,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public async Task<LockResponse> LockAsync(LockRequest request, Grpc.Core.Metadata headers = null,
-            DateTime? deadline = null, CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._lockClient
+            DateTime? deadline = null, CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.LockClient
                                                                                                        .LockAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public UnlockResponse Unlock(UnlockRequest request, Grpc.Core.Metadata headers = null,
-            DateTime? deadline = null, CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._lockClient
+            DateTime? deadline = null, CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.LockClient
                                                                                                        .Unlock(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>The response received from the server.</returns>
         public async Task<UnlockResponse> UnlockAsync(UnlockRequest request, Grpc.Core.Metadata headers = null,
-            DateTime? deadline = null, CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._lockClient
+            DateTime? deadline = null, CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.LockClient
                                                                                                        .UnlockAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
     }
 }

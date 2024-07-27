@@ -22,7 +22,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>Alarm Response</returns>
         public AlarmResponse Alarm(AlarmRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._maintenanceClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.MaintenanceClient
                                                                             .Alarm(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace dotnet_etcd
         /// <returns>Alarm Response</returns>
         public async Task<AlarmResponse> AlarmAsync(AlarmRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._maintenanceClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.MaintenanceClient
                                                                             .AlarmAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace dotnet_etcd
         /// <returns>Status response</returns>
         public StatusResponse Status(StatusRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._maintenanceClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.MaintenanceClient
                                                                             .Status(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace dotnet_etcd
         /// <returns>Status response</returns>
         public async Task<StatusResponse> StatusAsync(StatusRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._maintenanceClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.MaintenanceClient
                                                                             .StatusAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace dotnet_etcd
         /// <returns>Defragment Response</returns>
         public DefragmentResponse Defragment(DefragmentRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._maintenanceClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.MaintenanceClient
                                                                             .Defragment(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace dotnet_etcd
         /// <returns>Defragment Response</returns>
         public async Task<DefragmentResponse> DefragmentAsync(DefragmentRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._maintenanceClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.MaintenanceClient
                                                                             .DefragmentAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace dotnet_etcd
         /// <param name="cancellationToken">An optional token for canceling the call.</param>
         /// <returns>Hash Response</returns>
         public HashResponse Hash(HashRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._maintenanceClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.MaintenanceClient
                                                                             .Hash(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace dotnet_etcd
         /// <returns>Hash Response</returns>
         public async Task<HashResponse> HashAsync(HashRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._maintenanceClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.MaintenanceClient
                                                                             .HashAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace dotnet_etcd
         /// <returns>HashKV Response</returns>
         public HashKVResponse HashKV(HashKVRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._maintenanceClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.MaintenanceClient
                                                                             .HashKV(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace dotnet_etcd
         /// <returns>HashKV Response</returns>
         public async Task<HashKVResponse> HashKVAsync(HashKVRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._maintenanceClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.MaintenanceClient
                                                                             .HashKVAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken, Grpc.Core.Metadata headers = null, DateTime? deadline = null) => await CallEtcdAsync(async (connection) =>
                                                                                                                 {
                                                                                                                     using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = connection
-                                                                                                                        ._maintenanceClient.Snapshot(request, headers, deadline, cancellationToken))
+                                                                                                                        .MaintenanceClient.Snapshot(request, headers, deadline, cancellationToken))
                                                                                                                     {
                                                                                                                         while (await snapshotter.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                                                                                                                         {
@@ -187,7 +187,7 @@ namespace dotnet_etcd
             CancellationToken cancellationToken, Grpc.Core.Metadata headers = null, DateTime? deadline = null) => await CallEtcdAsync(async (connection) =>
                                                                                                                 {
                                                                                                                     using (AsyncServerStreamingCall<SnapshotResponse> snapshotter = connection
-                                                                                                                        ._maintenanceClient.Snapshot(request, headers, deadline, cancellationToken))
+                                                                                                                        .MaintenanceClient.Snapshot(request, headers, deadline, cancellationToken))
                                                                                                                     {
                                                                                                                         while (await snapshotter.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
                                                                                                                         {
@@ -210,7 +210,7 @@ namespace dotnet_etcd
         /// <returns>MoveLeader Response</returns>
         public MoveLeaderResponse MoveLeader(MoveLeaderRequest request, Grpc.Core.Metadata headers = null,
             DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection._maintenanceClient
+            CancellationToken cancellationToken = default) => CallEtcd((connection) => connection.MaintenanceClient
                                                                             .MoveLeader(request, headers, deadline, cancellationToken));
 
         /// <summary>
@@ -223,7 +223,7 @@ namespace dotnet_etcd
         /// <returns>MoveLeader Response</returns>
         public async Task<MoveLeaderResponse> MoveLeaderAsync(MoveLeaderRequest request,
             Grpc.Core.Metadata headers = null, DateTime? deadline = null,
-            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection._maintenanceClient
+            CancellationToken cancellationToken = default) => await CallEtcdAsync(async (connection) => await connection.MaintenanceClient
                                                                             .MoveLeaderAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
     }
 }

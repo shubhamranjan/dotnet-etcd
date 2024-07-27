@@ -66,6 +66,11 @@ namespace dotnet_etcd
 
         #region Initializers
 
+        public EtcdClient(CallInvoker callInvoker)
+        {
+            _connection = new Connection(callInvoker ?? throw new ArgumentNullException(nameof(callInvoker)));
+        }
+
         public EtcdClient(string connectionString, int port = 2379, string serverName = DefaultServerName, Action<GrpcChannelOptions> configureChannelOptions = null, Interceptor[] interceptors = null)
         {
 
@@ -137,17 +142,7 @@ namespace dotnet_etcd
 
 
             // Setup Connection
-            _connection = new Connection
-            {
-                _kvClient = new KV.KVClient(callInvoker),
-                _watchClient = new Watch.WatchClient(callInvoker),
-                _leaseClient = new Lease.LeaseClient(callInvoker),
-                _lockClient = new V3Lockpb.Lock.LockClient(callInvoker),
-                _clusterClient = new Cluster.ClusterClient(callInvoker),
-                _maintenanceClient = new Maintenance.MaintenanceClient(callInvoker),
-                _authClient = new Auth.AuthClient(callInvoker),
-                _electionClient = new V3Electionpb.Election.ElectionClient(callInvoker)
-            };
+            _connection = new Connection(callInvoker);
         }
 
         #endregion
