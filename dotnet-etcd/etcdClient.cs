@@ -5,13 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Net.Http;
 
 
 using dotnet_etcd.interfaces;
 using dotnet_etcd.multiplexer;
-
-using Etcdserverpb;
 
 using Grpc.Core;
 using Grpc.Core.Interceptors;
