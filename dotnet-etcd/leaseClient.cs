@@ -116,7 +116,7 @@ namespace dotnet_etcd
                     .ConfigureAwait(false);
             }
 
-            AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> LeaseKeepAlive(Connection connection, int timeoutInMilliseconds, CancellationToken cancellationToken)
+            AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> LeaseKeepAlive(multiplexer.Connection connection, int timeoutInMilliseconds, CancellationToken cancellationToken)
             {
                 // communication timeout
                 using CancellationTokenSource cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
