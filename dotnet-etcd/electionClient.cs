@@ -34,9 +34,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
             => CallEtcd((connection) => connection.ElectionClient.Campaign(
-#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 request ?? throw new ArgumentNullException(nameof(request)),
-#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 headers,
                 deadline,
                 cancellationToken));
@@ -62,10 +60,8 @@ namespace dotnet_etcd
             => CallEtcd((connection) => connection.ElectionClient.Campaign(
                 new CampaignRequest()
                 {
-#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one
                     Name = ByteString.CopyFromUtf8(name ?? throw new ArgumentNullException(nameof(name))),
                     Value = value == null ? null : ByteString.CopyFromUtf8(value),
-#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 },
                 headers,
                 deadline,
@@ -88,9 +84,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
             => await CallEtcdAsync(async (connection) => await connection.ElectionClient.CampaignAsync(
-#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 request ?? throw new ArgumentNullException(nameof(request)),
-#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 headers,
                 deadline,
                 cancellationToken)).ConfigureAwait(false);
@@ -116,10 +110,8 @@ namespace dotnet_etcd
             => await CallEtcdAsync(async (connection) => await connection.ElectionClient.CampaignAsync(
                 new CampaignRequest()
                 {
-#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one
                     Name = ByteString.CopyFromUtf8(name ?? throw new ArgumentNullException(nameof(name))),
                     Value = value == null ? null : ByteString.CopyFromUtf8(value),
-#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 },
                 headers,
                 deadline,
@@ -139,9 +131,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
             => CallEtcd((connection) => connection.ElectionClient.Proclaim(
-#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 request ?? throw new ArgumentNullException(nameof(request)),
-#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 headers,
                 deadline,
                 cancellationToken));
@@ -164,10 +154,8 @@ namespace dotnet_etcd
             => CallEtcd((connection) => connection.ElectionClient.Proclaim(
                 new ProclaimRequest
                 {
-#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one
                     Leader = leader ?? throw new ArgumentNullException(nameof(leader)),
                     Value = ByteString.CopyFromUtf8(value ?? throw new ArgumentNullException(nameof(value))),
-#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 },
                 headers,
                 deadline,
@@ -187,9 +175,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
             => await CallEtcdAsync(async (connection) => await connection.ElectionClient.ProclaimAsync(
-#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 request ?? throw new ArgumentNullException(nameof(request)),
-#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 headers,
                 deadline,
                 cancellationToken)).ConfigureAwait(false);
@@ -212,10 +198,8 @@ namespace dotnet_etcd
             => await CallEtcdAsync(async (connection) => await connection.ElectionClient.ProclaimAsync(
                 new ProclaimRequest
                 {
-#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one
                     Leader = leader ?? throw new ArgumentNullException(nameof(leader)),
                     Value = ByteString.CopyFromUtf8(value ?? throw new ArgumentNullException(nameof(value))),
-#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 },
                 headers,
                 deadline,
@@ -235,9 +219,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
             => CallEtcd((connection) => connection.ElectionClient.Leader(
-#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 request ?? throw new ArgumentNullException(nameof(request)),
-#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 headers,
                 deadline,
                 cancellationToken));
@@ -258,9 +240,7 @@ namespace dotnet_etcd
             => CallEtcd((connection) => connection.ElectionClient.Leader(
                 new LeaderRequest
                 {
-#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one
                     Name = ByteString.CopyFromUtf8(name ?? throw new ArgumentNullException(nameof(name)))
-#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 },
                 headers,
                 deadline,
@@ -280,9 +260,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
             => await CallEtcdAsync(async (connection) => await connection.ElectionClient.LeaderAsync(
-#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 request ?? throw new ArgumentNullException(nameof(request)),
-#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 headers,
                 deadline,
                 cancellationToken)).ConfigureAwait(false);
@@ -303,9 +281,7 @@ namespace dotnet_etcd
             => await CallEtcdAsync(async (connection) => await connection.ElectionClient.LeaderAsync(
                 new LeaderRequest
                 {
-#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one
                     Name = ByteString.CopyFromUtf8(name ?? throw new ArgumentNullException(nameof(name)))
-#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 },
                 headers,
                 deadline,
@@ -326,9 +302,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
             => CallEtcd((connection) => connection.ElectionClient.Observe(
-#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 request ?? throw new ArgumentNullException(nameof(request)),
-#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 headers,
                 deadline,
                 cancellationToken));
@@ -350,9 +324,7 @@ namespace dotnet_etcd
             => CallEtcd((connection) => connection.ElectionClient.Observe(
                 new LeaderRequest
                 {
-#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one
                     Name = ByteString.CopyFromUtf8(name ?? throw new ArgumentNullException(nameof(name)))
-#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 },
                 headers,
                 deadline,
@@ -432,9 +404,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
             => CallEtcd((connection) => connection.ElectionClient.Resign(
-#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 request ?? throw new ArgumentNullException(nameof(request)),
-#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 headers,
                 deadline,
                 cancellationToken));
@@ -456,9 +426,7 @@ namespace dotnet_etcd
             => CallEtcd((connection) => connection.ElectionClient.Resign(
                 new ResignRequest
                 {
-#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one
                     Leader = leader ?? throw new ArgumentNullException(nameof(leader))
-#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 },
                 headers,
                 deadline,
@@ -479,9 +447,7 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
             => await CallEtcdAsync(async (connection) => await connection.ElectionClient.ResignAsync(
-#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 request ?? throw new ArgumentNullException(nameof(request)),
-#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 headers,
                 deadline,
                 cancellationToken)).ConfigureAwait(false);
@@ -503,9 +469,7 @@ namespace dotnet_etcd
             => await CallEtcdAsync(async (connection) => await connection.ElectionClient.ResignAsync(
                 new ResignRequest
                 {
-#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one
                     Leader = leader ?? throw new ArgumentNullException(nameof(leader))
-#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one
                 },
                 headers,
                 deadline,
