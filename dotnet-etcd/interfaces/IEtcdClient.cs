@@ -7,7 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Etcdserverpb;
+
 using V3Electionpb;
+
 using V3Lockpb;
 
 namespace dotnet_etcd.interfaces
@@ -85,7 +87,7 @@ namespace dotnet_etcd.interfaces
         IAsyncEnumerable<LeaderResponse> ObserveAsync(string name, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         ProclaimResponse Proclaim(ProclaimRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         ProclaimResponse Proclaim(LeaderKey leader, string value, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
-        Task<ProclaimResponse> ProclaimAsync(ProclaimRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null,  CancellationToken cancellationToken = default);
+        Task<ProclaimResponse> ProclaimAsync(ProclaimRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         Task<ProclaimResponse> ProclaimAsync(LeaderKey leader, string value, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         ResignResponse Resign(ResignRequest request, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);
         ResignResponse Resign(LeaderKey leader, Grpc.Core.Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default);

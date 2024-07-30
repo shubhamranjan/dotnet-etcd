@@ -8,7 +8,9 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Google.Protobuf;
+
 using Grpc.Core;
+
 using V3Electionpb;
 
 namespace dotnet_etcd
@@ -58,7 +60,8 @@ namespace dotnet_etcd
             DateTime? deadline = null,
             CancellationToken cancellationToken = default)
             => CallEtcd((connection) => connection.ElectionClient.Campaign(
-                new CampaignRequest() {
+                new CampaignRequest()
+                {
 #pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one
                     Name = ByteString.CopyFromUtf8(name ?? throw new ArgumentNullException(nameof(name))),
                     Value = value == null ? null : ByteString.CopyFromUtf8(value),

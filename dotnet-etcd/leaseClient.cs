@@ -85,7 +85,7 @@ namespace dotnet_etcd
             ArgumentNullException.ThrowIfNull(cancellationTokenSource);
 #pragma warning disable CA1512 // ArgumentOutOfRangeException.ThrowIfNegativeOrZero it is only .NET 8 now
             if (keepAliveTimeout <= 0)
-            {   
+            {
                 throw new ArgumentOutOfRangeException(nameof(keepAliveTimeout));
             }
 #pragma warning restore CA1512
