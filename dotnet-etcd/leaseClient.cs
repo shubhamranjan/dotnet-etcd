@@ -125,7 +125,7 @@ namespace dotnet_etcd
                 return connection.LeaseClient.LeaseKeepAlive(headers, deadline, cancellationTokenSource.Token);
             }
 
-            async Task KeepAliveAsync()
+            async Task KeepAliveAsync(object state)
             {
                 int communicationTimeoutInMilliseconds = communicationTimeout ?? keepAliveTimeout / 2;
                 LeaseKeepAliveRequest request = new()
@@ -211,7 +211,7 @@ namespace dotnet_etcd
             }
 
             return Task.Factory.StartNew(
-                (_) => KeepAliveAsync(),
+                KeepAliveAsync,
                 null,
                 cancellationToken,
                 TaskCreationOptions.LongRunning,
