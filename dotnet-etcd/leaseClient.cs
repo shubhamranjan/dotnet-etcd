@@ -95,6 +95,7 @@ namespace dotnet_etcd
             }
 
             CancellationToken cancellationToken = cancellationTokenSource.Token;
+            int communicationTimeoutInMilliseconds = communicationTimeout ?? keepAliveTimeout / 2;
 
             async ValueTask WriteAsync(AsyncDuplexStreamingCall<LeaseKeepAliveRequest, LeaseKeepAliveResponse> leaser, LeaseKeepAliveRequest request, int timeoutInMilliseconds, CancellationToken cancellationToken)
             {
@@ -125,9 +126,8 @@ namespace dotnet_etcd
                 return connection.LeaseClient.LeaseKeepAlive(headers, deadline, cancellationTokenSource.Token);
             }
 
-            async Task KeepAliveAsync(object state)
+            async Task KeepAliveAsync()
             {
-                int communicationTimeoutInMilliseconds = communicationTimeout ?? keepAliveTimeout / 2;
                 LeaseKeepAliveRequest request = new()
                 {
                     ID = leaseId,
@@ -210,13 +210,7 @@ namespace dotnet_etcd
                 }
             }
 
-            return Task.Factory.StartNew(
-                KeepAliveAsync,
-                null,
-                cancellationToken,
-                TaskCreationOptions.LongRunning,
-                TaskScheduler.Current)
-                .Unwrap();
+            return Task.Run(KeepAliveAsync, cancellationToken);
         });
 
         /// <summary>
