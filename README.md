@@ -46,6 +46,20 @@ Add using statement at the top of your class file
     EtcdClient etcdClient = new EtcdClient("https://localhost:23790,https://localhost:23791,https://localhost:23792");
 ```
 
+#### Insecure Endpoint
+```C#
+    EtcdClient client = new EtcdClient("host1:port1:,...., hostN:portN", configureChannelOptions: (options =>
+    {
+        options.Credentials = ChannelCredentials.Insecure;
+    }));
+
+    // E.g.
+    EtcdClient etcdClient = new EtcdClient("http://localhost:23790,http://localhost:23791,http://localhost:23792", configureChannelOptions: (options =>
+    {
+        options.Credentials = ChannelCredentials.Insecure;
+    }));
+```
+
 ### Client With user and password
     
 ```C#
