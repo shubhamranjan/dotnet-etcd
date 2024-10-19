@@ -154,7 +154,7 @@ namespace dotnet_etcd
                                     await cancellationTokenSource.CancelAsync()
                                         .ConfigureAwait(false);
 #else
-                                        cancellationTokenSource.Cancel();
+                                    cancellationTokenSource.Cancel();
 #endif
                                 }
                             }
@@ -178,7 +178,7 @@ namespace dotnet_etcd
                                     await cancellationTokenSource.CancelAsync()
                                         .ConfigureAwait(false);
 #else
-                                        cancellationTokenSource.Cancel();
+                                    cancellationTokenSource.Cancel();
 #endif
                                 }
                             }
@@ -204,7 +204,7 @@ namespace dotnet_etcd
                         await cancellationTokenSource.CancelAsync()
                             .ConfigureAwait(false);
 #else
-                            cancellationTokenSource.Cancel();
+                        cancellationTokenSource.Cancel();
 #endif
                     }
                 }

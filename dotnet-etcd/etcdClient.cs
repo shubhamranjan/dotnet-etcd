@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-
+using System.Net.Http;
 
 using dotnet_etcd.interfaces;
 using dotnet_etcd.multiplexer;
@@ -38,6 +38,8 @@ namespace dotnet_etcd
         private const string DefaultServerName = "my-etcd-server";
 
         private readonly Connection _connection;
+        private readonly GrpcChannel _channel;
+
 
         // https://learn.microsoft.com/en-us/aspnet/core/grpc/retries?view=aspnetcore-6.0#configure-a-grpc-retry-policy
         private static readonly MethodConfig _defaultGrpcMethodConfig = new()
@@ -87,6 +89,13 @@ namespace dotnet_etcd
                 connectionString = DnsPrefix + connectionString;
             }
 
+            var httpHandler = new SocketsHttpHandler
+            {
+                KeepAlivePingDelay = TimeSpan.FromSeconds(30),
+                KeepAlivePingTimeout = TimeSpan.FromSeconds(30),
+                KeepAlivePingPolicy = HttpKeepAlivePingPolicy.Always
+            };
+
             // Connection Configuration
             var options = new GrpcChannelOptions
             {
@@ -95,16 +104,18 @@ namespace dotnet_etcd
                     MethodConfigs = { _defaultGrpcMethodConfig },
                     RetryThrottling = _defaultRetryThrottlingPolicy,
                     LoadBalancingConfigs = { new RoundRobinConfig() },
-                }
+                },
+                HttpHandler = httpHandler,
+                DisposeHttpClient = true,
+                ThrowOperationCanceledOnCancellation = true,
             };
 
             configureChannelOptions?.Invoke(options);
 
             // Channel Configuration
-            GrpcChannel channel = null;
             if (connectionString.StartsWith(DnsPrefix, StringComparison.InvariantCultureIgnoreCase))
             {
-                channel = GrpcChannel.ForAddress(connectionString, options);
+                _channel = GrpcChannel.ForAddress(connectionString, options);
             }
             else
             {
@@ -132,10 +143,10 @@ namespace dotnet_etcd
                 services.AddSingleton<ResolverFactory>(factory);
                 options.ServiceProvider = services.BuildServiceProvider();
 
-                channel = GrpcChannel.ForAddress($"{StaticHostsPrefix}{serverName}", options);
+                _channel = GrpcChannel.ForAddress($"{StaticHostsPrefix}{serverName}", options);
             }
 
-            CallInvoker callInvoker = interceptors != null && interceptors.Length > 0 ? channel.Intercept(interceptors) : channel.CreateCallInvoker();
+            CallInvoker callInvoker = interceptors != null && interceptors.Length > 0 ? _channel.Intercept(interceptors) : _channel.CreateCallInvoker();
 
 
             // Setup Connection
@@ -155,6 +166,7 @@ namespace dotnet_etcd
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects).
+                    _channel?.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
