@@ -15,6 +15,7 @@ using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Balancer;
 using Grpc.Net.Client.Configuration;
+using Etcdserverpb;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -24,7 +25,7 @@ namespace dotnet_etcd
     /// Etcd client is the entrypoint for this library.
     /// It contains all the functions required to perform operations on etcd.
     /// </summary>
-    public partial class EtcdClient : IDisposable, IEtcdClient
+    public partial class EtcdClient : IDisposable
     {
         #region Variables
 
@@ -39,6 +40,7 @@ namespace dotnet_etcd
 
         private readonly Connection _connection;
         private readonly GrpcChannel _channel;
+        private readonly IWatchManager _watchManager;
 
 
         // https://learn.microsoft.com/en-us/aspnet/core/grpc/retries?view=aspnetcore-6.0#configure-a-grpc-retry-policy
@@ -68,6 +70,11 @@ namespace dotnet_etcd
         public EtcdClient(CallInvoker callInvoker)
         {
             _connection = new Connection(callInvoker ?? throw new ArgumentNullException(nameof(callInvoker)));
+
+            // Initialize the watch manager
+            _watchManager = new WatchManager((headers, deadline, cancellationToken) =>
+                new AsyncDuplexStreamingCallAdapter<Etcdserverpb.WatchRequest, Etcdserverpb.WatchResponse>(
+                    GetConnection().WatchClient.Watch(headers, deadline, cancellationToken)));
         }
 
         public EtcdClient(string connectionString, int port = 2379, string serverName = DefaultServerName, Action<GrpcChannelOptions> configureChannelOptions = null, Interceptor[] interceptors = null)
@@ -151,9 +158,23 @@ namespace dotnet_etcd
 
             // Setup Connection
             _connection = new Connection(callInvoker);
+
+            // Initialize the watch manager
+            _watchManager = new WatchManager((headers, deadline, cancellationToken) =>
+                new AsyncDuplexStreamingCallAdapter<Etcdserverpb.WatchRequest, Etcdserverpb.WatchResponse>(
+                    GetConnection().WatchClient.Watch(headers, deadline, cancellationToken)));
         }
 
         #endregion
+
+        /// <summary>
+        /// Gets the connection object
+        /// </summary>
+        /// <returns>The connection object</returns>
+        private Connection GetConnection()
+        {
+            return _connection;
+        }
 
         #region IDisposable Support
 
@@ -182,8 +203,32 @@ namespace dotnet_etcd
             Dispose(true);
             // TODO: uncomment the following line if the finalizer is overridden above.
             GC.SuppressFinalize(this);
+
+            // Dispose the watch manager
+            _watchManager?.Dispose();
         }
 
         #endregion
+
+        /// <summary>
+        /// Cancels a watch request
+        /// </summary>
+        /// <param name="watchId">The ID of the watch to cancel</param>
+        public void CancelWatch(long watchId)
+        {
+            _watchManager.CancelWatch(watchId);
+        }
+
+        /// <summary>
+        /// Cancels multiple watch requests
+        /// </summary>
+        /// <param name="watchIds">The IDs of the watches to cancel</param>
+        public void CancelWatch(long[] watchIds)
+        {
+            foreach (var watchId in watchIds)
+            {
+                _watchManager.CancelWatch(watchId);
+            }
+        }
     }
 }
