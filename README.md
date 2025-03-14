@@ -189,3 +189,41 @@ For more details on proper client disposal, see the [documentation](docs/index.m
 We welcome contributions to help improve dotnet-etcd! Please see the [CONTRIBUTING.md](https://github.com/shubhamranjan/dotnet-etcd/blob/master/CONTRIBUTING.md) file for guidelines on how to contribute.
 
 For bug reports, feature requests, or questions, please create an [issue](https://github.com/shubhamranjan/dotnet-etcd/issues) on GitHub.
+
+### Running Tests
+
+The project includes both unit tests and integration tests. Unit tests can be run without any external dependencies, while integration tests require a running etcd cluster.
+
+#### Setting Up etcd for Testing
+
+The `dotnet-etcd.Tests` directory includes scripts to easily set up either a single-node or a 3-node etcd cluster using Docker:
+
+```bash
+cd dotnet-etcd.Tests
+
+# Start a single-node cluster
+./start-etcd.sh
+
+# Or start a 3-node cluster
+./start-etcd.sh 3nodes
+
+# Run the tests
+dotnet test
+
+# Stop the cluster when done
+./stop-etcd.sh
+```
+
+For convenience, you can also use the script that handles the entire process:
+
+```bash
+cd dotnet-etcd.Tests
+
+# Run integration tests with a single-node cluster
+./run-integration-tests.sh
+
+# Or with a 3-node cluster
+./run-integration-tests.sh 3nodes
+```
+
+See the [test README](dotnet-etcd.Tests/README.md) for more details on running tests.
