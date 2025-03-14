@@ -17,6 +17,7 @@ A C# .NET (dotnet) GRPC client for etcd v3+
 - [Quick Start](#quick-start)
 - [Features](#features)
 - [Contributing](#contributing)
+- [Testing and Code Coverage](#testing-and-code-coverage)
 
 ## Latest Version: 7.2.0
 
@@ -37,7 +38,8 @@ For older dotnet versions, use lib version < 5.x
 
 ## Installing Package
 
-Nuget package is published on [nuget.org](https://www.nuget.org/packages/dotnet-etcd/) and can be installed in the following ways:
+Nuget package is published on [nuget.org](https://www.nuget.org/packages/dotnet-etcd/) and can be installed in the
+following ways:
 
 ### Nuget Package Manager
 
@@ -61,7 +63,8 @@ paket add dotnet-etcd
 
 ## Documentation
 
-For comprehensive documentation of all operations and method overloads, please see the [documentation pages](docs/index.md).
+For comprehensive documentation of all operations and method overloads, please see
+the [documentation pages](docs/index.md).
 
 The documentation is organized into the following sections:
 
@@ -76,7 +79,8 @@ The documentation is organized into the following sections:
 - [Transactions](docs/transactions/index.md) - Atomic operations
 - [Authentication](docs/authentication/index.md) - Authentication with etcd
 
-The documentation includes detailed API references with all method overloads, parameters, and return types, as well as examples for common use cases.
+The documentation includes detailed API references with all method overloads, parameters, and return types, as well as
+examples for common use cases.
 
 ## Quick Start
 
@@ -102,7 +106,8 @@ EtcdClient client = new EtcdClient("http://localhost:23790", configureChannelOpt
 }));
 ```
 
-For more advanced initialization options, see the [Client Initialization documentation](docs/client-initialization/index.md).
+For more advanced initialization options, see
+the [Client Initialization documentation](docs/client-initialization/index.md).
 
 ### Authentication
 
@@ -127,7 +132,8 @@ For more authentication options, see the [Authentication documentation](docs/aut
 
 ### Automatic Retry Functionality
 
-dotnet-etcd includes an automatic retry mechanism for handling transient failures when communicating with etcd clusters. By default, the client is configured with a retry policy that:
+dotnet-etcd includes an automatic retry mechanism for handling transient failures when communicating with etcd clusters.
+By default, the client is configured with a retry policy that:
 
 - Retries up to 5 times when encountering unavailable servers
 - Uses exponential backoff between retry attempts
@@ -137,7 +143,8 @@ This functionality is enabled by default and requires no additional configuratio
 
 ### Canceling Operations
 
-Operations can be canceled using a CancellationToken. By default, the client throws OperationCanceledException when a request is canceled.
+Operations can be canceled using a CancellationToken. By default, the client throws OperationCanceledException when a
+request is canceled.
 
 ```csharp
 CancellationTokenSource cts = new CancellationTokenSource();
@@ -153,7 +160,8 @@ For legacy cancellation behavior with RpcException, see the [documentation](docs
 
 ### Error Handling
 
-Most errors from the etcd client are thrown as `RpcException` with specific status codes that can be handled appropriately:
+Most errors from the etcd client are thrown as `RpcException` with specific status codes that can be handled
+appropriately:
 
 ```csharp
 try {
@@ -186,17 +194,22 @@ For more details on proper client disposal, see the [documentation](docs/index.m
 
 ## Contributing
 
-We welcome contributions to help improve dotnet-etcd! Please see the [CONTRIBUTING.md](https://github.com/shubhamranjan/dotnet-etcd/blob/master/CONTRIBUTING.md) file for guidelines on how to contribute.
+We welcome contributions to help improve dotnet-etcd! Please see
+the [CONTRIBUTING.md](https://github.com/shubhamranjan/dotnet-etcd/blob/master/CONTRIBUTING.md) file for guidelines on
+how to contribute.
 
-For bug reports, feature requests, or questions, please create an [issue](https://github.com/shubhamranjan/dotnet-etcd/issues) on GitHub.
+For bug reports, feature requests, or questions, please create
+an [issue](https://github.com/shubhamranjan/dotnet-etcd/issues) on GitHub.
 
 ### Running Tests
 
-The project includes both unit tests and integration tests. Unit tests can be run without any external dependencies, while integration tests require a running etcd cluster.
+The project includes both unit tests and integration tests. Unit tests can be run without any external dependencies,
+while integration tests require a running etcd cluster.
 
 #### Setting Up etcd for Testing
 
-The `dotnet-etcd.Tests` directory includes scripts to easily set up either a single-node or a 3-node etcd cluster using Docker:
+The `dotnet-etcd.Tests` directory includes scripts to easily set up either a single-node or a 3-node etcd cluster using
+Docker:
 
 ```bash
 cd dotnet-etcd.Tests
@@ -227,3 +240,101 @@ cd dotnet-etcd.Tests
 ```
 
 See the [test README](dotnet-etcd.Tests/README.md) for more details on running tests.
+
+## Development
+
+### Running Tests
+
+#### Unit Tests
+
+To run only the unit tests (which don't require a running etcd server):
+
+```bash
+dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "FullyQualifiedName~Unit"
+```
+
+#### Integration Tests
+
+To run integration tests, you need a running etcd server. The integration tests will connect to etcd at `localhost:2379`
+by default.
+
+```bash
+dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "FullyQualifiedName~Integration"
+```
+
+#### All Tests
+
+To run all tests:
+
+```bash
+dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj
+```
+
+### Code Coverage
+
+To run tests with code coverage and generate a report:
+
+1. Make sure you have the required tools:
+
+```bash
+dotnet tool install -g dotnet-reportgenerator-globaltool
+```
+
+2. Run the coverage script:
+
+```bash
+./run-unit-tests-with-coverage.sh
+```
+
+3. View the coverage report at `./dotnet-etcd.Tests/TestResults/CoverageReport/index.html`
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Testing and Code Coverage
+
+We have comprehensive test coverage for dotnet-etcd, including both unit tests and integration tests.
+
+### Running Tests
+
+For detailed information about running tests and generating code coverage reports, see the [TESTING.md](TESTING.md)
+file.
+
+#### Quick Test Commands
+
+```bash
+# Run unit tests only
+dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Unit"
+
+# Run integration tests (requires running etcd server)
+dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Integration"
+
+# Run all tests
+dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj
+```
+
+### Code Coverage
+
+We use GitHub Actions to automatically generate code coverage reports for the main branch. You can view the latest code
+coverage report on the [GitHub Pages site](https://shubhamranjan.github.io/dotnet-etcd/).
+
+To generate a code coverage report locally:
+
+```bash
+# Install the required tools
+dotnet tool install --global dotnet-reportgenerator-globaltool
+
+# Run tests with coverage
+dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --collect:"XPlat Code Coverage"
+
+# Generate HTML report
+reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
+
+# Open the report
+open coveragereport/index.html  # On macOS
+# or
+start coveragereport/index.html  # On Windows
+```
+
+For more details, see the [TESTING.md](TESTING.md) file.

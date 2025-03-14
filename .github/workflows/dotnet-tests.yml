@@ -1,0 +1,56 @@
+name: .NET Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    services:
+      etcd:
+        image: quay.io/coreos/etcd:v3.5.0
+        ports:
+          - 2379:2379
+          - 2380:2380
+        env:
+          ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
+          ETCD_ADVERTISE_CLIENT_URLS: http://0.0.0.0:2379
+        options: --health-cmd "etcdctl endpoint health" --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: |
+          7.0.x
+          8.0.x
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build
+      run: dotnet build --no-restore
+    
+    - name: Run Unit Tests
+      run: dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Unit" --no-build --verbosity normal
+    
+    - name: Run Integration Tests
+      run: dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Integration" --no-build --verbosity normal
+    
+    - name: Generate Code Coverage Report
+      run: |
+        dotnet tool install --global dotnet-reportgenerator-globaltool
+        dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Unit" --no-build --collect:"XPlat Code Coverage" --results-directory ./coverage
+        reportgenerator -reports:./coverage/**/coverage.cobertura.xml -targetdir:./coveragereport -reporttypes:Html -classfilters:"-Authpb.*;-Etcdserverpb.*;-Mvccpb.*;-V3Electionpb.*;-V3Lockpb.*;-Versionpb.*;-Gogoproto.*"
+    
+    - name: Upload Coverage Report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: ./coveragereport 
