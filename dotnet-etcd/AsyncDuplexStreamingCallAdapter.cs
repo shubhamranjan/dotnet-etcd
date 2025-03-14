@@ -1,59 +1,45 @@
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
 using System;
+using System.Threading.Tasks;
 using dotnet_etcd.interfaces;
 using Grpc.Core;
 
-namespace dotnet_etcd
+namespace dotnet_etcd;
+
+/// <summary>
+///     Adapter for AsyncDuplexStreamingCall to implement IAsyncDuplexStreamingCall
+/// </summary>
+/// <typeparam name="TRequest">The request type</typeparam>
+/// <typeparam name="TResponse">The response type</typeparam>
+public class AsyncDuplexStreamingCallAdapter<TRequest, TResponse> : IAsyncDuplexStreamingCall<TRequest, TResponse>
 {
+    private readonly AsyncDuplexStreamingCall<TRequest, TResponse> _call;
+
     /// <summary>
-    /// Adapter for AsyncDuplexStreamingCall that implements IAsyncDuplexStreamingCall
+    ///     Initializes a new instance of the <see cref="AsyncDuplexStreamingCallAdapter{TRequest, TResponse}" /> class.
     /// </summary>
-    /// <typeparam name="TRequest">The type of the request messages.</typeparam>
-    /// <typeparam name="TResponse">The type of the response messages.</typeparam>
-    public class AsyncDuplexStreamingCallAdapter<TRequest, TResponse> : IAsyncDuplexStreamingCall<TRequest, TResponse>
-    {
-        private readonly AsyncDuplexStreamingCall<TRequest, TResponse> _call;
+    /// <param name="call">The underlying call to wrap</param>
+    /// <exception cref="ArgumentNullException">Thrown if call is null</exception>
+    public AsyncDuplexStreamingCallAdapter(AsyncDuplexStreamingCall<TRequest, TResponse> call) =>
+        _call = call ?? throw new ArgumentNullException(nameof(call));
 
-        /// <summary>
-        /// Creates a new AsyncDuplexStreamingCallAdapter
-        /// </summary>
-        /// <param name="call">The call to wrap</param>
-        public AsyncDuplexStreamingCallAdapter(AsyncDuplexStreamingCall<TRequest, TResponse> call)
-        {
-            _call = call ?? throw new ArgumentNullException(nameof(call));
-        }
+    /// <inheritdoc />
+    public IClientStreamWriter<TRequest> RequestStream => _call.RequestStream;
 
-        /// <summary>
-        /// Gets the request stream.
-        /// </summary>
-        public IClientStreamWriter<TRequest> RequestStream => _call.RequestStream;
+    /// <inheritdoc />
+    public IAsyncStreamReader<TResponse> ResponseStream => _call.ResponseStream;
 
-        /// <summary>
-        /// Gets the response stream.
-        /// </summary>
-        public IAsyncStreamReader<TResponse> ResponseStream => _call.ResponseStream;
+    /// <inheritdoc />
+    public Task<Metadata> GetHeadersAsync() => _call.ResponseHeadersAsync;
 
-        /// <summary>
-        /// Gets the call headers.
-        /// </summary>
-        public Metadata Headers => _call.ResponseHeadersAsync.Result;
+    /// <inheritdoc />
+    public Status GetStatus() => _call.GetStatus();
 
-        /// <summary>
-        /// Gets the call status if the call has already finished.
-        /// Throws InvalidOperationException otherwise.
-        /// </summary>
-        public Status Status => _call.GetStatus();
+    /// <inheritdoc />
+    public Metadata GetTrailers() => _call.GetTrailers();
 
-        /// <summary>
-        /// Gets the call trailing metadata.
-        /// </summary>
-        public Metadata Trailers => _call.GetTrailers();
-
-        /// <summary>
-        /// Disposes the call.
-        /// </summary>
-        public void Dispose()
-        {
-            _call.Dispose();
-        }
-    }
+    /// <inheritdoc />
+    public void Dispose() => _call.Dispose();
 }
