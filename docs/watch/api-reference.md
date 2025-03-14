@@ -6,260 +6,371 @@ This page provides a complete reference of all watch-related methods available i
 
 ### Watch
 
-Watches for changes to keys.
+Creates a watcher for a key or key range. Returns a watch ID that can be used to cancel the watch.
 
-#### Watch Overloads
+#### Overloads
 
 ```csharp
-// Watch a key with a callback
-public void Watch(
-    string key,
-    Action<WatchResponse> callback,
-    Grpc.Core.Metadata headers = null,
-    DateTime? deadline = null,
-    CancellationToken cancellationToken = default)
-
-// Watch a key with a callback and watch options
-public void Watch(
-    string key,
-    Action<WatchResponse> callback,
-    WatchOption watchOption,
-    Grpc.Core.Metadata headers = null,
-    DateTime? deadline = null,
-    CancellationToken cancellationToken = default)
-
-// Watch a key with a WatchRequest
-public void Watch(
-    WatchRequest watchRequest,
-    Action<WatchResponse> callback,
-    Grpc.Core.Metadata headers = null,
-    DateTime? deadline = null,
-    CancellationToken cancellationToken = default)
+public long Watch(string key, Action<WatchResponse> callback)
+public long Watch(string key, Action<WatchResponse> callback, Action<Exception> errorCallback)
+public long Watch(string key, long startRevision, Action<WatchResponse> callback)
+public long Watch(string key, long startRevision, Action<WatchResponse> callback, Action<Exception> errorCallback)
+public long Watch(WatchRequest watchRequest, Action<WatchResponse> callback)
+public long Watch(WatchRequest watchRequest, Action<WatchResponse> callback, Action<Exception> errorCallback)
+public long Watch(WatchRequest[] watchRequests, Action<WatchResponse>[] callbacks)
+public long Watch(WatchRequest[] watchRequests, Action<WatchResponse>[] callbacks, Action<Exception> errorCallback)
 ```
 
-#### Watch Parameters
+#### Parameters
 
 - `key`: The key to watch.
-- `callback`: The callback to invoke when changes are detected.
-- `watchOption`: Options for the watch operation.
-- `watchRequest`: The WatchRequest to send to the server.
-- `headers`: The initial metadata to send with the call. This parameter is optional.
-- `deadline`: An optional deadline for the call. The call will be cancelled if deadline is hit.
-- `cancellationToken`: An optional token for canceling the call.
+- `startRevision`: The revision to start watching from.
+- `watchRequest`: A watch request containing watch options.
+- `watchRequests`: An array of watch requests.
+- `callback`: A callback function that is called when a watch event is received.
+- `callbacks`: An array of callback functions that are called when watch events are received.
+- `errorCallback`: A callback function that is called when an error occurs.
+
+#### Returns
+
+- `long`: A watch ID that can be used to cancel the watch.
+
+#### Example
+
+```csharp
+// Create a watcher for a key
+long watchId = client.Watch("my-key", (response) =>
+{
+    foreach (var evt in response.Events)
+    {
+        string key = evt.Kv.Key.ToStringUtf8();
+        
+        if (evt.Type == Event.Types.EventType.Put)
+        {
+            string value = evt.Kv.Value.ToStringUtf8();
+            Console.WriteLine($"Key '{key}' was put with value '{value}'");
+        }
+        else if (evt.Type == Event.Types.EventType.Delete)
+        {
+            Console.WriteLine($"Key '{key}' was deleted");
+        }
+    }
+});
+
+// Do some work while watching
+await Task.Delay(TimeSpan.FromMinutes(1));
+
+// Cancel the watch when done
+client.CancelWatch(watchId);
+```
 
 ### WatchAsync
 
-Watches for changes to keys asynchronously.
+Creates a watcher for a key or key range asynchronously. Returns a watch ID that can be used to cancel the watch.
 
-#### WatchAsync Overloads
+#### Overloads
 
 ```csharp
-// Watch a key with a callback asynchronously
-public Task WatchAsync(
-    string key,
-    Action<WatchResponse> callback,
-    Grpc.Core.Metadata headers = null,
-    DateTime? deadline = null,
-    CancellationToken cancellationToken = default)
-
-// Watch a key with a callback and watch options asynchronously
-public Task WatchAsync(
-    string key,
-    Action<WatchResponse> callback,
-    WatchOption watchOption,
-    Grpc.Core.Metadata headers = null,
-    DateTime? deadline = null,
-    CancellationToken cancellationToken = default)
-
-// Watch a key with a WatchRequest asynchronously
-public Task WatchAsync(
-    WatchRequest watchRequest,
-    Action<WatchResponse> callback,
-    Grpc.Core.Metadata headers = null,
-    DateTime? deadline = null,
-    CancellationToken cancellationToken = default)
+public Task<long> WatchAsync(string key, Action<WatchResponse> callback)
+public Task<long> WatchAsync(string key, Action<WatchResponse> callback, Action<Exception> errorCallback)
+public Task<long> WatchAsync(string key, long startRevision, Action<WatchResponse> callback)
+public Task<long> WatchAsync(string key, long startRevision, Action<WatchResponse> callback, Action<Exception> errorCallback)
+public Task<long> WatchAsync(WatchRequest watchRequest, Action<WatchResponse> callback)
+public Task<long> WatchAsync(WatchRequest watchRequest, Action<WatchResponse> callback, Action<Exception> errorCallback)
+public Task<long> WatchAsync(WatchRequest[] watchRequests, Action<WatchResponse>[] callbacks)
+public Task<long> WatchAsync(WatchRequest[] watchRequests, Action<WatchResponse>[] callbacks, Action<Exception> errorCallback)
 ```
 
-#### WatchAsync Parameters
+#### Parameters
 
 - `key`: The key to watch.
-- `callback`: The callback to invoke when changes are detected.
-- `watchOption`: Options for the watch operation.
-- `watchRequest`: The WatchRequest to send to the server.
-- `headers`: The initial metadata to send with the call. This parameter is optional.
-- `deadline`: An optional deadline for the call. The call will be cancelled if deadline is hit.
-- `cancellationToken`: An optional token for canceling the call.
+- `startRevision`: The revision to start watching from.
+- `watchRequest`: A watch request containing watch options.
+- `watchRequests`: An array of watch requests.
+- `callback`: A callback function that is called when a watch event is received.
+- `callbacks`: An array of callback functions that are called when watch events are received.
+- `errorCallback`: A callback function that is called when an error occurs.
 
-#### WatchAsync Returns
+#### Returns
 
-- `Task`: A task that represents the asynchronous watch operation.
+- `Task<long>`: A task that represents the asynchronous operation. The task result contains a watch ID that can be used to cancel the watch.
+
+#### Example
+
+```csharp
+// Create a watcher for a key asynchronously
+long watchId = await client.WatchAsync("my-key", (response) =>
+{
+    foreach (var evt in response.Events)
+    {
+        string key = evt.Kv.Key.ToStringUtf8();
+        
+        if (evt.Type == Event.Types.EventType.Put)
+        {
+            string value = evt.Kv.Value.ToStringUtf8();
+            Console.WriteLine($"Key '{key}' was put with value '{value}'");
+        }
+        else if (evt.Type == Event.Types.EventType.Delete)
+        {
+            Console.WriteLine($"Key '{key}' was deleted");
+        }
+    }
+});
+
+// Do some work while watching
+await Task.Delay(TimeSpan.FromMinutes(1));
+
+// Cancel the watch when done
+client.CancelWatch(watchId);
+```
+
+### CancelWatch
+
+Cancels a watch operation.
+
+#### CancelWatch Overloads
+
+```csharp
+// Cancel a single watch
+public void CancelWatch(long watchId)
+
+// Cancel multiple watches
+public void CancelWatch(long[] watchIds)
+```
+
+#### CancelWatch Parameters
+
+- `watchId`: The ID of the watch to cancel.
+- `watchIds`: The IDs of the watches to cancel.
 
 ## Range Watch Methods
 
 ### WatchRange
 
-Watches for changes to a range of keys.
+Creates a watcher for a range of keys. Returns a watch ID that can be used to cancel the watch.
 
-#### WatchRange Overloads
+#### Overloads
 
 ```csharp
-// Watch a range of keys with a callback
-public void WatchRange(
-    string prefixKey,
-    Action<WatchResponse> callback,
-    Grpc.Core.Metadata headers = null,
-    DateTime? deadline = null,
-    CancellationToken cancellationToken = default)
-
-// Watch a range of keys with a callback and watch options
-public void WatchRange(
-    string prefixKey,
-    Action<WatchResponse> callback,
-    WatchOption watchOption,
-    Grpc.Core.Metadata headers = null,
-    DateTime? deadline = null,
-    CancellationToken cancellationToken = default)
+public long WatchRange(string prefixKey, Action<WatchResponse> callback)
+public long WatchRange(string prefixKey, Action<WatchResponse> callback, Action<Exception> errorCallback)
+public long WatchRange(string prefixKey, long startRevision, Action<WatchResponse> callback)
+public long WatchRange(string prefixKey, long startRevision, Action<WatchResponse> callback, Action<Exception> errorCallback)
 ```
 
-#### WatchRange Parameters
+#### Parameters
 
-- `prefixKey`: The prefix to match keys against.
-- `callback`: The callback to invoke when changes are detected.
-- `watchOption`: Options for the watch operation.
-- `headers`: The initial metadata to send with the call. This parameter is optional.
-- `deadline`: An optional deadline for the call. The call will be cancelled if deadline is hit.
-- `cancellationToken`: An optional token for canceling the call.
+- `prefixKey`: The prefix key to watch. All keys with this prefix will be watched.
+- `startRevision`: The revision to start watching from.
+- `callback`: A callback function that is called when a watch event is received.
+- `errorCallback`: A callback function that is called when an error occurs.
 
-### WatchRangeAsync
+#### Returns
 
-Watches for changes to a range of keys asynchronously.
+- `long`: A watch ID that can be used to cancel the watch.
 
-#### WatchRangeAsync Overloads
+#### Example
 
 ```csharp
-// Watch a range of keys with a callback asynchronously
-public Task WatchRangeAsync(
-    string prefixKey,
-    Action<WatchResponse> callback,
-    Grpc.Core.Metadata headers = null,
-    DateTime? deadline = null,
-    CancellationToken cancellationToken = default)
-
-// Watch a range of keys with a callback and watch options asynchronously
-public Task WatchRangeAsync(
-    string prefixKey,
-    Action<WatchResponse> callback,
-    WatchOption watchOption,
-    Grpc.Core.Metadata headers = null,
-    DateTime? deadline = null,
-    CancellationToken cancellationToken = default)
-```
-
-#### WatchRangeAsync Parameters
-
-- `prefixKey`: The prefix to match keys against.
-- `callback`: The callback to invoke when changes are detected.
-- `watchOption`: Options for the watch operation.
-- `headers`: The initial metadata to send with the call. This parameter is optional.
-- `deadline`: An optional deadline for the call. The call will be cancelled if deadline is hit.
-- `cancellationToken`: An optional token for canceling the call.
-
-#### WatchRangeAsync Returns
-
-- `Task`: A task that represents the asynchronous watch operation.
-
-## Watch Options
-
-The `WatchOption` class provides options for watch operations.
-
-### WatchOption Properties
-
-- `Revision`: Start watching from a specific revision.
-- `PrevKv`: If true, return the previous key-value pair before the event happens.
-- `ProgressNotify`: If true, periodically receive a WatchResponse with no events to update the progress.
-- `Filters`: A list of event types to filter out.
-- `Fragment`: If true, watch server-side events with multiple chunks.
-
-### WatchOption Example
-
-```csharp
-// Create watch options
-var watchOption = new WatchOption
-{
-    Revision = 0, // Start watching from the current revision
-    PrevKv = true, // Include previous key-value pairs
-    ProgressNotify = true, // Receive progress updates
-    Filters = new List<WatchCreateRequest.Types.FilterType>
-    {
-        // Filter out PUT events
-        WatchCreateRequest.Types.FilterType.Nodelete
-    }
-};
-
-// Watch with options
-client.Watch("my-key", response =>
+// Create a watcher for a key range (all keys with prefix "config/")
+long watchId = client.WatchRange("config/", (response) =>
 {
     foreach (var evt in response.Events)
     {
-        Console.WriteLine($"Event type: {evt.Type}");
-        Console.WriteLine($"Key: {evt.Kv.Key.ToStringUtf8()}");
-        Console.WriteLine($"Value: {evt.Kv.Value.ToStringUtf8()}");
+        string key = evt.Kv.Key.ToStringUtf8();
         
-        if (evt.PrevKv != null)
+        if (evt.Type == Event.Types.EventType.Put)
         {
-            Console.WriteLine($"Previous value: {evt.PrevKv.Value.ToStringUtf8()}");
+            string value = evt.Kv.Value.ToStringUtf8();
+            Console.WriteLine($"Key '{key}' was put with value '{value}'");
+        }
+        else if (evt.Type == Event.Types.EventType.Delete)
+        {
+            Console.WriteLine($"Key '{key}' was deleted");
         }
     }
-}, watchOption);
+});
+
+// Do some work while watching
+await Task.Delay(TimeSpan.FromMinutes(1));
+
+// Cancel the watch when done
+client.CancelWatch(watchId);
+```
+
+### WatchRangeAsync
+
+Creates a watcher for a range of keys asynchronously. Returns a watch ID that can be used to cancel the watch.
+
+#### Overloads
+
+```csharp
+public Task<long> WatchRangeAsync(string prefixKey, Action<WatchResponse> callback)
+public Task<long> WatchRangeAsync(string prefixKey, Action<WatchResponse> callback, Action<Exception> errorCallback)
+public Task<long> WatchRangeAsync(string prefixKey, long startRevision, Action<WatchResponse> callback)
+public Task<long> WatchRangeAsync(string prefixKey, long startRevision, Action<WatchResponse> callback, Action<Exception> errorCallback)
+```
+
+#### Parameters
+
+- `prefixKey`: The prefix key to watch. All keys with this prefix will be watched.
+- `startRevision`: The revision to start watching from.
+- `callback`: A callback function that is called when a watch event is received.
+- `errorCallback`: A callback function that is called when an error occurs.
+
+#### Returns
+
+- `Task<long>`: A task that represents the asynchronous operation. The task result contains a watch ID that can be used to cancel the watch.
+
+#### Example
+
+```csharp
+// Create a watcher for a key range asynchronously (all keys with prefix "config/")
+long watchId = await client.WatchRangeAsync("config/", (response) =>
+{
+    foreach (var evt in response.Events)
+    {
+        string key = evt.Kv.Key.ToStringUtf8();
+        
+        if (evt.Type == Event.Types.EventType.Put)
+        {
+            string value = evt.Kv.Value.ToStringUtf8();
+            Console.WriteLine($"Key '{key}' was put with value '{value}'");
+        }
+        else if (evt.Type == Event.Types.EventType.Delete)
+        {
+            Console.WriteLine($"Key '{key}' was deleted");
+        }
+    }
+});
+
+// Do some work while watching
+await Task.Delay(TimeSpan.FromMinutes(1));
+
+// Cancel the watch when done
+client.CancelWatch(watchId);
+```
+
+## Watch Options
+
+The `WatchCreateRequest` class provides options for configuring watch operations.
+
+### WatchCreateRequest Properties
+
+- `Key`: The key to watch.
+- `RangeEnd`: The end of the range [key, rangeEnd) to watch. If not set, only the key is watched. If set to `\0`, all keys greater than or equal to the key are watched.
+- `StartRevision`: The revision to start watching from. If not set, starts from the current revision.
+- `ProgressNotify`: If set, the watch will periodically receive a WatchResponse with no events when there are no recent events. It is useful when clients wish to recover a disconnected watcher starting from a recent known revision.
+- `FilterType`: The type of events to filter out. By default, no events are filtered out.
+- `PrevKv`: If set, created watcher gets the previous key-value before the event happens. If the previous key-value is already compacted, nothing will be returned.
+- `WatchId`: The ID of the watcher. If set, the server will use this ID instead of generating one.
+- `Fragment`: If set, the server will split large watch events into multiple responses.
+
+### WatchCreateRequest Example
+
+```csharp
+// Create a watch request with various options
+var watchRequest = new WatchRequest
+{
+    CreateRequest = new WatchCreateRequest
+    {
+        Key = ByteString.CopyFromUtf8("my-key"),
+        RangeEnd = ByteString.CopyFromUtf8("my-key\0"), // Watch all keys with prefix "my-key"
+        StartRevision = 100, // Start watching from revision 100
+        ProgressNotify = true, // Receive progress notifications
+        PrevKv = true, // Include previous key-value pairs
+        FilterType = WatchCreateRequest.Types.FilterType.NodePut // Only watch for Put events
+    }
+};
+
+// Create a watcher with the request
+long watchId = client.Watch(watchRequest, (response) =>
+{
+    // Process watch events
+});
+
+// Do some work while watching
+await Task.Delay(TimeSpan.FromMinutes(1));
+
+// Cancel the watch when done
+client.CancelWatch(watchId);
 ```
 
 ## Watch Response
 
-The `WatchResponse` class represents the response from a watch operation.
+The `WatchResponse`
 
-### WatchResponse Properties
+### WatchResponse
+
+The response from a watch operation.
+
+#### Properties
 
 - `Header`: The response header.
-- `WatchId`: The ID of the watch.
-- `Created`: Whether the watch was created in this response.
-- `Canceled`: Whether the watch was canceled in this response.
-- `CompactRevision`: The minimum revision the watcher may receive.
 - `Events`: The list of events that occurred.
+- `CompactRevision`: The compact revision. If not 0, indicates all revisions <= CompactRevision have been compacted.
+- `Canceled`: Indicates whether the watch has been canceled by the server.
+- `Created`: Indicates whether the watch was created in this response.
 
-### Event Types
-
-The `Event.Types.EventType` enum represents the type of event that occurred:
-
-- `Put`: A key was created or updated.
-- `Delete`: A key was deleted.
-
-### WatchResponse Example
+#### Example
 
 ```csharp
-client.Watch("my-key", response =>
+client.Watch("my-key", (response) =>
 {
+    // Check if the watch was created
     if (response.Created)
     {
-        Console.WriteLine($"Watch created with ID: {response.WatchId}");
+        Console.WriteLine("Watch created successfully");
     }
-    else if (response.Canceled)
+    
+    // Check if the watch was canceled
+    if (response.Canceled)
     {
-        Console.WriteLine($"Watch canceled: {response.CancelReason}");
+        Console.WriteLine("Watch was canceled");
         return;
     }
     
+    // Check if compaction occurred
+    if (response.CompactRevision != 0)
+    {
+        Console.WriteLine($"Compaction occurred at revision {response.CompactRevision}");
+    }
+    
+    // Process events
     foreach (var evt in response.Events)
     {
-        switch (evt.Type)
+        // Process each event
+    }
+});
+```
+
+### WatchEvent
+
+Represents a single watch event.
+
+#### Properties
+
+- `Type`: The type of event (Put or Delete).
+- `Kv`: The key-value pair that was changed.
+- `PrevKv`: The previous key-value pair (if requested).
+
+#### Example
+
+```csharp
+client.Watch("my-key", (response) =>
+{
+    foreach (var evt in response.Events)
+    {
+        string key = evt.Kv.Key.ToStringUtf8();
+        
+        if (evt.Type == Event.Types.EventType.Put)
         {
-            case Event.Types.EventType.Put:
-                Console.WriteLine($"Key created/updated: {evt.Kv.Key.ToStringUtf8()}");
-                Console.WriteLine($"New value: {evt.Kv.Value.ToStringUtf8()}");
-                break;
-                
-            case Event.Types.EventType.Delete:
-                Console.WriteLine($"Key deleted: {evt.Kv.Key.ToStringUtf8()}");
-                break;
+            string value = evt.Kv.Value.ToStringUtf8();
+            Console.WriteLine($"Key '{key}' was put with value '{value}'");
+        }
+        else if (evt.Type == Event.Types.EventType.Delete)
+        {
+            Console.WriteLine($"Key '{key}' was deleted");
         }
     }
 });
@@ -267,6 +378,6 @@ client.Watch("my-key", response =>
 
 ## See Also
 
-- [Watch Operations](index.md) - Overview and examples of watch operations
-- [Key-Value API Reference](../key-value/api-reference.md) - API reference for key-value operations
-- [Lease API Reference](../lease/api-reference.md) - API reference for lease operations
+- [Watch Operations](index.md)
+- [Key-Value API Reference](../key-value/api-reference.md)
+- [Client Initialization](../client-initialization/api-reference.md)
