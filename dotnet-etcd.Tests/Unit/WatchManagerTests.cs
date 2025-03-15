@@ -782,10 +782,10 @@ public class WatchManagerTests
 
         // Act - use reflection to call the private method
         var method = typeof(WatchManager).GetMethod("GetRangeEnd",
-            BindingFlags.NonPublic | BindingFlags.Instance);
+            BindingFlags.NonPublic | BindingFlags.Static);
 
         var result = string.Empty;
-        if (method != null) result = (string)method.Invoke(watchManager, new object[] { "test" })!;
+        if (method != null) result = (string)method.Invoke(null, new object[] { "test" });
 
         // Assert
         Assert.Equal("tesu", result);
