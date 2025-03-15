@@ -1,55 +1,66 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using dotnet_etcd.interfaces;
 using Etcdserverpb;
-
 using Grpc.Core;
-
 using V3Electionpb;
-
 using V3Lockpb;
 
-namespace dotnet_etcd.multiplexer
+namespace dotnet_etcd.multiplexer;
+
+internal sealed class Connection : IConnection
 {
-    internal sealed class Connection
-    {
-        private readonly CallInvoker _callInvoker;
+    private readonly CallInvoker _callInvoker;
 
-        internal Connection(CallInvoker callInvoker)
-        {
-            _callInvoker = callInvoker;
-        }
+    private Auth.AuthClient _authClient;
 
-        private KV.KVClient _kvClient;
+    private Cluster.ClusterClient _clusterClient;
 
-        private Watch.WatchClient _watchClient;
+    private Election.ElectionClient _electionClient;
 
-        private Lease.LeaseClient _leaseClient;
+    private KV.KVClient _kvClient;
 
-        private Lock.LockClient _lockClient;
+    private Lease.LeaseClient _leaseClient;
 
-        private Cluster.ClusterClient _clusterClient;
+    private Lock.LockClient _lockClient;
 
-        private Maintenance.MaintenanceClient _maintenanceClient;
+    private Maintenance.MaintenanceClient _maintenanceClient;
 
-        private Auth.AuthClient _authClient;
+    private Watch.WatchClient _watchClient;
 
-        private Election.ElectionClient _electionClient;
+    internal Connection(CallInvoker callInvoker) => _callInvoker = callInvoker;
 
-        internal KV.KVClient KVClient => _kvClient ??= new KV.KVClient(_callInvoker);
+    internal KV.KVClient KVClient => _kvClient ??= new KV.KVClient(_callInvoker);
 
-        internal Watch.WatchClient WatchClient => _watchClient ??= new Watch.WatchClient(_callInvoker);
+    internal Watch.WatchClient WatchClient => _watchClient ??= new Watch.WatchClient(_callInvoker);
 
-        internal Lease.LeaseClient LeaseClient => _leaseClient ??= new Lease.LeaseClient(_callInvoker);
+    internal Lease.LeaseClient LeaseClient => _leaseClient ??= new Lease.LeaseClient(_callInvoker);
 
-        internal Lock.LockClient LockClient => _lockClient ??= new Lock.LockClient(_callInvoker);
+    internal Lock.LockClient LockClient => _lockClient ??= new Lock.LockClient(_callInvoker);
 
-        internal Cluster.ClusterClient ClusterClient => _clusterClient ??= new Cluster.ClusterClient(_callInvoker);
+    internal Cluster.ClusterClient ClusterClient => _clusterClient ??= new Cluster.ClusterClient(_callInvoker);
 
-        internal Maintenance.MaintenanceClient MaintenanceClient => _maintenanceClient ??= new Maintenance.MaintenanceClient(_callInvoker);
+    internal Maintenance.MaintenanceClient MaintenanceClient =>
+        _maintenanceClient ??= new Maintenance.MaintenanceClient(_callInvoker);
 
-        internal Auth.AuthClient AuthClient => _authClient ??= new Auth.AuthClient(_callInvoker);
+    internal Auth.AuthClient AuthClient => _authClient ??= new Auth.AuthClient(_callInvoker);
 
-        internal Election.ElectionClient ElectionClient => _electionClient ??= new Election.ElectionClient(_callInvoker);
-    }
+    internal Election.ElectionClient ElectionClient => _electionClient ??= new Election.ElectionClient(_callInvoker);
+
+    KV.KVClient IConnection.KVClient => KVClient;
+
+    Watch.WatchClient IConnection.WatchClient => WatchClient;
+
+    Lease.LeaseClient IConnection.LeaseClient => LeaseClient;
+
+    Lock.LockClient IConnection.LockClient => LockClient;
+
+    Cluster.ClusterClient IConnection.ClusterClient => ClusterClient;
+
+    Maintenance.MaintenanceClient IConnection.MaintenanceClient => MaintenanceClient;
+
+    Auth.AuthClient IConnection.AuthClient => AuthClient;
+
+    Election.ElectionClient IConnection.ElectionClient => ElectionClient;
 }

@@ -261,3 +261,43 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+
+# Code Coverage Reports
+coverage/
+coveragereport/
+*.coverage
+*.opencover.xml
+*.cobertura.xml
+TestResults/
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Test artifacts
+**/TestResults/
+**/coverlet/
+**/coverage.json
+**/coverage.info
+
+# GitHub Pages
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+
+# Editor backup files
+*~
+*.bak
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# NuGet package files
+*.nuspec
+*.nupkg

@@ -12,7 +12,7 @@ To watch a single key for changes:
 
 ```csharp
 // Create a watcher for a key
-var watcher = client.Watch("my-key", (response) =>
+long watchId = client.Watch("my-key", (response) =>
 {
     foreach (var evt in response.Events)
     {
@@ -33,8 +33,8 @@ var watcher = client.Watch("my-key", (response) =>
 // Do some work while watching
 await Task.Delay(TimeSpan.FromMinutes(1));
 
-// Stop watching when done
-watcher.Dispose();
+// Cancel the watch when done
+client.CancelWatch(watchId);
 ```
 
 ## Watching a Key Range
@@ -43,7 +43,7 @@ To watch a range of keys for changes:
 
 ```csharp
 // Create a watcher for a key range (all keys with prefix "config/")
-var watcher = client.Watch("config/", WatchRange.Prefix, (response) =>
+long watchId = client.WatchRange("config/", (response) =>
 {
     foreach (var evt in response.Events)
     {
@@ -64,21 +64,21 @@ var watcher = client.Watch("config/", WatchRange.Prefix, (response) =>
 // Do some work while watching
 await Task.Delay(TimeSpan.FromMinutes(1));
 
-// Stop watching when done
-watcher.Dispose();
+// Cancel the watch when done
+client.CancelWatch(watchId);
 ```
 
 ## Watching from a Specific Revision
 
-You can start watching from a specific revision:
+To watch a key from a specific revision:
 
 ```csharp
 // Get the current revision
-var getResponse = client.Get("any-key");
-long currentRevision = getResponse.Header.Revision;
+var getResponse = client.Get("my-key");
+long startRevision = getResponse.Header.Revision;
 
 // Create a watcher starting from the current revision
-var watcher = client.Watch("my-key", new WatchOptions { StartRevision = currentRevision }, (response) =>
+long watchId = client.Watch("my-key", startRevision, (response) =>
 {
     foreach (var evt in response.Events)
     {
@@ -87,11 +87,11 @@ var watcher = client.Watch("my-key", new WatchOptions { StartRevision = currentR
         if (evt.Type == Event.Types.EventType.Put)
         {
             string value = evt.Kv.Value.ToStringUtf8();
-            Console.WriteLine($"Key '{key}' was put with value '{value}'");
+            Console.WriteLine($"Key '{key}' was put with value '{value}' at revision {evt.Kv.ModRevision}");
         }
         else if (evt.Type == Event.Types.EventType.Delete)
         {
-            Console.WriteLine($"Key '{key}' was deleted");
+            Console.WriteLine($"Key '{key}' was deleted at revision {evt.Kv.ModRevision}");
         }
     }
 });
@@ -99,21 +99,31 @@ var watcher = client.Watch("my-key", new WatchOptions { StartRevision = currentR
 // Do some work while watching
 await Task.Delay(TimeSpan.FromMinutes(1));
 
-// Stop watching when done
-watcher.Dispose();
+// Cancel the watch when done
+client.CancelWatch(watchId);
 ```
 
 ## Watching with Filters
 
-You can filter the events you receive:
+To watch a key with filters:
 
 ```csharp
-// Create a watcher that only notifies about PUT events
-var watcher = client.Watch("my-key", new WatchOptions { FilterType = WatchFilterType.Nodelete }, (response) =>
+// Create a watch request with filters
+var watchRequest = new WatchRequest
+{
+    CreateRequest = new WatchCreateRequest
+    {
+        Key = ByteString.CopyFromUtf8("my-key"),
+        FilterType = WatchCreateRequest.Types.FilterType.NodePut // Only watch for Put events
+    }
+};
+
+// Create a watcher with the request
+long watchId = client.Watch(watchRequest, (response) =>
 {
     foreach (var evt in response.Events)
     {
-        // This will only include PUT events
+        // This will only include Put events due to the filter
         string key = evt.Kv.Key.ToStringUtf8();
         string value = evt.Kv.Value.ToStringUtf8();
         Console.WriteLine($"Key '{key}' was put with value '{value}'");
@@ -123,104 +133,34 @@ var watcher = client.Watch("my-key", new WatchOptions { FilterType = WatchFilter
 // Do some work while watching
 await Task.Delay(TimeSpan.FromMinutes(1));
 
-// Stop watching when done
-watcher.Dispose();
+// Cancel the watch when done
+client.CancelWatch(watchId);
 ```
 
 ## Watching with Progress Notifications
 
-You can request progress notifications to ensure the watch is still active:
+To watch a key with progress notifications:
 
 ```csharp
-// Create a watcher with progress notifications
-var watcher = client.Watch("my-key", new WatchOptions { ProgressNotify = true }, (response) =>
+// Create a watch request with progress notifications
+var watchRequest = new WatchRequest
 {
-    if (response.Events.Count == 0)
+    CreateRequest = new WatchCreateRequest
+    {
+        Key = ByteString.CopyFromUtf8("my-key"),
+        ProgressNotify = true
+    }
+};
+
+// Create a watcher with the request
+long watchId = client.Watch(watchRequest, (response) =>
+{
+    if (response.Events.Count == 0 && response.CompactRevision == 0)
     {
         Console.WriteLine($"Received progress notification at revision {response.Header.Revision}");
+        return;
     }
-    else
-    {
-        foreach (var evt in response.Events)
-        {
-            string key = evt.Kv.Key.ToStringUtf8();
-            
-            if (evt.Type == Event.Types.EventType.Put)
-            {
-                string value = evt.Kv.Value.ToStringUtf8();
-                Console.WriteLine($"Key '{key}' was put with value '{value}'");
-            }
-            else if (evt.Type == Event.Types.EventType.Delete)
-            {
-                Console.WriteLine($"Key '{key}' was deleted");
-            }
-        }
-    }
-});
 
-// Do some work while watching
-await Task.Delay(TimeSpan.FromMinutes(1));
-
-// Stop watching when done
-watcher.Dispose();
-```
-
-## Watching with Previous Values
-
-You can include the previous value in the watch events:
-
-```csharp
-// Create a watcher that includes previous values
-var watcher = client.Watch("my-key", new WatchOptions { PrevKv = true }, (response) =>
-{
-    foreach (var evt in response.Events)
-    {
-        string key = evt.Kv.Key.ToStringUtf8();
-        
-        if (evt.Type == Event.Types.EventType.Put)
-        {
-            string value = evt.Kv.Value.ToStringUtf8();
-            
-            if (evt.PrevKv != null)
-            {
-                string prevValue = evt.PrevKv.Value.ToStringUtf8();
-                Console.WriteLine($"Key '{key}' was updated from '{prevValue}' to '{value}'");
-            }
-            else
-            {
-                Console.WriteLine($"Key '{key}' was created with value '{value}'");
-            }
-        }
-        else if (evt.Type == Event.Types.EventType.Delete)
-        {
-            if (evt.PrevKv != null)
-            {
-                string prevValue = evt.PrevKv.Value.ToStringUtf8();
-                Console.WriteLine($"Key '{key}' with value '{prevValue}' was deleted");
-            }
-            else
-            {
-                Console.WriteLine($"Key '{key}' was deleted");
-            }
-        }
-    }
-});
-
-// Do some work while watching
-await Task.Delay(TimeSpan.FromMinutes(1));
-
-// Stop watching when done
-watcher.Dispose();
-```
-
-## Handling Watch Errors
-
-You can handle errors that occur during watching:
-
-```csharp
-// Create a watcher with error handling
-var watcher = client.Watch("my-key", (response) =>
-{
     foreach (var evt in response.Events)
     {
         string key = evt.Kv.Key.ToStringUtf8();
@@ -235,19 +175,104 @@ var watcher = client.Watch("my-key", (response) =>
             Console.WriteLine($"Key '{key}' was deleted");
         }
     }
-}, (ex) =>
-{
-    Console.WriteLine($"Watch error: {ex.Message}");
-    
-    // Decide whether to retry or not
-    return true; // Return true to retry, false to stop watching
 });
 
 // Do some work while watching
 await Task.Delay(TimeSpan.FromMinutes(1));
 
-// Stop watching when done
-watcher.Dispose();
+// Cancel the watch when done
+client.CancelWatch(watchId);
+```
+
+## Watching with Previous Values
+
+To watch a key with previous values:
+
+```csharp
+// Create a watch request with previous values
+var watchRequest = new WatchRequest
+{
+    CreateRequest = new WatchCreateRequest
+    {
+        Key = ByteString.CopyFromUtf8("my-key"),
+        PrevKv = true
+    }
+};
+
+// Create a watcher with the request
+long watchId = client.Watch(watchRequest, (response) =>
+{
+    foreach (var evt in response.Events)
+    {
+        string key = evt.Kv.Key.ToStringUtf8();
+        
+        if (evt.Type == Event.Types.EventType.Put)
+        {
+            string value = evt.Kv.Value.ToStringUtf8();
+            Console.WriteLine($"Key '{key}' was put with value '{value}'");
+            
+            if (evt.PrevKv != null)
+            {
+                string prevValue = evt.PrevKv.Value.ToStringUtf8();
+                Console.WriteLine($"Previous value was '{prevValue}'");
+            }
+        }
+        else if (evt.Type == Event.Types.EventType.Delete)
+        {
+            Console.WriteLine($"Key '{key}' was deleted");
+            
+            if (evt.PrevKv != null)
+            {
+                string prevValue = evt.PrevKv.Value.ToStringUtf8();
+                Console.WriteLine($"Deleted value was '{prevValue}'");
+            }
+        }
+    }
+});
+
+// Do some work while watching
+await Task.Delay(TimeSpan.FromMinutes(1));
+
+// Cancel the watch when done
+client.CancelWatch(watchId);
+```
+
+## Handling Watch Errors
+
+To handle errors that occur during watching:
+
+```csharp
+try
+{
+    // Create a watcher with error handling
+    long watchId = client.Watch("my-key", (response) =>
+    {
+        // Process watch events
+        foreach (var evt in response.Events)
+        {
+            // Process events as normal
+        }
+    },
+    (exception) =>
+    {
+        // Handle any errors that occur during watching
+        Console.WriteLine($"Watch error: {exception.Message}");
+        
+        // You might want to retry or take other actions
+        // depending on the error
+    });
+    
+    // Do some work while watching
+    await Task.Delay(TimeSpan.FromMinutes(1));
+    
+    // Cancel the watch when done
+    client.CancelWatch(watchId);
+}
+catch (Exception ex)
+{
+    // Handle any errors that occur during watch setup
+    Console.WriteLine($"Error setting up watch: {ex.Message}");
+}
 ```
 
 ## Implementing a Configuration Watcher
@@ -596,6 +621,29 @@ await Task.Delay(TimeSpan.FromHours(1));
 
 // Clean up
 serviceDiscovery.Dispose();
+```
+
+## Canceling Watches
+
+You can cancel a watch operation at any time using the `CancelWatch` method:
+
+```csharp
+// Create a watcher
+long watchId = client.Watch("my-key", (response) => { /* ... */ });
+
+// Cancel the watch when you're done with it
+client.CancelWatch(watchId);
+```
+
+You can also cancel multiple watches at once:
+
+```csharp
+// Create multiple watchers
+long watchId1 = client.Watch("key1", (response) => { /* ... */ });
+long watchId2 = client.Watch("key2", (response) => { /* ... */ });
+
+// Cancel multiple watches
+client.CancelWatch(new long[] { watchId1, watchId2 });
 ```
 
 ## See Also
