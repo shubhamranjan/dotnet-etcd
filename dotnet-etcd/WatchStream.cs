@@ -124,12 +124,12 @@ public class WatchStream : IWatchStream
                 else if (_callbacks.TryGetValue(response.WatchId, out Action<WatchResponse> cb))
                 {
                     cb(response);
-                }
 
-                // If the watch was canceled, remove the callback
-                if (response.Canceled)
-                {
-                    _callbacks.TryRemove(response.WatchId, out _);
+                    // If the watch was canceled, remove the callback after invoking it
+                    if (response.Canceled)
+                    {
+                        _callbacks.TryRemove(response.WatchId, out _);
+                    }
                 }
             }
         }
@@ -145,6 +145,11 @@ public class WatchStream : IWatchStream
         {
             // Log the exception
             Console.Error.WriteLine($"Error processing watch responses: {ex}");
+
+            #if DEBUG
+            // Only re-throw in debug mode to help with debugging
+            throw;
+            #endif
         }
     }
 }
