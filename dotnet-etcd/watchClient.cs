@@ -143,6 +143,32 @@ public partial class EtcdClient
         return watchIds;
     }
 
+    public Task<long[]> WatchAsync(WatchRequest[] requests, Action<WatchEvent[]> method, Metadata headers = null,
+        DateTime? deadline = null, CancellationToken cancellationToken = default)
+    {
+        var tasks = new List<Task<long>>();
+
+        foreach (var request in requests)
+        {
+            // Create a wrapper that converts WatchResponse to WatchEvent[]
+            Action<WatchResponse> wrapper = response =>
+            {
+                WatchEvent[] events = response.Events.Select(e => new WatchEvent
+                {
+                    Key = e.Kv.Key.ToStringUtf8(),
+                    Value = e.Kv.Value.ToStringUtf8(),
+                    Type = e.Type
+                }).ToArray();
+
+                method(events);
+            };
+
+            tasks.Add(_watchManager.WatchAsync(request, wrapper, headers, deadline, cancellationToken));
+        }
+
+        return Task.WhenAll(tasks);
+    }
+
     #region Watch Key
 
     /// <summary>

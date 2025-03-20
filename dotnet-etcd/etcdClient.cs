@@ -22,7 +22,7 @@ namespace dotnet_etcd;
 ///     Etcd client is the entrypoint for this library.
 ///     It contains all the functions required to perform operations on etcd.
 /// </summary>
-public partial class EtcdClient : IDisposable
+public partial class EtcdClient : IDisposable, IEtcdClient
 {
     /// <summary>
     ///     Gets the connection object
@@ -165,7 +165,8 @@ public partial class EtcdClient : IDisposable
             },
             HttpHandler = httpHandler,
             DisposeHttpClient = true,
-            ThrowOperationCanceledOnCancellation = true
+            ThrowOperationCanceledOnCancellation = true,
+            Credentials = ChannelCredentials.Insecure // Default to insecure for backward compatibility
         };
 
         configureChannelOptions?.Invoke(options);
@@ -177,26 +178,30 @@ public partial class EtcdClient : IDisposable
         }
         else
         {
-            string[] hosts = Array.Empty<string>();
-            hosts = connectionString.Split(',');
+            string[] hosts = connectionString.Split(',');
             List<Uri> nodes = new();
-            for (int i = 0; i < hosts.Length; i++)
+
+            foreach (string host in hosts)
             {
-                string host = hosts[i];
-                if (host.Split(':').Length < 3)
+                string processedHost = host.Trim();
+                
+                // Only append port if no port is specified and it's not a full URL
+                if (!processedHost.Contains(':') && 
+                    !processedHost.StartsWith(InsecurePrefix, StringComparison.InvariantCultureIgnoreCase) &&
+                    !processedHost.StartsWith(SecurePrefix, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    host += $":{Convert.ToString(port, CultureInfo.InvariantCulture)}";
+                    processedHost += $":{Convert.ToString(port, CultureInfo.InvariantCulture)}";
                 }
 
-                if (!(host.StartsWith(InsecurePrefix, StringComparison.InvariantCultureIgnoreCase) ||
-                      host.StartsWith(SecurePrefix, StringComparison.InvariantCultureIgnoreCase)))
+                if (!(processedHost.StartsWith(InsecurePrefix, StringComparison.InvariantCultureIgnoreCase) ||
+                      processedHost.StartsWith(SecurePrefix, StringComparison.InvariantCultureIgnoreCase)))
                 {
-                    host = options.Credentials == ChannelCredentials.Insecure
-                        ? $"{InsecurePrefix}{host}"
-                        : $"{SecurePrefix}{host}";
+                    processedHost = options.Credentials == ChannelCredentials.Insecure
+                        ? $"{InsecurePrefix}{processedHost}"
+                        : $"{SecurePrefix}{processedHost}";
                 }
 
-                nodes.Add(new Uri(host));
+                nodes.Add(new Uri(processedHost));
             }
 
             StaticResolverFactory factory =

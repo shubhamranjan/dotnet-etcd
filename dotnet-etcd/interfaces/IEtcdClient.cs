@@ -387,99 +387,45 @@ public interface IEtcdClient
     void Watch(string[] keys, Action<WatchResponse>[] methods, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
 
-    Task WatchAsync(string key, Action<WatchEvent[]> method, Metadata headers = null, DateTime? deadline = null,
-        CancellationToken cancellationToken = default);
-
-    Task WatchAsync(string key, Action<WatchEvent[]>[] methods, Metadata headers = null, DateTime? deadline = null,
-        CancellationToken cancellationToken = default);
-
-    Task WatchAsync(string key, Action<WatchResponse> method, Metadata headers = null, DateTime? deadline = null,
-        CancellationToken cancellationToken = default);
-
-    Task WatchAsync(string key, Action<WatchResponse>[] methods, Metadata headers = null, DateTime? deadline = null,
-        CancellationToken cancellationToken = default);
-
-    Task WatchAsync(string[] keys, Action<WatchEvent[]> method, Metadata headers = null, DateTime? deadline = null,
-        CancellationToken cancellationToken = default);
-
-    Task WatchAsync(string[] keys, Action<WatchEvent[]>[] methods, Metadata headers = null, DateTime? deadline = null,
-        CancellationToken cancellationToken = default);
-
-    Task WatchAsync(string[] keys, Action<WatchResponse> method, Metadata headers = null, DateTime? deadline = null,
-        CancellationToken cancellationToken = default);
-
-    Task WatchAsync(string[] keys, Action<WatchResponse>[] methods, Metadata headers = null, DateTime? deadline = null,
-        CancellationToken cancellationToken = default);
-
-    Task WatchAsync(WatchRequest request, Action<WatchEvent[]> method, Metadata headers = null,
+    Task<long> WatchAsync(WatchRequest request, Action<WatchResponse> method, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
-    Task WatchAsync(WatchRequest request, Action<WatchEvent[]>[] methods, Metadata headers = null,
+    Task<long> WatchAsync(WatchRequest request, Action<WatchResponse>[] methods, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
-    Task WatchAsync(WatchRequest request, Action<WatchResponse> method, Metadata headers = null,
+    Task<long[]> WatchAsync(WatchRequest[] requests, Action<WatchEvent[]> method, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
-    Task WatchAsync(WatchRequest request, Action<WatchResponse>[] methods, Metadata headers = null,
+    Task<long[]> WatchAsync(WatchRequest[] requests, Action<WatchEvent[]>[] methods, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
-    Task WatchAsync(WatchRequest[] requests, Action<WatchEvent[]> method, Metadata headers = null,
+    Task<long[]> WatchAsync(WatchRequest[] requests, Action<WatchResponse> method, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
-    Task WatchAsync(WatchRequest[] requests, Action<WatchEvent[]>[] methods, Metadata headers = null,
+    Task<long[]> WatchAsync(WatchRequest[] requests, Action<WatchResponse>[] methods, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
-    Task WatchAsync(WatchRequest[] requests, Action<WatchResponse> method, Metadata headers = null,
+    long WatchRange(string path, Action<WatchResponse> method, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
-    Task WatchAsync(WatchRequest[] requests, Action<WatchResponse>[] methods, Metadata headers = null,
+    long WatchRange(string path, Action<WatchResponse>[] methods, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
-    void WatchRange(string path, Action<WatchEvent[]> method, Metadata headers = null, DateTime? deadline = null,
-        CancellationToken cancellationToken = default);
-
-    void WatchRange(string path, Action<WatchEvent[]>[] methods, Metadata headers = null, DateTime? deadline = null,
-        CancellationToken cancellationToken = default);
-
-    void WatchRange(string path, Action<WatchResponse> method, Metadata headers = null, DateTime? deadline = null,
-        CancellationToken cancellationToken = default);
-
-    void WatchRange(string path, Action<WatchResponse>[] methods, Metadata headers = null, DateTime? deadline = null,
-        CancellationToken cancellationToken = default);
-
-    void WatchRange(string[] paths, Action<WatchEvent[]> method, Metadata headers = null, DateTime? deadline = null,
-        CancellationToken cancellationToken = default);
-
-    void WatchRange(string[] paths, Action<WatchEvent[]>[] methods, Metadata headers = null, DateTime? deadline = null,
-        CancellationToken cancellationToken = default);
-
-    void WatchRange(string[] paths, Action<WatchResponse> method, Metadata headers = null, DateTime? deadline = null,
-        CancellationToken cancellationToken = default);
-
-    void WatchRange(string[] paths, Action<WatchResponse>[] methods, Metadata headers = null, DateTime? deadline = null,
-        CancellationToken cancellationToken = default);
-
-    Task WatchRangeAsync(string path, Action<WatchEvent[]> method, Metadata headers = null, DateTime? deadline = null,
-        CancellationToken cancellationToken = default);
-
-    Task WatchRangeAsync(string path, Action<WatchEvent[]>[] methods, Metadata headers = null,
+    long[] WatchRange(string[] paths, Action<WatchResponse> method, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
-    Task WatchRangeAsync(string path, Action<WatchResponse> method, Metadata headers = null, DateTime? deadline = null,
-        CancellationToken cancellationToken = default);
-
-    Task WatchRangeAsync(string path, Action<WatchResponse>[] methods, Metadata headers = null,
+    long[] WatchRange(string[] paths, Action<WatchResponse>[] methods, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
-    Task WatchRangeAsync(string[] paths, Action<WatchEvent[]> method, Metadata headers = null,
+    Task<long> WatchRangeAsync(string path, Action<WatchResponse> method, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
-    Task WatchRangeAsync(string[] paths, Action<WatchEvent[]>[] methods, Metadata headers = null,
+    Task<long> WatchRangeAsync(string path, Action<WatchResponse>[] methods, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
-    Task WatchRangeAsync(string[] paths, Action<WatchResponse> method, Metadata headers = null,
+    Task<long[]> WatchRangeAsync(string[] paths, Action<WatchResponse> method, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
-    Task WatchRangeAsync(string[] paths, Action<WatchResponse>[] methods, Metadata headers = null,
+    Task<long[]> WatchRangeAsync(string[] paths, Action<WatchResponse>[] methods, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 }
