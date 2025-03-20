@@ -1,13 +1,40 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+# Dependabot configuration file
+# See documentation: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
 version: 2
 updates:
-  - package-ecosystem: "nuget" # See documentation for possible values
-    directory: "/dotnet-etcd" # Location of package manifests
-    reviewers:
-      - "shubhamranjan"
+  # NuGet dependencies
+  - package-ecosystem: "nuget"
+    directory: "/dotnet-etcd"
     schedule:
       interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    reviewers:
+      - "shubhamranjan"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "nuget"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    reviewers:
+      - "shubhamranjan"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "ci"
+      include: "scope"

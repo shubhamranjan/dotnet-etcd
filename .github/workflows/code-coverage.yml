@@ -11,7 +11,7 @@ jobs:
     
     services:
       etcd:
-        image: quay.io/coreos/etcd:v3.5.0
+        image: quay.io/coreos/etcd:v3.5.9
         ports:
           - 2379:2379
           - 2380:2380
@@ -21,13 +21,13 @@ jobs:
         options: --health-cmd "etcdctl endpoint health" --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
-          7.0.x
+          9.0.x
           8.0.x
     
     - name: Restore dependencies
@@ -47,17 +47,18 @@ jobs:
     
     - name: Generate Coverage Report
       run: |
-        reportgenerator -reports:./coverage/**/coverage.cobertura.xml -targetdir:./coveragereport -reporttypes:Html,Cobertura,TextSummary -classfilters:"-Authpb.*;-Etcdserverpb.*;-Mvccpb.*;-V3Electionpb.*;-V3Lockpb.*;-Versionpb.*;-Gogoproto.*"
+        reportgenerator -reports:./coverage/**/coverage.cobertura.xml -targetdir:./coveragereport -reporttypes:Html,Cobertura,TextSummary,Badges -classfilters:"-Authpb.*;-Etcdserverpb.*;-Mvccpb.*;-V3Electionpb.*;-V3Lockpb.*;-Versionpb.*;-Gogoproto.*"
         cat ./coveragereport/Summary.txt
     
     - name: Upload Coverage Report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: coverage-report
         path: ./coveragereport
+        retention-days: 30
     
     - name: Publish Coverage Report to GitHub Pages
-      uses: JamesIves/github-pages-deploy-action@v4
+      uses: JamesIves/github-pages-deploy-action@v4.5.0
       with:
         folder: ./coveragereport
         branch: gh-pages
