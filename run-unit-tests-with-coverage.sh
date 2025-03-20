@@ -16,7 +16,7 @@ rm -rf ./dotnet-etcd.Tests/TestResults
 
 # Run unit tests with coverage
 echo "Running unit tests with coverage..."
-dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Unit" --collect:"XPlat Code Coverage" --results-directory ./coverage
+dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Unit" --collect:"XPlat Code Coverage" --results-directory ./coverage > test.out
 
 # Generate report excluding gRPC generated code
 echo "Generating coverage report..."

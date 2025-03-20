@@ -301,3 +301,9 @@ _site/
 # NuGet package files
 *.nuspec
 *.nupkg
+
+# Build output files
+build.out
+
+# Test output files
+test.out
