@@ -5,6 +5,7 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build-and-test:
@@ -12,7 +13,7 @@ jobs:
     
     services:
       etcd:
-        image: quay.io/coreos/etcd:v3.5.0
+        image: quay.io/coreos/etcd:v3.5.9
         ports:
           - 2379:2379
           - 2380:2380
@@ -22,13 +23,13 @@ jobs:
         options: --health-cmd "etcdctl endpoint health" --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
-          7.0.x
+          9.0.x
           8.0.x
     
     - name: Restore dependencies
@@ -47,10 +48,11 @@ jobs:
       run: |
         dotnet tool install --global dotnet-reportgenerator-globaltool
         dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Unit" --no-build --collect:"XPlat Code Coverage" --results-directory ./coverage
-        reportgenerator -reports:./coverage/**/coverage.cobertura.xml -targetdir:./coveragereport -reporttypes:Html -classfilters:"-Authpb.*;-Etcdserverpb.*;-Mvccpb.*;-V3Electionpb.*;-V3Lockpb.*;-Versionpb.*;-Gogoproto.*"
+        reportgenerator -reports:./coverage/**/coverage.cobertura.xml -targetdir:./coveragereport -reporttypes:Html,Cobertura -classfilters:"-Authpb.*;-Etcdserverpb.*;-Mvccpb.*;-V3Electionpb.*;-V3Lockpb.*;-Versionpb.*;-Gogoproto.*"
     
     - name: Upload Coverage Report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: coverage-report
-        path: ./coveragereport 
+        path: ./coveragereport
+        retention-days: 14 
