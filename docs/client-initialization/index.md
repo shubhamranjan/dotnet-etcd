@@ -5,197 +5,193 @@ The `EtcdClient` class is the main entry point for interacting with etcd. This p
 ## Constructor Overloads
 
 ### Basic Constructor
-
 ```csharp
-public EtcdClient(string connectionString, int port = 2379, string serverName = "my-etcd-server",
-    Action<GrpcChannelOptions> configureChannelOptions = null, Interceptor[] interceptors = null)
-```
-
-#### Parameters
-
-- `connectionString` (required): String containing comma-separated list of etcd endpoints.
-- `port` (optional): Port to use when no port is specified in the endpoints. Default: 2379
-- `serverName` (optional): Name used for the static resolver. Default: "my-etcd-server"
-- `configureChannelOptions` (optional): Action to configure gRPC channel options. Can be used to set credentials for secure/insecure connections.
-- `interceptors` (optional): Array of gRPC interceptors to use with the client.
-
-#### Basic Constructor Examples
-
-```csharp
-// Basic initialization with a single endpoint
-EtcdClient client = new EtcdClient("localhost:2379");
+// Single endpoint
+var client = new EtcdClient("localhost:2379");
 
 // Multiple endpoints
-EtcdClient client = new EtcdClient("localhost:2379,localhost:2380,localhost:2381");
-
-// Specifying HTTPS endpoints
-EtcdClient client = new EtcdClient("https://localhost:2379,https://localhost:2380");
-
-// Specifying HTTP endpoints
-EtcdClient client = new EtcdClient("http://localhost:2379,http://localhost:2380");
+var client = new EtcdClient("https://localhost:23790,https://localhost:23791");
 ```
 
 ### Advanced Constructor
-
 ```csharp
-public EtcdClient(CallInvoker callInvoker)
+var client = new EtcdClient(
+    connectionString: "localhost:2379",
+    port: 2379,
+    serverName: "my-etcd-server",
+    configureChannelOptions: options => {
+        options.Credentials = ChannelCredentials.Insecure;
+    });
 ```
 
-#### Advanced Constructor Parameter
-
-- `callInvoker` (required): A gRPC CallInvoker instance.
-
-#### CallInvoker Example
-
+### Dependency Injection
 ```csharp
-// Create a channel
-var channel = GrpcChannel.ForAddress("localhost:2379");
-var callInvoker = channel.CreateCallInvoker();
+// In Program.cs or Startup.cs
+services.AddEtcdClient(options => {
+    options.ConnectionString = "localhost:2379";
+    options.UseInsecureChannel = true;
+});
 
-// Initialize with a custom CallInvoker
-EtcdClient client = new EtcdClient(callInvoker);
+// Then inject IEtcdClient into your services
+public class MyService
+{
+    private readonly IEtcdClient _etcdClient;
+
+    public MyService(IEtcdClient etcdClient)
+    {
+        _etcdClient = etcdClient;
+    }
+}
 ```
+
+For detailed DI configuration options, see [Dependency Injection](dependency-injection.md).
 
 ## Connection String Formats
 
-The `EtcdClient` supports several connection string formats:
-
-### Static Host List
-
-A comma-separated list of endpoints:
-
-```csharp
-// Format: host1:port1,host2:port2,...
-EtcdClient client = new EtcdClient("localhost:2379,localhost:2380");
+### Basic Format
+```
+hostname:port
 ```
 
-### DNS Discovery
-
-Use DNS SRV records for discovery:
-
-```csharp
-// Format: dns://domain
-EtcdClient client = new EtcdClient("dns://example.com");
+### Multiple Endpoints
+```
+host1:port1,host2:port2,host3:port3
 ```
 
-### Alternative DNS Discovery
-
-An alternative format for DNS SRV discovery:
-
-```csharp
-// Format: discovery-srv://domain
-EtcdClient client = new EtcdClient("discovery-srv://example.com");
+### With Protocol
+```
+http://hostname:port
+https://hostname:port
 ```
 
 ## Secure vs. Insecure Connections
 
-### Secure Connection (HTTPS)
-
-By default, the client uses secure connections (HTTPS):
-
+### Insecure (HTTP)
 ```csharp
-// Explicitly using HTTPS
-EtcdClient client = new EtcdClient("https://localhost:2379");
-```
-
-### Insecure Connection (HTTP)
-
-To use insecure connections (HTTP), you need to configure the channel options:
-
-```csharp
-// Using HTTP with insecure channel
-EtcdClient client = new EtcdClient(
-    "http://localhost:2379",
+// Using constructor
+var client = new EtcdClient(
+    "localhost:2379",
     configureChannelOptions: options => {
         options.Credentials = ChannelCredentials.Insecure;
-    }
-);
+    });
+
+// Using DI
+services.AddEtcdClient(options => {
+    options.ConnectionString = "localhost:2379";
+    options.UseInsecureChannel = true;
+});
+```
+
+### Secure (HTTPS)
+```csharp
+// Using constructor
+var client = new EtcdClient(
+    "https://localhost:2379",
+    configureChannelOptions: options => {
+        options.Credentials = new SslCredentials();
+    });
+
+// Using DI
+services.AddEtcdClient(options => {
+    options.ConnectionString = "https://localhost:2379";
+    options.CallCredentials = CallCredentials.FromInterceptor((context, metadata) => {
+        metadata.Add("token", "my-auth-token");
+        return Task.CompletedTask;
+    });
+});
 ```
 
 ## Advanced Configuration
 
 ### Custom HTTP Handler
-
-You can configure a custom HTTP handler for the gRPC client:
-
 ```csharp
-EtcdClient client = new EtcdClient(
-    "https://localhost:2379",
+var handler = new SocketsHttpHandler
+{
+    PooledConnectionIdleTimeout = TimeSpan.FromMinutes(5),
+    KeepAlivePingDelay = TimeSpan.FromSeconds(60),
+    KeepAlivePingTimeout = TimeSpan.FromSeconds(30),
+    EnableMultipleHttp2Connections = true
+};
+
+// Using constructor
+var client = new EtcdClient(
+    "localhost:2379",
     configureChannelOptions: options => {
-        var handler = new SocketsHttpHandler {
-            PooledConnectionIdleTimeout = TimeSpan.FromMinutes(5),
-            KeepAlivePingDelay = TimeSpan.FromSeconds(60),
-            KeepAlivePingTimeout = TimeSpan.FromSeconds(30),
-            EnableMultipleHttp2Connections = true
-        };
         options.HttpHandler = handler;
-    }
-);
+    });
+
+// Using DI
+services.AddEtcdClient(options => {
+    options.ConnectionString = "localhost:2379";
+    options.ConfigureChannel = channelOptions => {
+        channelOptions.HttpHandler = handler;
+    };
+});
 ```
 
 ### Client Certificates
-
-To use client certificates for authentication:
-
 ```csharp
-EtcdClient client = new EtcdClient(
+var clientCertificate = new X509Certificate2("client.pfx", "password");
+var channelCredentials = new SslCredentials(
+    rootCertificates: File.ReadAllText("ca.crt"),
+    keyCertificatePair: new KeyCertificatePair(
+        File.ReadAllText("client.crt"),
+        File.ReadAllText("client.key")
+    ));
+
+// Using constructor
+var client = new EtcdClient(
     "https://localhost:2379",
     configureChannelOptions: options => {
-        var handler = new SocketsHttpHandler();
+        options.Credentials = channelCredentials;
+    });
 
-        // Load client certificate
-        var clientCert = new X509Certificate2("client.pfx", "password");
-
-        handler.SslOptions.ClientCertificates = new X509CertificateCollection { clientCert };
-        options.HttpHandler = handler;
-    }
-);
+// Using DI
+services.AddEtcdClient(options => {
+    options.ConnectionString = "https://localhost:2379";
+    options.ConfigureChannel = channelOptions => {
+        channelOptions.Credentials = channelCredentials;
+    };
+});
 ```
 
 ### Custom Interceptors
-
-You can add custom gRPC interceptors:
-
 ```csharp
-// Create custom interceptors
-var loggingInterceptor = new LoggingInterceptor();
-var metricInterceptor = new MetricInterceptor();
+var interceptors = new[]
+{
+    new LoggingInterceptor(),
+    new MetricsInterceptor(),
+    new RetryInterceptor()
+};
 
-// Initialize with interceptors
-EtcdClient client = new EtcdClient(
-    "https://localhost:2379",
-    interceptors: new Interceptor[] { loggingInterceptor, metricInterceptor }
-);
+// Using constructor
+var client = new EtcdClient(
+    "localhost:2379",
+    interceptors: interceptors);
+
+// Using DI
+services.AddEtcdClient(options => {
+    options.ConnectionString = "localhost:2379";
+    options.Interceptors = interceptors;
+});
 ```
 
 ### Custom Retry Policy
-
-You can customize the retry policy:
-
 ```csharp
-EtcdClient client = new EtcdClient(
-    "https://localhost:2379",
-    configureChannelOptions: options => {
-        options.ServiceConfig = new ServiceConfig {
-            MethodConfigs = {
-                new MethodConfig {
-                    Names = { MethodName.Default },
-                    RetryPolicy = new RetryPolicy {
-                        MaxAttempts = 3,
-                        InitialBackoff = TimeSpan.FromSeconds(2),
-                        MaxBackoff = TimeSpan.FromSeconds(10),
-                        BackoffMultiplier = 2,
-                        RetryableStatusCodes = { StatusCode.Unavailable, StatusCode.DeadlineExceeded }
-                    }
-                }
-            }
-        };
-    }
-);
+// Using constructor
+var client = new EtcdClient(
+    "localhost:2379",
+    retryPolicy: new ExponentialBackoffRetryPolicy(maxRetries: 5));
+
+// Using DI
+services.AddEtcdClient(options => {
+    options.ConnectionString = "localhost:2379";
+    options.EnableRetryPolicy = true;
+});
 ```
 
 ## See Also
 
-- [API Reference](client-methods.md) - Complete API reference for the EtcdClient class
-- [Authentication](../authentication/index.md) - How to authenticate with etcd
-- [Disposing the Client](../index.md#disposing-the-client) - How to properly dispose the client
+- [Dependency Injection](dependency-injection.md) - Detailed DI configuration
+- [API Reference](api-reference.md) - Complete API reference
+- [Authentication](../authentication/index.md) - Authentication options
