@@ -7,6 +7,7 @@ A C# .NET (dotnet) GRPC client for etcd v3+
 ![Build Status](https://github.com/shubhamranjan/dotnet-etcd/actions/workflows/codeql-analysis.yml/badge.svg)
 ![Nuget Version Info](https://img.shields.io/nuget/v/dotnet-etcd.svg)
 ![Nuget Download Info](https://img.shields.io/nuget/dt/dotnet-etcd.svg)
+[![Code Coverage](https://img.shields.io/badge/coverage-XX%-brightgreen)](https://github.com/shubhamranjan/dotnet-etcd/actions/workflows/dotnet-tests.yml/artifacts)
 
 ## Table of Contents
 
