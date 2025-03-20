@@ -1,36 +1,71 @@
-# Testing Guide for dotnet-etcd
+# Testing dotnet-etcd
 
-This document provides information about testing the dotnet-etcd library, including running tests and generating code coverage reports.
+This document provides comprehensive guidance for running tests and generating code coverage reports for the dotnet-etcd project.
 
 ## Test Categories
 
-The tests are organized into two main categories:
+The test suite is divided into two main categories:
 
-1. **Unit Tests**: These tests focus on testing individual components in isolation, using mocks for dependencies. They don't require a running etcd server.
-2. **Integration Tests**: These tests interact with a real etcd server and verify the behavior of the library against an actual etcd instance.
+1. **Unit Tests**: Don't require a running etcd server
+2. **Integration Tests**: Require a running etcd server
 
 ## Running Tests
 
 ### Prerequisites
 
-- .NET SDK 7.0 or later
-- For integration tests: A running etcd server (v3.x) accessible at localhost:2379
+- .NET SDK (6.0 or later)
+- Docker (for running integration tests)
+- ReportGenerator tool (for coverage reports)
 
-### Running Unit Tests
+Install the required tools:
+
+```bash
+dotnet tool install -g dotnet-reportgenerator-globaltool
+```
+
+### Unit Tests
+
+Run unit tests only:
 
 ```bash
 dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Unit"
 ```
 
-### Running Integration Tests
+### Integration Tests
 
-Ensure you have an etcd server running, then:
+1. Start an etcd server:
+
+```bash
+# Single node
+docker run -d --name etcd-server \
+  -p 2379:2379 \
+  quay.io/coreos/etcd:v3.5.0 \
+  etcd --advertise-client-urls http://0.0.0.0:2379 \
+  --listen-client-urls http://0.0.0.0:2379
+
+# Or use the provided script
+./dotnet-etcd.Tests/start-etcd.sh
+```
+
+2. Run integration tests:
 
 ```bash
 dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Integration"
 ```
 
-### Running All Tests
+3. Stop the server:
+
+```bash
+docker stop etcd-server
+docker rm etcd-server
+
+# Or use the provided script
+./dotnet-etcd.Tests/stop-etcd.sh
+```
+
+### All Tests
+
+Run both unit and integration tests:
 
 ```bash
 dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj
@@ -38,85 +73,135 @@ dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj
 
 ## Code Coverage
 
-### Generating Code Coverage Reports
+### Generating Coverage Reports
 
-We use the `coverlet` and `reportgenerator` tools to generate code coverage reports.
-
-1. Install the required tools:
+1. Run tests with coverage:
 
 ```bash
-dotnet tool install --global dotnet-reportgenerator-globaltool
-```
-
-2. Run tests with coverage:
-
-```bash
-dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --collect:"XPlat Code Coverage"
-```
-
-3. Generate a report:
-
-```bash
-reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
-```
-
-4. Open the generated report:
-
-```bash
-open coveragereport/index.html  # On macOS
-# or
-start coveragereport/index.html  # On Windows
-```
-
-### Excluding gRPC Generated Code
-
-To get a more accurate representation of code coverage, we exclude gRPC generated code from the reports. These files are auto-generated and don't need to be tested.
-
-To exclude gRPC generated code when generating a report:
-
-```bash
-reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html -classfilters:"-Authpb.*;-Etcdserverpb.*;-Mvccpb.*;-V3Electionpb.*;-V3Lockpb.*;-Versionpb.*;-Gogoproto.*"
-```
-
-This excludes all the auto-generated gRPC code in the following namespaces:
-- Authpb
-- Etcdserverpb
-- Mvccpb
-- V3Electionpb
-- V3Lockpb
-- Versionpb
-- Gogoproto
-
-### Using the Coverage Script
-
-For convenience, you can use the provided script:
-
-```bash
+# Use the provided script
 ./run-unit-tests-with-coverage.sh
+
+# Or run manually
+dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj \
+  /p:CollectCoverage=true \
+  /p:CoverletOutputFormat=cobertura \
+  /p:CoverletOutput=./TestResults/Coverage/
 ```
 
-This script will:
-1. Run the unit tests with coverage enabled
-2. Generate an HTML report
-3. Display the coverage summary
+2. Generate HTML report:
 
-## Continuous Integration
+```bash
+reportgenerator \
+  -reports:"dotnet-etcd.Tests/TestResults/Coverage/coverage.cobertura.xml" \
+  -targetdir:"coveragereport" \
+  -reporttypes:Html
+```
 
-GitHub Actions workflows are set up to run tests automatically:
+3. View the report at `coveragereport/index.html`
 
-1. **dotnet-tests.yml**: Runs on PRs and pushes to the main branch
-2. **code-coverage.yml**: Generates and publishes code coverage reports
+### Continuous Integration
 
-## Improving Test Coverage
-
-When adding new features or fixing bugs, please ensure:
-
-1. Add unit tests for new functionality
-2. Add integration tests for end-to-end scenarios
-3. Run the coverage report to identify areas that need more testing
+- GitHub Actions automatically runs tests and generates coverage reports
+- Coverage reports are published to GitHub Pages
+- Coverage trends are tracked over time
 
 ## Test Structure
 
-- **Unit Tests**: Located in `dotnet-etcd.Tests/Unit/`
-- **Integration Tests**: Located in `dotnet-etcd.Tests/Integration/`
-- **Test Infrastructure**: Located in `dotnet-etcd.Tests/Infrastructure/` 
+### Unit Tests
+
+- Located in `dotnet-etcd.Tests/Unit/`
+- Test individual components in isolation
+- Use mocking for external dependencies
+- Fast execution, no external dependencies
+
+### Integration Tests
+
+- Located in `dotnet-etcd.Tests/Integration/`
+- Test full functionality with real etcd server
+- Cover real-world scenarios
+- Require running etcd server
+
+## Writing Tests
+
+### Best Practices
+
+1. **Categories**: Mark tests with appropriate category:
+```csharp
+[Trait("Category", "Unit")]
+public class MyUnitTest { }
+
+[Trait("Category", "Integration")]
+public class MyIntegrationTest { }
+```
+
+2. **Naming**: Follow the convention:
+```csharp
+public class ClassNameTests
+{
+    [Fact]
+    public void MethodName_Scenario_ExpectedResult()
+    {
+        // Arrange
+        // Act
+        // Assert
+    }
+}
+```
+
+3. **Mocking**: Use Moq for unit tests:
+```csharp
+var mockClient = new Mock<IEtcdClient>();
+mockClient.Setup(x => x.Get(It.IsAny<string>()))
+         .Returns(expectedResponse);
+```
+
+4. **Clean Up**: Use IDisposable for resource cleanup:
+```csharp
+public class IntegrationTest : IDisposable
+{
+    private readonly EtcdClient _client;
+
+    public IntegrationTest()
+    {
+        _client = new EtcdClient("localhost:2379");
+    }
+
+    public void Dispose()
+    {
+        _client.Dispose();
+    }
+}
+```
+
+### Test Data
+
+- Use meaningful test data
+- Clean up test data in integration tests
+- Use constants for common values
+- Document test data requirements
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Integration Tests Failing**
+   - Verify etcd server is running
+   - Check connection string
+   - Ensure no port conflicts
+
+2. **Coverage Reports**
+   - Verify coverage files exist
+   - Check ReportGenerator installation
+   - Ensure all test categories are run
+
+3. **Test Timeouts**
+   - Increase timeout in test settings
+   - Check etcd server health
+   - Verify network connectivity
+
+### Getting Help
+
+- Check the [GitHub Issues](https://github.com/shubhamranjan/dotnet-etcd/issues)
+- Create a new issue with test output
+- Include environment details
+- Provide minimal reproduction

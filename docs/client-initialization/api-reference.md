@@ -204,6 +204,50 @@ The `HealthCheckResponse` class represents the response from a health check oper
 
 - `Status`: The health status of the etcd cluster.
 
+## Dependency Injection
+
+### AddEtcdClient Extension Methods
+```csharp
+// Basic registration
+public static IServiceCollection AddEtcdClient(
+    this IServiceCollection services,
+    Action<EtcdClientOptions> configureClient)
+
+// Named client registration
+public static IServiceCollection AddEtcdClient(
+    this IServiceCollection services,
+    string name,
+    Action<EtcdClientOptions> configureClient)
+
+// Configuration section registration
+public static IServiceCollection AddEtcdClient(
+    this IServiceCollection services,
+    IConfiguration configuration)
+```
+
+### EtcdClientOptions
+```csharp
+public class EtcdClientOptions
+{
+    public string ConnectionString { get; set; }
+    public int Port { get; set; } = 2379;
+    public string ServerName { get; set; } = "my-etcd-server";
+    public Action<GrpcChannelOptions> ConfigureChannel { get; set; }
+    public Interceptor[] Interceptors { get; set; }
+    public bool UseInsecureChannel { get; set; }
+    public CallCredentials CallCredentials { get; set; }
+    public bool EnableRetryPolicy { get; set; } = true;
+}
+```
+
+### IEtcdClientFactory
+```csharp
+public interface IEtcdClientFactory
+{
+    IEtcdClient CreateClient(string name);
+}
+```
+
 ## Examples
 
 ### Basic Authentication
@@ -258,6 +302,41 @@ finally
 {
     // Ensure the client is disposed
     etcdClient.Dispose();
+}
+```
+
+### Dependency Injection Example
+```csharp
+// Register with options
+services.AddEtcdClient(options => {
+    options.ConnectionString = "localhost:2379";
+    options.UseInsecureChannel = true;
+});
+
+// Register with configuration
+services.AddEtcdClient(configuration.GetSection("Etcd"));
+
+// Register named clients
+services.AddEtcdClient("client1", options => {
+    options.ConnectionString = "localhost:2379";
+});
+services.AddEtcdClient("client2", options => {
+    options.ConnectionString = "localhost:2380";
+});
+
+// Use in services
+public class MyService
+{
+    private readonly IEtcdClient _client;
+    private readonly IEtcdClient _client2;
+
+    public MyService(
+        IEtcdClient client,
+        IEtcdClientFactory clientFactory)
+    {
+        _client = client; // Default client
+        _client2 = clientFactory.CreateClient("client2");
+    }
 }
 ```
 

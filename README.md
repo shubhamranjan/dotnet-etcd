@@ -10,7 +10,6 @@ A C# .NET (dotnet) GRPC client for etcd v3+
 
 ## Table of Contents
 
-- [Latest Version](#latest-version-720)
 - [Supported .NET Versions](#supported-net-versions)
 - [Installing Package](#installing-package)
 - [Documentation](#documentation)
@@ -19,22 +18,17 @@ A C# .NET (dotnet) GRPC client for etcd v3+
 - [Contributing](#contributing)
 - [Testing and Code Coverage](#testing-and-code-coverage)
 
-## Latest Version: 7.2.0
-
-- Support for .NET 8.0
-- Improved watch reconnects
-- Enhanced retry policy for better resilience
-- Package updates and dependencies refresh
 
 ## Supported .NET Versions
 
+- .NET 9
 - .NET 8
-- .NET 7
-- .NET 6
 
 ### Compatibility Note
 
-For older dotnet versions, use lib version < 5.x
+For older .NET versions:
+- For .NET 6/7 support, use version 7.2.0
+- For .NET versions < 6, use version < 5.x
 
 ## Installing Package
 
@@ -63,21 +57,26 @@ paket add dotnet-etcd
 
 ## Documentation
 
-For comprehensive documentation of all operations and method overloads, please see
-the [documentation pages](docs/index.md).
+For comprehensive documentation of all operations and method overloads, please see the [documentation pages](docs/index.md).
 
 The documentation is organized into the following sections:
 
+### Getting Started
 - [Client Initialization](docs/client-initialization/index.md) - How to initialize and configure the client
+- [Dependency Injection](docs/client-initialization/dependency-injection.md) - Using the client with DI
+- [Authentication](docs/authentication/index.md) - Authentication with etcd
+
+### Core Operations
 - [Key-Value Operations](docs/key-value/index.md) - Working with keys and values
 - [Watch Operations](docs/watch/index.md) - Watching for changes to keys
 - [Lease Operations](docs/lease/index.md) - Working with leases
 - [Lock Operations](docs/lock/index.md) - Distributed locking
 - [Election Operations](docs/election/index.md) - Leader election
+
+### Advanced Operations
 - [Cluster Operations](docs/cluster/index.md) - Managing the etcd cluster
 - [Maintenance Operations](docs/maintenance/index.md) - Maintenance tasks
 - [Transactions](docs/transactions/index.md) - Atomic operations
-- [Authentication](docs/authentication/index.md) - Authentication with etcd
 
 The documentation includes detailed API references with all method overloads, parameters, and return types, as well as
 examples for common use cases.
@@ -129,6 +128,16 @@ client.Put("foo/bar", "barfoo", new Grpc.Core.Metadata() {
 For more authentication options, see the [Authentication documentation](docs/authentication/index.md).
 
 ## Features
+
+### Dependency Injection Support
+Built-in support for Microsoft.Extensions.DependencyInjection with extension methods for easy configuration:
+
+```csharp
+services.AddEtcdClient(options => {
+    options.ConnectionString = "localhost:2379";
+    options.UseInsecureChannel = true;
+});
+```
 
 ### Automatic Retry Functionality
 
