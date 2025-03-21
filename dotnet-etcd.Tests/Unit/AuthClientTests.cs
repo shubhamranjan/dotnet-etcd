@@ -228,6 +228,48 @@ public class AuthClientTests
     }
 
     [Fact]
+    public async Task RoleAddAsync_ShouldCallGrpcClient()
+    {
+        // Arrange
+        var mockAuthClient = new Mock<Auth.AuthClient>();
+
+        var expectedResponse = new AuthRoleAddResponse();
+
+        var asyncResponse = new AsyncUnaryCall<AuthRoleAddResponse>(
+            Task.FromResult(expectedResponse),
+            Task.FromResult(new Metadata()),
+            () => Status.DefaultSuccess,
+            () => new Metadata(),
+            () => { });
+
+        mockAuthClient
+            .Setup(x => x.RoleAddAsync(It.IsAny<AuthRoleAddRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+                It.IsAny<CancellationToken>()))
+            .Returns(asyncResponse);
+
+        // Create a client with mocked dependencies
+        var client = TestHelper.CreateEtcdClientWithMockCallInvoker();
+
+        // Set up the mock Auth client
+        TestHelper.SetupMockClientViaConnection(client, mockAuthClient.Object, "_authClient");
+
+        // Act
+        var request = new AuthRoleAddRequest
+        {
+            Name = "test-role"
+        };
+        var result = await client.RoleAddAsync(request);
+
+        // Assert
+        mockAuthClient.Verify(x => x.RoleAddAsync(
+            It.Is<AuthRoleAddRequest>(r => r.Name == "test-role"),
+            It.IsAny<Metadata>(),
+            It.IsAny<DateTime?>(),
+            It.IsAny<CancellationToken>()
+        ), Times.Once);
+    }
+
+    [Fact]
     public void UserGrantRole_ShouldCallGrpcClient()
     {
         // Arrange

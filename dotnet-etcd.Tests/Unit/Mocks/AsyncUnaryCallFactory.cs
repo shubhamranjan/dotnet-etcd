@@ -18,9 +18,9 @@ public static class AsyncUnaryCallFactory
     /// <returns>An AsyncUnaryCall that returns the specified response</returns>
     public static AsyncUnaryCall<TResponse> Create<TResponse>(
         TResponse response,
-        Metadata responseHeaders = null,
+        Metadata? responseHeaders = null,
         Status? status = null,
-        Metadata trailers = null)
+        Metadata? trailers = null)
     {
         responseHeaders ??= new Metadata();
         status ??= Status.DefaultSuccess;
