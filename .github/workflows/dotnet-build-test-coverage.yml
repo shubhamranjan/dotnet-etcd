@@ -1,4 +1,4 @@
-name: .NET Tests
+name: .NET Build, Test and Coverage
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-test:
+  build-test-coverage:
     runs-on: ubuntu-latest
     
     services:
@@ -20,6 +20,7 @@ jobs:
         env:
           ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
           ETCD_ADVERTISE_CLIENT_URLS: http://0.0.0.0:2379
+        options: --health-cmd "etcdctl endpoint health" --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
     - uses: actions/checkout@v4
@@ -37,41 +38,44 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     
+    - name: Install Coverage Tools
+      run: |
+        dotnet tool install --global dotnet-reportgenerator-globaltool
+        dotnet tool install --global dotnet-coverage
+    
     - name: Run Unit Tests
       run: dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Unit" --no-build --verbosity normal
     
     - name: Run Integration Tests
       run: dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Integration" --no-build --verbosity normal
     
-    - name: Generate Code Coverage Report
+    - name: Run Tests with Coverage
       run: |
-        dotnet tool install --global dotnet-reportgenerator-globaltool
-        dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Unit" --no-build --collect:"XPlat Code Coverage" --results-directory ./coverage
-        reportgenerator -reports:./coverage/**/coverage.cobertura.xml -targetdir:./coveragereport -reporttypes:Html,Cobertura -classfilters:"-Authpb.*;-Etcdserverpb.*;-Mvccpb.*;-V3Electionpb.*;-V3Lockpb.*;-Versionpb.*;-Gogoproto.*"
+        dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --no-build --collect:"XPlat Code Coverage" --results-directory ./coverage
+    
+    - name: Generate Coverage Report
+      run: |
+        reportgenerator -reports:./coverage/**/coverage.cobertura.xml -targetdir:./coveragereport -reporttypes:Html,Cobertura,TextSummary,Badges -classfilters:"-Authpb.*;-Etcdserverpb.*;-Mvccpb.*;-V3Electionpb.*;-V3Lockpb.*;-Versionpb.*;-Gogoproto.*"
+        cat ./coveragereport/Summary.txt
     
     - name: Upload Coverage Report
       uses: actions/upload-artifact@v4
       with:
         name: coverage-report
         path: ./coveragereport
-        retention-days: 14
+        retention-days: 30
     
-    - name: Code Coverage Report
-      uses: irongut/CodeCoverageSummary@v1.3.0
-      with:
-        filename: coverage/**/coverage.cobertura.xml
-        badge: true
-        fail_below_min: true
-        format: markdown
-        hide_branch_rate: false
-        hide_complexity: true
-        indicators: true
-        output: both
-        thresholds: '60 80'
-
     - name: Add Coverage PR Comment
       uses: marocchino/sticky-pull-request-comment@v2
       if: github.event_name == 'pull_request'
       with:
         recreate: true
         path: code-coverage-results.md
+    
+    - name: Publish Coverage Report to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      uses: JamesIves/github-pages-deploy-action@v4.5.0
+      with:
+        folder: ./coveragereport
+        branch: gh-pages
+        clean: true

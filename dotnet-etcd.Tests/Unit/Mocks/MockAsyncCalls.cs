@@ -40,7 +40,7 @@ public static class MockAsyncCalls
     /// <param name="mockCall">Optional mock call to return from the factory</param>
     /// <returns>A mock of IAsyncStreamCallFactory</returns>
     public static Mock<IAsyncStreamCallFactory<TRequest, TResponse>> CreateStreamCallFactory<TRequest, TResponse>(
-        Mock<IAsyncDuplexStreamingCall<TRequest, TResponse>> mockCall = null)
+        Mock<IAsyncDuplexStreamingCall<TRequest, TResponse>>? mockCall = null)
     {
         var factory = new Mock<IAsyncStreamCallFactory<TRequest, TResponse>>();
 

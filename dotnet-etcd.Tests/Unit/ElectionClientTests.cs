@@ -525,4 +525,157 @@ public class ElectionClientTests
             It.IsAny<CancellationToken>()
         ), Times.Once);
     }
+
+    [Fact]
+    public async Task ObserveAsync_WithRequestObject_ShouldCallCorrectMethod()
+    {
+        // Arrange
+        var mockElectionClient = new Mock<Election.ElectionClient>();
+        var testLeaderResponse = new LeaderResponse 
+        { 
+            Kv = new KeyValue
+            {
+                Key = ByteString.CopyFromUtf8("test-key"),
+                Value = ByteString.CopyFromUtf8("test-value"),
+                ModRevision = 100
+            }
+        };
+
+        // Create a client with mocked dependencies
+        var client = TestHelper.CreateEtcdClientWithMockCallInvoker();
+
+        // Set up the mock Election client
+        TestHelper.SetupMockClientViaConnection(client, mockElectionClient.Object, "_electionClient");
+
+        // Mock the server streaming call
+        var mockResponseStream = new Mock<IAsyncStreamReader<LeaderResponse>>();
+        var moveNextSequence = new Queue<bool>();
+        // Setup to return true once (has a response) then false (end of stream)
+        moveNextSequence.Enqueue(true);  
+        moveNextSequence.Enqueue(false);
+
+        mockResponseStream
+            .Setup(x => x.MoveNext(It.IsAny<CancellationToken>()))
+            .Returns(() => moveNextSequence.Count > 0 
+                ? Task.FromResult(moveNextSequence.Dequeue()) 
+                : Task.FromResult(false));
+
+        mockResponseStream
+            .Setup(x => x.Current)
+            .Returns(testLeaderResponse);
+
+        var asyncStreamingCall = new AsyncServerStreamingCall<LeaderResponse>(
+            mockResponseStream.Object,
+            Task.FromResult(new Metadata()),
+            () => Status.DefaultSuccess,
+            () => new Metadata(),
+            () => { });
+
+        var request = new LeaderRequest 
+        { 
+            Name = ByteString.CopyFromUtf8("test-election") 
+        };
+
+        mockElectionClient
+            .Setup(x => x.Observe(
+                It.IsAny<LeaderRequest>(),
+                It.IsAny<Metadata>(),
+                It.IsAny<DateTime?>(),
+                It.IsAny<CancellationToken>()))
+            .Returns(asyncStreamingCall);
+
+        // Act
+        var results = new List<LeaderResponse>();
+        await foreach (var response in client.ObserveAsync(request))
+        {
+            results.Add(response);
+        }
+
+        // Assert
+        mockElectionClient.Verify(x => x.Observe(
+            It.Is<LeaderRequest>(r => r.Name.ToStringUtf8() == "test-election"),
+            It.IsAny<Metadata>(),
+            It.IsAny<DateTime?>(),
+            It.IsAny<CancellationToken>()),
+            Times.Once);
+        
+        Assert.Single(results);
+        Assert.Equal("test-key", results[0].Kv.Key.ToStringUtf8());
+        Assert.Equal("test-value", results[0].Kv.Value.ToStringUtf8());
+        Assert.Equal(100, results[0].Kv.ModRevision);
+    }
+
+    [Fact]
+    public async Task ObserveAsync_WithStringName_ShouldCallCorrectMethod()
+    {
+        // Arrange
+        var mockElectionClient = new Mock<Election.ElectionClient>();
+        var testLeaderResponse = new LeaderResponse 
+        { 
+            Kv = new KeyValue
+            {
+                Key = ByteString.CopyFromUtf8("test-key"),
+                Value = ByteString.CopyFromUtf8("test-value"),
+                ModRevision = 100
+            }
+        };
+
+        // Create a client with mocked dependencies
+        var client = TestHelper.CreateEtcdClientWithMockCallInvoker();
+
+        // Set up the mock Election client
+        TestHelper.SetupMockClientViaConnection(client, mockElectionClient.Object, "_electionClient");
+
+        // Mock the server streaming call
+        var mockResponseStream = new Mock<IAsyncStreamReader<LeaderResponse>>();
+        var moveNextSequence = new Queue<bool>();
+        // Setup to return true once (has a response) then false (end of stream)
+        moveNextSequence.Enqueue(true);  
+        moveNextSequence.Enqueue(false);
+
+        mockResponseStream
+            .Setup(x => x.MoveNext(It.IsAny<CancellationToken>()))
+            .Returns(() => moveNextSequence.Count > 0 
+                ? Task.FromResult(moveNextSequence.Dequeue()) 
+                : Task.FromResult(false));
+
+        mockResponseStream
+            .Setup(x => x.Current)
+            .Returns(testLeaderResponse);
+
+        var asyncStreamingCall = new AsyncServerStreamingCall<LeaderResponse>(
+            mockResponseStream.Object,
+            Task.FromResult(new Metadata()),
+            () => Status.DefaultSuccess,
+            () => new Metadata(),
+            () => { });
+
+        mockElectionClient
+            .Setup(x => x.Observe(
+                It.IsAny<LeaderRequest>(),
+                It.IsAny<Metadata>(),
+                It.IsAny<DateTime?>(),
+                It.IsAny<CancellationToken>()))
+            .Returns(asyncStreamingCall);
+
+        // Act
+        var results = new List<LeaderResponse>();
+        await foreach (var response in client.ObserveAsync("test-election"))
+        {
+            results.Add(response);
+        }
+
+        // Assert
+        mockElectionClient.Verify(x => x.Observe(
+            It.Is<LeaderRequest>(r => r.Name.ToStringUtf8() == "test-election"),
+            It.IsAny<Metadata>(),
+            It.IsAny<DateTime?>(),
+            It.IsAny<CancellationToken>()),
+            Times.Once);
+        
+        Assert.Single(results);
+        Assert.Equal("test-key", results[0].Kv.Key.ToStringUtf8());
+        Assert.Equal("test-value", results[0].Kv.Value.ToStringUtf8());
+        Assert.Equal(100, results[0].Kv.ModRevision);
+    }
 }
