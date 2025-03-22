@@ -8,13 +8,13 @@ namespace dotnet_etcd.Tests.Integration;
 
 [Collection("EtcdCluster")]
 [Trait("Category", "Integration")]
-public class ElectionIntegrationTests : IDisposable
+public class ElectionClientIntegrationTests : IDisposable
 {
     private readonly EtcdClient _client;
     private readonly EtcdClusterFixture _fixture;
     private readonly long _leaseId;
 
-    public ElectionIntegrationTests(EtcdClusterFixture fixture)
+    public ElectionClientIntegrationTests(EtcdClusterFixture fixture)
     {
         _fixture = fixture;
         Console.WriteLine($"Connecting to {_fixture.ClusterType} etcd cluster at {_fixture.ConnectionString}");
@@ -126,7 +126,7 @@ public class ElectionIntegrationTests : IDisposable
     {
         // Arrange
         var electionName = $"test-election-{Guid.NewGuid()}";
-        CampaignResponse campaignResponse = null;
+        CampaignResponse? campaignResponse = null;
 
         try
         {
@@ -169,7 +169,7 @@ public class ElectionIntegrationTests : IDisposable
     {
         // Arrange
         var electionName = $"test-election-{Guid.NewGuid()}";
-        CampaignResponse campaignResponse = null;
+        CampaignResponse? campaignResponse = null;
 
         try
         {
@@ -212,7 +212,7 @@ public class ElectionIntegrationTests : IDisposable
     {
         // Arrange
         var electionName = $"test-election-{Guid.NewGuid()}";
-        CampaignResponse campaignResponse = null;
+        CampaignResponse? campaignResponse = null;
 
         try
         {
@@ -264,7 +264,7 @@ public class ElectionIntegrationTests : IDisposable
     {
         // Arrange
         var electionName = $"test-election-{Guid.NewGuid()}";
-        CampaignResponse campaignResponse = null;
+        CampaignResponse? campaignResponse = null;
 
         try
         {

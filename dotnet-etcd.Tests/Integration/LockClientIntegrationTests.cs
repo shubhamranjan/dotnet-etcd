@@ -5,7 +5,7 @@ using V3Lockpb;
 namespace dotnet_etcd.Tests.Integration;
 
 [Trait("Category", "Integration")]
-public class LockIntegrationTests
+public class LockClientIntegrationTests
 {
     [Fact]
     public async Task LockUnlockLifecycleTest()

@@ -6,12 +6,12 @@ namespace dotnet_etcd.Tests.Integration;
 
 [Collection("EtcdCluster")]
 [Trait("Category", "Integration")]
-public class MaintenanceIntegrationTests : IDisposable
+public class MaintenanceClientIntegrationTests : IDisposable
 {
     private readonly EtcdClient _client;
     private readonly EtcdClusterFixture _fixture;
 
-    public MaintenanceIntegrationTests(EtcdClusterFixture fixture)
+    public MaintenanceClientIntegrationTests(EtcdClusterFixture fixture)
     {
         _fixture = fixture;
         Console.WriteLine($"Connecting to {_fixture.ClusterType} etcd cluster at {_fixture.ConnectionString}");

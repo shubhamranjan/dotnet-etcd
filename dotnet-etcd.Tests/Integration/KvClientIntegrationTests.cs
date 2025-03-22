@@ -5,12 +5,12 @@ namespace dotnet_etcd.Tests.Integration;
 
 [Collection("EtcdCluster")]
 [Trait("Category", "Integration")]
-public class KvIntegrationTests
+public class KvClientIntegrationTests
 {
     private readonly EtcdClient _client;
     private readonly EtcdClusterFixture _fixture;
 
-    public KvIntegrationTests(EtcdClusterFixture fixture)
+    public KvClientIntegrationTests(EtcdClusterFixture fixture)
     {
         _fixture = fixture;
         Console.WriteLine($"Connecting to {_fixture.ClusterType} etcd cluster at {_fixture.ConnectionString}");
