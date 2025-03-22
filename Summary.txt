@@ -1,0 +1,33 @@
+Summary
+  Generated on: 03/22/2025 - 12:45:49
+  Coverage date: 03/22/2025 - 12:45:48
+  Parser: Cobertura
+  Assemblies: 1
+  Classes: 11
+  Files: 20
+  Line coverage: 21.8%
+  Covered lines: 367
+  Uncovered lines: 1310
+  Coverable lines: 1677
+  Total lines: 4687
+  Branch coverage: 22.1% (67 of 302)
+  Covered branches: 67
+  Total branches: 302
+  Method coverage: 35.3% (88 of 249)
+  Full method coverage: 30.1% (75 of 249)
+  Covered methods: 88
+  Fully covered methods: 75
+  Total methods: 249
+
+dotnet-etcd                                                     21.8%
+  dotnet_etcd.AsyncDuplexStreamingCallAdapter<T1, T2>              0%
+  dotnet_etcd.AsyncStreamCallFactory<T1, T2>                    42.8%
+  dotnet_etcd.DependencyInjection.EtcdClientOptions               80%
+  dotnet_etcd.DependencyInjection.EtcdClientOptionsValidator     100%
+  dotnet_etcd.DependencyInjection.ServiceCollectionExtensions     80%
+  dotnet_etcd.EtcdClient                                        21.7%
+  dotnet_etcd.helper.AsyncHelper                                   0%
+  dotnet_etcd.multiplexer.Connection                            76.4%
+  dotnet_etcd.WatchEvent                                           0%
+  dotnet_etcd.WatchManager                                       4.4%
+  dotnet_etcd.WatchStream                                          0%
