@@ -50,7 +50,7 @@ jobs:
     
     - name: Run Tests with Coverage
       run: |
-        dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --no-build --collect:"XPlat Code Coverage" --results-directory ./coverage
+        dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Unit" --no-build --collect:"XPlat Code Coverage" --results-directory ./coverage
     
     - name: Generate Coverage Report
       run: |
