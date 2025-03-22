@@ -184,9 +184,9 @@ public partial class EtcdClient : IDisposable, IEtcdClient
             foreach (string host in hosts)
             {
                 string processedHost = host.Trim();
-                
+
                 // Only append port if no port is specified and it's not a full URL
-                if (!processedHost.Contains(':') && 
+                if (!processedHost.Contains(':') &&
                     !processedHost.StartsWith(InsecurePrefix, StringComparison.InvariantCultureIgnoreCase) &&
                     !processedHost.StartsWith(SecurePrefix, StringComparison.InvariantCultureIgnoreCase))
                 {

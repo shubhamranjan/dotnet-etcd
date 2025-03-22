@@ -1,7 +1,5 @@
-using dotnet_etcd.Tests.Infrastructure;
 using Etcdserverpb;
 using Google.Protobuf;
-using Grpc.Core;
 
 namespace dotnet_etcd.Tests.Integration;
 
@@ -13,45 +11,45 @@ public class EtcdClientIntegrationTests
     {
         // Arrange & Act
         using var client = new EtcdClient("127.0.0.1:2379");
-        
+
         // Assert - Get status to verify connection works
         var statusResponse = await client.StatusAsync(new StatusRequest());
         Assert.NotNull(statusResponse);
         Assert.NotEmpty(statusResponse.Version);
     }
-    
+
     [Fact]
     public async Task MultiEndpointConnectionTest()
     {
         // Arrange - Test with multiple endpoints (assuming at least one is valid)
         var endpoints = new[] { "127.0.0.1:2379", "127.0.0.1:9999" }; // Second one likely invalid
-        
+
         // Act
         using var client = new EtcdClient(string.Join(",", endpoints));
-        
+
         // Assert - Should connect to the valid endpoint
         var statusResponse = await client.StatusAsync(new StatusRequest());
         Assert.NotNull(statusResponse);
         Assert.NotEmpty(statusResponse.Version);
     }
-    
+
     [Fact]
     public async Task BasicOperationsTest()
     {
         // Arrange
         using var client = new EtcdClient("127.0.0.1:2379");
-        
-        string testKey = "etcd-client-test-key";
-        string testValue = "etcd-client-test-value";
-        string updatedValue = "etcd-client-updated-value";
-        
+
+        var testKey = "etcd-client-test-key";
+        var testValue = "etcd-client-test-value";
+        var updatedValue = "etcd-client-updated-value";
+
         try
         {
             // Clean up in case previous test didn't complete
             await client.DeleteAsync(testKey);
-            
+
             // Act & Assert
-            
+
             // 1. Put a key-value
             var putRequest = new PutRequest
             {
@@ -59,7 +57,7 @@ public class EtcdClientIntegrationTests
                 Value = ByteString.CopyFromUtf8(testValue)
             };
             await client.PutAsync(putRequest);
-            
+
             // 2. Get the value
             var getRequest = new RangeRequest
             {
@@ -68,7 +66,7 @@ public class EtcdClientIntegrationTests
             var getResponse = await client.GetAsync(getRequest);
             Assert.Single(getResponse.Kvs);
             Assert.Equal(testValue, getResponse.Kvs[0].Value.ToStringUtf8());
-            
+
             // 3. Update the value
             var updateRequest = new PutRequest
             {
@@ -76,15 +74,15 @@ public class EtcdClientIntegrationTests
                 Value = ByteString.CopyFromUtf8(updatedValue)
             };
             await client.PutAsync(updateRequest);
-            
+
             // 4. Get the updated value
             var getUpdatedResponse = await client.GetAsync(getRequest);
             Assert.Single(getUpdatedResponse.Kvs);
             Assert.Equal(updatedValue, getUpdatedResponse.Kvs[0].Value.ToStringUtf8());
-            
+
             // 5. Delete the key
             await client.DeleteAsync(testKey);
-            
+
             // 6. Verify the key is gone
             var getAfterDeleteResponse = await client.GetAsync(getRequest);
             Assert.Empty(getAfterDeleteResponse.Kvs);
@@ -95,19 +93,19 @@ public class EtcdClientIntegrationTests
             await client.DeleteAsync(testKey);
         }
     }
-    
+
     [Fact]
     public async Task TransactionTest()
     {
         // Arrange
         using var client = new EtcdClient("127.0.0.1:2379");
-        
-        string testKey = "etcd-client-tx-test-key";
-        string testValue = "etcd-client-tx-test-value";
-        string ifMatchValue = "etcd-client-tx-match-value";
-        string thenValue = "etcd-client-tx-then-value";
-        string elseValue = "etcd-client-tx-else-value";
-        
+
+        var testKey = "etcd-client-tx-test-key";
+        var testValue = "etcd-client-tx-test-value";
+        var ifMatchValue = "etcd-client-tx-match-value";
+        var thenValue = "etcd-client-tx-then-value";
+        var elseValue = "etcd-client-tx-else-value";
+
         try
         {
             // Setup - ensure the key exists with a known value
@@ -117,10 +115,10 @@ public class EtcdClientIntegrationTests
                 Value = ByteString.CopyFromUtf8(testValue)
             };
             await client.PutAsync(setupRequest);
-            
+
             // Act - Create a transaction that will fail the condition
             var failingTxn = new TxnRequest();
-            
+
             // Add a compare condition that should fail
             failingTxn.Compare.Add(new Compare
             {
@@ -129,7 +127,7 @@ public class EtcdClientIntegrationTests
                 Target = Compare.Types.CompareTarget.Value,
                 Result = Compare.Types.CompareResult.Equal
             });
-            
+
             // Add a success operation
             failingTxn.Success.Add(new RequestOp
             {
@@ -139,7 +137,7 @@ public class EtcdClientIntegrationTests
                     Value = ByteString.CopyFromUtf8(thenValue)
                 }
             });
-            
+
             // Add a failure operation
             failingTxn.Failure.Add(new RequestOp
             {
@@ -149,12 +147,12 @@ public class EtcdClientIntegrationTests
                     Value = ByteString.CopyFromUtf8(elseValue)
                 }
             });
-            
+
             var failingResult = await client.TransactionAsync(failingTxn);
-            
+
             // Assert
             Assert.False(failingResult.Succeeded);
-            
+
             // Verify the ELSE clause was executed
             var getRequest = new RangeRequest
             {
@@ -163,10 +161,10 @@ public class EtcdClientIntegrationTests
             var getResponse = await client.GetAsync(getRequest);
             Assert.Single(getResponse.Kvs);
             Assert.Equal(elseValue, getResponse.Kvs[0].Value.ToStringUtf8());
-            
+
             // Act - Create a transaction that will succeed
             var succeedingTxn = new TxnRequest();
-            
+
             // Add a compare condition that should succeed
             succeedingTxn.Compare.Add(new Compare
             {
@@ -175,7 +173,7 @@ public class EtcdClientIntegrationTests
                 Target = Compare.Types.CompareTarget.Value,
                 Result = Compare.Types.CompareResult.Equal
             });
-            
+
             // Add a success operation
             succeedingTxn.Success.Add(new RequestOp
             {
@@ -185,12 +183,12 @@ public class EtcdClientIntegrationTests
                     Value = ByteString.CopyFromUtf8(thenValue)
                 }
             });
-            
+
             var succeedingResult = await client.TransactionAsync(succeedingTxn);
-            
+
             // Assert
             Assert.True(succeedingResult.Succeeded);
-            
+
             // Verify the THEN clause was executed
             getResponse = await client.GetAsync(getRequest);
             Assert.Single(getResponse.Kvs);

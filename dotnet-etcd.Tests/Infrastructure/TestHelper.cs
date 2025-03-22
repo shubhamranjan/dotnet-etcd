@@ -4,7 +4,6 @@ using Google.Protobuf;
 using Grpc.Core;
 using Moq;
 using Mvccpb;
-using System.Collections.Generic;
 
 namespace dotnet_etcd.Tests.Infrastructure;
 
@@ -50,7 +49,7 @@ public static class TestHelper
         var mockCallInvoker = new Mock<CallInvoker>();
         return new EtcdClient(mockCallInvoker.Object);
     }
-    
+
     /// <summary>
     ///     Creates a sample KeyValue for testing
     /// </summary>
@@ -65,7 +64,7 @@ public static class TestHelper
             Value = ByteString.CopyFromUtf8(value)
         };
     }
-    
+
     /// <summary>
     ///     Creates a sample RangeResponse for testing
     /// </summary>
@@ -78,7 +77,7 @@ public static class TestHelper
         response.Kvs.Add(CreateKeyValue(key, value));
         return response;
     }
-    
+
     /// <summary>
     ///     Creates an AsyncUnaryCall for mocking async responses
     /// </summary>
@@ -95,7 +94,7 @@ public static class TestHelper
             () => { }
         );
     }
-    
+
     /// <summary>
     ///     Setups common connection parameters for integration tests
     /// </summary>
@@ -104,9 +103,9 @@ public static class TestHelper
     {
         return new Dictionary<string, string>
         {
-            {"endpoints", "127.0.0.1:2379"},
-            {"username", ""},
-            {"password", ""}
+            { "endpoints", "127.0.0.1:2379" },
+            { "username", "" },
+            { "password", "" }
         };
     }
 }

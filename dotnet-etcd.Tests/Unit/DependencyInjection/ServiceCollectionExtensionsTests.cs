@@ -1,7 +1,5 @@
-using System;
 using dotnet_etcd.DependencyInjection;
 using dotnet_etcd.interfaces;
-using Grpc.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 
@@ -15,40 +13,40 @@ public class ServiceCollectionExtensionsTests
     {
         // Arrange
         var services = new ServiceCollection();
-        
+
         // Act
         services.AddEtcdClient("localhost:2379");
         var serviceProvider = services.BuildServiceProvider();
-        
+
         // Assert
         var client = serviceProvider.GetService<IEtcdClient>();
         Assert.NotNull(client);
         Assert.IsType<EtcdClient>(client);
     }
-    
+
     [Fact]
     public void AddEtcdClient_WithOptionsAction_ShouldRegisterClient()
     {
         // Arrange
         var services = new ServiceCollection();
-        bool configActionCalled = false;
-        
+        var configActionCalled = false;
+
         // Act
-        services.AddEtcdClient(options => 
+        services.AddEtcdClient(options =>
         {
             options.ConnectionString = "localhost:2379";
             options.UseInsecureChannel = true;
             configActionCalled = true;
         });
         var serviceProvider = services.BuildServiceProvider();
-        
+
         // Assert
         var client = serviceProvider.GetService<IEtcdClient>();
         Assert.NotNull(client);
         Assert.IsType<EtcdClient>(client);
         Assert.True(configActionCalled);
     }
-    
+
     [Fact]
     public void AddEtcdClient_WithOptions_ShouldRegisterClient()
     {
@@ -59,17 +57,17 @@ public class ServiceCollectionExtensionsTests
             ConnectionString = "localhost:2379",
             UseInsecureChannel = true
         };
-        
+
         // Act
         services.AddEtcdClient(options);
         var serviceProvider = services.BuildServiceProvider();
-        
+
         // Assert
         var client = serviceProvider.GetService<IEtcdClient>();
         Assert.NotNull(client);
         Assert.IsType<EtcdClient>(client);
     }
-    
+
     [Fact]
     public void AddEtcdClient_WithFactories_ShouldRegisterClient()
     {
@@ -77,34 +75,34 @@ public class ServiceCollectionExtensionsTests
         var services = new ServiceCollection();
         var mockConnection = new Mock<IConnection>();
         var mockWatchManager = new Mock<IWatchManager>();
-        
+
         // Act
         services.AddEtcdClient(
             _ => mockConnection.Object,
             _ => mockWatchManager.Object);
         var serviceProvider = services.BuildServiceProvider();
-        
+
         // Assert
         var client = serviceProvider.GetService<IEtcdClient>();
         Assert.NotNull(client);
         Assert.IsType<EtcdClient>(client);
     }
-    
+
     [Fact]
     public void AddEtcdClient_WithNullServices_ShouldThrowArgumentNullException()
     {
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => 
+        Assert.Throws<ArgumentNullException>(() =>
             ServiceCollectionExtensions.AddEtcdClient(null, "localhost:2379"));
     }
-    
+
     [Fact]
     public void AddEtcdClient_WithNullConnectionString_ShouldThrowArgumentNullException()
     {
         // Arrange
         var services = new ServiceCollection();
         Action<EtcdClientOptions> nullAction = null;
-        
+
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() => services.AddEtcdClient(nullAction));
     }

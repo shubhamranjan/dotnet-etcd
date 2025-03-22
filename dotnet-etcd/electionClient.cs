@@ -287,46 +287,6 @@ public partial class EtcdClient
     /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     /// <returns>The response received from the server.</returns>
-    public AsyncServerStreamingCall<LeaderResponse> Observe(
-        LeaderRequest request,
-        Metadata headers = null,
-        DateTime? deadline = null,
-        CancellationToken cancellationToken = default)
-        => CallEtcd(connection => connection.ElectionClient.Observe(
-            request ?? throw new ArgumentNullException(nameof(request)),
-            headers,
-            deadline,
-            cancellationToken));
-
-    /// <summary>
-    ///     Observe streams election proclamations in-order as made by the election's
-    ///     elected leaders.
-    /// </summary>
-    /// <param name="name">The name is the election identifier for the leadership information.</param>
-    /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
-    /// <param name="cancellationToken">An optional token for canceling the call.</param>
-    /// <returns>The response received from the server.</returns>
-    public AsyncServerStreamingCall<LeaderResponse> Observe(
-        string name,
-        Metadata headers = null,
-        DateTime? deadline = null,
-        CancellationToken cancellationToken = default)
-        => CallEtcd(connection => connection.ElectionClient.Observe(
-            new LeaderRequest { Name = ByteString.CopyFromUtf8(name ?? throw new ArgumentNullException(nameof(name))) },
-            headers,
-            deadline,
-            cancellationToken));
-
-    /// <summary>
-    ///     Observe streams election proclamations in-order as made by the election's
-    ///     elected leaders.
-    /// </summary>
-    /// <param name="request">The request to send to the server.</param>
-    /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
-    /// <param name="cancellationToken">An optional token for canceling the call.</param>
-    /// <returns>The response received from the server.</returns>
     public async IAsyncEnumerable<LeaderResponse> ObserveAsync(
         LeaderRequest request,
         Metadata headers = null,
@@ -456,4 +416,44 @@ public partial class EtcdClient
             headers,
             deadline,
             cancellationToken)).ConfigureAwait(false);
+
+    /// <summary>
+    ///     Observe streams election proclamations in-order as made by the election's
+    ///     elected leaders.
+    /// </summary>
+    /// <param name="request">The request to send to the server.</param>
+    /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="cancellationToken">An optional token for canceling the call.</param>
+    /// <returns>The response received from the server.</returns>
+    public AsyncServerStreamingCall<LeaderResponse> Observe(
+        LeaderRequest request,
+        Metadata headers = null,
+        DateTime? deadline = null,
+        CancellationToken cancellationToken = default)
+        => CallEtcd(connection => connection.ElectionClient.Observe(
+            request ?? throw new ArgumentNullException(nameof(request)),
+            headers,
+            deadline,
+            cancellationToken));
+
+    /// <summary>
+    ///     Observe streams election proclamations in-order as made by the election's
+    ///     elected leaders.
+    /// </summary>
+    /// <param name="name">The name is the election identifier for the leadership information.</param>
+    /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="cancellationToken">An optional token for canceling the call.</param>
+    /// <returns>The response received from the server.</returns>
+    public AsyncServerStreamingCall<LeaderResponse> Observe(
+        string name,
+        Metadata headers = null,
+        DateTime? deadline = null,
+        CancellationToken cancellationToken = default)
+        => CallEtcd(connection => connection.ElectionClient.Observe(
+            new LeaderRequest { Name = ByteString.CopyFromUtf8(name ?? throw new ArgumentNullException(nameof(name))) },
+            headers,
+            deadline,
+            cancellationToken));
 }

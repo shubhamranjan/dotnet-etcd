@@ -6,12 +6,12 @@ using System;
 namespace dotnet_etcd.DependencyInjection;
 
 /// <summary>
-/// Validates etcd client options.
+///     Validates etcd client options.
 /// </summary>
 internal static class EtcdClientOptionsValidator
 {
     /// <summary>
-    /// Validates the specified options.
+    ///     Validates the specified options.
     /// </summary>
     /// <param name="options">The options to validate.</param>
     /// <exception cref="ArgumentNullException">Thrown if options is null.</exception>
@@ -35,10 +35,11 @@ internal static class EtcdClientOptionsValidator
         }
 
         // Validate server name if using static hosts format
-        if (options.ConnectionString.StartsWith("static://", StringComparison.OrdinalIgnoreCase) && 
+        if (options.ConnectionString.StartsWith("static://", StringComparison.OrdinalIgnoreCase) &&
             string.IsNullOrWhiteSpace(options.ServerName))
         {
-            throw new ArgumentException("ServerName must be provided when using static:// connection string format", nameof(options));
+            throw new ArgumentException("ServerName must be provided when using static:// connection string format",
+                nameof(options));
         }
     }
 }

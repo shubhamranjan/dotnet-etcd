@@ -2,8 +2,8 @@ using dotnet_etcd.Tests.Infrastructure;
 using Google.Protobuf;
 using Grpc.Core;
 using Moq;
-using V3Electionpb;
 using Mvccpb;
+using V3Electionpb;
 
 namespace dotnet_etcd.Tests.Unit;
 
@@ -15,10 +15,10 @@ public class ElectionClientUnitTests
     {
         // Arrange
         var mockElectionClient = new Mock<Election.ElectionClient>();
-        string name = "test-election";
+        var name = "test-election";
         long leaseId = 12345;
-        string value = "test-value";
-        byte[] expectedLeader = ByteString.CopyFromUtf8("test-leader").ToByteArray();
+        var value = "test-value";
+        var expectedLeader = ByteString.CopyFromUtf8("test-leader").ToByteArray();
 
         mockElectionClient
             .Setup(x => x.Campaign(It.IsAny<CampaignRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
@@ -42,8 +42,8 @@ public class ElectionClientUnitTests
 
         // Assert
         mockElectionClient.Verify(x => x.Campaign(
-            It.Is<CampaignRequest>(r => 
-                r.Name.Equals(ByteString.CopyFromUtf8(name)) && 
+            It.Is<CampaignRequest>(r =>
+                r.Name.Equals(ByteString.CopyFromUtf8(name)) &&
                 r.Lease == leaseId &&
                 r.Value.Equals(ByteString.CopyFromUtf8(value))),
             It.IsAny<Metadata>(),
@@ -59,12 +59,13 @@ public class ElectionClientUnitTests
     {
         // Arrange
         var mockElectionClient = new Mock<Election.ElectionClient>();
-        string name = "test-election";
+        var name = "test-election";
         long leaseId = 12345;
-        string value = "test-value";
-        byte[] expectedLeader = ByteString.CopyFromUtf8("test-leader").ToByteArray();
+        var value = "test-value";
+        var expectedLeader = ByteString.CopyFromUtf8("test-leader").ToByteArray();
 
-        var expectedResponse = new CampaignResponse { Leader = new LeaderKey { Key = ByteString.CopyFrom(expectedLeader) } };
+        var expectedResponse = new CampaignResponse
+            { Leader = new LeaderKey { Key = ByteString.CopyFrom(expectedLeader) } };
         var asyncResponse = TestHelper.CreateAsyncUnaryCall(expectedResponse);
 
         mockElectionClient
@@ -89,8 +90,8 @@ public class ElectionClientUnitTests
 
         // Assert
         mockElectionClient.Verify(x => x.CampaignAsync(
-            It.Is<CampaignRequest>(r => 
-                r.Name.Equals(ByteString.CopyFromUtf8(name)) && 
+            It.Is<CampaignRequest>(r =>
+                r.Name.Equals(ByteString.CopyFromUtf8(name)) &&
                 r.Lease == leaseId &&
                 r.Value.Equals(ByteString.CopyFromUtf8(value))),
             It.IsAny<Metadata>(),
@@ -106,8 +107,8 @@ public class ElectionClientUnitTests
     {
         // Arrange
         var mockElectionClient = new Mock<Election.ElectionClient>();
-        byte[] leaderKey = ByteString.CopyFromUtf8("test-leader").ToByteArray();
-        string value = "test-value";
+        var leaderKey = ByteString.CopyFromUtf8("test-leader").ToByteArray();
+        var value = "test-value";
 
         mockElectionClient
             .Setup(x => x.Proclaim(It.IsAny<ProclaimRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
@@ -133,7 +134,7 @@ public class ElectionClientUnitTests
 
         // Assert
         mockElectionClient.Verify(x => x.Proclaim(
-            It.Is<ProclaimRequest>(r => 
+            It.Is<ProclaimRequest>(r =>
                 r.Leader.Key.Equals(ByteString.CopyFrom(leaderKey)) &&
                 r.Value.Equals(ByteString.CopyFromUtf8(value))),
             It.IsAny<Metadata>(),
@@ -147,9 +148,9 @@ public class ElectionClientUnitTests
     {
         // Arrange
         var mockElectionClient = new Mock<Election.ElectionClient>();
-        byte[] leaderKey = ByteString.CopyFromUtf8("test-leader").ToByteArray();
-        string value = "test-value";
-        
+        var leaderKey = ByteString.CopyFromUtf8("test-leader").ToByteArray();
+        var value = "test-value";
+
         var expectedResponse = new ProclaimResponse();
         var asyncResponse = TestHelper.CreateAsyncUnaryCall(expectedResponse);
 
@@ -177,7 +178,7 @@ public class ElectionClientUnitTests
 
         // Assert
         mockElectionClient.Verify(x => x.ProclaimAsync(
-            It.Is<ProclaimRequest>(r => 
+            It.Is<ProclaimRequest>(r =>
                 r.Leader.Key.Equals(ByteString.CopyFrom(leaderKey)) &&
                 r.Value.Equals(ByteString.CopyFromUtf8(value))),
             It.IsAny<Metadata>(),
@@ -191,14 +192,14 @@ public class ElectionClientUnitTests
     {
         // Arrange
         var mockElectionClient = new Mock<Election.ElectionClient>();
-        string name = "test-election";
-        byte[] expectedKey = ByteString.CopyFromUtf8("test-leader").ToByteArray();
+        var name = "test-election";
+        var expectedKey = ByteString.CopyFromUtf8("test-leader").ToByteArray();
 
         mockElectionClient
             .Setup(x => x.Leader(It.IsAny<LeaderRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
                 It.IsAny<CancellationToken>()))
-            .Returns(new LeaderResponse 
-            { 
+            .Returns(new LeaderResponse
+            {
                 Kv = new KeyValue { Key = ByteString.CopyFrom(expectedKey) }
             });
 
@@ -217,7 +218,7 @@ public class ElectionClientUnitTests
 
         // Assert
         mockElectionClient.Verify(x => x.Leader(
-            It.Is<LeaderRequest>(r => 
+            It.Is<LeaderRequest>(r =>
                 r.Name.Equals(ByteString.CopyFromUtf8(name))),
             It.IsAny<Metadata>(),
             It.IsAny<DateTime?>(),
@@ -232,10 +233,10 @@ public class ElectionClientUnitTests
     {
         // Arrange
         var mockElectionClient = new Mock<Election.ElectionClient>();
-        string name = "test-election";
-        byte[] expectedKey = ByteString.CopyFromUtf8("test-leader").ToByteArray();
+        var name = "test-election";
+        var expectedKey = ByteString.CopyFromUtf8("test-leader").ToByteArray();
 
-        var expectedResponse = new LeaderResponse 
+        var expectedResponse = new LeaderResponse
         {
             Kv = new KeyValue { Key = ByteString.CopyFrom(expectedKey) }
         };
@@ -261,7 +262,7 @@ public class ElectionClientUnitTests
 
         // Assert
         mockElectionClient.Verify(x => x.LeaderAsync(
-            It.Is<LeaderRequest>(r => 
+            It.Is<LeaderRequest>(r =>
                 r.Name.Equals(ByteString.CopyFromUtf8(name))),
             It.IsAny<Metadata>(),
             It.IsAny<DateTime?>(),
@@ -276,14 +277,14 @@ public class ElectionClientUnitTests
     {
         // Arrange
         var mockElectionClient = new Mock<Election.ElectionClient>();
-        string name = "test-election";
-        byte[] expectedKey = ByteString.CopyFromUtf8("test-leader").ToByteArray();
+        var name = "test-election";
+        var expectedKey = ByteString.CopyFromUtf8("test-leader").ToByteArray();
 
         mockElectionClient
             .Setup(x => x.Leader(It.IsAny<LeaderRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
                 It.IsAny<CancellationToken>()))
-            .Returns(new LeaderResponse 
-            { 
+            .Returns(new LeaderResponse
+            {
                 Kv = new KeyValue { Key = ByteString.CopyFrom(expectedKey) }
             });
 
@@ -302,7 +303,7 @@ public class ElectionClientUnitTests
 
         // Assert
         mockElectionClient.Verify(x => x.Leader(
-            It.Is<LeaderRequest>(r => 
+            It.Is<LeaderRequest>(r =>
                 r.Name.Equals(ByteString.CopyFromUtf8(name))),
             It.IsAny<Metadata>(),
             It.IsAny<DateTime?>(),
@@ -317,10 +318,10 @@ public class ElectionClientUnitTests
     {
         // Arrange
         var mockElectionClient = new Mock<Election.ElectionClient>();
-        string name = "test-election";
-        byte[] expectedKey = ByteString.CopyFromUtf8("test-leader").ToByteArray();
+        var name = "test-election";
+        var expectedKey = ByteString.CopyFromUtf8("test-leader").ToByteArray();
 
-        var expectedResponse = new LeaderResponse 
+        var expectedResponse = new LeaderResponse
         {
             Kv = new KeyValue { Key = ByteString.CopyFrom(expectedKey) }
         };
@@ -346,7 +347,7 @@ public class ElectionClientUnitTests
 
         // Assert
         mockElectionClient.Verify(x => x.LeaderAsync(
-            It.Is<LeaderRequest>(r => 
+            It.Is<LeaderRequest>(r =>
                 r.Name.Equals(ByteString.CopyFromUtf8(name))),
             It.IsAny<Metadata>(),
             It.IsAny<DateTime?>(),
@@ -361,7 +362,7 @@ public class ElectionClientUnitTests
     {
         // Arrange
         var mockElectionClient = new Mock<Election.ElectionClient>();
-        byte[] leaderKey = ByteString.CopyFromUtf8("test-leader").ToByteArray();
+        var leaderKey = ByteString.CopyFromUtf8("test-leader").ToByteArray();
 
         mockElectionClient
             .Setup(x => x.Resign(It.IsAny<ResignRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
@@ -398,8 +399,8 @@ public class ElectionClientUnitTests
     {
         // Arrange
         var mockElectionClient = new Mock<Election.ElectionClient>();
-        byte[] leaderKey = ByteString.CopyFromUtf8("test-leader").ToByteArray();
-        
+        var leaderKey = ByteString.CopyFromUtf8("test-leader").ToByteArray();
+
         var expectedResponse = new ResignResponse();
         var asyncResponse = TestHelper.CreateAsyncUnaryCall(expectedResponse);
 

@@ -1,6 +1,5 @@
 using dotnet_etcd.Tests.Infrastructure;
 using Etcdserverpb;
-using Google.Protobuf;
 using Grpc.Core;
 using Moq;
 
@@ -36,8 +35,8 @@ public class MaintenanceClientUnitTests
 
         // Assert
         mockMaintenanceClient.Verify(x => x.Alarm(
-            It.Is<AlarmRequest>(r => 
-                r.Action == AlarmRequest.Types.AlarmAction.Get && 
+            It.Is<AlarmRequest>(r =>
+                r.Action == AlarmRequest.Types.AlarmAction.Get &&
                 r.Alarm == AlarmType.Nospace),
             It.IsAny<Metadata>(),
             It.IsAny<DateTime?>(),
@@ -50,7 +49,7 @@ public class MaintenanceClientUnitTests
     {
         // Arrange
         var mockMaintenanceClient = new Mock<Maintenance.MaintenanceClient>();
-        
+
         var expectedResponse = new AlarmResponse();
         var asyncResponse = TestHelper.CreateAsyncUnaryCall(expectedResponse);
 
@@ -75,8 +74,8 @@ public class MaintenanceClientUnitTests
 
         // Assert
         mockMaintenanceClient.Verify(x => x.AlarmAsync(
-            It.Is<AlarmRequest>(r => 
-                r.Action == AlarmRequest.Types.AlarmAction.Get && 
+            It.Is<AlarmRequest>(r =>
+                r.Action == AlarmRequest.Types.AlarmAction.Get &&
                 r.Alarm == AlarmType.Nospace),
             It.IsAny<Metadata>(),
             It.IsAny<DateTime?>(),
@@ -107,7 +106,7 @@ public class MaintenanceClientUnitTests
 
         // Assert
         Assert.Equal("3.4.0", response.Version);
-        
+
         mockMaintenanceClient.Verify(x => x.Status(
             It.IsAny<StatusRequest>(),
             It.IsAny<Metadata>(),
@@ -142,7 +141,7 @@ public class MaintenanceClientUnitTests
 
         // Assert
         Assert.Equal("3.4.0", response.Version);
-        
+
         mockMaintenanceClient.Verify(x => x.StatusAsync(
             It.IsAny<StatusRequest>(),
             It.IsAny<Metadata>(),
@@ -237,7 +236,7 @@ public class MaintenanceClientUnitTests
 
         // Assert
         Assert.Equal(12345u, response.Hash);
-        
+
         mockMaintenanceClient.Verify(x => x.Hash(
             It.IsAny<HashRequest>(),
             It.IsAny<Metadata>(),
@@ -272,7 +271,7 @@ public class MaintenanceClientUnitTests
 
         // Assert
         Assert.Equal(12345u, response.Hash);
-        
+
         mockMaintenanceClient.Verify(x => x.HashAsync(
             It.IsAny<HashRequest>(),
             It.IsAny<Metadata>(),

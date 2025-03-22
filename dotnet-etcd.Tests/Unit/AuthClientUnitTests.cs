@@ -124,7 +124,7 @@ public class AuthClientUnitTests
             It.IsAny<DateTime?>(),
             It.IsAny<CancellationToken>()
         ), Times.Once);
-        
+
         Assert.Equal("token", response.Token);
     }
 
@@ -212,7 +212,7 @@ public class AuthClientUnitTests
             It.IsAny<DateTime?>(),
             It.IsAny<CancellationToken>()
         ), Times.Once);
-        
+
         Assert.Equal(2, response.Users.Count);
         Assert.Contains("user1", response.Users);
         Assert.Contains("user2", response.Users);

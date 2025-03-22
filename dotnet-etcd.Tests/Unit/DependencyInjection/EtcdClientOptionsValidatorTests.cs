@@ -1,6 +1,4 @@
-using System;
 using dotnet_etcd.DependencyInjection;
-using Xunit;
 
 namespace dotnet_etcd.Tests.Unit.DependencyInjection;
 

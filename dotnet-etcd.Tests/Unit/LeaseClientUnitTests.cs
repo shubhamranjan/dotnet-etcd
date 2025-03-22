@@ -49,7 +49,7 @@ public class LeaseClientUnitTests
         var mockLeaseClient = new Mock<Lease.LeaseClient>();
         long ttl = 10;
         long expectedLeaseId = 12345;
-        
+
         var expectedResponse = new LeaseGrantResponse { ID = expectedLeaseId };
         var asyncResponse = TestHelper.CreateAsyncUnaryCall(expectedResponse);
 
@@ -116,7 +116,7 @@ public class LeaseClientUnitTests
         // Arrange
         var mockLeaseClient = new Mock<Lease.LeaseClient>();
         long leaseId = 12345;
-        
+
         var expectedResponse = new LeaseRevokeResponse();
         var asyncResponse = TestHelper.CreateAsyncUnaryCall(expectedResponse);
 
@@ -153,7 +153,8 @@ public class LeaseClientUnitTests
         long expectedTtl = 8;
 
         mockLeaseClient
-            .Setup(x => x.LeaseTimeToLive(It.IsAny<LeaseTimeToLiveRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+            .Setup(x => x.LeaseTimeToLive(It.IsAny<LeaseTimeToLiveRequest>(), It.IsAny<Metadata>(),
+                It.IsAny<DateTime?>(),
                 It.IsAny<CancellationToken>()))
             .Returns(new LeaseTimeToLiveResponse { ID = leaseId, TTL = expectedTtl });
 
@@ -186,12 +187,13 @@ public class LeaseClientUnitTests
         var mockLeaseClient = new Mock<Lease.LeaseClient>();
         long leaseId = 12345;
         long expectedTtl = 8;
-        
+
         var expectedResponse = new LeaseTimeToLiveResponse { ID = leaseId, TTL = expectedTtl };
         var asyncResponse = TestHelper.CreateAsyncUnaryCall(expectedResponse);
 
         mockLeaseClient
-            .Setup(x => x.LeaseTimeToLiveAsync(It.IsAny<LeaseTimeToLiveRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+            .Setup(x => x.LeaseTimeToLiveAsync(It.IsAny<LeaseTimeToLiveRequest>(), It.IsAny<Metadata>(),
+                It.IsAny<DateTime?>(),
                 It.IsAny<CancellationToken>()))
             .Returns(asyncResponse);
 

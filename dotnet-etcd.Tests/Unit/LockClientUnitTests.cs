@@ -3,6 +3,7 @@ using Google.Protobuf;
 using Grpc.Core;
 using Moq;
 using V3Lockpb;
+using Lock = V3Lockpb.Lock;
 
 namespace dotnet_etcd.Tests.Unit;
 
@@ -13,10 +14,10 @@ public class LockClientUnitTests
     public void Lock_ShouldCallGrpcClient()
     {
         // Arrange
-        var mockLockClient = new Mock<V3Lockpb.Lock.LockClient>();
-        string name = "test-lock";
+        var mockLockClient = new Mock<Lock.LockClient>();
+        var name = "test-lock";
         long leaseId = 12345;
-        byte[] expectedKey = ByteString.CopyFromUtf8("test-lock-key").ToByteArray();
+        var expectedKey = ByteString.CopyFromUtf8("test-lock-key").ToByteArray();
 
         mockLockClient
             .Setup(x => x.Lock(It.IsAny<LockRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
@@ -39,8 +40,8 @@ public class LockClientUnitTests
 
         // Assert
         mockLockClient.Verify(x => x.Lock(
-            It.Is<LockRequest>(r => 
-                r.Name.Equals(ByteString.CopyFromUtf8(name)) && 
+            It.Is<LockRequest>(r =>
+                r.Name.Equals(ByteString.CopyFromUtf8(name)) &&
                 r.Lease == leaseId),
             It.IsAny<Metadata>(),
             It.IsAny<DateTime?>(),
@@ -54,11 +55,11 @@ public class LockClientUnitTests
     public async Task LockAsync_ShouldCallGrpcClient()
     {
         // Arrange
-        var mockLockClient = new Mock<V3Lockpb.Lock.LockClient>();
-        string name = "test-lock";
+        var mockLockClient = new Mock<Lock.LockClient>();
+        var name = "test-lock";
         long leaseId = 12345;
-        byte[] expectedKey = ByteString.CopyFromUtf8("test-lock-key").ToByteArray();
-        
+        var expectedKey = ByteString.CopyFromUtf8("test-lock-key").ToByteArray();
+
         var expectedResponse = new LockResponse { Key = ByteString.CopyFrom(expectedKey) };
         var asyncResponse = TestHelper.CreateAsyncUnaryCall(expectedResponse);
 
@@ -83,8 +84,8 @@ public class LockClientUnitTests
 
         // Assert
         mockLockClient.Verify(x => x.LockAsync(
-            It.Is<LockRequest>(r => 
-                r.Name.Equals(ByteString.CopyFromUtf8(name)) && 
+            It.Is<LockRequest>(r =>
+                r.Name.Equals(ByteString.CopyFromUtf8(name)) &&
                 r.Lease == leaseId),
             It.IsAny<Metadata>(),
             It.IsAny<DateTime?>(),
@@ -98,8 +99,8 @@ public class LockClientUnitTests
     public void Unlock_ShouldCallGrpcClient()
     {
         // Arrange
-        var mockLockClient = new Mock<V3Lockpb.Lock.LockClient>();
-        byte[] key = ByteString.CopyFromUtf8("test-lock-key").ToByteArray();
+        var mockLockClient = new Mock<Lock.LockClient>();
+        var key = ByteString.CopyFromUtf8("test-lock-key").ToByteArray();
 
         mockLockClient
             .Setup(x => x.Unlock(It.IsAny<UnlockRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
@@ -132,9 +133,9 @@ public class LockClientUnitTests
     public async Task UnlockAsync_ShouldCallGrpcClient()
     {
         // Arrange
-        var mockLockClient = new Mock<V3Lockpb.Lock.LockClient>();
-        byte[] key = ByteString.CopyFromUtf8("test-lock-key").ToByteArray();
-        
+        var mockLockClient = new Mock<Lock.LockClient>();
+        var key = ByteString.CopyFromUtf8("test-lock-key").ToByteArray();
+
         var expectedResponse = new UnlockResponse();
         var asyncResponse = TestHelper.CreateAsyncUnaryCall(expectedResponse);
 
