@@ -1,11 +1,15 @@
 using System.Reflection;
+using Etcdserverpb;
+using Google.Protobuf;
 using Grpc.Core;
 using Moq;
+using Mvccpb;
+using System.Collections.Generic;
 
 namespace dotnet_etcd.Tests.Infrastructure;
 
 /// <summary>
-///     Helper class for setting up mocks in unit tests
+///     Helper class for setting up mocks and common test functionality
 /// </summary>
 public static class TestHelper
 {
@@ -45,5 +49,64 @@ public static class TestHelper
     {
         var mockCallInvoker = new Mock<CallInvoker>();
         return new EtcdClient(mockCallInvoker.Object);
+    }
+    
+    /// <summary>
+    ///     Creates a sample KeyValue for testing
+    /// </summary>
+    /// <param name="key">The key</param>
+    /// <param name="value">The value</param>
+    /// <returns>A KeyValue instance</returns>
+    public static KeyValue CreateKeyValue(string key, string value)
+    {
+        return new KeyValue
+        {
+            Key = ByteString.CopyFromUtf8(key),
+            Value = ByteString.CopyFromUtf8(value)
+        };
+    }
+    
+    /// <summary>
+    ///     Creates a sample RangeResponse for testing
+    /// </summary>
+    /// <param name="key">The key</param>
+    /// <param name="value">The value</param>
+    /// <returns>A RangeResponse with a single KeyValue</returns>
+    public static RangeResponse CreateRangeResponse(string key, string value)
+    {
+        var response = new RangeResponse();
+        response.Kvs.Add(CreateKeyValue(key, value));
+        return response;
+    }
+    
+    /// <summary>
+    ///     Creates an AsyncUnaryCall for mocking async responses
+    /// </summary>
+    /// <typeparam name="TResponse">The response type</typeparam>
+    /// <param name="response">The response object</param>
+    /// <returns>An AsyncUnaryCall instance</returns>
+    public static AsyncUnaryCall<TResponse> CreateAsyncUnaryCall<TResponse>(TResponse response)
+    {
+        return new AsyncUnaryCall<TResponse>(
+            Task.FromResult(response),
+            Task.FromResult(new Metadata()),
+            () => Status.DefaultSuccess,
+            () => new Metadata(),
+            () => { }
+        );
+    }
+    
+    /// <summary>
+    ///     Setups common connection parameters for integration tests
+    /// </summary>
+    /// <returns>A dictionary of connection parameters</returns>
+    public static Dictionary<string, string> GetIntegrationTestConnectionParameters()
+    {
+        return new Dictionary<string, string>
+        {
+            {"endpoints", "127.0.0.1:2379"},
+            {"username", ""},
+            {"password", ""}
+        };
     }
 }
