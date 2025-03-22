@@ -93,10 +93,10 @@ public static class ServiceCollectionExtensions
         EtcdClientOptionsValidator.ValidateOptions(options);
 
         // Create a wrapper action that applies both the options and any custom channel configuration
-        Action<GrpcChannelOptions> channelConfiguration = grpcOptions => { options.ApplyTo(grpcOptions); };
+        Action<GrpcChannelOptions> channelConfiguration = options.ApplyTo;
 
         // Register EtcdClient as a singleton
-        services.TryAddSingleton(serviceProvider =>
+        services.TryAddSingleton(_ =>
             (IEtcdClient)new EtcdClient(
                 options.ConnectionString,
                 options.Port,
@@ -135,13 +135,13 @@ public static class ServiceCollectionExtensions
         {
             IConnection connection = connectionFactory(serviceProvider);
 
-            if (watchManagerFactory != null)
+            if (watchManagerFactory == null)
             {
-                IWatchManager watchManager = watchManagerFactory(serviceProvider);
-                return new EtcdClient(connection, watchManager);
+                return (IEtcdClient)new EtcdClient(connection);
             }
 
-            return (IEtcdClient)new EtcdClient(connection);
+            IWatchManager watchManager = watchManagerFactory(serviceProvider);
+            return new EtcdClient(connection, watchManager);
         });
 
         // If a watch manager factory is provided, also register IWatchManager directly

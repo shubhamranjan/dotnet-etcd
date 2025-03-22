@@ -18,10 +18,7 @@ internal static class EtcdClientOptionsValidator
     /// <exception cref="ArgumentException">Thrown if options is invalid.</exception>
     public static void ValidateOptions(EtcdClientOptions options)
     {
-        if (options == null)
-        {
-            throw new ArgumentNullException(nameof(options));
-        }
+        ArgumentNullException.ThrowIfNull(options);
 
         if (string.IsNullOrWhiteSpace(options.ConnectionString))
         {
@@ -29,7 +26,7 @@ internal static class EtcdClientOptionsValidator
         }
 
         // Validate port is in a valid range
-        if (options.Port <= 0 || options.Port > 65535)
+        if (options.Port is <= 0 or > 65535)
         {
             throw new ArgumentException($"Port must be between 1 and 65535, but was {options.Port}", nameof(options));
         }

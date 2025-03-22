@@ -53,10 +53,7 @@ public class WatchManager : IWatchManager
     public async Task<long> WatchAsync(WatchRequest request, Action<WatchResponse> callback, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
-        if (_disposed)
-        {
-            throw new ObjectDisposedException(nameof(WatchManager));
-        }
+        ObjectDisposedException.ThrowIf(_disposed, this);
 
         // Create a new watch stream if needed
         EnsureWatchStream(headers, deadline, cancellationToken);
@@ -70,24 +67,8 @@ public class WatchManager : IWatchManager
         // Create a watch cancellation object
         WatchCancellation watchCancellation = new() { WatchId = watchId, CancellationTokenSource = cts };
 
-        // Create a wrapper callback that checks if the watch has been canceled
-        Action<WatchResponse> wrappedCallback = response =>
-        {
-            if (!cts.IsCancellationRequested)
-            {
-                // If this is a create response, update our watch ID mapping
-                if (response.Created)
-                {
-                    // Map the server-assigned watch ID to our client-generated watch ID
-                    _watchIdMapping[response.WatchId] = watchId;
-                }
-
-                callback(response);
-            }
-        };
-
         // Create the watch
-        await _watchStream.CreateWatchAsync(request, wrappedCallback).ConfigureAwait(false);
+        await _watchStream.CreateWatchAsync(request, WrappedCallback).ConfigureAwait(false);
 
         // Add the watch cancellation to the dictionary
         _watches[watchId] = watchCancellation;
@@ -97,6 +78,24 @@ public class WatchManager : IWatchManager
         // Our wrappedCallback will handle this mapping when it receives the response
 
         return watchId;
+
+        // Create a wrapper callback that checks if the watch has been canceled
+        void WrappedCallback(WatchResponse response)
+        {
+            if (cts.IsCancellationRequested)
+            {
+                return;
+            }
+
+            // If this is a creation response, update our watch ID mapping
+            if (response.Created)
+            {
+                // Map the server-assigned watch ID to our client-generated watch ID
+                _watchIdMapping[response.WatchId] = watchId;
+            }
+
+            callback(response);
+        }
     }
 
     /// <summary>
@@ -129,10 +128,7 @@ public class WatchManager : IWatchManager
     public long Watch(string key, Action<WatchEvent> action, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default)
     {
-        if (_disposed)
-        {
-            throw new ObjectDisposedException(nameof(WatchManager));
-        }
+        ObjectDisposedException.ThrowIf(_disposed, this);
 
         // Create a watch request for the key
         WatchRequest request = new()
@@ -143,24 +139,23 @@ public class WatchManager : IWatchManager
             }
         };
 
-        // Create a wrapper callback that converts the WatchResponse to a WatchEvent
-        Action<WatchResponse> callback = response =>
-        {
-            if (response.Events != null)
-            {
-                foreach (Event evt in response.Events)
-                {
-                    WatchEvent watchEvent = new()
-                    {
-                        Key = evt.Kv.Key.ToStringUtf8(), Value = evt.Kv.Value.ToStringUtf8(), Type = evt.Type
-                    };
-                    action(watchEvent);
-                }
-            }
-        };
-
         // Call the Watch method with the request
-        return Watch(request, callback, headers, deadline, cancellationToken);
+        return Watch(request, Callback, headers, deadline, cancellationToken);
+
+        // Create a wrapper callback that converts the WatchResponse to a WatchEvent
+        void Callback(WatchResponse response)
+        {
+            if (response.Events == null)
+            {
+                return;
+            }
+
+            foreach (Event evt in response.Events)
+            {
+                WatchEvent watchEvent = new() { Key = evt.Kv.Key.ToStringUtf8(), Value = evt.Kv.Value.ToStringUtf8(), Type = evt.Type };
+                action(watchEvent);
+            }
+        }
     }
 
     /// <summary>
@@ -195,16 +190,18 @@ public class WatchManager : IWatchManager
         // Create a wrapper callback that converts the WatchResponse to a WatchEvent
         Action<WatchResponse> callback = response =>
         {
-            if (response.Events != null)
+            if (response.Events == null)
             {
-                foreach (Event evt in response.Events)
+                return;
+            }
+
+            foreach (Event evt in response.Events)
+            {
+                WatchEvent watchEvent = new()
                 {
-                    WatchEvent watchEvent = new()
-                    {
-                        Key = evt.Kv.Key.ToStringUtf8(), Value = evt.Kv.Value.ToStringUtf8(), Type = evt.Type
-                    };
-                    action(watchEvent);
-                }
+                    Key = evt.Kv.Key.ToStringUtf8(), Value = evt.Kv.Value.ToStringUtf8(), Type = evt.Type
+                };
+                action(watchEvent);
             }
         };
 
@@ -245,16 +242,18 @@ public class WatchManager : IWatchManager
         // Create a wrapper callback that converts the WatchResponse to a WatchEvent
         Action<WatchResponse> callback = response =>
         {
-            if (response.Events != null)
+            if (response.Events == null)
             {
-                foreach (Event evt in response.Events)
+                return;
+            }
+
+            foreach (Event evt in response.Events)
+            {
+                WatchEvent watchEvent = new()
                 {
-                    WatchEvent watchEvent = new()
-                    {
-                        Key = evt.Kv.Key.ToStringUtf8(), Value = evt.Kv.Value.ToStringUtf8(), Type = evt.Type
-                    };
-                    action(watchEvent);
-                }
+                    Key = evt.Kv.Key.ToStringUtf8(), Value = evt.Kv.Value.ToStringUtf8(), Type = evt.Type
+                };
+                action(watchEvent);
             }
         };
 
@@ -296,16 +295,18 @@ public class WatchManager : IWatchManager
         // Create a wrapper callback that converts the WatchResponse to a WatchEvent
         Action<WatchResponse> callback = response =>
         {
-            if (response.Events != null)
+            if (response.Events == null)
             {
-                foreach (Event evt in response.Events)
+                return;
+            }
+
+            foreach (Event evt in response.Events)
+            {
+                WatchEvent watchEvent = new()
                 {
-                    WatchEvent watchEvent = new()
-                    {
-                        Key = evt.Kv.Key.ToStringUtf8(), Value = evt.Kv.Value.ToStringUtf8(), Type = evt.Type
-                    };
-                    action(watchEvent);
-                }
+                    Key = evt.Kv.Key.ToStringUtf8(), Value = evt.Kv.Value.ToStringUtf8(), Type = evt.Type
+                };
+                action(watchEvent);
             }
         };
 
@@ -342,16 +343,18 @@ public class WatchManager : IWatchManager
         // Create a wrapper callback that converts the WatchResponse to a WatchEvent
         Action<WatchResponse> callback = response =>
         {
-            if (response.Events != null)
+            if (response.Events == null)
             {
-                foreach (Event evt in response.Events)
+                return;
+            }
+
+            foreach (Event evt in response.Events)
+            {
+                WatchEvent watchEvent = new()
                 {
-                    WatchEvent watchEvent = new()
-                    {
-                        Key = evt.Kv.Key.ToStringUtf8(), Value = evt.Kv.Value.ToStringUtf8(), Type = evt.Type
-                    };
-                    action(watchEvent);
-                }
+                    Key = evt.Kv.Key.ToStringUtf8(), Value = evt.Kv.Value.ToStringUtf8(), Type = evt.Type
+                };
+                action(watchEvent);
             }
         };
 
@@ -371,10 +374,7 @@ public class WatchManager : IWatchManager
     public async Task<long> WatchRangeAsync(string prefixKey, Action<WatchEvent> action, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
-        if (_disposed)
-        {
-            throw new ObjectDisposedException(nameof(WatchManager));
-        }
+        ObjectDisposedException.ThrowIf(_disposed, this);
 
         // Create a watch request for the range
         WatchRequest request = new()
@@ -391,16 +391,18 @@ public class WatchManager : IWatchManager
         // Create a wrapper callback that converts the WatchResponse to a WatchEvent
         Action<WatchResponse> callback = response =>
         {
-            if (response.Events != null)
+            if (response.Events == null)
             {
-                foreach (Event evt in response.Events)
+                return;
+            }
+
+            foreach (Event evt in response.Events)
+            {
+                WatchEvent watchEvent = new()
                 {
-                    WatchEvent watchEvent = new()
-                    {
-                        Key = evt.Kv.Key.ToStringUtf8(), Value = evt.Kv.Value.ToStringUtf8(), Type = evt.Type
-                    };
-                    action(watchEvent);
-                }
+                    Key = evt.Kv.Key.ToStringUtf8(), Value = evt.Kv.Value.ToStringUtf8(), Type = evt.Type
+                };
+                action(watchEvent);
             }
         };
 
@@ -441,16 +443,18 @@ public class WatchManager : IWatchManager
         // Create a wrapper callback that converts the WatchResponse to a WatchEvent
         Action<WatchResponse> callback = response =>
         {
-            if (response.Events != null)
+            if (response.Events == null)
             {
-                foreach (Event evt in response.Events)
+                return;
+            }
+
+            foreach (Event evt in response.Events)
+            {
+                WatchEvent watchEvent = new()
                 {
-                    WatchEvent watchEvent = new()
-                    {
-                        Key = evt.Kv.Key.ToStringUtf8(), Value = evt.Kv.Value.ToStringUtf8(), Type = evt.Type
-                    };
-                    action(watchEvent);
-                }
+                    Key = evt.Kv.Key.ToStringUtf8(), Value = evt.Kv.Value.ToStringUtf8(), Type = evt.Type
+                };
+                action(watchEvent);
             }
         };
 
@@ -471,10 +475,7 @@ public class WatchManager : IWatchManager
     public async Task<long> WatchRangeAsync(string prefixKey, long startRevision, Action<WatchEvent> action,
         Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
-        if (_disposed)
-        {
-            throw new ObjectDisposedException(nameof(WatchManager));
-        }
+        ObjectDisposedException.ThrowIf(_disposed, this);
 
         // Create a watch request for the range with start revision
         WatchRequest request = new()
@@ -492,16 +493,18 @@ public class WatchManager : IWatchManager
         // Create a wrapper callback that converts the WatchResponse to a WatchEvent
         Action<WatchResponse> callback = response =>
         {
-            if (response.Events != null)
+            if (response.Events == null)
             {
-                foreach (Event evt in response.Events)
+                return;
+            }
+
+            foreach (Event evt in response.Events)
+            {
+                WatchEvent watchEvent = new()
                 {
-                    WatchEvent watchEvent = new()
-                    {
-                        Key = evt.Kv.Key.ToStringUtf8(), Value = evt.Kv.Value.ToStringUtf8(), Type = evt.Type
-                    };
-                    action(watchEvent);
-                }
+                    Key = evt.Kv.Key.ToStringUtf8(), Value = evt.Kv.Value.ToStringUtf8(), Type = evt.Type
+                };
+                action(watchEvent);
             }
         };
 
@@ -548,32 +551,31 @@ public class WatchManager : IWatchManager
     /// <param name="watchId">The ID of the watch to cancel</param>
     public void CancelWatch(long watchId)
     {
-        if (_disposed)
+        ObjectDisposedException.ThrowIf(_disposed, this);
+
+        if (!_watches.TryRemove(watchId, out WatchCancellation watchCancellation))
         {
-            throw new ObjectDisposedException(nameof(WatchManager));
+            return;
         }
 
-        if (_watches.TryRemove(watchId, out WatchCancellation watchCancellation))
+        // Cancel the watch
+        watchCancellation.CancellationTokenSource.Cancel();
+
+        // Find the server watch ID that corresponds to our client watch ID
+        long serverWatchId = GetServerWatchId(watchId);
+
+        // Cancel the watch on the server if we found a mapping
+        if (serverWatchId != -1 && _watchStream != null)
         {
-            // Cancel the watch
-            watchCancellation.CancellationTokenSource.Cancel();
-
-            // Find the server watch ID that corresponds to our client watch ID
-            long serverWatchId = GetServerWatchId(watchId);
-
-            // Cancel the watch on the server if we found a mapping
-            if (serverWatchId != -1 && _watchStream != null)
+            _watchIdMapping.TryRemove(serverWatchId, out _);
+            _watchStream.CancelWatchAsync(serverWatchId).ContinueWith(_ =>
             {
-                _watchIdMapping.TryRemove(serverWatchId, out _);
-                _watchStream.CancelWatchAsync(serverWatchId).ContinueWith(task =>
-                {
-                    // Ignore exceptions
-                });
-            }
-
-            // Dispose the cancellation token source
-            watchCancellation.CancellationTokenSource.Dispose();
+                // Ignore exceptions
+            });
         }
+
+        // Dispose the cancellation token source
+        watchCancellation.CancellationTokenSource.Dispose();
     }
 
     /// <summary>
@@ -603,6 +605,8 @@ public class WatchManager : IWatchManager
             _watchStream.Dispose();
             _watchStream = null;
         }
+
+        GC.SuppressFinalize(this);
     }
 
     private static string GetRangeEnd(string path)
@@ -612,11 +616,13 @@ public class WatchManager : IWatchManager
         byte[] bytes = Encoding.UTF8.GetBytes(path);
         for (int i = bytes.Length - 1; i >= 0; i--)
         {
-            if (bytes[i] < 0xff)
+            if (bytes[i] >= 0xff)
             {
-                bytes[i]++;
-                return Encoding.UTF8.GetString(bytes, 0, i + 1);
+                continue;
             }
+
+            bytes[i]++;
+            return Encoding.UTF8.GetString(bytes, 0, i + 1);
         }
 
         return string.Empty;
@@ -644,17 +650,19 @@ public class WatchManager : IWatchManager
     {
         lock (_lockObject)
         {
-            if (_watchStream == null)
+            if (_watchStream != null)
             {
-                // Create a new watch stream
-                IAsyncDuplexStreamingCall<WatchRequest, WatchResponse> watchStreamCall =
-                    _watchStreamFactory(headers, deadline, cancellationToken);
-                _watchStream = new WatchStream(watchStreamCall);
+                return;
             }
+
+            // Create a new watch stream
+            IAsyncDuplexStreamingCall<WatchRequest, WatchResponse> watchStreamCall =
+                _watchStreamFactory(headers, deadline, cancellationToken);
+            _watchStream = new WatchStream(watchStreamCall);
         }
     }
 
-    public class WatchCancellation
+    private class WatchCancellation
     {
         public long WatchId { get; set; }
         public CancellationTokenSource CancellationTokenSource { get; set; }
