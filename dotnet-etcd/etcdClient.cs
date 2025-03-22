@@ -100,6 +100,7 @@ public partial class EtcdClient : IDisposable, IEtcdClient
     public EtcdClient(CallInvoker callInvoker)
     {
         ArgumentNullException.ThrowIfNull(callInvoker);
+        ArgumentNullException.ThrowIfNull(callInvoker);
 
         _connection = new Connection(callInvoker);
 
@@ -125,83 +126,24 @@ public partial class EtcdClient : IDisposable, IEtcdClient
     public EtcdClient(string connectionString, int port = 2379, string serverName = DefaultServerName,
         Action<GrpcChannelOptions> configureChannelOptions = null, Interceptor[] interceptors = null)
     {
-        ArgumentNullException.ThrowIfNull(connectionString);
-
-        interceptors ??= [];
-
-        if (connectionString.StartsWith(AlternateDnsPrefix, StringComparison.InvariantCultureIgnoreCase))
+        // Param check
+        if (string.IsNullOrWhiteSpace(connectionString))
         {
-            connectionString = connectionString.Substring(AlternateDnsPrefix.Length);
-            connectionString = DnsPrefix + connectionString;
+            throw new ArgumentNullException(nameof(connectionString));
         }
 
-        SocketsHttpHandler httpHandler = new()
-        {
-            KeepAlivePingDelay = TimeSpan.FromSeconds(30),
-            KeepAlivePingTimeout = TimeSpan.FromSeconds(30),
-            KeepAlivePingPolicy = HttpKeepAlivePingPolicy.Always
-        };
+        // Param sanitization
+        interceptors ??= Array.Empty<Interceptor>();
 
-        // Connection Configuration
-        GrpcChannelOptions options = new()
-        {
-            ServiceConfig = new ServiceConfig
-            {
-                MethodConfigs = { _defaultGrpcMethodConfig },
-                RetryThrottling = _defaultRetryThrottlingPolicy,
-                LoadBalancingConfigs = { new RoundRobinConfig() }
-            },
-            HttpHandler = httpHandler,
-            DisposeHttpClient = true,
-            ThrowOperationCanceledOnCancellation = true,
-            Credentials = ChannelCredentials.Insecure // Default to insecure for backward compatibility
-        };
+        var channelFactory = new GrpcChannelFactory();
+        _channel = channelFactory.CreateChannel(
+            connectionString,
+            port,
+            serverName,
+            ChannelCredentials.Insecure, // Default to insecure for backward compatibility
+            configureChannelOptions);
 
-        configureChannelOptions?.Invoke(options);
-
-        // Channel Configuration
-        if (connectionString.StartsWith(DnsPrefix, StringComparison.InvariantCultureIgnoreCase))
-        {
-            _channel = GrpcChannel.ForAddress(connectionString, options);
-        }
-        else
-        {
-            string[] hosts = connectionString.Split(',');
-            List<Uri> nodes = [];
-
-            foreach (string host in hosts)
-            {
-                string processedHost = host.Trim();
-
-                // Only append port if no port is specified and it's not a full URL
-                if (!processedHost.Contains(':') &&
-                    !processedHost.StartsWith(InsecurePrefix, StringComparison.InvariantCultureIgnoreCase) &&
-                    !processedHost.StartsWith(SecurePrefix, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    processedHost += $":{Convert.ToString(port, CultureInfo.InvariantCulture)}";
-                }
-
-                if (!(processedHost.StartsWith(InsecurePrefix, StringComparison.InvariantCultureIgnoreCase) ||
-                      processedHost.StartsWith(SecurePrefix, StringComparison.InvariantCultureIgnoreCase)))
-                {
-                    processedHost = options.Credentials == ChannelCredentials.Insecure
-                        ? $"{InsecurePrefix}{processedHost}"
-                        : $"{SecurePrefix}{processedHost}";
-                }
-
-                nodes.Add(new Uri(processedHost));
-            }
-
-            StaticResolverFactory factory =
-                new(addr => nodes.Select(i => new BalancerAddress(i.Host, i.Port)).ToArray());
-            ServiceCollection services = new();
-            services.AddSingleton<ResolverFactory>(factory);
-            options.ServiceProvider = services.BuildServiceProvider();
-
-            _channel = GrpcChannel.ForAddress($"{StaticHostsPrefix}{serverName}", options);
-        }
-
-        CallInvoker callInvoker = interceptors != null && interceptors.Length > 0
+        CallInvoker callInvoker = interceptors.Length > 0
             ? _channel.Intercept(interceptors)
             : _channel.CreateCallInvoker();
 
