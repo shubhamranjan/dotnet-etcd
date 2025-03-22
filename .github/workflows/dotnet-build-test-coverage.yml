@@ -69,7 +69,7 @@ jobs:
       if: github.event_name == 'pull_request'
       with:
         recreate: true
-        path: code-coverage-results.md
+        path: ./coveragereport/Summary.txt
     
     - name: Publish Coverage Report to GitHub Pages
       if: github.ref == 'refs/heads/main'

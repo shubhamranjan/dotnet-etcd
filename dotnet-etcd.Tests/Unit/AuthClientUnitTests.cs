@@ -6,7 +6,7 @@ using Moq;
 namespace dotnet_etcd.Tests.Unit;
 
 [Trait("Category", "Unit")]
-public class AuthClientTests
+public class AuthClientUnitTests
 {
     [Fact]
     public void AuthEnable_ShouldCallGrpcClient()
@@ -14,12 +14,10 @@ public class AuthClientTests
         // Arrange
         var mockAuthClient = new Mock<Auth.AuthClient>();
 
-        var expectedResponse = new AuthEnableResponse();
-
         mockAuthClient
             .Setup(x => x.AuthEnable(It.IsAny<AuthEnableRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
                 It.IsAny<CancellationToken>()))
-            .Returns(expectedResponse);
+            .Returns(new AuthEnableResponse());
 
         // Create a client with mocked dependencies
         var client = TestHelper.CreateEtcdClientWithMockCallInvoker();
@@ -28,8 +26,7 @@ public class AuthClientTests
         TestHelper.SetupMockClientViaConnection(client, mockAuthClient.Object, "_authClient");
 
         // Act
-        var request = new AuthEnableRequest();
-        var result = client.AuthEnable(request);
+        client.AuthEnable(new AuthEnableRequest());
 
         // Assert
         mockAuthClient.Verify(x => x.AuthEnable(
@@ -45,15 +42,8 @@ public class AuthClientTests
     {
         // Arrange
         var mockAuthClient = new Mock<Auth.AuthClient>();
-
         var expectedResponse = new AuthEnableResponse();
-
-        var asyncResponse = new AsyncUnaryCall<AuthEnableResponse>(
-            Task.FromResult(expectedResponse),
-            Task.FromResult(new Metadata()),
-            () => Status.DefaultSuccess,
-            () => new Metadata(),
-            () => { });
+        var asyncResponse = TestHelper.CreateAsyncUnaryCall(expectedResponse);
 
         mockAuthClient
             .Setup(x => x.AuthEnableAsync(It.IsAny<AuthEnableRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
@@ -67,8 +57,7 @@ public class AuthClientTests
         TestHelper.SetupMockClientViaConnection(client, mockAuthClient.Object, "_authClient");
 
         // Act
-        var request = new AuthEnableRequest();
-        var result = await client.AuthEnableAsync(request);
+        await client.AuthEnableAsync(new AuthEnableRequest());
 
         // Assert
         mockAuthClient.Verify(x => x.AuthEnableAsync(
@@ -84,23 +73,16 @@ public class AuthClientTests
     {
         // Arrange
         var mockAuthClient = new Mock<Auth.AuthClient>();
-
-        var expectedResponse = new AuthDisableResponse();
-
         mockAuthClient
             .Setup(x => x.AuthDisable(It.IsAny<AuthDisableRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
                 It.IsAny<CancellationToken>()))
-            .Returns(expectedResponse);
+            .Returns(new AuthDisableResponse());
 
-        // Create a client with mocked dependencies
         var client = TestHelper.CreateEtcdClientWithMockCallInvoker();
-
-        // Set up the mock Auth client
         TestHelper.SetupMockClientViaConnection(client, mockAuthClient.Object, "_authClient");
 
         // Act
-        var request = new AuthDisableRequest();
-        var result = client.AuthDisable(request);
+        client.AuthDisable(new AuthDisableRequest());
 
         // Assert
         mockAuthClient.Verify(x => x.AuthDisable(
@@ -116,42 +98,34 @@ public class AuthClientTests
     {
         // Arrange
         var mockAuthClient = new Mock<Auth.AuthClient>();
-
-        var expectedResponse = new AuthenticateResponse
-        {
-            Token = "test-token"
-        };
+        var username = "user";
+        var password = "password";
 
         mockAuthClient
             .Setup(x => x.Authenticate(It.IsAny<AuthenticateRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
                 It.IsAny<CancellationToken>()))
-            .Returns(expectedResponse);
+            .Returns(new AuthenticateResponse { Token = "token" });
 
-        // Create a client with mocked dependencies
         var client = TestHelper.CreateEtcdClientWithMockCallInvoker();
-
-        // Set up the mock Auth client
         TestHelper.SetupMockClientViaConnection(client, mockAuthClient.Object, "_authClient");
 
         // Act
         var request = new AuthenticateRequest
         {
-            Name = "test-user",
-            Password = "test-password"
+            Name = username,
+            Password = password
         };
-        var result = client.Authenticate(request);
+        var response = client.Authenticate(request);
 
         // Assert
         mockAuthClient.Verify(x => x.Authenticate(
-            It.Is<AuthenticateRequest>(r =>
-                r.Name == "test-user" &&
-                r.Password == "test-password"),
+            It.Is<AuthenticateRequest>(r => r.Name == username && r.Password == password),
             It.IsAny<Metadata>(),
             It.IsAny<DateTime?>(),
             It.IsAny<CancellationToken>()
         ), Times.Once);
-
-        Assert.Equal("test-token", result.Token);
+        
+        Assert.Equal("token", response.Token);
     }
 
     [Fact]
@@ -159,33 +133,28 @@ public class AuthClientTests
     {
         // Arrange
         var mockAuthClient = new Mock<Auth.AuthClient>();
-
-        var expectedResponse = new AuthUserAddResponse();
+        var username = "user";
+        var password = "password";
 
         mockAuthClient
             .Setup(x => x.UserAdd(It.IsAny<AuthUserAddRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
                 It.IsAny<CancellationToken>()))
-            .Returns(expectedResponse);
+            .Returns(new AuthUserAddResponse());
 
-        // Create a client with mocked dependencies
         var client = TestHelper.CreateEtcdClientWithMockCallInvoker();
-
-        // Set up the mock Auth client
         TestHelper.SetupMockClientViaConnection(client, mockAuthClient.Object, "_authClient");
 
         // Act
         var request = new AuthUserAddRequest
         {
-            Name = "test-user",
-            Password = "test-password"
+            Name = username,
+            Password = password
         };
-        var result = client.UserAdd(request);
+        client.UserAdd(request);
 
         // Assert
         mockAuthClient.Verify(x => x.UserAdd(
-            It.Is<AuthUserAddRequest>(r =>
-                r.Name == "test-user" &&
-                r.Password == "test-password"),
+            It.Is<AuthUserAddRequest>(r => r.Name == username && r.Password == password),
             It.IsAny<Metadata>(),
             It.IsAny<DateTime?>(),
             It.IsAny<CancellationToken>()
@@ -193,34 +162,27 @@ public class AuthClientTests
     }
 
     [Fact]
-    public void RoleAdd_ShouldCallGrpcClient()
+    public void UserDelete_ShouldCallGrpcClient()
     {
         // Arrange
         var mockAuthClient = new Mock<Auth.AuthClient>();
-
-        var expectedResponse = new AuthRoleAddResponse();
+        var username = "user";
 
         mockAuthClient
-            .Setup(x => x.RoleAdd(It.IsAny<AuthRoleAddRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+            .Setup(x => x.UserDelete(It.IsAny<AuthUserDeleteRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
                 It.IsAny<CancellationToken>()))
-            .Returns(expectedResponse);
+            .Returns(new AuthUserDeleteResponse());
 
-        // Create a client with mocked dependencies
         var client = TestHelper.CreateEtcdClientWithMockCallInvoker();
-
-        // Set up the mock Auth client
         TestHelper.SetupMockClientViaConnection(client, mockAuthClient.Object, "_authClient");
 
         // Act
-        var request = new AuthRoleAddRequest
-        {
-            Name = "test-role"
-        };
-        var result = client.RoleAdd(request);
+        var request = new AuthUserDeleteRequest { Name = username };
+        client.UserDelete(request);
 
         // Assert
-        mockAuthClient.Verify(x => x.RoleAdd(
-            It.Is<AuthRoleAddRequest>(r => r.Name == "test-role"),
+        mockAuthClient.Verify(x => x.UserDelete(
+            It.Is<AuthUserDeleteRequest>(r => r.Name == username),
             It.IsAny<Metadata>(),
             It.IsAny<DateTime?>(),
             It.IsAny<CancellationToken>()
@@ -228,82 +190,31 @@ public class AuthClientTests
     }
 
     [Fact]
-    public async Task RoleAddAsync_ShouldCallGrpcClient()
+    public void UserList_ShouldCallGrpcClient()
     {
         // Arrange
         var mockAuthClient = new Mock<Auth.AuthClient>();
-
-        var expectedResponse = new AuthRoleAddResponse();
-
-        var asyncResponse = new AsyncUnaryCall<AuthRoleAddResponse>(
-            Task.FromResult(expectedResponse),
-            Task.FromResult(new Metadata()),
-            () => Status.DefaultSuccess,
-            () => new Metadata(),
-            () => { });
-
         mockAuthClient
-            .Setup(x => x.RoleAddAsync(It.IsAny<AuthRoleAddRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+            .Setup(x => x.UserList(It.IsAny<AuthUserListRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
                 It.IsAny<CancellationToken>()))
-            .Returns(asyncResponse);
+            .Returns(new AuthUserListResponse { Users = { "user1", "user2" } });
 
-        // Create a client with mocked dependencies
         var client = TestHelper.CreateEtcdClientWithMockCallInvoker();
-
-        // Set up the mock Auth client
         TestHelper.SetupMockClientViaConnection(client, mockAuthClient.Object, "_authClient");
 
         // Act
-        var request = new AuthRoleAddRequest
-        {
-            Name = "test-role"
-        };
-        var result = await client.RoleAddAsync(request);
+        var response = client.UserList(new AuthUserListRequest());
 
         // Assert
-        mockAuthClient.Verify(x => x.RoleAddAsync(
-            It.Is<AuthRoleAddRequest>(r => r.Name == "test-role"),
+        mockAuthClient.Verify(x => x.UserList(
+            It.IsAny<AuthUserListRequest>(),
             It.IsAny<Metadata>(),
             It.IsAny<DateTime?>(),
             It.IsAny<CancellationToken>()
         ), Times.Once);
-    }
-
-    [Fact]
-    public void UserGrantRole_ShouldCallGrpcClient()
-    {
-        // Arrange
-        var mockAuthClient = new Mock<Auth.AuthClient>();
-
-        var expectedResponse = new AuthUserGrantRoleResponse();
-
-        mockAuthClient
-            .Setup(x => x.UserGrantRole(It.IsAny<AuthUserGrantRoleRequest>(), It.IsAny<Metadata>(),
-                It.IsAny<DateTime?>(), It.IsAny<CancellationToken>()))
-            .Returns(expectedResponse);
-
-        // Create a client with mocked dependencies
-        var client = TestHelper.CreateEtcdClientWithMockCallInvoker();
-
-        // Set up the mock Auth client
-        TestHelper.SetupMockClientViaConnection(client, mockAuthClient.Object, "_authClient");
-
-        // Act
-        var request = new AuthUserGrantRoleRequest
-        {
-            User = "test-user",
-            Role = "test-role"
-        };
-        var result = client.UserGrantRole(request);
-
-        // Assert
-        mockAuthClient.Verify(x => x.UserGrantRole(
-            It.Is<AuthUserGrantRoleRequest>(r =>
-                r.User == "test-user" &&
-                r.Role == "test-role"),
-            It.IsAny<Metadata>(),
-            It.IsAny<DateTime?>(),
-            It.IsAny<CancellationToken>()
-        ), Times.Once);
+        
+        Assert.Equal(2, response.Users.Count);
+        Assert.Contains("user1", response.Users);
+        Assert.Contains("user2", response.Users);
     }
 }
