@@ -413,9 +413,3 @@ public class ElectionIntegrationTests : IDisposable
 }
 
 // Helper class for skipping tests
-public class SkipException : Exception
-{
-    public SkipException(string message) : base(message)
-    {
-    }
-}

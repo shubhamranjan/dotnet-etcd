@@ -1,4 +1,3 @@
-using System.Reflection;
 using dotnet_etcd.Tests.Infrastructure;
 using Etcdserverpb;
 using Google.Protobuf;
@@ -152,14 +151,14 @@ public class KvClientUnitTests
     {
         // Arrange
         var mockKvClient = new Mock<KV.KVClient>();
-        
+
         // Create a response with a key-value pair
         var kvPair = new KeyValue
         {
             Key = ByteString.CopyFromUtf8("test-key"),
             Value = ByteString.CopyFromUtf8("test-value")
         };
-        
+
         var expectedResponse = new RangeResponse();
         expectedResponse.Kvs.Add(kvPair);
         expectedResponse.Count = 1;

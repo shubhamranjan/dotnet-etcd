@@ -19,7 +19,6 @@ A C# .NET (dotnet) GRPC client for etcd v3+
 - [Contributing](#contributing)
 - [Testing and Code Coverage](#testing-and-code-coverage)
 
-
 ## Supported .NET Versions
 
 - .NET 9
@@ -28,6 +27,7 @@ A C# .NET (dotnet) GRPC client for etcd v3+
 ### Compatibility Note
 
 For older .NET versions:
+
 - For .NET 6/7 support, use version 7.2.0
 - For .NET versions < 6, use version < 5.x
 
@@ -58,16 +58,19 @@ paket add dotnet-etcd
 
 ## Documentation
 
-For comprehensive documentation of all operations and method overloads, please see the [documentation pages](docs/index.md).
+For comprehensive documentation of all operations and method overloads, please see
+the [documentation pages](docs/index.md).
 
 The documentation is organized into the following sections:
 
 ### Getting Started
+
 - [Client Initialization](docs/client-initialization/index.md) - How to initialize and configure the client
 - [Dependency Injection](docs/client-initialization/dependency-injection.md) - Using the client with DI
 - [Authentication](docs/authentication/index.md) - Authentication with etcd
 
 ### Core Operations
+
 - [Key-Value Operations](docs/key-value/index.md) - Working with keys and values
 - [Watch Operations](docs/watch/index.md) - Watching for changes to keys
 - [Lease Operations](docs/lease/index.md) - Working with leases
@@ -75,6 +78,7 @@ The documentation is organized into the following sections:
 - [Election Operations](docs/election/index.md) - Leader election
 
 ### Advanced Operations
+
 - [Cluster Operations](docs/cluster/index.md) - Managing the etcd cluster
 - [Maintenance Operations](docs/maintenance/index.md) - Maintenance tasks
 - [Transactions](docs/transactions/index.md) - Atomic operations
@@ -131,6 +135,7 @@ For more authentication options, see the [Authentication documentation](docs/aut
 ## Features
 
 ### Dependency Injection Support
+
 Built-in support for Microsoft.Extensions.DependencyInjection with extension methods for easy configuration:
 
 ```csharp

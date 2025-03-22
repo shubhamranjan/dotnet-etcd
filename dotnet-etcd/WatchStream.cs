@@ -146,10 +146,10 @@ public class WatchStream : IWatchStream
             // Log the exception
             Console.Error.WriteLine($"Error processing watch responses: {ex}");
 
-            #if DEBUG
+#if DEBUG
             // Only re-throw in debug mode to help with debugging
             throw;
-            #endif
+#endif
         }
     }
 }

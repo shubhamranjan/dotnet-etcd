@@ -9,34 +9,78 @@ using System.Threading.Tasks;
 using Etcdserverpb;
 using Google.Protobuf;
 using Grpc.Core;
-using static Mvccpb.Event.Types;
 
 namespace dotnet_etcd;
 
-/// <summary>
-///     WatchEvent class is used for retrieval of minimal
-///     data from watch events on etcd.
-/// </summary>
-public class WatchEvent
-{
-    /// <summary>
-    ///     etcd Key
-    /// </summary>
-    public string Key { get; set; }
-
-    /// <summary>
-    ///     etcd value
-    /// </summary>
-    public string Value { get; set; }
-
-    /// <summary>
-    ///     etcd watch event type (PUT,DELETE etc.)
-    /// </summary>
-    public EventType Type { get; set; }
-}
-
 public partial class EtcdClient
 {
+    /// <summary>
+    ///     Watches the specified requests and passes the watch events to the methods provided asynchronously.
+    /// </summary>
+    /// <param name="requests">Watch Requests containing keys to be watched</param>
+    /// <param name="methods">Methods to which watch events should be passed on</param>
+    /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="cancellationToken">An optional token for canceling the call.</param>
+    /// <returns>A task that completes with an array of watch IDs</returns>
+    public async Task<long[]> WatchAsync(WatchRequest[] requests, Action<WatchEvent[]>[] methods,
+        Metadata headers = null,
+        DateTime? deadline = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (requests.Length != methods.Length)
+        {
+            throw new ArgumentException("The number of requests must match the number of methods");
+        }
+
+        long[] watchIds = new long[requests.Length];
+
+        for (int i = 0; i < requests.Length; i++)
+        {
+            // Create a wrapper that converts WatchResponse to WatchEvent[]
+            Action<WatchResponse> wrapper = response =>
+            {
+                WatchEvent[] events = response.Events.Select(e =>
+                {
+                    return new WatchEvent
+                    {
+                        Key = e.Kv.Key.ToStringUtf8(), Value = e.Kv.Value.ToStringUtf8(), Type = e.Type
+                    };
+                }).ToArray();
+
+                methods[i](events);
+            };
+
+            watchIds[i] = await _watchManager.WatchAsync(requests[i], wrapper, headers, deadline, cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        return watchIds;
+    }
+
+    public Task<long[]> WatchAsync(WatchRequest[] requests, Action<WatchEvent[]> method, Metadata headers = null,
+        DateTime? deadline = null, CancellationToken cancellationToken = default)
+    {
+        List<Task<long>> tasks = new();
+
+        foreach (WatchRequest request in requests)
+        {
+            // Create a wrapper that converts WatchResponse to WatchEvent[]
+            Action<WatchResponse> wrapper = response =>
+            {
+                WatchEvent[] events = response.Events.Select(e => new WatchEvent
+                {
+                    Key = e.Kv.Key.ToStringUtf8(), Value = e.Kv.Value.ToStringUtf8(), Type = e.Type
+                }).ToArray();
+
+                method(events);
+            };
+
+            tasks.Add(_watchManager.WatchAsync(request, wrapper, headers, deadline, cancellationToken));
+        }
+
+        return Task.WhenAll(tasks);
+    }
     // CancelWatch methods are already defined in EtcdClient.cs
 
     /// <summary>
@@ -97,76 +141,6 @@ public partial class EtcdClient
 
             _watchManager.Watch(requests[i], wrapper, headers, deadline, cancellationToken);
         }
-    }
-
-    /// <summary>
-    ///     Watches the specified requests and passes the watch events to the methods provided asynchronously.
-    /// </summary>
-    /// <param name="requests">Watch Requests containing keys to be watched</param>
-    /// <param name="methods">Methods to which watch events should be passed on</param>
-    /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
-    /// <param name="cancellationToken">An optional token for canceling the call.</param>
-    /// <returns>A task that completes with an array of watch IDs</returns>
-    public async Task<long[]> WatchAsync(WatchRequest[] requests, Action<WatchEvent[]>[] methods,
-        Metadata headers = null,
-        DateTime? deadline = null,
-        CancellationToken cancellationToken = default)
-    {
-        if (requests.Length != methods.Length)
-        {
-            throw new ArgumentException("The number of requests must match the number of methods");
-        }
-
-        long[] watchIds = new long[requests.Length];
-
-        for (int i = 0; i < requests.Length; i++)
-        {
-            // Create a wrapper that converts WatchResponse to WatchEvent[]
-            Action<WatchResponse> wrapper = response =>
-            {
-                WatchEvent[] events = response.Events.Select(e =>
-                {
-                    return new WatchEvent
-                    {
-                        Key = e.Kv.Key.ToStringUtf8(), Value = e.Kv.Value.ToStringUtf8(), Type = e.Type
-                    };
-                }).ToArray();
-
-                methods[i](events);
-            };
-
-            watchIds[i] = await _watchManager.WatchAsync(requests[i], wrapper, headers, deadline, cancellationToken)
-                .ConfigureAwait(false);
-        }
-
-        return watchIds;
-    }
-
-    public Task<long[]> WatchAsync(WatchRequest[] requests, Action<WatchEvent[]> method, Metadata headers = null,
-        DateTime? deadline = null, CancellationToken cancellationToken = default)
-    {
-        var tasks = new List<Task<long>>();
-
-        foreach (var request in requests)
-        {
-            // Create a wrapper that converts WatchResponse to WatchEvent[]
-            Action<WatchResponse> wrapper = response =>
-            {
-                WatchEvent[] events = response.Events.Select(e => new WatchEvent
-                {
-                    Key = e.Kv.Key.ToStringUtf8(),
-                    Value = e.Kv.Value.ToStringUtf8(),
-                    Type = e.Type
-                }).ToArray();
-
-                method(events);
-            };
-
-            tasks.Add(_watchManager.WatchAsync(request, wrapper, headers, deadline, cancellationToken));
-        }
-
-        return Task.WhenAll(tasks);
     }
 
     #region Watch Key

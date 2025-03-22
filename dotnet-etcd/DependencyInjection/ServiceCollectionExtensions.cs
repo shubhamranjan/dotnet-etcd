@@ -3,7 +3,6 @@
 
 using System;
 using dotnet_etcd.interfaces;
-using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,12 +11,12 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 namespace dotnet_etcd.DependencyInjection;
 
 /// <summary>
-/// Extension methods for setting up etcd related services in an <see cref="IServiceCollection" />.
+///     Extension methods for setting up etcd related services in an <see cref="IServiceCollection" />.
 /// </summary>
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Adds etcd client services to the specified <see cref="IServiceCollection" />.
+    ///     Adds etcd client services to the specified <see cref="IServiceCollection" />.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection" /> to add services to.</param>
     /// <param name="connectionString">The connection string for etcd.</param>
@@ -25,7 +24,7 @@ public static class ServiceCollectionExtensions
     /// <param name="serverName">The server name.</param>
     /// <param name="configureChannel">Optional action to configure channel options.</param>
     /// <param name="interceptors">Optional interceptors to apply to calls.</param>
-    /// <returns>The <see cref="IServiceCollection"/> so that additional calls can be chained.</returns>
+    /// <returns>The <see cref="IServiceCollection" /> so that additional calls can be chained.</returns>
     public static IServiceCollection AddEtcdClient(
         this IServiceCollection services,
         string connectionString,
@@ -41,7 +40,7 @@ public static class ServiceCollectionExtensions
             throw new ArgumentNullException(nameof(connectionString));
         }
 
-        var options = new EtcdClientOptions
+        EtcdClientOptions options = new()
         {
             ConnectionString = connectionString,
             Port = port,
@@ -57,33 +56,33 @@ public static class ServiceCollectionExtensions
     }
 
     /// <summary>
-    /// Adds etcd client services to the specified <see cref="IServiceCollection" /> with the specified configuration.
+    ///     Adds etcd client services to the specified <see cref="IServiceCollection" /> with the specified configuration.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection" /> to add services to.</param>
     /// <param name="configureClient">An action to configure the etcd client options.</param>
-    /// <returns>The <see cref="IServiceCollection"/> so that additional calls can be chained.</returns>
+    /// <returns>The <see cref="IServiceCollection" /> so that additional calls can be chained.</returns>
     public static IServiceCollection AddEtcdClient(
         this IServiceCollection services,
         Action<EtcdClientOptions> configureClient)
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configureClient);
-        
-        var options = new EtcdClientOptions();
+
+        EtcdClientOptions options = new();
         configureClient(options);
-        
+
         // Validate the options
         EtcdClientOptionsValidator.ValidateOptions(options);
-        
+
         return AddEtcdClient(services, options);
     }
 
     /// <summary>
-    /// Adds etcd client services to the specified <see cref="IServiceCollection" /> with the specified options.
+    ///     Adds etcd client services to the specified <see cref="IServiceCollection" /> with the specified options.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection" /> to add services to.</param>
     /// <param name="options">The options to configure the etcd client.</param>
-    /// <returns>The <see cref="IServiceCollection"/> so that additional calls can be chained.</returns>
+    /// <returns>The <see cref="IServiceCollection" /> so that additional calls can be chained.</returns>
     public static IServiceCollection AddEtcdClient(
         this IServiceCollection services,
         EtcdClientOptions options)
@@ -94,24 +93,21 @@ public static class ServiceCollectionExtensions
         EtcdClientOptionsValidator.ValidateOptions(options);
 
         // Create a wrapper action that applies both the options and any custom channel configuration
-        Action<GrpcChannelOptions> channelConfiguration = grpcOptions => 
-        {
-            options.ApplyTo(grpcOptions);
-        };
+        Action<GrpcChannelOptions> channelConfiguration = grpcOptions => { options.ApplyTo(grpcOptions); };
 
         // Register EtcdClient as a singleton
-        services.TryAddSingleton<IEtcdClient>(serviceProvider => 
+        services.TryAddSingleton(serviceProvider =>
             (IEtcdClient)new EtcdClient(
-                options.ConnectionString, 
-                options.Port, 
+                options.ConnectionString,
+                options.Port,
                 options.ServerName,
                 channelConfiguration,
                 options.Interceptors));
 
         // Register IWatchManager for direct access if needed
-        services.TryAddTransient(serviceProvider => 
+        services.TryAddTransient(serviceProvider =>
         {
-            var etcdClient = serviceProvider.GetRequiredService<IEtcdClient>();
+            IEtcdClient etcdClient = serviceProvider.GetRequiredService<IEtcdClient>();
             return (etcdClient as EtcdClient)?.GetWatchManager();
         });
 
@@ -119,13 +115,13 @@ public static class ServiceCollectionExtensions
     }
 
     /// <summary>
-    /// Adds etcd client services to the specified <see cref="IServiceCollection" /> using custom factory functions.
-    /// This allows for more advanced configuration and testing scenarios.
+    ///     Adds etcd client services to the specified <see cref="IServiceCollection" /> using custom factory functions.
+    ///     This allows for more advanced configuration and testing scenarios.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection" /> to add services to.</param>
     /// <param name="connectionFactory">Factory function to create a connection.</param>
     /// <param name="watchManagerFactory">Optional factory function to create a watch manager.</param>
-    /// <returns>The <see cref="IServiceCollection"/> so that additional calls can be chained.</returns>
+    /// <returns>The <see cref="IServiceCollection" /> so that additional calls can be chained.</returns>
     public static IServiceCollection AddEtcdClient(
         this IServiceCollection services,
         Func<IServiceProvider, IConnection> connectionFactory,
@@ -135,16 +131,16 @@ public static class ServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(connectionFactory);
 
         // Register EtcdClient as a singleton
-        services.TryAddSingleton<IEtcdClient>(serviceProvider =>
+        services.TryAddSingleton(serviceProvider =>
         {
-            var connection = connectionFactory(serviceProvider);
-            
+            IConnection connection = connectionFactory(serviceProvider);
+
             if (watchManagerFactory != null)
             {
-                var watchManager = watchManagerFactory(serviceProvider);
-                return (IEtcdClient)new EtcdClient(connection, watchManager);
+                IWatchManager watchManager = watchManagerFactory(serviceProvider);
+                return new EtcdClient(connection, watchManager);
             }
-            
+
             return (IEtcdClient)new EtcdClient(connection);
         });
 
@@ -156,9 +152,9 @@ public static class ServiceCollectionExtensions
         else
         {
             // Register IWatchManager for direct access if needed
-            services.TryAddTransient(serviceProvider => 
+            services.TryAddTransient(serviceProvider =>
             {
-                var etcdClient = serviceProvider.GetRequiredService<IEtcdClient>();
+                IEtcdClient etcdClient = serviceProvider.GetRequiredService<IEtcdClient>();
                 return (etcdClient as EtcdClient)?.GetWatchManager();
             });
         }
