@@ -181,7 +181,7 @@ public class MaintenanceClientIntegrationTests : IDisposable
         }
     }
 
-    [Fact(Skip = "This test is potentially destructive and should be run manually")]
+    [Fact]
     public void Alarm_ShouldManageAlarms()
     {
         // Arrange
@@ -201,7 +201,7 @@ public class MaintenanceClientIntegrationTests : IDisposable
         // as this could affect the etcd server's operation
     }
 
-    [Fact(Skip = "This test is potentially destructive and should be run manually")]
+    [Fact]
     public async Task AlarmAsync_ShouldManageAlarms()
     {
         // Arrange
@@ -221,7 +221,7 @@ public class MaintenanceClientIntegrationTests : IDisposable
         // as this could affect the etcd server's operation
     }
 
-    [Fact(Skip = "This test is potentially destructive and should be run manually")]
+    [Fact]
     public void Defragment_ShouldDefragmentDatabase()
     {
         // Act
@@ -234,7 +234,7 @@ public class MaintenanceClientIntegrationTests : IDisposable
         // and should be run manually in production environments
     }
 
-    [Fact(Skip = "This test is potentially destructive and should be run manually")]
+    [Fact]
     public async Task DefragmentAsync_ShouldDefragmentDatabase()
     {
         // Act
