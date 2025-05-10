@@ -1,6 +1,3 @@
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -170,10 +167,7 @@ public class WatchManager : IWatchManager
     public long WatchRange(string prefixKey, Action<WatchEvent> action, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
-        if (_disposed)
-        {
-            throw new ObjectDisposedException(nameof(WatchManager));
-        }
+        ObjectDisposedException.ThrowIf(_disposed, this);
 
         // Create a watch request for the range
         WatchRequest request = new()
@@ -222,10 +216,7 @@ public class WatchManager : IWatchManager
     public long Watch(string key, long startRevision, Action<WatchEvent> action, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
-        if (_disposed)
-        {
-            throw new ObjectDisposedException(nameof(WatchManager));
-        }
+        ObjectDisposedException.ThrowIf(_disposed, this);
 
         // Create a watch request for the key with start revision
         WatchRequest request = new()
@@ -274,10 +265,7 @@ public class WatchManager : IWatchManager
     public long WatchRange(string prefixKey, long startRevision, Action<WatchEvent> action, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
-        if (_disposed)
-        {
-            throw new ObjectDisposedException(nameof(WatchManager));
-        }
+        ObjectDisposedException.ThrowIf(_disposed, this);
 
         // Create a watch request for the range with start revision
         WatchRequest request = new()
@@ -326,10 +314,7 @@ public class WatchManager : IWatchManager
     public async Task<long> WatchAsync(string key, Action<WatchEvent> action, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
-        if (_disposed)
-        {
-            throw new ObjectDisposedException(nameof(WatchManager));
-        }
+        ObjectDisposedException.ThrowIf(_disposed, this);
 
         // Create a watch request for the key
         WatchRequest request = new()
@@ -423,10 +408,7 @@ public class WatchManager : IWatchManager
     public async Task<long> WatchAsync(string key, long startRevision, Action<WatchEvent> action,
         Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
-        if (_disposed)
-        {
-            throw new ObjectDisposedException(nameof(WatchManager));
-        }
+        ObjectDisposedException.ThrowIf(_disposed, this);
 
         // Create a watch request for the key with start revision
         WatchRequest request = new()
@@ -524,10 +506,7 @@ public class WatchManager : IWatchManager
     public long WatchRange(string path, Action<WatchResponse> callback, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
-        if (_disposed)
-        {
-            throw new ObjectDisposedException(nameof(WatchManager));
-        }
+        ObjectDisposedException.ThrowIf(_disposed, this);
 
         // Create a watch request for the range
         WatchRequest request = new()

@@ -1,7 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -102,10 +99,7 @@ public partial class EtcdClient : IDisposable, IEtcdClient
     /// <exception cref="ArgumentNullException">Thrown if callInvoker is null</exception>
     public EtcdClient(CallInvoker callInvoker)
     {
-        if (callInvoker == null)
-        {
-            throw new ArgumentNullException(nameof(callInvoker));
-        }
+        ArgumentNullException.ThrowIfNull(callInvoker);
 
         _connection = new Connection(callInvoker);
 
@@ -131,15 +125,9 @@ public partial class EtcdClient : IDisposable, IEtcdClient
     public EtcdClient(string connectionString, int port = 2379, string serverName = DefaultServerName,
         Action<GrpcChannelOptions> configureChannelOptions = null, Interceptor[] interceptors = null)
     {
-        // Param check
-        if (string.IsNullOrWhiteSpace(connectionString))
-        {
-            throw new ArgumentNullException(nameof(connectionString));
-        }
+        ArgumentNullException.ThrowIfNull(connectionString);
 
-        // Param sanitization
-
-        interceptors ??= Array.Empty<Interceptor>();
+        interceptors ??= [];
 
         if (connectionString.StartsWith(AlternateDnsPrefix, StringComparison.InvariantCultureIgnoreCase))
         {
@@ -179,7 +167,7 @@ public partial class EtcdClient : IDisposable, IEtcdClient
         else
         {
             string[] hosts = connectionString.Split(',');
-            List<Uri> nodes = new();
+            List<Uri> nodes = [];
 
             foreach (string host in hosts)
             {
@@ -238,7 +226,9 @@ public partial class EtcdClient : IDisposable, IEtcdClient
     /// <exception cref="ArgumentNullException">Thrown if connection or watchManager is null</exception>
     public EtcdClient(IConnection connection, IWatchManager watchManager = null)
     {
-        _connection = connection ?? throw new ArgumentNullException(nameof(connection));
+        ArgumentNullException.ThrowIfNull(connection);
+
+        _connection = connection;
 
         if (watchManager != null)
         {
