@@ -100,7 +100,6 @@ public partial class EtcdClient : IDisposable, IEtcdClient
     public EtcdClient(CallInvoker callInvoker)
     {
         ArgumentNullException.ThrowIfNull(callInvoker);
-        ArgumentNullException.ThrowIfNull(callInvoker);
 
         _connection = new Connection(callInvoker);
 
