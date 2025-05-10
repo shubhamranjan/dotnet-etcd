@@ -1,7 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -20,7 +17,7 @@ public partial class EtcdClient
     /// <param name="requests">Watch Requests containing keys to be watched</param>
     /// <param name="methods">Methods to which watch events should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     /// <returns>A task that completes with an array of watch IDs</returns>
     public async Task<long[]> WatchAsync(WatchRequest[] requests, Action<WatchEvent[]>[] methods,
@@ -40,12 +37,9 @@ public partial class EtcdClient
             // Create a wrapper that converts WatchResponse to WatchEvent[]
             Action<WatchResponse> wrapper = response =>
             {
-                WatchEvent[] events = response.Events.Select(e =>
+                WatchEvent[] events = response.Events.Select(e => new WatchEvent
                 {
-                    return new WatchEvent
-                    {
-                        Key = e.Kv.Key.ToStringUtf8(), Value = e.Kv.Value.ToStringUtf8(), Type = e.Type
-                    };
+                    Key = e.Kv.Key.ToStringUtf8(), Value = e.Kv.Value.ToStringUtf8(), Type = e.Type
                 }).ToArray();
 
                 methods[i](events);
@@ -61,7 +55,7 @@ public partial class EtcdClient
     public Task<long[]> WatchAsync(WatchRequest[] requests, Action<WatchEvent[]> method, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
-        List<Task<long>> tasks = new();
+        List<Task<long>> tasks = [];
 
         foreach (WatchRequest request in requests)
         {
@@ -87,9 +81,9 @@ public partial class EtcdClient
     ///     Watches the specified requests and passes the watch response to the methods provided.
     /// </summary>
     /// <param name="requests">Watch Requests containing keys to be watched</param>
-    /// <param name="methods">Methods to which watch response should be passed on</param>
+    /// <param name="methods">Methods to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public void Watch(WatchRequest[] requests, Action<WatchResponse>[] methods, Metadata headers = null,
         DateTime? deadline = null,
@@ -112,7 +106,7 @@ public partial class EtcdClient
     /// <param name="requests">Watch Requests containing keys to be watched</param>
     /// <param name="methods">Methods to which watch events should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public void Watch(WatchRequest[] requests, Action<WatchEvent[]>[] methods, Metadata headers = null,
         DateTime? deadline = null,
@@ -128,13 +122,10 @@ public partial class EtcdClient
             // Create a wrapper that converts WatchResponse to WatchEvent[]
             Action<WatchResponse> wrapper = response =>
             {
-                WatchEvent[] events = response.Events.Select(e =>
+                WatchEvent[] events = [.. response.Events.Select(e => new WatchEvent
                 {
-                    return new WatchEvent
-                    {
-                        Key = e.Kv.Key.ToStringUtf8(), Value = e.Kv.Value.ToStringUtf8(), Type = e.Type
-                    };
-                }).ToArray();
+                    Key = e.Kv.Key.ToStringUtf8(), Value = e.Kv.Value.ToStringUtf8(), Type = e.Type
+                })];
 
                 methods[i](events);
             };
@@ -149,10 +140,10 @@ public partial class EtcdClient
     ///     Watches a key according to the specified watch request and
     ///     passes the watch response to the method provided.
     /// </summary>
-    /// <param name="request">Watch Request containing key to be watched</param>
-    /// <param name="method">Method to which watch response should be passed on</param>
+    /// <param name="request">Watch Request containing a key to be watched</param>
+    /// <param name="method">Method to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     /// <returns>A task that completes with the watch ID</returns>
     public Task<long> WatchAsync(WatchRequest request, Action<WatchResponse> method, Metadata headers = null,
@@ -164,10 +155,10 @@ public partial class EtcdClient
     ///     Watches a key according to the specified watch request and
     ///     passes the watch response to the methods provided.
     /// </summary>
-    /// <param name="request">Watch Request containing key to be watched</param>
-    /// <param name="methods">Methods to which watch response should be passed on</param>
+    /// <param name="request">Watch Request containing a key to be watched</param>
+    /// <param name="methods">Methods to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     /// <returns>A task that completes with the watch ID</returns>
     public Task<long> WatchAsync(WatchRequest request, Action<WatchResponse>[] methods, Metadata headers = null,
@@ -191,9 +182,9 @@ public partial class EtcdClient
     ///     passes the watch response to the method provided.
     /// </summary>
     /// <param name="requests">Watch Requests containing keys to be watched</param>
-    /// <param name="method">Method to which watch response should be passed on</param>
+    /// <param name="method">Method to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     /// <returns>A task that completes with an array of watch IDs</returns>
     public async Task<long[]> WatchAsync(WatchRequest[] requests, Action<WatchResponse> method, Metadata headers = null,
@@ -216,9 +207,9 @@ public partial class EtcdClient
     ///     passes the watch response to the methods provided.
     /// </summary>
     /// <param name="requests">Watch Requests containing keys to be watched</param>
-    /// <param name="methods">Methods to which watch response should be passed on</param>
+    /// <param name="methods">Methods to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     /// <returns>A task that completes with an array of watch IDs</returns>
     public async Task<long[]> WatchAsync(WatchRequest[] requests, Action<WatchResponse>[] methods,
@@ -246,10 +237,10 @@ public partial class EtcdClient
     ///     Watches a key according to the specified watch request and
     ///     passes the minimal watch event data to the method provided.
     /// </summary>
-    /// <param name="request">Watch Request containing key to be watched</param>
+    /// <param name="request">Watch Request containing a key to be watched</param>
     /// <param name="method">Method to which minimal watch events data should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public Task WatchAsync(WatchRequest request, Action<WatchEvent[]> method, Metadata headers = null,
         DateTime? deadline = null,
@@ -276,10 +267,10 @@ public partial class EtcdClient
     ///     Watches a key according to the specified watch request and
     ///     passes the minimal watch event data to the methods provided.
     /// </summary>
-    /// <param name="request">Watch Request containing key to be watched</param>
+    /// <param name="request">Watch Request containing a key to be watched</param>
     /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public Task WatchAsync(WatchRequest request, Action<WatchEvent[]>[] methods, Metadata headers = null,
         DateTime? deadline = null,
@@ -308,84 +299,84 @@ public partial class EtcdClient
     /// <summary>
     ///     Watches the specified key and passes the watch response to the method provided.
     /// </summary>
-    /// <param name="key">Key to be watched</param>
-    /// <param name="method">Method to which watch response should be passed on</param>
+    /// <param name="request">Watch Request</param>
+    /// <param name="method">Method to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public void Watch(WatchRequest request, Action<WatchResponse> method, Metadata headers = null,
         DateTime? deadline = null,
-        CancellationToken cancellationToken = default) => Watch(new WatchRequest[1] { request },
-        new Action<WatchResponse>[1] { method }, headers, deadline, cancellationToken);
+        CancellationToken cancellationToken = default) =>
+        _watchManager.Watch(request, method, headers, deadline, cancellationToken);
 
     /// <summary>
     ///     Watches a key according to the specified watch request and
     ///     passes the watch response to the methods provided.
     /// </summary>
-    /// <param name="request">Watch Request containing key to be watched</param>
-    /// <param name="methods">Methods to which watch response should be passed on</param>
+    /// <param name="request">Watch Request containing a key to be watched</param>
+    /// <param name="methods">Methods to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public void Watch(WatchRequest request, Action<WatchResponse>[] methods,
         Metadata headers = null, DateTime? deadline = null,
-        CancellationToken cancellationToken = default) => Watch(new WatchRequest[1] { request }, methods, headers,
+        CancellationToken cancellationToken = default) => Watch([request], methods, headers,
         deadline, cancellationToken);
 
 
     /// <summary>
     ///     Watches the specified keys and passes the watch response to the method provided.
     /// </summary>
-    /// <param name="keys">Keys to be watched</param>
-    /// <param name="method">Method to which watch response should be passed on</param>
+    /// <param name="key">Key to watch</param>
+    /// <param name="method">Method to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public void Watch(string key, Action<WatchResponse> method, Metadata headers = null,
         DateTime? deadline = null,
-        CancellationToken cancellationToken = default) => Watch(new string[1] { key },
-        new Action<WatchResponse>[1] { method }, headers, deadline, cancellationToken);
+        CancellationToken cancellationToken = default) => Watch([key],
+        [method], headers, deadline, cancellationToken);
 
     /// <summary>
     ///     Watches the specified key and passes the watch response to the methods provided.
     /// </summary>
     /// <param name="key">Key to be watched</param>
-    /// <param name="methods">Methods to which watch response should be passed on</param>
+    /// <param name="methods">Methods to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public void Watch(string key, Action<WatchResponse>[] methods, Metadata headers = null,
         DateTime? deadline = null,
         CancellationToken cancellationToken = default) =>
-        Watch(new string[1] { key }, methods, headers, deadline, cancellationToken);
+        Watch([key], methods, headers, deadline, cancellationToken);
 
 
     /// <summary>
     ///     Watches the specified keys and passes the watch response to the method provided.
     /// </summary>
     /// <param name="keys">Keys to be watched</param>
-    /// <param name="method">Method to which watch response should be passed on</param>
+    /// <param name="method">Method to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public void Watch(string[] keys, Action<WatchResponse> method, Metadata headers = null,
         DateTime? deadline = null,
-        CancellationToken cancellationToken = default) => Watch(keys, new Action<WatchResponse>[1] { method }, headers,
+        CancellationToken cancellationToken = default) => Watch(keys, [method], headers,
         deadline, cancellationToken);
 
     /// <summary>
     ///     Watches the specified keys and passes the watch response to the method provided.
     /// </summary>
     /// <param name="keys">Keys to be watched</param>
-    /// <param name="methods">Methods to which watch response should be passed on</param>
+    /// <param name="methods">Methods to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public void Watch(string[] keys, Action<WatchResponse>[] methods, Metadata headers = null,
         DateTime? deadline = null,
         CancellationToken cancellationToken = default)
     {
-        List<WatchRequest> requests = new();
+        List<WatchRequest> requests = [];
 
         foreach (string key in keys)
         {
@@ -409,12 +400,12 @@ public partial class EtcdClient
     /// <param name="key">Key to be watched</param>
     /// <param name="method">Method to which minimal watch events data should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public void Watch(string key, Action<WatchEvent[]> method, Metadata headers = null,
         DateTime? deadline = null,
-        CancellationToken cancellationToken = default) => Watch(new string[1] { key },
-        new Action<WatchEvent[]>[1] { method }, headers, deadline, cancellationToken);
+        CancellationToken cancellationToken = default) => Watch([key],
+        [method], headers, deadline, cancellationToken);
 
     /// <summary>
     ///     Watches the specified key and passes the minimal watch events data to the methods provided.
@@ -422,12 +413,12 @@ public partial class EtcdClient
     /// <param name="key">Key to be watched</param>
     /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public void Watch(string key, Action<WatchEvent[]>[] methods, Metadata headers = null,
         DateTime? deadline = null,
         CancellationToken cancellationToken = default) =>
-        Watch(new string[1] { key }, methods, headers, deadline, cancellationToken);
+        Watch([key], methods, headers, deadline, cancellationToken);
 
     /// <summary>
     ///     Watches the specified keys and passes the minimal watch events data to the method provided.
@@ -435,11 +426,11 @@ public partial class EtcdClient
     /// <param name="keys">Keys to be watched</param>
     /// <param name="method">Method to which minimal watch events data should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public void Watch(string[] keys, Action<WatchEvent[]> method, Metadata headers = null,
         DateTime? deadline = null,
-        CancellationToken cancellationToken = default) => Watch(keys, new Action<WatchEvent[]>[1] { method }, headers,
+        CancellationToken cancellationToken = default) => Watch(keys, [method], headers,
         deadline, cancellationToken);
 
     /// <summary>
@@ -448,13 +439,13 @@ public partial class EtcdClient
     /// <param name="keys">Keys to be watched</param>
     /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public void Watch(string[] keys, Action<WatchEvent[]>[] methods, Metadata headers = null,
         DateTime? deadline = null,
         CancellationToken cancellationToken = default)
     {
-        List<WatchRequest> requests = new();
+        List<WatchRequest> requests = [];
 
         foreach (string key in keys)
         {
@@ -473,55 +464,55 @@ public partial class EtcdClient
     ///     Watches the specified key and passes the watch response to the method provided.
     /// </summary>
     /// <param name="key">Key to be watched</param>
-    /// <param name="method">Method to which watch response should be passed on</param>
+    /// <param name="method">Method to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public Task WatchAsync(string key, Action<WatchResponse> method, Metadata headers = null,
         DateTime? deadline = null,
-        CancellationToken cancellationToken = default) => WatchAsync(new string[1] { key },
-        new Action<WatchResponse>[1] { method }, headers, deadline, cancellationToken);
+        CancellationToken cancellationToken = default) => WatchAsync([key],
+        [method], headers, deadline, cancellationToken);
 
     /// <summary>
     ///     Watches the specified key and passes the watch response to the methods provided.
     /// </summary>
     /// <param name="key">Key to be watched</param>
-    /// <param name="methods">Methods to which watch response should be passed on</param>
+    /// <param name="methods">Methods to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public Task WatchAsync(string key, Action<WatchResponse>[] methods, Metadata headers = null,
         DateTime? deadline = null,
         CancellationToken cancellationToken = default) =>
-        WatchAsync(new string[1] { key }, methods, headers, deadline, cancellationToken);
+        WatchAsync([key], methods, headers, deadline, cancellationToken);
 
 
     /// <summary>
     ///     Watches the specified keys and passes the watch response to the method provided.
     /// </summary>
     /// <param name="keys">Keys to be watched</param>
-    /// <param name="method">Method to which watch response should be passed on</param>
+    /// <param name="method">Method to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public Task WatchAsync(string[] keys, Action<WatchResponse> method, Metadata headers = null,
         DateTime? deadline = null,
-        CancellationToken cancellationToken = default) => WatchAsync(keys, new Action<WatchResponse>[1] { method },
+        CancellationToken cancellationToken = default) => WatchAsync(keys, [method],
         headers, deadline, cancellationToken);
 
     /// <summary>
     ///     Watches the specified keys and passes the watch response to the method provided.
     /// </summary>
     /// <param name="keys">Keys to be watched</param>
-    /// <param name="methods">Methods to which watch response should be passed on</param>
+    /// <param name="methods">Methods to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public Task WatchAsync(string[] keys, Action<WatchResponse>[] methods, Metadata headers = null,
         DateTime? deadline = null,
         CancellationToken cancellationToken = default)
     {
-        List<WatchRequest> requests = new();
+        List<WatchRequest> requests = [];
 
         foreach (string key in keys)
         {
@@ -544,12 +535,12 @@ public partial class EtcdClient
     /// <param name="key">Key to be watched</param>
     /// <param name="method">Method to which minimal watch events data should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public Task WatchAsync(string key, Action<WatchEvent[]> method, Metadata headers = null,
         DateTime? deadline = null,
-        CancellationToken cancellationToken = default) => WatchAsync(new string[1] { key },
-        new Action<WatchEvent[]>[1] { method }, headers, deadline, cancellationToken);
+        CancellationToken cancellationToken = default) => WatchAsync([key],
+        [method], headers, deadline, cancellationToken);
 
     /// <summary>
     ///     Watches the specified key and passes the minimal watch events data to the methods provided.
@@ -557,12 +548,12 @@ public partial class EtcdClient
     /// <param name="key">Key to be watched</param>
     /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public Task WatchAsync(string key, Action<WatchEvent[]>[] methods, Metadata headers = null,
         DateTime? deadline = null,
         CancellationToken cancellationToken = default) =>
-        WatchAsync(new string[1] { key }, methods, headers, deadline, cancellationToken);
+        WatchAsync([key], methods, headers, deadline, cancellationToken);
 
     /// <summary>
     ///     Watches the specified keys and passes the minimal watch events data to the method provided.
@@ -570,11 +561,11 @@ public partial class EtcdClient
     /// <param name="keys">Keys to be watched</param>
     /// <param name="method">Method to which minimal watch events data should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public Task WatchAsync(string[] keys, Action<WatchEvent[]> method, Metadata headers = null,
         DateTime? deadline = null,
-        CancellationToken cancellationToken = default) => WatchAsync(keys, new Action<WatchEvent[]>[1] { method },
+        CancellationToken cancellationToken = default) => WatchAsync(keys, [method],
         headers, deadline, cancellationToken);
 
     /// <summary>
@@ -583,13 +574,13 @@ public partial class EtcdClient
     /// <param name="keys">Keys to be watched</param>
     /// <param name="methods">Methods to which minimal watch events data should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     public Task WatchAsync(string[] keys, Action<WatchEvent[]>[] methods, Metadata headers = null,
         DateTime? deadline = null,
         CancellationToken cancellationToken = default)
     {
-        List<WatchRequest> requests = new();
+        List<WatchRequest> requests = [];
 
         foreach (string key in keys)
         {
@@ -614,9 +605,9 @@ public partial class EtcdClient
     ///     Watches the specified key range and passes the watch response to the method provided.
     /// </summary>
     /// <param name="path">Path to be watched</param>
-    /// <param name="method">Method to which watch response should be passed on</param>
+    /// <param name="method">Method to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     /// <returns>A watch ID that can be used to cancel the watch</returns>
     public long WatchRange(string path, Action<WatchResponse> method, Metadata headers = null,
@@ -641,9 +632,9 @@ public partial class EtcdClient
     ///     Watches the specified key range and passes the watch response to the methods provided.
     /// </summary>
     /// <param name="path">Path to be watched</param>
-    /// <param name="methods">Methods to which watch response should be passed on</param>
+    /// <param name="methods">Methods to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     /// <returns>A watch ID that can be used to cancel the watch</returns>
     public long WatchRange(string path, Action<WatchResponse>[] methods, Metadata headers = null,
@@ -666,9 +657,9 @@ public partial class EtcdClient
     ///     Watches the specified key range and passes the watch response to the method provided.
     /// </summary>
     /// <param name="paths">Paths to be watched</param>
-    /// <param name="method">Method to which watch response should be passed on</param>
+    /// <param name="method">Method to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     /// <returns>An array of watch IDs that can be used to cancel the watches</returns>
     public long[] WatchRange(string[] paths, Action<WatchResponse> method, Metadata headers = null,
@@ -689,9 +680,9 @@ public partial class EtcdClient
     ///     Watches the specified key range and passes the watch response to the method provided.
     /// </summary>
     /// <param name="paths">Paths to be watched</param>
-    /// <param name="methods">Methods to which watch response should be passed on</param>
+    /// <param name="methods">Methods to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     /// <returns>An array of watch IDs that can be used to cancel the watches</returns>
     public long[] WatchRange(string[] paths, Action<WatchResponse>[] methods, Metadata headers = null,
@@ -717,9 +708,9 @@ public partial class EtcdClient
     ///     Watches the specified key range and passes the watch response to the method provided asynchronously.
     /// </summary>
     /// <param name="path">Path to be watched</param>
-    /// <param name="method">Method to which watch response should be passed on</param>
+    /// <param name="method">Method to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     /// <returns>A task that completes with the watch ID</returns>
     public Task<long> WatchRangeAsync(string path, Action<WatchResponse> method, Metadata headers = null,
@@ -744,9 +735,9 @@ public partial class EtcdClient
     ///     Watches the specified key range and passes the watch response to the methods provided asynchronously.
     /// </summary>
     /// <param name="path">Path to be watched</param>
-    /// <param name="methods">Methods to which watch response should be passed on</param>
+    /// <param name="methods">Methods to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     /// <returns>A task that completes with the watch ID</returns>
     public Task<long> WatchRangeAsync(string path, Action<WatchResponse>[] methods, Metadata headers = null,
@@ -769,9 +760,9 @@ public partial class EtcdClient
     ///     Watches the specified key range and passes the watch response to the method provided asynchronously.
     /// </summary>
     /// <param name="paths">Paths to be watched</param>
-    /// <param name="method">Method to which watch response should be passed on</param>
+    /// <param name="method">Method to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     /// <returns>A task that completes with an array of watch IDs</returns>
     public async Task<long[]> WatchRangeAsync(string[] paths, Action<WatchResponse> method, Metadata headers = null,
@@ -793,9 +784,9 @@ public partial class EtcdClient
     ///     Watches the specified key range and passes the watch response to the method provided asynchronously.
     /// </summary>
     /// <param name="paths">Paths to be watched</param>
-    /// <param name="methods">Methods to which watch response should be passed on</param>
+    /// <param name="methods">Methods to which a watch response should be passed on</param>
     /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
-    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     /// <returns>A task that completes with an array of watch IDs</returns>
     public async Task<long[]> WatchRangeAsync(string[] paths, Action<WatchResponse>[] methods, Metadata headers = null,

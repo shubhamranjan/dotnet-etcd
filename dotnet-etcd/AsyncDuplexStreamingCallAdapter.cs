@@ -41,5 +41,9 @@ public class AsyncDuplexStreamingCallAdapter<TRequest, TResponse> : IAsyncDuplex
     public Metadata GetTrailers() => _call.GetTrailers();
 
     /// <inheritdoc />
-    public void Dispose() => _call.Dispose();
+    public void Dispose()
+    {
+        _call.Dispose();
+        GC.SuppressFinalize(this);
+    }
 }
