@@ -215,10 +215,12 @@ var assemblies = [
     "classes": [
       { "name": "dotnet_etcd.AsyncDuplexStreamingCallAdapter<T1, T2>", "rp": "dotnet_etcd_AsyncDuplexStreamingCallAdapter_2.html", "cl": 0, "ucl": 11, "cal": 11, "tl": 49, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.AsyncStreamCallFactory<T1, T2>", "rp": "dotnet_etcd_AsyncStreamCallFactory_2.html", "cl": 3, "ucl": 4, "cal": 7, "tl": 39, "cb": 1, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "dotnet_etcd.ConnectionStringParser", "rp": "dotnet_etcd_ConnectionStringParser.html", "cl": 34, "ucl": 0, "cal": 34, "tl": 73, "cb": 19, "tb": 20, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.DependencyInjection.EtcdClientOptions", "rp": "dotnet_etcd_EtcdClientOptions.html", "cl": 16, "ucl": 4, "cal": 20, "tl": 76, "cb": 4, "tb": 6, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.DependencyInjection.EtcdClientOptionsValidator", "rp": "dotnet_etcd_EtcdClientOptionsValidator.html", "cl": 14, "ucl": 0, "cal": 14, "tl": 42, "cb": 12, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.DependencyInjection.ServiceCollectionExtensions", "rp": "dotnet_etcd_ServiceCollectionExtensions.html", "cl": 56, "ucl": 14, "cal": 70, "tl": 164, "cb": 3, "tb": 10, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "dotnet_etcd.EtcdClient", "rp": "dotnet_etcd_EtcdClient.html", "cl": 250, "ucl": 886, "cal": 1136, "tl": 3386, "cb": 34, "tb": 174, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "dotnet_etcd.EtcdClient", "rp": "dotnet_etcd_EtcdClient.html", "cl": 210, "ucl": 878, "cal": 1088, "tl": 3327, "cb": 20, "tb": 154, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "dotnet_etcd.GrpcChannelFactory", "rp": "dotnet_etcd_GrpcChannelFactory.html", "cl": 49, "ucl": 0, "cal": 49, "tl": 88, "cb": 4, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.helper.AsyncHelper", "rp": "dotnet_etcd_AsyncHelper.html", "cl": 0, "ucl": 12, "cal": 12, "tl": 47, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.multiplexer.Connection", "rp": "dotnet_etcd_Connection.html", "cl": 13, "ucl": 4, "cal": 17, "tl": 63, "cb": 6, "tb": 16, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.WatchEvent", "rp": "dotnet_etcd_WatchEvent.html", "cl": 0, "ucl": 3, "cal": 3, "tl": 25, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
@@ -262,10 +264,10 @@ var riskHotspots = [
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "dotnet-etcd", "class": "dotnet_etcd.EtcdClient", "reportPath": "dotnet_etcd_EtcdClient.html", "methodName": ".ctor(System.String,System.Int32,System.String,System.Action`1<Grpc.Net.Client.GrpcChannelOptions>,Grpc.Core.Interceptors.Interceptor[])", "methodShortName": ".ctor(...)", "fileIndex": 3, "line": 125,
+    "assembly": "dotnet-etcd", "class": "dotnet_etcd.ConnectionStringParser", "reportPath": "dotnet_etcd_ConnectionStringParser.html", "methodName": "ParseConnectionString(System.String,System.Int32,Grpc.Core.ChannelCredentials)", "methodShortName": "ParseConnectionString(...)", "fileIndex": 0, "line": 28,
     "metrics": [
-      { "value": 28, "exceeded": false },
-      { "value": 26, "exceeded": true },
+      { "value": 20, "exceeded": false },
+      { "value": 20, "exceeded": true },
     ]},
 ];
 
