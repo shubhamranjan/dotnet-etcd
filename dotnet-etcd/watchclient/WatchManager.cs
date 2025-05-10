@@ -41,7 +41,7 @@ public class WatchManager : IWatchManager
     /// <summary>
     ///     Creates a new watch request
     /// </summary>
-    /// <param name="request">The watch request to create</param>
+    /// <param name="request">The watch requests to create</param>
     /// <param name="callback">The callback to invoke when a watch event is received</param>
     /// <param name="headers">The initial metadata to send with the call</param>
     /// <param name="deadline">An optional deadline for the call</param>
@@ -64,6 +64,7 @@ public class WatchManager : IWatchManager
         // Create a watch cancellation object
         WatchCancellation watchCancellation = new() { WatchId = watchId, CancellationTokenSource = cts };
 
+        request.CreateRequest.WatchId = watchId;
         // Create the watch
         await _watchStream.CreateWatchAsync(request, WrappedCallback).ConfigureAwait(false);
 
@@ -108,7 +109,7 @@ public class WatchManager : IWatchManager
         DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
         // Run the async method synchronously
-        Task<long> task = Task.Run(() => WatchAsync(request, callback, headers, deadline, cancellationToken));
+        Task<long> task = Task.Run(() => WatchAsync(request, callback, headers, deadline, cancellationToken), cancellationToken);
         task.Wait(cancellationToken);
         return task.Result;
     }
