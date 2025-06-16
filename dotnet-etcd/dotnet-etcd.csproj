@@ -53,14 +53,14 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Google.Api.CommonProtos" Version="2.16.0"/>
-    <PackageReference Include="Google.Protobuf" Version="3.30.2" />
+    <PackageReference Include="Google.Api.CommonProtos" Version="2.17.0"/>
+    <PackageReference Include="Google.Protobuf" Version="3.31.1" />
     <PackageReference Include="Grpc.Net.Client" Version="2.71.0" />
     <PackageReference Include="Grpc.Tools" Version="2.72.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
 
     <Protobuf Include="grpc\proto\etcd\auth.proto" GrpcServices="Client"/>
     <Protobuf Include="grpc\proto\etcd\election.proto" GrpcServices="Client"/>
