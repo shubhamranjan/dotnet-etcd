@@ -48,6 +48,73 @@ public class ServiceCollectionExtensionsTests
     }
 
     [Fact]
+    public void AddEtcdClient_WithOptionsActionAndServiceProvider_ShouldRegisterClient()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        var configActionCalled = false;
+        var providedConnectionString = "";
+
+        // Register some service that should be resolved within AddEtcdClient()
+        services.AddKeyedSingleton<string>("connectionString", "localhost:2379");
+
+        // Act
+        services.AddEtcdClient((sp, options) =>
+        {
+            var connectionString = sp.GetRequiredKeyedService<string>("connectionString");
+
+            providedConnectionString = connectionString;
+
+            options.ConnectionString = connectionString;
+            options.UseInsecureChannel = true;
+            configActionCalled = true;
+        });
+        var serviceProvider = services.BuildServiceProvider();
+
+        // Assert
+        var client = serviceProvider.GetService<IEtcdClient>();
+        Assert.NotNull(client);
+        Assert.IsType<EtcdClient>(client);
+        Assert.True(configActionCalled);
+        Assert.Equal("localhost:2379", providedConnectionString);
+    }
+
+    [Fact]
+    public void AddEtcdClient_WithOptionsFuncAndServiceProvider_ShouldRegisterClient()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        var configActionCalled = false;
+        var providedConnectionString = "";
+
+        // Register some service that should be resolved within AddEtcdClient()
+        services.AddKeyedSingleton<string>("connectionString", "localhost:2379");
+
+        // Act
+        services.AddEtcdClient(sp =>
+        {
+            var connectionString = sp.GetRequiredKeyedService<string>("connectionString");
+
+            providedConnectionString = connectionString;
+
+            var options = new EtcdClientOptions();
+            options.ConnectionString = connectionString;
+            options.UseInsecureChannel = true;
+            configActionCalled = true;
+
+            return options;
+        });
+        var serviceProvider = services.BuildServiceProvider();
+
+        // Assert
+        var client = serviceProvider.GetService<IEtcdClient>();
+        Assert.NotNull(client);
+        Assert.IsType<EtcdClient>(client);
+        Assert.True(configActionCalled);
+        Assert.Equal("localhost:2379", providedConnectionString);
+    }
+
+    [Fact]
     public void AddEtcdClient_WithOptions_ShouldRegisterClient()
     {
         // Arrange
