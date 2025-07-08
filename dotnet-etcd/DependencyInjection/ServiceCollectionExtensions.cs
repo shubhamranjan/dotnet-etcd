@@ -71,10 +71,34 @@ public static class ServiceCollectionExtensions
         EtcdClientOptions options = new();
         configureClient(options);
 
-        // Validate the options
-        EtcdClientOptionsValidator.ValidateOptions(options);
-
         return AddEtcdClient(services, options);
+    }
+
+    /// <summary>
+    ///     Adds etcd client services to the specified <see cref="IServiceCollection" /> with the specified configuration.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection" /> to add services to.</param>
+    /// <param name="configureClient">An action to configure the etcd client options.</param>
+    /// <returns>The <see cref="IServiceCollection" /> so that additional calls can be chained.</returns>
+    public static IServiceCollection AddEtcdClient(
+        this IServiceCollection services,
+        Action<IServiceProvider, EtcdClientOptions> configureClient)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configureClient);
+
+        return AddEtcdClient(
+            services,
+            sp =>
+            {
+                EtcdClientOptions options = new();
+                configureClient(sp, options);
+
+                // Validate the options
+                EtcdClientOptionsValidator.ValidateOptions(options);
+
+                return options;
+            });
     }
 
     /// <summary>
@@ -87,22 +111,42 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         EtcdClientOptions options)
     {
-        ArgumentNullException.ThrowIfNull(services);
-
         // Validate the options
         EtcdClientOptionsValidator.ValidateOptions(options);
 
-        // Create a wrapper action that applies both the options and any custom channel configuration
-        Action<GrpcChannelOptions> channelConfiguration = options.ApplyTo;
+        return AddEtcdClient(services, _ => options);
+    }
+
+    /// <summary>
+    ///     Adds etcd client services to the specified <see cref="IServiceCollection" /> with the specified options.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection" /> to add services to.</param>
+    /// <param name="optionsFunc">A func that returns the options to configure the etcd client.</param>
+    /// <returns>The <see cref="IServiceCollection" /> so that additional calls can be chained.</returns>
+    public static IServiceCollection AddEtcdClient(
+        this IServiceCollection services,
+        Func<IServiceProvider, EtcdClientOptions> optionsFunc)
+    {
+        ArgumentNullException.ThrowIfNull(services);
 
         // Register EtcdClient as a singleton
-        services.TryAddSingleton(_ =>
-            (IEtcdClient)new EtcdClient(
+        services.TryAddSingleton(sp =>
+        {
+            EtcdClientOptions options = optionsFunc(sp);
+
+            // Validate the options
+            EtcdClientOptionsValidator.ValidateOptions(options);
+
+            // Create a wrapper action that applies both the options and any custom channel configuration
+            Action<GrpcChannelOptions> channelConfiguration = options.ApplyTo;
+
+            return (IEtcdClient)new EtcdClient(
                 options.ConnectionString,
                 options.Port,
                 options.ServerName,
                 channelConfiguration,
-                options.Interceptors));
+                options.Interceptors);
+        });
 
         // Register IWatchManager for direct access if needed
         services.TryAddTransient(serviceProvider =>
