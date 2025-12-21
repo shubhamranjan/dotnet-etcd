@@ -17,7 +17,7 @@ namespace dotnet_etcd.Tests.Integration
             // Load the CA certificate
             // Ensure certs are copied to output directory via csproj
             var caCertPath = System.IO.Path.Combine(AppContext.BaseDirectory, "certs", "ca.pem");
-            var caCert = new X509Certificate2(caCertPath);
+            var caCert = X509CertificateLoader.LoadCertificateFromFile(caCertPath);
 
             // Connect to the SSL-enabled etcd instance exposed on port 2389
             _client = new EtcdClient(
@@ -45,6 +45,8 @@ namespace dotnet_etcd.Tests.Integration
                             // Allow untrusted root because our CA is not in the system store
                             customChain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
 
+                            if (cert is null) return false;
+                            
                             bool isChainValid = customChain.Build((X509Certificate2)cert);
                             
                             if (!isChainValid)
