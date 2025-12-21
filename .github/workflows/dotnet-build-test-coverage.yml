@@ -58,7 +58,7 @@ jobs:
           ETCD_INITIAL_CLUSTER_STATE: new
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
