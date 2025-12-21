@@ -116,18 +116,16 @@ the [Client Initialization documentation](docs/client-initialization/index.md).
 ### Authentication
 
 ```csharp
-// Authenticate with username and password
-EtcdClient client = new EtcdClient("https://localhost:23790");
-var authRes = client.Authenticate(new Etcdserverpb.AuthenticateRequest()
-{
-    Name = "username",
-    Password = "password",
-});
+// Automatic authentication with constructor
+var client = new EtcdClient("localhost:2379", "username", "password");
 
-// Use the token for authenticated operations
-client.Put("foo/bar", "barfoo", new Grpc.Core.Metadata() {
-    new Grpc.Core.Metadata.Entry("token", authRes.Token)
-});
+// All requests automatically authenticated
+client.Put("foo/bar", "barfoo");
+client.Get("foo/bar");
+
+// Or set credentials after creation
+var client = new EtcdClient("localhost:2379");
+client.SetCredentials("username", "password");
 ```
 
 For more authentication options, see the [Authentication documentation](docs/authentication/index.md).

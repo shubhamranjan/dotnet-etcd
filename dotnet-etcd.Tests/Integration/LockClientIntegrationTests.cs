@@ -56,7 +56,8 @@ public class LockClientIntegrationTests
             });
 
             // The task should not complete immediately as the lock is held
-            Assert.False(lockTask.Wait(TimeSpan.FromSeconds(1)));
+            var completedInTime = await Task.WhenAny(lockTask, Task.Delay(TimeSpan.FromSeconds(1))) == lockTask;
+            Assert.False(completedInTime);
 
             // 4. Release the lock
             var unlockRequest = new UnlockRequest
@@ -66,7 +67,8 @@ public class LockClientIntegrationTests
             await client.UnlockAsync(unlockRequest);
 
             // 5. Now the second lock should be acquired
-            Assert.True(lockTask.Wait(TimeSpan.FromSeconds(5)));
+            var acquiredLock = await Task.WhenAny(lockTask, Task.Delay(TimeSpan.FromSeconds(5))) == lockTask;
+            Assert.True(acquiredLock);
             var secondLockResponse = await lockTask;
 
             Assert.NotNull(secondLockResponse);

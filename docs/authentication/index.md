@@ -4,11 +4,11 @@ This page documents how to authenticate with etcd using the `dotnet-etcd` client
 
 ## Overview
 
-etcd supports authentication through username and password credentials. When authentication is enabled, a token is generated upon successful authentication, which is then used for subsequent requests.
+etcd supports authentication through username and password credentials. The `dotnet-etcd` client provides **automatic authentication** - simply provide your credentials and the client handles token management for you.
 
-## Enabling Authentication
+## Enabling Authentication on etcd Server
 
-Before using authentication, you need to enable it on the etcd server. This is typically done using the etcdctl command-line tool:
+Before using authentication, you need to enable it on the etcd server:
 
 ```bash
 # Create root user
@@ -18,46 +18,55 @@ etcdctl user add root
 etcdctl auth enable
 ```
 
-## Authenticating with dotnet-etcd
+## Automatic Authentication
 
-### Basic Authentication
+### Constructor with Credentials (Recommended)
 
-To authenticate with etcd, provide the username and password when initializing the client:
+The simplest way to use authentication is to provide credentials when creating the client:
 
 ```csharp
-// Initialize client with authentication
-var client = new EtcdClient(
-    "https://localhost:2379",
-    username: "root",
-    password: "rootpwd"
-);
+// Client automatically authenticates and manages tokens
+var client = new EtcdClient("localhost:2379", "root", "rootpwd");
 
-// Now all operations will be authenticated
+// All operations are automatically authenticated
+client.Put("my-key", "my-value");
 var response = client.Get("my-key");
 ```
 
-### Authentication with Connection String
+### SetCredentials Method
 
-You can also include authentication credentials in the connection string:
-
-```csharp
-// Using authentication in connection string
-var client = new EtcdClient("https://root:rootpwd@localhost:2379");
-```
-
-### Changing Authentication Credentials
-
-You can change the authentication credentials after client initialization:
+You can also set credentials after client creation:
 
 ```csharp
-// Initialize client without authentication
-var client = new EtcdClient("https://localhost:2379");
+// Create client without authentication
+var client = new EtcdClient("localhost:2379");
 
-// Later, set authentication credentials
+// Set credentials when needed
 client.SetCredentials("root", "rootpwd");
 
-// Now all subsequent operations will be authenticated
-var response = client.Get("my-key");
+// All subsequent operations are automatically authenticated
+client.Put("my-key", "my-value");
+```
+
+### How Automatic Authentication Works
+
+When you provide credentials:
+1. The client authenticates with etcd on the first request
+2. The authentication token is cached and reused
+3. All requests automatically include the token in the `authorization` header
+4. You never need to manually manage tokens
+
+### Changing Credentials
+
+You can change credentials at runtime:
+
+```csharp
+var client = new EtcdClient("localhost:2379", "user1", "pass1");
+client.Put("key1", "value1");  // Authenticated as user1
+
+// Switch to different credentials
+client.SetCredentials("user2", "pass2");
+client.Put("key2", "value2");  // Authenticated as user2
 ```
 
 ## User Management

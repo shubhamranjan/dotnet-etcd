@@ -5,9 +5,9 @@ using Etcdserverpb;
 namespace dotnet_etcd.interfaces;
 
 /// <summary>
-///     Interface for the WatchStream class to make it mockable for testing
+///     Interface for the Watcher class to make it mockable for testing
 /// </summary>
-public interface IWatchStream : IDisposable
+public interface IWatcher : IDisposable
 {
     /// <summary>
     ///     Creates a watch for the specified request

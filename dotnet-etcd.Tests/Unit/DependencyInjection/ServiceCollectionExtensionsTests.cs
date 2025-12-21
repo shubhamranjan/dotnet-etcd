@@ -101,7 +101,7 @@ public class ServiceCollectionExtensionsTests
     {
         // Arrange
         var services = new ServiceCollection();
-        Action<EtcdClientOptions> nullAction = null;
+        Action<EtcdClientOptions>? nullAction = null;
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() => services.AddEtcdClient(nullAction));

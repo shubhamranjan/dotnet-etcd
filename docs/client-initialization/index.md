@@ -13,6 +13,15 @@ var client = new EtcdClient("localhost:2379");
 var client = new EtcdClient("https://localhost:23790,https://localhost:23791");
 ```
 
+### Constructor with Authentication
+```csharp
+// Automatic authentication
+var client = new EtcdClient("localhost:2379", "username", "password");
+
+// All requests are automatically authenticated
+client.Put("key", "value");
+```
+
 ### Advanced Constructor
 ```csharp
 var client = new EtcdClient(

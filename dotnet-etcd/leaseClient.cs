@@ -86,15 +86,10 @@ public partial class EtcdClient
         DateTime? deadline = null) => CallEtcdAsync(connection =>
     {
         ArgumentNullException.ThrowIfNull(cancellationTokenSource);
-#pragma warning disable CA1512 // ArgumentOutOfRangeException.ThrowIfNegativeOrZero it is only .NET 8 now
-        if (keepAliveTimeout <= 0)
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(keepAliveTimeout);
+        if (communicationTimeout.HasValue)
         {
-            throw new ArgumentOutOfRangeException(nameof(keepAliveTimeout));
-        }
-#pragma warning restore CA1512
-        if (communicationTimeout != null && communicationTimeout <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(communicationTimeout));
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(communicationTimeout.Value, nameof(communicationTimeout));
         }
 
         CancellationToken cancellationToken = cancellationTokenSource.Token;

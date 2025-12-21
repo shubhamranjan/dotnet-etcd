@@ -11,9 +11,7 @@ namespace dotnet_etcd;
 /// <summary>
 ///     Manages a bidirectional streaming connection to the etcd watch API
 /// </summary>
-#pragma warning disable CA1711
-public class WatchStream : IWatchStream
-#pragma warning restore CA1711
+public class Watcher : IWatcher
 {
     private readonly ConcurrentDictionary<long, Action<WatchResponse>> _callbacks = new();
     private readonly CancellationTokenSource _cts = new();
@@ -22,10 +20,10 @@ public class WatchStream : IWatchStream
 
 
     /// <summary>
-    ///     Creates a new WatchStream
+    ///     Creates a new Watcher
     /// </summary>
     /// <param name="streamingCall">The streaming call to use</param>
-    public WatchStream(IAsyncDuplexStreamingCall<WatchRequest, WatchResponse> streamingCall)
+    public Watcher(IAsyncDuplexStreamingCall<WatchRequest, WatchResponse> streamingCall)
     {
         _streamingCall = streamingCall ?? throw new ArgumentNullException(nameof(streamingCall));
         _ = ProcessWatchResponses();

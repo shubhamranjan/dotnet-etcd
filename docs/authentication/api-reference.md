@@ -2,20 +2,66 @@
 
 This page provides a complete reference of all authentication-related methods available in the `dotnet-etcd` client.
 
+## Client Initialization with Authentication
+
+### Constructor with Credentials
+
+Initializes the client with automatic authentication.
+
+```csharp
+public EtcdClient(
+    string connectionString,
+    string username,
+    string password,
+    int port = 2379,
+    string serverName = "my-etcd-server",
+    Action<GrpcChannelOptions> configureChannelOptions = null)
+```
+
+#### Parameters
+
+- `connectionString`: The connection string for etcd endpoints
+- `username`: The username for authentication
+- `password`: The password for authentication  
+- `port`: The port to connect to (default: 2379)
+- `serverName`: The server name for the connection (default: "my-etcd-server")
+- `configureChannelOptions`: Optional function to configure channel options
+
+#### Example
+
+```csharp
+var client = new EtcdClient("localhost:2379", "root", "rootpwd");
+// All operations are automatically authenticated
+```
+
 ## Authentication Methods
 
 ### SetCredentials
 
-Sets the authentication credentials for the client.
-
-#### SetCredentials Parameters
-
-- `username`: The username to authenticate with.
-- `password`: The password to authenticate with.
+Sets or updates the authentication credentials for the client. All subsequent requests will automatically include the authentication token.
 
 ```csharp
 public void SetCredentials(string username, string password)
 ```
+
+#### Parameters
+
+- `username`: The username to authenticate with
+- `password`: The password to authenticate with
+
+#### Example
+
+```csharp
+var client = new EtcdClient("localhost:2379");
+client.SetCredentials("root", "rootpwd");
+// All subsequent operations are automatically authenticated
+```
+
+#### Notes
+
+- When credentials are set, the client automatically obtains and caches an authentication token
+- The token is included in all subsequent requests via the `authorization` header
+- Calling `SetCredentials` again will clear the cached token and re-authenticate with new credentials
 
 ## User Management Methods
 

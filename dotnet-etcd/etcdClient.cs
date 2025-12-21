@@ -67,6 +67,10 @@ public partial class EtcdClient : IDisposable, IEtcdClient
     private readonly IWatchManager _watchManager;
     private readonly AsyncStreamCallFactory<WatchRequest, WatchResponse> _watchCallFactory;
 
+    private string _username;
+    private string _password;
+    private string _authToken;
+    private readonly object _authLock = new object();
 
     // https://learn.microsoft.com/en-us/aspnet/core/grpc/retries?view=aspnetcore-6.0#configure-a-grpc-retry-policy
     private static readonly MethodConfig _defaultGrpcMethodConfig = new()
@@ -101,7 +105,11 @@ public partial class EtcdClient : IDisposable, IEtcdClient
     {
         ArgumentNullException.ThrowIfNull(callInvoker);
 
-        _connection = new Connection(callInvoker);
+        // Add authentication interceptor - it passively reads the cached token
+        var authInterceptor = new AuthenticationInterceptor(() => _authToken);
+        var interceptedCallInvoker = callInvoker.Intercept(authInterceptor);
+
+        _connection = new Connection(interceptedCallInvoker);
 
         // Create the watch call factory
         _watchCallFactory = new AsyncStreamCallFactory<WatchRequest, WatchResponse>(
@@ -142,8 +150,12 @@ public partial class EtcdClient : IDisposable, IEtcdClient
             ChannelCredentials.Insecure, // Default to insecure for backward compatibility
             configureChannelOptions);
 
-        CallInvoker callInvoker = interceptors.Length > 0
-            ? _channel.Intercept(interceptors)
+        // Always add authentication interceptor first (it will be a no-op if credentials aren't set)
+        var authInterceptor = new AuthenticationInterceptor(() => _authToken);
+        var allInterceptors = new[] { authInterceptor }.Concat(interceptors).ToArray();
+
+        CallInvoker callInvoker = allInterceptors.Length > 0
+            ? _channel.Intercept(allInterceptors)
             : _channel.CreateCallInvoker();
 
         // Setup Connection
@@ -157,6 +169,38 @@ public partial class EtcdClient : IDisposable, IEtcdClient
         // Initialize the watch manager
         _watchManager = new WatchManager((headers, deadline, cancellationToken) =>
             _watchCallFactory.CreateDuplexStreamingCall(headers, deadline, cancellationToken));
+    }
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="EtcdClient" /> class with a connection string and credentials.
+    /// </summary>
+    /// <param name="connectionString">The connection string for etcd</param>
+    /// <param name="username">The username for authentication</param>
+    /// <param name="password">The password for authentication</param>
+    /// <param name="port">The port to connect to</param>
+    /// <param name="serverName">The server name</param>
+    /// <param name="configureChannelOptions">Function to configure channel options</param>
+    /// <exception cref="ArgumentNullException">Thrown if connectionString is null or empty</exception>
+    public EtcdClient(string connectionString, string username, string password, int port = 2379,
+        string serverName = DefaultServerName, Action<GrpcChannelOptions> configureChannelOptions = null)
+        : this(connectionString, port, serverName, configureChannelOptions)
+    {
+        // Validate and set credentials
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            throw new ArgumentNullException(nameof(username));
+        }
+
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            throw new ArgumentNullException(nameof(password));
+        }
+
+        _username = username;
+        _password = password;
+        
+        // Authenticate immediately with the provided credentials
+        AuthenticateAndCacheToken();
     }
 
     /// <summary>
@@ -190,9 +234,78 @@ public partial class EtcdClient : IDisposable, IEtcdClient
 
     #endregion
 
+    #region Authentication
+
+    /// <summary>
+    ///     Sets the credentials for automatic authentication with etcd.
+    ///     When credentials are set, all subsequent requests will automatically include the authentication token.
+    /// </summary>
+    /// <param name="username">The username for authentication</param>
+    /// <param name="password">The password for authentication</param>
+    /// <exception cref="ArgumentNullException">Thrown if username or password is null or empty</exception>
+    public void SetCredentials(string username, string password)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            throw new ArgumentNullException(nameof(username));
+        }
+
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            throw new ArgumentNullException(nameof(password));
+        }
+
+        lock (_authLock)
+        {
+            _username = username;
+            _password = password;
+            _authToken = null; // Reset token to force re-authentication on next request
+        }
+        
+        // Authenticate immediately with the new credentials
+        AuthenticateAndCacheToken();
+    }
+
+    /// <summary>
+    ///     Authenticates with etcd and caches the token.
+    ///     This method is called immediately when credentials are set (constructor or SetCredentials).
+    /// </summary>
+    private void AuthenticateAndCacheToken()
+    {
+        if (string.IsNullOrWhiteSpace(_username) || string.IsNullOrWhiteSpace(_password))
+        {
+            return;
+        }
+
+        lock (_authLock)
+        {
+            try
+            {
+                var authRequest = new AuthenticateRequest
+                {
+                    Name = _username,
+                    Password = _password
+                };
+
+                // Call authenticate directly on the connection's auth client
+                // The interceptor won't interfere because it only reads the cached token
+                var authResponse = _connection.AuthClient.Authenticate(authRequest, null, null, default);
+                _authToken = authResponse.Token;
+            }
+            catch
+            {
+                // Clear token on failure
+                _authToken = null;
+                throw;
+            }
+        }
+    }
+
+    #endregion
+
     #region IDisposable Support
 
-    private bool _disposed; // To detect redundant calls
+    private bool _disposed;
 
     /// <summary>
     ///     Disposes the resources used by this instance

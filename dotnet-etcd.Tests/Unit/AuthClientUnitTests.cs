@@ -301,7 +301,7 @@ public class AuthClientUnitTests
         // Assert
         mockAuthClient.Verify(x => x.AuthEnable(
             It.IsAny<AuthEnableRequest>(),
-            It.Is<Metadata>(m => m.Get("key").Value == "value"),
+            It.Is<Metadata>(m => m.Get("key") != null && m.Get("key")!.Value == "value"),
             It.IsAny<DateTime?>(),
             It.IsAny<CancellationToken>()
         ), Times.Once);
@@ -321,7 +321,7 @@ public class AuthClientUnitTests
             {
                 var tcs = new TaskCompletionSource<AuthEnableResponse>();
                 tcs.SetException(new OperationCanceledException());
-                return new AsyncUnaryCall<AuthEnableResponse>(tcs.Task, null, null, null, null);
+                return new AsyncUnaryCall<AuthEnableResponse>(tcs.Task, null!, null!, null!, null!);
             });
 
         var client = TestHelper.CreateEtcdClientWithMockCallInvoker();

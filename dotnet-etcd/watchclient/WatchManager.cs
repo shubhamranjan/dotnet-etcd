@@ -27,7 +27,7 @@ public class WatchManager : IWatchManager
 
     private bool _disposed;
     private long _nextWatchId = 1;
-    private WatchStream _watchStream;
+    private Watcher _watchStream;
 
     /// <summary>
     ///     Creates a new WatchManager
@@ -638,7 +638,7 @@ public class WatchManager : IWatchManager
             // Create a new watch stream
             IAsyncDuplexStreamingCall<WatchRequest, WatchResponse> watchStreamCall =
                 _watchStreamFactory(headers, deadline, cancellationToken);
-            _watchStream = new WatchStream(watchStreamCall);
+            _watchStream = new Watcher(watchStreamCall);
         }
     }
 
