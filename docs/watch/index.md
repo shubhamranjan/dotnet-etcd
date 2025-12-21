@@ -37,6 +37,15 @@ await Task.Delay(TimeSpan.FromMinutes(1));
 client.CancelWatch(watchId);
 ```
 
+## Automatic Reconnection
+
+The client includes robust automatic reconnection logic for watches. If the network connection is lost or the etcd server restarts:
+1.  The client detects the failure (via gRPC stream error or connection callback).
+2.  It automatically attempts to reconnect to the server, with exponential backoff.
+3.  Once connected, it re-establishes all active watches transparently.
+
+No manual intervention is required to recover watches after a disruption.
+
 ## Watching a Key Range
 
 To watch a range of keys for changes:

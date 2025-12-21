@@ -20,7 +20,7 @@ A C# .NET (dotnet) GRPC client for etcd v3+
 - [Testing and Code Coverage](#testing-and-code-coverage)
 
 ## Supported .NET Versions
-
+- .NET 10
 - .NET 9
 - .NET 8
 
@@ -68,6 +68,7 @@ The documentation is organized into the following sections:
 - [Client Initialization](docs/client-initialization/index.md) - How to initialize and configure the client
 - [Dependency Injection](docs/client-initialization/dependency-injection.md) - Using the client with DI
 - [Authentication](docs/authentication/index.md) - Authentication with etcd
+- [SSL/TLS Support](docs/authentication/ssl-tls.md) - Connecting securely with SSL/TLS
 
 ### Core Operations
 
@@ -131,6 +132,12 @@ client.SetCredentials("username", "password");
 For more authentication options, see the [Authentication documentation](docs/authentication/index.md).
 
 ## Features
+
+### Robust Watch Reconnection
+The client automatically recovers watches after network interruptions or server restarts. See [Automatic Reconnection](docs/watch/index.md#automatic-reconnection) for details.
+
+### SSL/TLS Support
+Full support for secure connections, including self-signed certificates. See [SSL/TLS Configuration](docs/authentication/ssl-tls.md) for details on configuring `SslClientAuthenticationOptions`.
 
 ### Dependency Injection Support
 
