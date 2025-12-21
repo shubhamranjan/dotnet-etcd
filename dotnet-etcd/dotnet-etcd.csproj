@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">net8.0;net9.0;net10.0</TargetFrameworks>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
     <RootNamespace>dotnet_etcd</RootNamespace>
     <IncludeGoogleApiCommonProtos>True</IncludeGoogleApiCommonProtos>
@@ -10,8 +10,8 @@
     <RepositoryUrl>https://github.com/shubhamranjan/dotnet-etcd</RepositoryUrl>
     <PackageProjectUrl>https://github.com/shubhamranjan/dotnet-etcd</PackageProjectUrl>
     <Authors>Shubham Ranjan</Authors>
-    <Company/>
-    <Product/>
+    <Company />
+    <Product />
     <Description>A C# .NET (dotnet) GRPC client for etcd v3+.
 
       etcd is a distributed key value store that provides a reliable way to store data across a cluster of machines. It’s open-source and available on GitHub. etcd gracefully handles leader elections during network partitions and will tolerate machine failure, including the leader.
@@ -25,7 +25,7 @@
     <Version>8.0.1</Version>
     <AutoGenerateBindingRedirects>False</AutoGenerateBindingRedirects>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageIconUrl/>
+    <PackageIconUrl />
     <PackageIcon>etcd-logo-rectangle.png</PackageIcon>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <PackageReleaseNotes>
@@ -45,31 +45,31 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="etcd-logo-rectangle.png"/>
-    <None Remove="grpc\proto\google\api\annotations.proto"/>
-    <None Include="..\README.md" Pack="True" PackagePath="\"/>
-    <None Include="etcd-logo-rectangle.png" Pack="True" PackagePath="\"/>
+    <None Remove="etcd-logo-rectangle.png" />
+    <None Remove="grpc\proto\google\api\annotations.proto" />
+    <None Include="..\README.md" Pack="True" PackagePath="\" />
+    <None Include="etcd-logo-rectangle.png" Pack="True" PackagePath="\" />
   </ItemGroup>
 
 
   <ItemGroup>
-    <PackageReference Include="Google.Api.CommonProtos" Version="2.16.0"/>
-    <PackageReference Include="Google.Protobuf" Version="3.30.2" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.71.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.72.0">
+    <PackageReference Include="Google.Api.CommonProtos" Version="2.17.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.33.2" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.76.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.76.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
 
-    <Protobuf Include="grpc\proto\etcd\auth.proto" GrpcServices="Client"/>
-    <Protobuf Include="grpc\proto\etcd\election.proto" GrpcServices="Client"/>
-    <Protobuf Include="grpc\proto\etcd\kv.proto" GrpcServices="Client"/>
-    <Protobuf Include="grpc\proto\etcd\lock.proto" GrpcServices="Client"/>
-    <Protobuf Include="grpc\proto\etcd\rpc.proto" GrpcServices="Client"/>
-    <Protobuf Include="grpc\proto\etcd\version.proto" GrpcServices="Client"/>
+    <Protobuf Include="grpc\proto\etcd\auth.proto" GrpcServices="Client" />
+    <Protobuf Include="grpc\proto\etcd\election.proto" GrpcServices="Client" />
+    <Protobuf Include="grpc\proto\etcd\kv.proto" GrpcServices="Client" />
+    <Protobuf Include="grpc\proto\etcd\lock.proto" GrpcServices="Client" />
+    <Protobuf Include="grpc\proto\etcd\rpc.proto" GrpcServices="Client" />
+    <Protobuf Include="grpc\proto\etcd\version.proto" GrpcServices="Client" />
 
-    <Protobuf Include="grpc\proto\gogoproto\gogo.proto" GrpcServices="Client"/>
+    <Protobuf Include="grpc\proto\gogoproto\gogo.proto" GrpcServices="Client" />
   </ItemGroup>
 
   <ItemGroup>
