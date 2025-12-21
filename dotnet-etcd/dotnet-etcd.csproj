@@ -22,16 +22,11 @@
     </Description>
     <PackageTags>etcd grpc etcdv3 etcd3</PackageTags>
     <SignAssembly>false</SignAssembly>
-    <Version>8.0.1</Version>
     <AutoGenerateBindingRedirects>False</AutoGenerateBindingRedirects>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIconUrl />
     <PackageIcon>etcd-logo-rectangle.png</PackageIcon>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <PackageReleaseNotes>
-      * Package updates
-      * Minor enhancements and cleanups
-    </PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>

@@ -1,0 +1,36 @@
+name: Publish to NuGet
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: |
+            10.0.x
+            9.0.x
+            8.0.x
+
+    - name: Get Version
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore -c Release -p:Version=${{ env.VERSION }}
+
+    - name: Pack
+      run: dotnet pack --no-build -c Release -p:PackageVersion=${{ env.VERSION }} -o ./artifacts
+
+    - name: Push to NuGet
+      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
