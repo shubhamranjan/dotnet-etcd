@@ -224,9 +224,9 @@ var assemblies = [
       { "name": "dotnet_etcd.GrpcChannelFactory", "rp": "dotnet_etcd_GrpcChannelFactory.html", "cl": 55, "ucl": 0, "cal": 55, "tl": 103, "cb": 6, "tb": 6, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.helper.AsyncHelper", "rp": "dotnet_etcd_AsyncHelper.html", "cl": 0, "ucl": 12, "cal": 12, "tl": 47, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.multiplexer.Connection", "rp": "dotnet_etcd_Connection.html", "cl": 13, "ucl": 4, "cal": 17, "tl": 63, "cb": 6, "tb": 16, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "dotnet_etcd.Watcher", "rp": "dotnet_etcd_Watcher.html", "cl": 0, "ucl": 49, "cal": 49, "tl": 116, "cb": 0, "tb": 8, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "dotnet_etcd.Watcher", "rp": "dotnet_etcd_Watcher.html", "cl": 0, "ucl": 56, "cal": 56, "tl": 128, "cb": 0, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.WatchEvent", "rp": "dotnet_etcd_WatchEvent.html", "cl": 0, "ucl": 3, "cal": 3, "tl": 25, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "dotnet_etcd.WatchManager", "rp": "dotnet_etcd_WatchManager.html", "cl": 16, "ucl": 330, "cal": 346, "tl": 650, "cb": 4, "tb": 60, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "dotnet_etcd.WatchManager", "rp": "dotnet_etcd_WatchManager.html", "cl": 16, "ucl": 377, "cal": 393, "tl": 703, "cb": 4, "tb": 60, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
     ]},
 ];
 
@@ -241,19 +241,19 @@ var riskHotspotMetrics = [
 
 var riskHotspots = [
   {
+    "assembly": "dotnet-etcd", "class": "dotnet_etcd.Watcher", "reportPath": "dotnet_etcd_Watcher.html", "methodName": "ProcessWatchResponses()", "methodShortName": "ProcessWatchResponses()", "fileIndex": 0, "line": 72,
+    "metrics": [
+      { "value": 110, "exceeded": true },
+      { "value": 10, "exceeded": false },
+    ]},
+  {
     "assembly": "dotnet-etcd", "class": "dotnet_etcd.EtcdClient", "reportPath": "dotnet_etcd_EtcdClient.html", "methodName": "<LeaseKeepAlive()", "methodShortName": "<LeaseKeepAlive()", "fileIndex": 5, "line": 225,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
     ]},
   {
-    "assembly": "dotnet-etcd", "class": "dotnet_etcd.Watcher", "reportPath": "dotnet_etcd_Watcher.html", "methodName": "ProcessWatchResponses()", "methodShortName": "ProcessWatchResponses()", "fileIndex": 0, "line": 68,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "dotnet-etcd", "class": "dotnet_etcd.WatchManager", "reportPath": "dotnet_etcd_WatchManager.html", "methodName": "CancelWatch(System.Int64)", "methodShortName": "CancelWatch(...)", "fileIndex": 0, "line": 533,
+    "assembly": "dotnet-etcd", "class": "dotnet_etcd.WatchManager", "reportPath": "dotnet_etcd_WatchManager.html", "methodName": "CancelWatch(System.Int64)", "methodShortName": "CancelWatch(...)", "fileIndex": 0, "line": 540,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
