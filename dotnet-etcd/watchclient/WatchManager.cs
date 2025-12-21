@@ -674,14 +674,7 @@ public class WatchManager : IWatchManager
 
                 foreach (var watch in _watches.Values)
                 {
-                    try 
-                    {
-                        await _watchStream!.CreateWatchAsync(watch.Request, watch.Callback).ConfigureAwait(false);
-                    }
-                    catch (Exception innerEx)
-                    {
-                         Console.Error.WriteLine($"Failed to recreate watch {watch.WatchId}: {innerEx.Message}");
-                    }
+                    await _watchStream!.CreateWatchAsync(watch.Request, watch.Callback).ConfigureAwait(false);
                 }
             }
             catch (Exception ex)
