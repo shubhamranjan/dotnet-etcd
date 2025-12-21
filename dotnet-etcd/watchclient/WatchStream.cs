@@ -97,12 +97,19 @@ public class Watcher : IWatcher
         {
             // This is expected when the token is canceled
         }
+        catch (RpcException ex)
+        {
+            // Log a simplified message for expected connection failures
+            Console.WriteLine($"Watch stream connection lost: {ex.StatusCode} - {ex.Message}");
+            _onConnectionFailure?.Invoke();
+        }
         catch (Exception ex)
         {
             // Log the exception
             await Console.Error.WriteAsync($"Error processing watch responses: {ex}");
             _onConnectionFailure?.Invoke();
-#if DEBUG            // Only re-throw in debug mode to help with debugging
+#if DEBUG
+            // Only re-throw in debug mode to help with debugging
             throw;
 #endif
         }
