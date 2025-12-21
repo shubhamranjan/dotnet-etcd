@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.27694687983496646" branch-rate="0.2818181818181818" lines-covered="537" lines-valid="1939" branches-covered="93" branches-valid="330" complexity="495" version="0" timestamp="1766317158">
+<coverage line-rate="0.27694687983496646" branch-rate="0.2818181818181818" lines-covered="537" lines-valid="1939" branches-covered="93" branches-valid="330" complexity="495" version="0" timestamp="1766317469">
   <sources>
     <source>/home/runner/work/dotnet-etcd/dotnet-etcd/dotnet-etcd/</source>
   </sources>
