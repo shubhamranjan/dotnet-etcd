@@ -13,6 +13,7 @@ namespace dotnet_etcd.Tests.Unit;
 /// </summary>
 public class SslConfigurationTests
 {
+    [Trait("Category", "Unit")]
     [Fact]
     public void Constructor_WithSslOptionsConfig_ShouldConfigureSsl()
     {

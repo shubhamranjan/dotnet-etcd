@@ -6,6 +6,7 @@ using Xunit;
 namespace dotnet_etcd.Tests.Integration
 {
     [Collection("Auth tests")] // Run sequentially to avoid port conflicts or resource contention
+    [Trait("Category", "Integration")]
     public class SslIntegrationTests : IDisposable
     {
         private readonly EtcdClient _client;
