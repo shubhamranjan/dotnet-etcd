@@ -307,3 +307,5 @@ build.out
 
 # Test output files
 test.out
+
+certs/
