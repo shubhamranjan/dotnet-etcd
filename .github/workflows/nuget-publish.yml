@@ -21,7 +21,9 @@ jobs:
 
     - name: Get Version
       id: get_version
-      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+      run: |
+        TAG=${GITHUB_REF#refs/tags/}
+        echo "VERSION=${TAG#v}" >> $GITHUB_ENV
 
     - name: Restore dependencies
       run: dotnet restore
