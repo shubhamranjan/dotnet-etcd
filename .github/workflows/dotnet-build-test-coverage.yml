@@ -94,7 +94,7 @@ jobs:
         cat ./coveragereport/Summary.txt
     
     - name: Upload Coverage Report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: coverage-report
         path: ./coveragereport
