@@ -10,59 +10,10 @@ on:
 jobs:
   build-test-coverage:
     runs-on: ubuntu-latest
-    
-    services:
-      etcd1:
-        image: quay.io/coreos/etcd:v3.5.21
-        options: --name etcd1
-        ports:
-          - 2379:2379
-          - 2380:2380
-        env:
-          ETCD_NAME: etcd1
-          ETCD_INITIAL_ADVERTISE_PEER_URLS: http://etcd1:2380
-          ETCD_LISTEN_PEER_URLS: http://0.0.0.0:2380
-          ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
-          ETCD_ADVERTISE_CLIENT_URLS: http://etcd1:2379
-          ETCD_INITIAL_CLUSTER_TOKEN: etcd-cluster
-          ETCD_INITIAL_CLUSTER: etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
-          ETCD_INITIAL_CLUSTER_STATE: new
-
-      etcd2:
-        image: quay.io/coreos/etcd:v3.5.21
-        options: --name etcd2
-        ports:
-          - 2381:2379
-          - 2382:2380
-        env:
-          ETCD_NAME: etcd2
-          ETCD_INITIAL_ADVERTISE_PEER_URLS: http://etcd2:2380
-          ETCD_LISTEN_PEER_URLS: http://0.0.0.0:2380
-          ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
-          ETCD_ADVERTISE_CLIENT_URLS: http://etcd2:2379
-          ETCD_INITIAL_CLUSTER_TOKEN: etcd-cluster
-          ETCD_INITIAL_CLUSTER: etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
-          ETCD_INITIAL_CLUSTER_STATE: new
-
-      etcd3:
-        image: quay.io/coreos/etcd:v3.5.21
-        options: --name etcd3
-        ports:
-          - 2383:2379
-          - 2384:2380
-        env:
-          ETCD_NAME: etcd3
-          ETCD_INITIAL_ADVERTISE_PEER_URLS: http://etcd3:2380
-          ETCD_LISTEN_PEER_URLS: http://0.0.0.0:2380
-          ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
-          ETCD_ADVERTISE_CLIENT_URLS: http://etcd3:2379
-          ETCD_INITIAL_CLUSTER_TOKEN: etcd-cluster
-          ETCD_INITIAL_CLUSTER: etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
-          ETCD_INITIAL_CLUSTER_STATE: new
 
     steps:
     - uses: actions/checkout@v6
-    
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v5
       with:
@@ -75,7 +26,7 @@ jobs:
         chmod +x dotnet-etcd.Tests/generate-certs.sh
         cd dotnet-etcd.Tests
         ./generate-certs.sh
-        docker compose up -d etcd-ssl
+        docker compose up -d
         cd ..
     
     - name: Restore dependencies
