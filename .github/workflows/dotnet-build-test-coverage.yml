@@ -21,7 +21,7 @@ jobs:
           9.0.x
           8.0.x
     
-    - name: Setup SSL Environment
+    - name: Setup test etcd containers
       run: |
         chmod +x dotnet-etcd.Tests/generate-certs.sh
         cd dotnet-etcd.Tests
