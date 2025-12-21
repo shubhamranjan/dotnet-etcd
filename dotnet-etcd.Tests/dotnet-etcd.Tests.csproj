@@ -37,4 +37,10 @@
         <ProjectReference Include="..\dotnet-etcd\dotnet-etcd.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Content Include="certs\**">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
 </Project>

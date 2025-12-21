@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Security;
 using dotnet_etcd.interfaces;
 using dotnet_etcd.multiplexer;
 using Etcdserverpb;
@@ -148,7 +149,68 @@ public partial class EtcdClient : IDisposable, IEtcdClient
             port,
             serverName,
             ChannelCredentials.Insecure, // Default to insecure for backward compatibility
-            configureChannelOptions);
+            configureChannelOptions,
+            configureSslOptions: null); // No custom SSL by default
+
+        // Always add authentication interceptor first (it will be a no-op if credentials aren't set)
+        var authInterceptor = new AuthenticationInterceptor(() => _authToken);
+        var allInterceptors = new[] { authInterceptor }.Concat(interceptors).ToArray();
+
+        CallInvoker callInvoker = allInterceptors.Length > 0
+            ? _channel.Intercept(allInterceptors)
+            : _channel.CreateCallInvoker();
+
+        // Setup Connection
+        _connection = new Connection(callInvoker);
+
+        // Create the watch call factory
+        _watchCallFactory = new AsyncStreamCallFactory<WatchRequest, WatchResponse>(
+            (headers, deadline, cancellationToken) =>
+                _connection.WatchClient.Watch(headers, deadline, cancellationToken));
+
+        // Initialize the watch manager
+        _watchManager = new WatchManager((headers, deadline, cancellationToken) =>
+            _watchCallFactory.CreateDuplexStreamingCall(headers, deadline, cancellationToken));
+    }
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="EtcdClient" /> class with a connection string and SSL options configuration.
+    ///     Use this constructor to configure custom SSL certificates for self-signed certificates.
+    /// </summary>
+    /// <param name="connectionString">The connection string for etcd</param>
+    /// <param name="configureSslOptions">Action to configure SSL options for custom SSL certificates</param>
+    /// <param name="port">The port to connect to</param>
+    /// <param name="serverName">The server name</param>
+    /// <param name="configureChannelOptions">Function to configure channel options</param>
+    /// <param name="interceptors">Interceptors to apply to calls</param>
+    /// <exception cref="ArgumentNullException">Thrown if connectionString is null or empty</exception>
+    public EtcdClient(string connectionString, Action<SslClientAuthenticationOptions> configureSslOptions, int port = 2379, 
+       string serverName = DefaultServerName, Action<GrpcChannelOptions> configureChannelOptions = null, 
+        Interceptor[] interceptors = null)
+    {
+        // Param check
+       if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            throw new ArgumentNullException(nameof(connectionString));
+        }
+
+        // Param sanitization
+        interceptors ??= Array.Empty<Interceptor>();
+
+        var channelFactory = new GrpcChannelFactory();
+        
+        // Use SSL credentials when SSL options configuration is provided
+        var credentials = configureSslOptions != null 
+            ? new SslCredentials() 
+            : ChannelCredentials.Insecure;
+        
+        _channel = channelFactory.CreateChannel(
+            connectionString,
+            port,
+            serverName,
+            credentials,
+            configureChannelOptions,
+            configureSslOptions);
 
         // Always add authentication interceptor first (it will be a no-op if credentials aren't set)
         var authInterceptor = new AuthenticationInterceptor(() => _authToken);

@@ -10,6 +10,7 @@ A C# .NET (dotnet) GRPC client for etcd v3+
 - [Client Initialization](client-initialization/index.md) - How to initialize and configure the etcd client
 - [Dependency Injection](client-initialization/dependency-injection.md) - Using the client with Microsoft.Extensions.DependencyInjection
 - [Authentication](authentication/index.md) - How to authenticate with etcd
+- [SSL/TLS Support](authentication/ssl-tls.md) - Connecting securely with SSL/TLS
 
 ### Core Operations
 - [Key-Value Operations](key-value/index.md) - Working with keys and values

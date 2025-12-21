@@ -185,3 +185,4 @@ client.RoleRevokePermission("admin", "my-prefix/", "my-prefix0");
 
 - [API Reference](api-reference.md) - Complete API reference for authentication operations
 - [Client Initialization](../client-initialization/index.md) - How to initialize and configure the etcd client
+- [SSL/TLS Support](ssl-tls.md) - Connecting securely with SSL/TLS

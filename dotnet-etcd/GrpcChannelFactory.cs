@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Security;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Balancer;
@@ -43,9 +44,15 @@ public class GrpcChannelFactory
     /// <param name="serverName">The server name</param>
     /// <param name="credentials">The credentials to use</param>
     /// <param name="configureChannelOptions">Optional configuration for channel options</param>
+    /// <param name="configureSslOptions">Optional configuration for SSL options (for custom SSL certificates)</param>
     /// <returns>A gRPC channel</returns>
-    public GrpcChannel CreateChannel(string connectionString, int port, string serverName, ChannelCredentials credentials,
-        Action<GrpcChannelOptions> configureChannelOptions = null)
+    public GrpcChannel CreateChannel(
+        string connectionString, 
+        int port, 
+        string serverName, 
+        ChannelCredentials credentials,
+        Action<GrpcChannelOptions> configureChannelOptions = null,
+        Action<SslClientAuthenticationOptions> configureSslOptions = null)
     {
         var parser = new ConnectionStringParser();
         var (uris, isDnsConnection) = parser.ParseConnectionString(connectionString, port, credentials);
@@ -56,6 +63,14 @@ public class GrpcChannelFactory
             KeepAlivePingTimeout = TimeSpan.FromSeconds(30),
             KeepAlivePingPolicy = HttpKeepAlivePingPolicy.Always
         };
+
+        // Configure SSL options if provided - this is the correct way for gRPC .NET
+        if (configureSslOptions != null)
+        {
+            var sslOptions = new SslClientAuthenticationOptions();
+            configureSslOptions(sslOptions);
+            httpHandler.SslOptions = sslOptions;
+        }
 
         var options = new GrpcChannelOptions
         {

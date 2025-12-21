@@ -2,6 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Net.Http;
+using System.Net.Security;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
@@ -50,13 +52,19 @@ public class EtcdClientOptions
     public CallCredentials CallCredentials { get; set; }
 
     /// <summary>
+    ///     Gets or sets the action to configure SSL client authentication options.
+    ///     Use this to configure custom SSL certificates for self-signed certificates.
+    /// </summary>
+    public Action<SslClientAuthenticationOptions> ConfigureSslOptions { get; set; }
+
+    /// <summary>
     ///     Gets or sets a value indicating whether to enable retry policy.
     /// </summary>
     public bool EnableRetryPolicy { get; set; } = true;
 
     /// <summary>
     ///     Applies the options to the channel options.
-    /// </summary>
+   /// </summary>
     /// <param name="options">The gRPC channel options to configure.</param>
     internal void ApplyTo(GrpcChannelOptions options)
     {

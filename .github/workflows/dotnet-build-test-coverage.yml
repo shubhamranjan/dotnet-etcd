@@ -67,6 +67,14 @@ jobs:
           9.0.x
           8.0.x
     
+    - name: Setup SSL Environment
+      run: |
+        chmod +x dotnet-etcd.Tests/generate-certs.sh
+        cd dotnet-etcd.Tests
+        ./generate-certs.sh
+        docker compose up -d etcd-ssl
+        cd ..
+    
     - name: Restore dependencies
       run: dotnet restore
     
