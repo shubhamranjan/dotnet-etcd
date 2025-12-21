@@ -54,6 +54,7 @@ jobs:
     - name: Generate Coverage Report
       run: |
         reportgenerator -reports:./coverage/**/coverage.cobertura.xml -targetdir:./coveragereport -reporttypes:Html,Cobertura,TextSummary,Badges -classfilters:"-Authpb.*;-Etcdserverpb.*;-Mvccpb.*;-V3Electionpb.*;-V3Lockpb.*;-Versionpb.*;-Gogoproto.*"
+        touch ./coveragereport/.nojekyll
         cat ./coveragereport/Summary.txt
     
     - name: Upload Coverage Report
