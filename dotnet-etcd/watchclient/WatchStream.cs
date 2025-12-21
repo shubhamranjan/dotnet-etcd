@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
@@ -17,15 +18,18 @@ public class Watcher : IWatcher
     private readonly CancellationTokenSource _cts = new();
 
     private readonly IAsyncDuplexStreamingCall<WatchRequest, WatchResponse> _streamingCall;
+    private readonly Action? _onConnectionFailure;
 
 
     /// <summary>
     ///     Creates a new Watcher
     /// </summary>
     /// <param name="streamingCall">The streaming call to use</param>
-    public Watcher(IAsyncDuplexStreamingCall<WatchRequest, WatchResponse> streamingCall)
+    /// <param name="onConnectionFailure">Action to invoke when connection fails</param>
+    public Watcher(IAsyncDuplexStreamingCall<WatchRequest, WatchResponse> streamingCall, Action? onConnectionFailure = null)
     {
         _streamingCall = streamingCall ?? throw new ArgumentNullException(nameof(streamingCall));
+        _onConnectionFailure = onConnectionFailure;
         _ = ProcessWatchResponses();
     }
 
@@ -71,7 +75,7 @@ public class Watcher : IWatcher
             while (await _streamingCall.ResponseStream.MoveNext(_cts.Token))
             {
                 WatchResponse response = _streamingCall.ResponseStream.Current;
-                if (!_callbacks.TryGetValue(response.WatchId, out Action<WatchResponse> cb))
+                if (!_callbacks.TryGetValue(response.WatchId, out Action<WatchResponse>? cb))
                 {
                     continue;
                 }
@@ -97,6 +101,7 @@ public class Watcher : IWatcher
         {
             // Log the exception
             await Console.Error.WriteAsync($"Error processing watch responses: {ex}");
+            _onConnectionFailure?.Invoke();
 #if DEBUG            // Only re-throw in debug mode to help with debugging
             throw;
 #endif

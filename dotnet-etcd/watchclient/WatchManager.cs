@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -22,19 +23,19 @@ public class WatchManager : IWatchManager
     private readonly ConcurrentDictionary<long, long> _watchIdMapping = new();
 
     private readonly
-        Func<Metadata, DateTime?, CancellationToken, IAsyncDuplexStreamingCall<WatchRequest, WatchResponse>>
+        Func<Metadata?, DateTime?, CancellationToken, IAsyncDuplexStreamingCall<WatchRequest, WatchResponse>>
         _watchStreamFactory;
 
     private bool _disposed;
     private long _nextWatchId = 1;
-    private Watcher _watchStream;
+    private Watcher? _watchStream;
 
     /// <summary>
     ///     Creates a new WatchManager
     /// </summary>
     /// <param name="watchStreamFactory">A factory function that creates a new watch stream</param>
     public WatchManager(
-        Func<Metadata, DateTime?, CancellationToken, IAsyncDuplexStreamingCall<WatchRequest, WatchResponse>>
+        Func<Metadata?, DateTime?, CancellationToken, IAsyncDuplexStreamingCall<WatchRequest, WatchResponse>>
             watchStreamFactory) => _watchStreamFactory =
         watchStreamFactory ?? throw new ArgumentNullException(nameof(watchStreamFactory));
 
@@ -47,7 +48,7 @@ public class WatchManager : IWatchManager
     /// <param name="deadline">An optional deadline for the call</param>
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>A watch ID that can be used to cancel the watch</returns>
-    public async Task<long> WatchAsync(WatchRequest request, Action<WatchResponse> callback, Metadata headers = null,
+    public async Task<long> WatchAsync(WatchRequest request, Action<WatchResponse> callback, Metadata? headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
@@ -62,11 +63,17 @@ public class WatchManager : IWatchManager
         CancellationTokenSource cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
         // Create a watch cancellation object
-        WatchCancellation watchCancellation = new() { WatchId = watchId, CancellationTokenSource = cts };
+        WatchCancellation watchCancellation = new() 
+        { 
+            WatchId = watchId, 
+            CancellationTokenSource = cts,
+            Request = request,
+            Callback = WrappedCallback
+        };
 
         request.CreateRequest.WatchId = watchId;
         // Create the watch
-        await _watchStream.CreateWatchAsync(request, WrappedCallback).ConfigureAwait(false);
+        await _watchStream!.CreateWatchAsync(request, WrappedCallback).ConfigureAwait(false);
 
         // Add the watch cancellation to the dictionary
         _watches[watchId] = watchCancellation;
@@ -105,7 +112,7 @@ public class WatchManager : IWatchManager
     /// <param name="deadline">An optional deadline for the call</param>
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>A watch ID that can be used to cancel the watch</returns>
-    public long Watch(WatchRequest request, Action<WatchResponse> callback, Metadata headers = null,
+    public long Watch(WatchRequest request, Action<WatchResponse> callback, Metadata? headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
         // Run the async method synchronously
@@ -123,7 +130,7 @@ public class WatchManager : IWatchManager
     /// <param name="deadline">An optional deadline for the call</param>
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>Watch ID</returns>
-    public long Watch(string key, Action<WatchEvent> action, Metadata headers = null, DateTime? deadline = null,
+    public long Watch(string key, Action<WatchEvent> action, Metadata? headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
@@ -165,7 +172,7 @@ public class WatchManager : IWatchManager
     /// <param name="deadline">An optional deadline for the call</param>
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>Watch ID</returns>
-    public long WatchRange(string prefixKey, Action<WatchEvent> action, Metadata headers = null,
+    public long WatchRange(string prefixKey, Action<WatchEvent> action, Metadata? headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
@@ -214,7 +221,7 @@ public class WatchManager : IWatchManager
     /// <param name="deadline">An optional deadline for the call</param>
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>Watch ID</returns>
-    public long Watch(string key, long startRevision, Action<WatchEvent> action, Metadata headers = null,
+    public long Watch(string key, long startRevision, Action<WatchEvent> action, Metadata? headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
@@ -263,7 +270,7 @@ public class WatchManager : IWatchManager
     /// <param name="deadline">An optional deadline for the call</param>
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>Watch ID</returns>
-    public long WatchRange(string prefixKey, long startRevision, Action<WatchEvent> action, Metadata headers = null,
+    public long WatchRange(string prefixKey, long startRevision, Action<WatchEvent> action, Metadata? headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
@@ -312,7 +319,7 @@ public class WatchManager : IWatchManager
     /// <param name="deadline">An optional deadline for the call</param>
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>Watch ID</returns>
-    public async Task<long> WatchAsync(string key, Action<WatchEvent> action, Metadata headers = null,
+    public async Task<long> WatchAsync(string key, Action<WatchEvent> action, Metadata? headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
@@ -357,7 +364,7 @@ public class WatchManager : IWatchManager
     /// <param name="deadline">An optional deadline for the call</param>
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>Watch ID</returns>
-    public async Task<long> WatchRangeAsync(string prefixKey, Action<WatchEvent> action, Metadata headers = null,
+    public async Task<long> WatchRangeAsync(string prefixKey, Action<WatchEvent> action, Metadata? headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
@@ -407,7 +414,7 @@ public class WatchManager : IWatchManager
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>Watch ID</returns>
     public async Task<long> WatchAsync(string key, long startRevision, Action<WatchEvent> action,
-        Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default)
+        Metadata? headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
 
@@ -456,7 +463,7 @@ public class WatchManager : IWatchManager
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>Watch ID</returns>
     public async Task<long> WatchRangeAsync(string prefixKey, long startRevision, Action<WatchEvent> action,
-        Metadata headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default)
+        Metadata? headers = null, DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
 
@@ -504,7 +511,7 @@ public class WatchManager : IWatchManager
     /// <param name="deadline">An optional deadline for the call</param>
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>A watch ID that can be used to cancel the watch</returns>
-    public long WatchRange(string path, Action<WatchResponse> callback, Metadata headers = null,
+    public long WatchRange(string path, Action<WatchResponse> callback, Metadata? headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
@@ -533,7 +540,7 @@ public class WatchManager : IWatchManager
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
 
-        if (!_watches.TryRemove(watchId, out WatchCancellation watchCancellation))
+        if (!_watches.TryRemove(watchId, out WatchCancellation? watchCancellation))
         {
             return;
         }
@@ -626,7 +633,8 @@ public class WatchManager : IWatchManager
         return -1;
     }
 
-    private void EnsureWatchStream(Metadata headers, DateTime? deadline, CancellationToken cancellationToken)
+    /// <param name="cancellationToken">An optional token for canceling the call</param>
+    private void EnsureWatchStream(Metadata? headers, DateTime? deadline, CancellationToken cancellationToken)
     {
         lock (_lockObject)
         {
@@ -638,13 +646,58 @@ public class WatchManager : IWatchManager
             // Create a new watch stream
             IAsyncDuplexStreamingCall<WatchRequest, WatchResponse> watchStreamCall =
                 _watchStreamFactory(headers, deadline, cancellationToken);
-            _watchStream = new Watcher(watchStreamCall);
+            _watchStream = new Watcher(watchStreamCall, HandleConnectionFailure);
         }
+    }
+
+    private void HandleConnectionFailure()
+    {
+        lock (_lockObject)
+        {
+            _watchStream = null;
+            _watchIdMapping.Clear();
+        }
+
+        // Must run async to avoid blocking the caller (which might be the dead stream loop)
+        Task.Run(async () =>
+        {
+            try
+            {
+                // Wait small delay to allow network to stabilize
+                await Task.Delay(500);
+
+                lock (_lockObject)
+                {
+                   if (_disposed) return;
+                   EnsureWatchStream(null, null, default); 
+                }
+
+                foreach (var watch in _watches.Values)
+                {
+                    try 
+                    {
+                        await _watchStream!.CreateWatchAsync(watch.Request, watch.Callback).ConfigureAwait(false);
+                    }
+                    catch (Exception innerEx)
+                    {
+                         Console.Error.WriteLine($"Failed to recreate watch {watch.WatchId}: {innerEx.Message}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Watch reconnection failed: {ex.Message}");
+                // Retry in 5s
+                _ = Task.Delay(5000).ContinueWith(_ => HandleConnectionFailure());
+            }
+        });
     }
 
     private class WatchCancellation
     {
         public long WatchId { get; set; }
-        public CancellationTokenSource CancellationTokenSource { get; set; }
+        public required CancellationTokenSource CancellationTokenSource { get; set; }
+        public required WatchRequest Request { get; set; }
+        public required Action<WatchResponse> Callback { get; set; }
     }
 }

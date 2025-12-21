@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ public interface IWatchManager : IDisposable
     /// <param name="deadline">An optional deadline for the call</param>
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>A watch ID that can be used to cancel the watch</returns>
-    Task<long> WatchAsync(WatchRequest request, Action<WatchResponse> callback, Metadata headers = null,
+    Task<long> WatchAsync(WatchRequest request, Action<WatchResponse> callback, Metadata? headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -32,7 +33,7 @@ public interface IWatchManager : IDisposable
     /// <param name="deadline">An optional deadline for the call</param>
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>A watch ID that can be used to cancel the watch</returns>
-    long Watch(WatchRequest request, Action<WatchResponse> callback, Metadata headers = null, DateTime? deadline = null,
+    long Watch(WatchRequest request, Action<WatchResponse> callback, Metadata? headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -44,7 +45,7 @@ public interface IWatchManager : IDisposable
     /// <param name="deadline">An optional deadline for the call</param>
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>A watch ID that can be used to cancel the watch</returns>
-    long WatchRange(string path, Action<WatchResponse> callback, Metadata headers = null, DateTime? deadline = null,
+    long WatchRange(string path, Action<WatchResponse> callback, Metadata? headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -56,7 +57,7 @@ public interface IWatchManager : IDisposable
     /// <param name="deadline">An optional deadline for the call</param>
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>Watch ID</returns>
-    long Watch(string key, Action<WatchEvent> action, Metadata headers = null, DateTime? deadline = null,
+    long Watch(string key, Action<WatchEvent> action, Metadata? headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -68,7 +69,7 @@ public interface IWatchManager : IDisposable
     /// <param name="deadline">An optional deadline for the call</param>
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>Watch ID</returns>
-    long WatchRange(string prefixKey, Action<WatchEvent> action, Metadata headers = null, DateTime? deadline = null,
+    long WatchRange(string prefixKey, Action<WatchEvent> action, Metadata? headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -81,7 +82,7 @@ public interface IWatchManager : IDisposable
     /// <param name="deadline">An optional deadline for the call</param>
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>Watch ID</returns>
-    long Watch(string key, long startRevision, Action<WatchEvent> action, Metadata headers = null,
+    long Watch(string key, long startRevision, Action<WatchEvent> action, Metadata? headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -94,7 +95,7 @@ public interface IWatchManager : IDisposable
     /// <param name="deadline">An optional deadline for the call</param>
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>Watch ID</returns>
-    long WatchRange(string prefixKey, long startRevision, Action<WatchEvent> action, Metadata headers = null,
+    long WatchRange(string prefixKey, long startRevision, Action<WatchEvent> action, Metadata? headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -106,7 +107,7 @@ public interface IWatchManager : IDisposable
     /// <param name="deadline">An optional deadline for the call</param>
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>Watch ID</returns>
-    Task<long> WatchAsync(string key, Action<WatchEvent> action, Metadata headers = null, DateTime? deadline = null,
+    Task<long> WatchAsync(string key, Action<WatchEvent> action, Metadata? headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -118,7 +119,7 @@ public interface IWatchManager : IDisposable
     /// <param name="deadline">An optional deadline for the call</param>
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>Watch ID</returns>
-    Task<long> WatchRangeAsync(string prefixKey, Action<WatchEvent> action, Metadata headers = null,
+    Task<long> WatchRangeAsync(string prefixKey, Action<WatchEvent> action, Metadata? headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -131,7 +132,7 @@ public interface IWatchManager : IDisposable
     /// <param name="deadline">An optional deadline for the call</param>
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>Watch ID</returns>
-    Task<long> WatchAsync(string key, long startRevision, Action<WatchEvent> action, Metadata headers = null,
+    Task<long> WatchAsync(string key, long startRevision, Action<WatchEvent> action, Metadata? headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -144,7 +145,7 @@ public interface IWatchManager : IDisposable
     /// <param name="deadline">An optional deadline for the call</param>
     /// <param name="cancellationToken">An optional token for canceling the call</param>
     /// <returns>Watch ID</returns>
-    Task<long> WatchRangeAsync(string prefixKey, long startRevision, Action<WatchEvent> action, Metadata headers = null,
+    Task<long> WatchRangeAsync(string prefixKey, long startRevision, Action<WatchEvent> action, Metadata? headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
     /// <summary>
