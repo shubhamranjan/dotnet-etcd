@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.27595066803699897" branch-rate="0.2818181818181818" lines-covered="537" lines-valid="1946" branches-covered="93" branches-valid="330" complexity="495" version="0" timestamp="1766314861">
+<coverage line-rate="0.27694687983496646" branch-rate="0.2818181818181818" lines-covered="537" lines-valid="1939" branches-covered="93" branches-valid="330" complexity="495" version="0" timestamp="1766315549">
   <sources>
     <source>/home/runner/work/dotnet-etcd/dotnet-etcd/dotnet-etcd/</source>
   </sources>
   <packages>
-    <package name="dotnet-etcd" line-rate="0.27595066803699897" branch-rate="0.2818181818181818" complexity="495">
+    <package name="dotnet-etcd" line-rate="0.27694687983496646" branch-rate="0.2818181818181818" complexity="495">
       <classes>
         <class name="dotnet_etcd.AsyncDuplexStreamingCallAdapter`2" filename="/home/runner/work/dotnet-etcd/dotnet-etcd/dotnet-etcd/AsyncDuplexStreamingCallAdapter.cs" line-rate="0" branch-rate="0" complexity="8">
           <methods>
@@ -4345,7 +4345,7 @@
             <line number="24" hits="0" branch="false" />
           </lines>
         </class>
-        <class name="dotnet_etcd.WatchManager" filename="/home/runner/work/dotnet-etcd/dotnet-etcd/dotnet-etcd/watchclient/WatchManager.cs" line-rate="0.04071246819338423" branch-rate="0.06666666666666667" complexity="57">
+        <class name="dotnet_etcd.WatchManager" filename="/home/runner/work/dotnet-etcd/dotnet-etcd/dotnet-etcd/watchclient/WatchManager.cs" line-rate="0.04145077720207254" branch-rate="0.06666666666666667" complexity="57">
           <methods>
             <method name="Watch" signature="(Etcdserverpb.WatchRequest,System.Action`1&lt;Etcdserverpb.WatchResponse&gt;,Grpc.Core.Metadata,System.Nullable`1&lt;System.DateTime&gt;,System.Threading.CancellationToken)" line-rate="0" branch-rate="1" complexity="1">
               <lines>
@@ -4622,13 +4622,6 @@
                 <line number="685" hits="0" branch="false" />
                 <line number="686" hits="0" branch="false" />
                 <line number="687" hits="0" branch="false" />
-                <line number="688" hits="0" branch="false" />
-                <line number="689" hits="0" branch="false" />
-                <line number="690" hits="0" branch="false" />
-                <line number="691" hits="0" branch="false" />
-                <line number="692" hits="0" branch="false" />
-                <line number="693" hits="0" branch="false" />
-                <line number="694" hits="0" branch="false" />
               </lines>
             </method>
             <method name=".ctor" signature="(System.Func`4&lt;Grpc.Core.Metadata,System.Nullable`1&lt;System.DateTime&gt;,System.Threading.CancellationToken,dotnet_etcd.interfaces.IAsyncDuplexStreamingCall`2&lt;Etcdserverpb.WatchRequest,Etcdserverpb.WatchResponse&gt;&gt;)" line-rate="1" branch-rate="0.5" complexity="2">
@@ -4645,22 +4638,22 @@
             </method>
             <method name="get_WatchId" signature="()" line-rate="0" branch-rate="1" complexity="1">
               <lines>
-                <line number="698" hits="0" branch="false" />
+                <line number="691" hits="0" branch="false" />
               </lines>
             </method>
             <method name="get_CancellationTokenSource" signature="()" line-rate="0" branch-rate="1" complexity="1">
               <lines>
-                <line number="699" hits="0" branch="false" />
+                <line number="692" hits="0" branch="false" />
               </lines>
             </method>
             <method name="get_Request" signature="()" line-rate="0" branch-rate="1" complexity="1">
               <lines>
-                <line number="700" hits="0" branch="false" />
+                <line number="693" hits="0" branch="false" />
               </lines>
             </method>
             <method name="get_Callback" signature="()" line-rate="0" branch-rate="1" complexity="1">
               <lines>
-                <line number="701" hits="0" branch="false" />
+                <line number="694" hits="0" branch="false" />
               </lines>
             </method>
             <method name="Callback" signature="()" line-rate="0" branch-rate="0" complexity="4">
@@ -5240,17 +5233,10 @@
             <line number="685" hits="0" branch="false" />
             <line number="686" hits="0" branch="false" />
             <line number="687" hits="0" branch="false" />
-            <line number="688" hits="0" branch="false" />
-            <line number="689" hits="0" branch="false" />
-            <line number="690" hits="0" branch="false" />
             <line number="691" hits="0" branch="false" />
             <line number="692" hits="0" branch="false" />
             <line number="693" hits="0" branch="false" />
             <line number="694" hits="0" branch="false" />
-            <line number="698" hits="0" branch="false" />
-            <line number="699" hits="0" branch="false" />
-            <line number="700" hits="0" branch="false" />
-            <line number="701" hits="0" branch="false" />
           </lines>
         </class>
       </classes>

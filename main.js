@@ -226,7 +226,7 @@ var assemblies = [
       { "name": "dotnet_etcd.multiplexer.Connection", "rp": "dotnet_etcd_Connection.html", "cl": 13, "ucl": 4, "cal": 17, "tl": 63, "cb": 6, "tb": 16, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.Watcher", "rp": "dotnet_etcd_Watcher.html", "cl": 0, "ucl": 56, "cal": 56, "tl": 128, "cb": 0, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.WatchEvent", "rp": "dotnet_etcd_WatchEvent.html", "cl": 0, "ucl": 3, "cal": 3, "tl": 25, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "dotnet_etcd.WatchManager", "rp": "dotnet_etcd_WatchManager.html", "cl": 16, "ucl": 377, "cal": 393, "tl": 703, "cb": 4, "tb": 60, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "dotnet_etcd.WatchManager", "rp": "dotnet_etcd_WatchManager.html", "cl": 16, "ucl": 370, "cal": 386, "tl": 696, "cb": 4, "tb": 60, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
     ]},
 ];
 
