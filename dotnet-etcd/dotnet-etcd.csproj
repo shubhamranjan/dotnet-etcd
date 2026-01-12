@@ -49,7 +49,7 @@
 
   <ItemGroup>
     <PackageReference Include="Google.Api.CommonProtos" Version="2.17.0" />
-    <PackageReference Include="Google.Protobuf" Version="3.33.2" />
+    <PackageReference Include="Google.Protobuf" Version="3.33.3" />
     <PackageReference Include="Grpc.Net.Client" Version="2.76.0" />
     <PackageReference Include="Grpc.Tools" Version="2.76.0">
       <PrivateAssets>all</PrivateAssets>
