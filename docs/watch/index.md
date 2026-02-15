@@ -306,27 +306,29 @@ client.CancelWatch(watchId);
 
 ## Handling Watch Errors
 
-To handle errors that occur during watching:
+To handle errors that occur during watching, wrap your watch setup in a try-catch block:
 
 ```csharp
 try
 {
-    // Create a watcher with error handling
-    long watchId = client.Watch("my-key", (response) =>
+    // Create a watcher using WatchRequest
+    var watchRequest = new WatchRequest
+    {
+        CreateRequest = new WatchCreateRequest
+        {
+            Key = ByteString.CopyFromUtf8("my-key"),
+            ProgressNotify = true,
+            PrevKv = true
+        }
+    };
+    
+    long watchId = client.Watch(watchRequest, (response) =>
     {
         // Process watch events
         foreach (var evt in response.Events)
         {
             // Process events as normal
         }
-    },
-    (exception) =>
-    {
-        // Handle any errors that occur during watching
-        Console.WriteLine($"Watch error: {exception.Message}");
-        
-        // You might want to retry or take other actions
-        // depending on the error
     });
     
     // Do some work while watching
@@ -344,6 +346,8 @@ catch (Exception ex)
 
 ## Implementing a Configuration Watcher
 
+**Note**: The following example demonstrates the concept of a configuration watcher. Some method signatures may need adjustment for the current API.
+
 You can implement a configuration watcher that reacts to changes in configuration:
 
 ```csharp
@@ -352,7 +356,7 @@ public class ConfigurationWatcher : IDisposable
     private readonly EtcdClient _client;
     private readonly string _configPrefix;
     private readonly Dictionary<string, string> _currentConfig = new Dictionary<string, string>();
-    private IWatcher _watcher;
+    private long _watchId;
     
     public event EventHandler<ConfigChangedEventArgs> ConfigChanged;
     
@@ -365,7 +369,7 @@ public class ConfigurationWatcher : IDisposable
     public async Task StartAsync()
     {
         // Load initial configuration
-        var response = await _client.GetRangeAsync(_configPrefix, WatchRange.Prefix);
+        var response = await _client.GetRangeAsync(_configPrefix);
         foreach (var kv in response.Kvs)
         {
             string key = kv.Key.ToStringUtf8().Substring(_configPrefix.Length);
@@ -374,7 +378,7 @@ public class ConfigurationWatcher : IDisposable
         }
         
         // Start watching for changes
-        _watcher = _client.Watch(_configPrefix, WatchRange.Prefix, (watchResponse) =>
+        _watchId = _client.WatchRange(_configPrefix, (watchResponse) =>
         {
             var changedKeys = new List<string>();
             
@@ -441,7 +445,10 @@ public class ConfigurationWatcher : IDisposable
     
     public void Dispose()
     {
-        _watcher?.Dispose();
+        if (_watchId != 0)
+        {
+            _client.CancelWatch(_watchId);
+        }
     }
 }
 
@@ -492,6 +499,8 @@ configWatcher.Dispose();
 
 ## Implementing a Service Discovery Client
 
+**Note**: The following example demonstrates the concept of a service discovery client. Some method signatures may need adjustment for the current API.
+
 You can implement a simple service discovery client using watches:
 
 ```csharp
@@ -500,7 +509,7 @@ public class ServiceDiscoveryClient : IDisposable
     private readonly EtcdClient _client;
     private readonly string _servicesPrefix;
     private readonly Dictionary<string, List<ServiceInstance>> _services = new Dictionary<string, List<ServiceInstance>>();
-    private IWatcher _watcher;
+    private long _watchId;
     
     public event EventHandler<ServiceChangedEventArgs> ServiceChanged;
     
@@ -513,14 +522,14 @@ public class ServiceDiscoveryClient : IDisposable
     public async Task StartAsync()
     {
         // Load initial services
-        var response = await _client.GetRangeAsync(_servicesPrefix, WatchRange.Prefix);
+        var response = await _client.GetRangeAsync(_servicesPrefix);
         foreach (var kv in response.Kvs)
         {
             ProcessServiceKey(kv.Key.ToStringUtf8(), kv.Value.ToStringUtf8(), false);
         }
         
         // Start watching for changes
-        _watcher = _client.Watch(_servicesPrefix, WatchRange.Prefix, (watchResponse) =>
+        _watchId = _client.WatchRange(_servicesPrefix, (watchResponse) =>
         {
             var changedServices = new HashSet<string>();
             
@@ -635,7 +644,10 @@ public class ServiceDiscoveryClient : IDisposable
     
     public void Dispose()
     {
-        _watcher?.Dispose();
+        if (_watchId != 0)
+        {
+            _client.CancelWatch(_watchId);
+        }
     }
 }
 
@@ -692,11 +704,11 @@ serviceDiscovery.Dispose();
 
 ## Canceling Watches
 
-You can cancel a watch operation at any time using the `CancelWatch` method:
+You can cancel a watch operation at any time using the `CancelWatch` method. Note that to get a watch ID for cancellation, you need to use `WatchRange` or the `WatchRequest` overload:
 
 ```csharp
-// Create a watcher
-long watchId = client.Watch("my-key", (response) => { /* ... */ });
+// Create a watcher using WatchRange (returns watch ID)
+long watchId = client.WatchRange("my-key/", (response) => { /* ... */ });
 
 // Cancel the watch when you're done with it
 client.CancelWatch(watchId);
@@ -706,8 +718,8 @@ You can also cancel multiple watches at once:
 
 ```csharp
 // Create multiple watchers
-long watchId1 = client.Watch("key1", (response) => { /* ... */ });
-long watchId2 = client.Watch("key2", (response) => { /* ... */ });
+long watchId1 = client.WatchRange("key1/", (response) => { /* ... */ });
+long watchId2 = client.WatchRange("key2/", (response) => { /* ... */ });
 
 // Cancel multiple watches
 client.CancelWatch(new long[] { watchId1, watchId2 });
