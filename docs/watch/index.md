@@ -306,7 +306,7 @@ client.CancelWatch(watchId);
 
 ## Handling Watch Errors
 
-To handle errors that occur during watching, wrap your watch setup in a try-catch block:
+To handle errors that occur during watch setup, wrap your watch creation in a try-catch block:
 
 ```csharp
 try
@@ -324,10 +324,18 @@ try
     
     long watchId = client.Watch(watchRequest, (response) =>
     {
-        // Process watch events
-        foreach (var evt in response.Events)
+        try
         {
-            // Process events as normal
+            // Process watch events
+            foreach (var evt in response.Events)
+            {
+                // Process events as normal
+            }
+        }
+        catch (Exception callbackEx)
+        {
+            // Handle errors that occur during event processing
+            Console.WriteLine($"Error processing watch event: {callbackEx.Message}");
         }
     });
     
@@ -345,8 +353,6 @@ catch (Exception ex)
 ```
 
 ## Implementing a Configuration Watcher
-
-**Note**: The following example demonstrates the concept of a configuration watcher. Some method signatures may need adjustment for the current API.
 
 You can implement a configuration watcher that reacts to changes in configuration:
 
@@ -498,8 +504,6 @@ configWatcher.Dispose();
 ```
 
 ## Implementing a Service Discovery Client
-
-**Note**: The following example demonstrates the concept of a service discovery client. Some method signatures may need adjustment for the current API.
 
 You can implement a simple service discovery client using watches:
 

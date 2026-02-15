@@ -11,10 +11,10 @@ Creates a watcher for a key or key range. Returns a watch ID that can be used to
 #### Overloads
 
 ```csharp
-public long Watch(string key, Action<WatchResponse> callback)
-public long Watch(string key, Action<WatchResponse>[] callbacks)
-public long Watch(string[] keys, Action<WatchResponse> callback)
-public long Watch(string[] keys, Action<WatchResponse>[] callbacks)
+public void Watch(string key, Action<WatchResponse> callback)
+public void Watch(string key, Action<WatchResponse>[] callbacks)
+public void Watch(string[] keys, Action<WatchResponse> callback)
+public void Watch(string[] keys, Action<WatchResponse>[] callbacks)
 public long Watch(WatchRequest watchRequest, Action<WatchResponse> callback)
 public long Watch(WatchRequest watchRequest, Action<WatchResponse>[] callbacks)
 public long Watch(WatchRequest[] watchRequests, Action<WatchResponse>[] callbacks)
@@ -31,8 +31,8 @@ public long Watch(WatchRequest[] watchRequests, Action<WatchResponse>[] callback
 
 #### Returns
 
-- `void` for `Watch(string, ...)` and `Watch(string[], ...)` overloads - these methods don't return a watch ID. Use `WatchRange` or the `WatchRequest` overload to get a watch ID for cancellation.
-- `long` for `Watch(WatchRequest, ...)` overload - a watch ID that can be used to cancel the watch.
+- `void` for `Watch(string, ...)` and `Watch(string[], ...)` overloads - these methods don't return a watch ID.
+- `long` for `Watch(WatchRequest, ...)` and `Watch(WatchRequest[], ...)` overloads - a watch ID that can be used to cancel the watch.
 
 #### Example
 
