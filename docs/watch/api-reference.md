@@ -31,13 +31,24 @@ public long Watch(WatchRequest[] watchRequests, Action<WatchResponse>[] callback
 
 #### Returns
 
-- `long`: A watch ID that can be used to cancel the watch.
+- `void` for `Watch(string, ...)` and `Watch(string[], ...)` overloads - these methods don't return a watch ID. Use `WatchRange` or the `WatchRequest` overload to get a watch ID for cancellation.
+- `long` for `Watch(WatchRequest, ...)` overload - a watch ID that can be used to cancel the watch.
 
 #### Example
 
 ```csharp
-// Create a watcher for a key
-long watchId = client.Watch("my-key", (response) =>
+// Create a watcher for a key using WatchRequest to get a watch ID
+var watchRequest = new WatchRequest
+{
+    CreateRequest = new WatchCreateRequest
+    {
+        Key = ByteString.CopyFromUtf8("my-key"),
+        ProgressNotify = true,
+        PrevKv = true
+    }
+};
+
+long watchId = client.Watch(watchRequest, (response) =>
 {
     foreach (var evt in response.Events)
     {
@@ -71,19 +82,14 @@ Creates a watcher for a key or key range asynchronously. Returns a watch ID that
 #### Overloads
 
 ```csharp
-public Task<long> WatchAsync(string key, Action<WatchResponse> callback)
-public Task<long> WatchAsync(string key, Action<WatchResponse>[] callbacks)
-public Task<long[]> WatchAsync(string[] keys, Action<WatchResponse> callback)
-public Task<long[]> WatchAsync(string[] keys, Action<WatchResponse>[] callbacks)
 public Task<long> WatchAsync(WatchRequest watchRequest, Action<WatchResponse> callback)
 public Task<long> WatchAsync(WatchRequest watchRequest, Action<WatchResponse>[] callbacks)
+public Task<long[]> WatchAsync(WatchRequest[] watchRequests, Action<WatchResponse> callback)
 public Task<long[]> WatchAsync(WatchRequest[] watchRequests, Action<WatchResponse>[] callbacks)
 ```
 
 #### Parameters
 
-- `key`: The key to watch.
-- `keys`: An array of keys to watch.
 - `watchRequest`: A watch request containing watch options (including `StartRevision` for watching from a specific revision).
 - `watchRequests`: An array of watch requests.
 - `callback`: A callback function that is called when a watch event is received.
@@ -92,12 +98,23 @@ public Task<long[]> WatchAsync(WatchRequest[] watchRequests, Action<WatchRespons
 #### Returns
 
 - `Task<long>`: A task that represents the asynchronous operation. The task result contains a watch ID that can be used to cancel the watch.
+- `Task<long[]>`: For array overloads, a task that represents the asynchronous operation. The task result contains an array of watch IDs.
 
 #### Example
 
 ```csharp
-// Create a watcher for a key asynchronously
-long watchId = await client.WatchAsync("my-key", (response) =>
+// Create a watcher for a key asynchronously using WatchRequest
+var watchRequest = new WatchRequest
+{
+    CreateRequest = new WatchCreateRequest
+    {
+        Key = ByteString.CopyFromUtf8("my-key"),
+        ProgressNotify = true,
+        PrevKv = true
+    }
+};
+
+long watchId = await client.WatchAsync(watchRequest, (response) =>
 {
     foreach (var evt in response.Events)
     {

@@ -12,7 +12,7 @@ To watch a single key for changes:
 
 ```csharp
 // Create a watcher for a key
-long watchId = client.Watch("my-key", (response) =>
+client.Watch("my-key", (response) =>
 {
     foreach (var evt in response.Events)
     {
@@ -33,8 +33,8 @@ long watchId = client.Watch("my-key", (response) =>
 // Do some work while watching
 await Task.Delay(TimeSpan.FromMinutes(1));
 
-// Cancel the watch when done
-client.CancelWatch(watchId);
+// Note: The Watch(string, callback) method doesn't return a watch ID.
+// To cancel watches, use WatchRange which returns a watch ID, or use WatchRequest.
 ```
 
 ## Automatic Reconnection
