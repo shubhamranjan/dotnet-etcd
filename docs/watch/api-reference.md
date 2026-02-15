@@ -91,9 +91,9 @@ public Task<long[]> WatchAsync(WatchRequest[] watchRequests, Action<WatchRespons
 #### Parameters
 
 - `watchRequest`: A watch request containing watch options (including `StartRevision` for watching from a specific revision).
-- `watchRequests`: An array of watch requests.
-- `callback`: A callback function that is called when a watch event is received.
-- `callbacks`: An array of callback functions that are called when watch events are received.
+- `watchRequests`: An array of watch requests. When used with a single `callback`, the same callback is invoked for all watch requests. When used with `callbacks` array, each callback corresponds to its respective watch request.
+- `callback`: A callback function that is called when a watch event is received. When used with `watchRequests` array, this single callback handles events from all watches.
+- `callbacks`: An array of callback functions where each callback corresponds to a watch request at the same index.
 
 #### Returns
 

@@ -128,7 +128,7 @@ You can also watch a range of keys from a specific revision:
 
 ```csharp
 // Get the current revision
-var getResponse = client.GetRange("config/");
+var getResponse = await client.GetRangeAsync("config/");
 long startRevision = getResponse.Header.Revision;
 
 // Create a watch request for a range with a start revision
