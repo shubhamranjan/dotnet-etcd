@@ -79,15 +79,73 @@ client.CancelWatch(watchId);
 
 ## Watching from a Specific Revision
 
-To watch a key from a specific revision:
+To watch a key from a specific revision, use a `WatchRequest` with `StartRevision` set:
 
 ```csharp
 // Get the current revision
 var getResponse = client.Get("my-key");
 long startRevision = getResponse.Header.Revision;
 
-// Create a watcher starting from the current revision
-long watchId = client.Watch("my-key", startRevision, (response) =>
+// Create a watch request with a start revision
+var watchRequest = new WatchRequest
+{
+    CreateRequest = new WatchCreateRequest
+    {
+        Key = ByteString.CopyFromUtf8("my-key"),
+        StartRevision = startRevision,
+        ProgressNotify = true,
+        PrevKv = true
+    }
+};
+
+// Create a watcher starting from the specified revision
+long watchId = client.Watch(watchRequest, (response) =>
+{
+    foreach (var evt in response.Events)
+    {
+        string key = evt.Kv.Key.ToStringUtf8();
+        
+        if (evt.Type == Event.Types.EventType.Put)
+        {
+            string value = evt.Kv.Value.ToStringUtf8();
+            Console.WriteLine($"Key '{key}' was put with value '{value}' at revision {evt.Kv.ModRevision}");
+        }
+        else if (evt.Type == Event.Types.EventType.Delete)
+        {
+            Console.WriteLine($"Key '{key}' was deleted at revision {evt.Kv.ModRevision}");
+        }
+    }
+});
+
+// Do some work while watching
+await Task.Delay(TimeSpan.FromMinutes(1));
+
+// Cancel the watch when done
+client.CancelWatch(watchId);
+```
+
+You can also watch a range of keys from a specific revision:
+
+```csharp
+// Get the current revision
+var getResponse = client.GetRange("config/");
+long startRevision = getResponse.Header.Revision;
+
+// Create a watch request for a range with a start revision
+var watchRequest = new WatchRequest
+{
+    CreateRequest = new WatchCreateRequest
+    {
+        Key = ByteString.CopyFromUtf8("config/"),
+        RangeEnd = ByteString.CopyFromUtf8(EtcdClient.GetRangeEnd("config/")),
+        StartRevision = startRevision,
+        ProgressNotify = true,
+        PrevKv = true
+    }
+};
+
+// Create a watcher for the range starting from the specified revision
+long watchId = client.Watch(watchRequest, (response) =>
 {
     foreach (var evt in response.Events)
     {

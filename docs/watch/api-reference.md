@@ -12,24 +12,22 @@ Creates a watcher for a key or key range. Returns a watch ID that can be used to
 
 ```csharp
 public long Watch(string key, Action<WatchResponse> callback)
-public long Watch(string key, Action<WatchResponse> callback, Action<Exception> errorCallback)
-public long Watch(string key, long startRevision, Action<WatchResponse> callback)
-public long Watch(string key, long startRevision, Action<WatchResponse> callback, Action<Exception> errorCallback)
+public long Watch(string key, Action<WatchResponse>[] callbacks)
+public long Watch(string[] keys, Action<WatchResponse> callback)
+public long Watch(string[] keys, Action<WatchResponse>[] callbacks)
 public long Watch(WatchRequest watchRequest, Action<WatchResponse> callback)
-public long Watch(WatchRequest watchRequest, Action<WatchResponse> callback, Action<Exception> errorCallback)
+public long Watch(WatchRequest watchRequest, Action<WatchResponse>[] callbacks)
 public long Watch(WatchRequest[] watchRequests, Action<WatchResponse>[] callbacks)
-public long Watch(WatchRequest[] watchRequests, Action<WatchResponse>[] callbacks, Action<Exception> errorCallback)
 ```
 
 #### Parameters
 
 - `key`: The key to watch.
-- `startRevision`: The revision to start watching from.
-- `watchRequest`: A watch request containing watch options.
+- `keys`: An array of keys to watch.
+- `watchRequest`: A watch request containing watch options (including `StartRevision` for watching from a specific revision).
 - `watchRequests`: An array of watch requests.
 - `callback`: A callback function that is called when a watch event is received.
 - `callbacks`: An array of callback functions that are called when watch events are received.
-- `errorCallback`: A callback function that is called when an error occurs.
 
 #### Returns
 
@@ -64,6 +62,8 @@ await Task.Delay(TimeSpan.FromMinutes(1));
 client.CancelWatch(watchId);
 ```
 
+**Note**: To watch from a specific revision, use the `WatchRequest` overload with `StartRevision` set in the `WatchCreateRequest`. See the [Watch Options](#watch-options) section for details.
+
 ### WatchAsync
 
 Creates a watcher for a key or key range asynchronously. Returns a watch ID that can be used to cancel the watch.
@@ -72,24 +72,22 @@ Creates a watcher for a key or key range asynchronously. Returns a watch ID that
 
 ```csharp
 public Task<long> WatchAsync(string key, Action<WatchResponse> callback)
-public Task<long> WatchAsync(string key, Action<WatchResponse> callback, Action<Exception> errorCallback)
-public Task<long> WatchAsync(string key, long startRevision, Action<WatchResponse> callback)
-public Task<long> WatchAsync(string key, long startRevision, Action<WatchResponse> callback, Action<Exception> errorCallback)
+public Task<long> WatchAsync(string key, Action<WatchResponse>[] callbacks)
+public Task<long[]> WatchAsync(string[] keys, Action<WatchResponse> callback)
+public Task<long[]> WatchAsync(string[] keys, Action<WatchResponse>[] callbacks)
 public Task<long> WatchAsync(WatchRequest watchRequest, Action<WatchResponse> callback)
-public Task<long> WatchAsync(WatchRequest watchRequest, Action<WatchResponse> callback, Action<Exception> errorCallback)
-public Task<long> WatchAsync(WatchRequest[] watchRequests, Action<WatchResponse>[] callbacks)
-public Task<long> WatchAsync(WatchRequest[] watchRequests, Action<WatchResponse>[] callbacks, Action<Exception> errorCallback)
+public Task<long> WatchAsync(WatchRequest watchRequest, Action<WatchResponse>[] callbacks)
+public Task<long[]> WatchAsync(WatchRequest[] watchRequests, Action<WatchResponse>[] callbacks)
 ```
 
 #### Parameters
 
 - `key`: The key to watch.
-- `startRevision`: The revision to start watching from.
-- `watchRequest`: A watch request containing watch options.
+- `keys`: An array of keys to watch.
+- `watchRequest`: A watch request containing watch options (including `StartRevision` for watching from a specific revision).
 - `watchRequests`: An array of watch requests.
 - `callback`: A callback function that is called when a watch event is received.
 - `callbacks`: An array of callback functions that are called when watch events are received.
-- `errorCallback`: A callback function that is called when an error occurs.
 
 #### Returns
 
@@ -153,17 +151,17 @@ Creates a watcher for a range of keys. Returns a watch ID that can be used to ca
 
 ```csharp
 public long WatchRange(string prefixKey, Action<WatchResponse> callback)
-public long WatchRange(string prefixKey, Action<WatchResponse> callback, Action<Exception> errorCallback)
-public long WatchRange(string prefixKey, long startRevision, Action<WatchResponse> callback)
-public long WatchRange(string prefixKey, long startRevision, Action<WatchResponse> callback, Action<Exception> errorCallback)
+public long WatchRange(string prefixKey, Action<WatchResponse>[] callbacks)
+public long[] WatchRange(string[] prefixKeys, Action<WatchResponse> callback)
+public long[] WatchRange(string[] prefixKeys, Action<WatchResponse>[] callbacks)
 ```
 
 #### Parameters
 
 - `prefixKey`: The prefix key to watch. All keys with this prefix will be watched.
-- `startRevision`: The revision to start watching from.
+- `prefixKeys`: An array of prefix keys to watch.
 - `callback`: A callback function that is called when a watch event is received.
-- `errorCallback`: A callback function that is called when an error occurs.
+- `callbacks`: An array of callback functions that are called when watch events are received.
 
 #### Returns
 
@@ -206,17 +204,17 @@ Creates a watcher for a range of keys asynchronously. Returns a watch ID that ca
 
 ```csharp
 public Task<long> WatchRangeAsync(string prefixKey, Action<WatchResponse> callback)
-public Task<long> WatchRangeAsync(string prefixKey, Action<WatchResponse> callback, Action<Exception> errorCallback)
-public Task<long> WatchRangeAsync(string prefixKey, long startRevision, Action<WatchResponse> callback)
-public Task<long> WatchRangeAsync(string prefixKey, long startRevision, Action<WatchResponse> callback, Action<Exception> errorCallback)
+public Task<long> WatchRangeAsync(string prefixKey, Action<WatchResponse>[] callbacks)
+public Task<long[]> WatchRangeAsync(string[] prefixKeys, Action<WatchResponse> callback)
+public Task<long[]> WatchRangeAsync(string[] prefixKeys, Action<WatchResponse>[] callbacks)
 ```
 
 #### Parameters
 
 - `prefixKey`: The prefix key to watch. All keys with this prefix will be watched.
-- `startRevision`: The revision to start watching from.
+- `prefixKeys`: An array of prefix keys to watch.
 - `callback`: A callback function that is called when a watch event is received.
-- `errorCallback`: A callback function that is called when an error occurs.
+- `callbacks`: An array of callback functions that are called when watch events are received.
 
 #### Returns
 
