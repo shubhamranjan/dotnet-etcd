@@ -55,7 +55,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.3" />
 
     <Protobuf Include="grpc\proto\etcd\auth.proto" GrpcServices="Client" />
     <Protobuf Include="grpc\proto\etcd\election.proto" GrpcServices="Client" />
