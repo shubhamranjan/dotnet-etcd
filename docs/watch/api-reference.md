@@ -15,9 +15,9 @@ public void Watch(string key, Action<WatchResponse> callback)
 public void Watch(string key, Action<WatchResponse>[] callbacks)
 public void Watch(string[] keys, Action<WatchResponse> callback)
 public void Watch(string[] keys, Action<WatchResponse>[] callbacks)
-public long Watch(WatchRequest watchRequest, Action<WatchResponse> callback)
-public long Watch(WatchRequest watchRequest, Action<WatchResponse>[] callbacks)
-public long Watch(WatchRequest[] watchRequests, Action<WatchResponse>[] callbacks)
+public void Watch(WatchRequest watchRequest, Action<WatchResponse> callback)
+public void Watch(WatchRequest watchRequest, Action<WatchResponse>[] callbacks)
+public void Watch(WatchRequest[] watchRequests, Action<WatchResponse>[] callbacks)
 ```
 
 #### Parameters
@@ -31,13 +31,12 @@ public long Watch(WatchRequest[] watchRequests, Action<WatchResponse>[] callback
 
 #### Returns
 
-- `void` for `Watch(string, ...)` and `Watch(string[], ...)` overloads - these methods don't return a watch ID.
-- `long` for `Watch(WatchRequest, ...)` and `Watch(WatchRequest[], ...)` overloads - a watch ID that can be used to cancel the watch.
+- `void` - all `Watch` overloads return void and do not provide a watch ID. To get a watch ID for cancellation, use `WatchAsync` (returns `Task<long>`) or `WatchRange` (returns `long`).
 
 #### Example
 
 ```csharp
-// Create a watcher for a key using WatchRequest to get a watch ID
+// Create a watcher for a key using WatchAsync to get a watch ID
 var watchRequest = new WatchRequest
 {
     CreateRequest = new WatchCreateRequest
@@ -48,7 +47,7 @@ var watchRequest = new WatchRequest
     }
 };
 
-long watchId = client.Watch(watchRequest, (response) =>
+long watchId = await client.WatchAsync(watchRequest, (response) =>
 {
     foreach (var evt in response.Events)
     {
@@ -73,7 +72,7 @@ await Task.Delay(TimeSpan.FromMinutes(1));
 client.CancelWatch(watchId);
 ```
 
-**Note**: To watch from a specific revision, use the `WatchRequest` overload with `StartRevision` set in the `WatchCreateRequest`. See the [Watch Options](#watch-options) section for details.
+**Note**: To get a watch ID for cancellation, use `WatchAsync(WatchRequest, ...)` which returns `Task<long>`, or `WatchRange(string, ...)` which returns `long`. The synchronous `Watch` methods return `void`.
 
 ### WatchAsync
 

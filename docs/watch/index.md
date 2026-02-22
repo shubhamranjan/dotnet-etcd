@@ -34,7 +34,7 @@ client.Watch("my-key", (response) =>
 await Task.Delay(TimeSpan.FromMinutes(1));
 
 // Note: The Watch(string, callback) method doesn't return a watch ID.
-// To cancel watches, use WatchRange which returns a watch ID, or use WatchRequest.
+// To cancel watches, use WatchAsync(WatchRequest, ...) (returns Task<long>) or WatchRange(...) (returns long).
 ```
 
 ## Automatic Reconnection
@@ -99,7 +99,7 @@ var watchRequest = new WatchRequest
 };
 
 // Create a watcher starting from the specified revision
-long watchId = client.Watch(watchRequest, (response) =>
+long watchId = await client.WatchAsync(watchRequest, (response) =>
 {
     foreach (var evt in response.Events)
     {
@@ -145,7 +145,7 @@ var watchRequest = new WatchRequest
 };
 
 // Create a watcher for the range starting from the specified revision
-long watchId = client.Watch(watchRequest, (response) =>
+long watchId = await client.WatchAsync(watchRequest, (response) =>
 {
     foreach (var evt in response.Events)
     {
@@ -186,7 +186,7 @@ var watchRequest = new WatchRequest
 };
 
 // Create a watcher with the request
-long watchId = client.Watch(watchRequest, (response) =>
+long watchId = await client.WatchAsync(watchRequest, (response) =>
 {
     foreach (var evt in response.Events)
     {
@@ -220,7 +220,7 @@ var watchRequest = new WatchRequest
 };
 
 // Create a watcher with the request
-long watchId = client.Watch(watchRequest, (response) =>
+long watchId = await client.WatchAsync(watchRequest, (response) =>
 {
     if (response.Events.Count == 0 && response.CompactRevision == 0)
     {
@@ -267,7 +267,7 @@ var watchRequest = new WatchRequest
 };
 
 // Create a watcher with the request
-long watchId = client.Watch(watchRequest, (response) =>
+long watchId = await client.WatchAsync(watchRequest, (response) =>
 {
     foreach (var evt in response.Events)
     {
@@ -322,7 +322,7 @@ try
         }
     };
     
-    long watchId = client.Watch(watchRequest, (response) =>
+    long watchId = await client.WatchAsync(watchRequest, (response) =>
     {
         try
         {
@@ -708,11 +708,21 @@ serviceDiscovery.Dispose();
 
 ## Canceling Watches
 
-You can cancel a watch operation at any time using the `CancelWatch` method. Note that to get a watch ID for cancellation, you need to use `WatchRange` or the `WatchRequest` overload:
+You can cancel a watch operation at any time using the `CancelWatch` method. Note that to get a watch ID for cancellation, you need to use `WatchAsync(WatchRequest, ...)` (returns `Task<long>`) or `WatchRange(...)` (returns `long`):
 
 ```csharp
-// Create a watcher using WatchRange (returns watch ID)
-long watchId = client.WatchRange("my-key/", (response) => { /* ... */ });
+// Create a watcher using WatchAsync (returns watch ID)
+var watchRequest = new WatchRequest
+{
+    CreateRequest = new WatchCreateRequest
+    {
+        Key = ByteString.CopyFromUtf8("my-key"),
+        ProgressNotify = true,
+        PrevKv = true
+    }
+};
+
+long watchId = await client.WatchAsync(watchRequest, (response) => { /* ... */ });
 
 // Cancel the watch when you're done with it
 client.CancelWatch(watchId);
@@ -721,7 +731,7 @@ client.CancelWatch(watchId);
 You can also cancel multiple watches at once:
 
 ```csharp
-// Create multiple watchers
+// Create multiple watchers using WatchRange
 long watchId1 = client.WatchRange("key1/", (response) => { /* ... */ });
 long watchId2 = client.WatchRange("key2/", (response) => { /* ... */ });
 
