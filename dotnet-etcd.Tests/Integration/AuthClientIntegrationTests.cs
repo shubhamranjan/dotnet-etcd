@@ -18,7 +18,7 @@ public class AuthClientIntegrationTests : IDisposable
     private const string TestPassword = "testpass123";
     private const string AdminUsername = "admin";
     private const string AdminPassword = "admin123";
-    
+
     // Track clients created during tests for cleanup
     private readonly List<EtcdClient> _clientsToDispose = new();
 
@@ -72,8 +72,7 @@ public class AuthClientIntegrationTests : IDisposable
 
             // Verify auth is enabled by trying an operation without credentials (should fail)
             using var unauthClient = new EtcdClient("127.0.0.1:2379");
-            await Assert.ThrowsAsync<RpcException>(async () =>
-                await unauthClient.GetAsync("test"));
+            await Assert.ThrowsAsync<RpcException>(async () => await unauthClient.GetAsync("test"));
 
             // Disable auth (use root credentials since admin doesn't exist in this test)
             client.SetCredentials("root", "root");
@@ -104,21 +103,21 @@ public class AuthClientIntegrationTests : IDisposable
 
             // Act - Create a new user
             client.SetCredentials(AdminUsername, AdminPassword);
-            var addUserResponse = await client.UserAddAsync(new AuthUserAddRequest
-            {
-                Name = TestUsername,
-                Password = TestPassword,
-                Options = new UserAddOptions { NoPassword = false }
-            });
+            var addUserResponse = await client.UserAddAsync(
+                new AuthUserAddRequest
+                {
+                    Name = TestUsername,
+                    Password = TestPassword,
+                    Options = new UserAddOptions { NoPassword = false },
+                }
+            );
 
             Assert.NotNull(addUserResponse);
 
             // Authenticate as the new user
-            var authResponse = await client.AuthenticateAsync(new AuthenticateRequest
-            {
-                Name = TestUsername,
-                Password = TestPassword
-            });
+            var authResponse = await client.AuthenticateAsync(
+                new AuthenticateRequest { Name = TestUsername, Password = TestPassword }
+            );
 
             // Assert
             Assert.NotNull(authResponse);
@@ -258,11 +257,9 @@ public class AuthClientIntegrationTests : IDisposable
 
             // Act - Change password as admin
             client.SetCredentials(AdminUsername, AdminPassword);
-            await client.UserChangePasswordAsync(new AuthUserChangePasswordRequest
-            {
-                Name = TestUsername,
-                Password = newPassword
-            });
+            await client.UserChangePasswordAsync(
+                new AuthUserChangePasswordRequest { Name = TestUsername, Password = newPassword }
+            );
 
             // Set new credentials - should trigger new authentication
             client.SetCredentials(TestUsername, newPassword);
@@ -297,11 +294,10 @@ public class AuthClientIntegrationTests : IDisposable
 
             // Act & Assert - Authenticate with wrong credentials
             var exception = await Assert.ThrowsAsync<RpcException>(async () =>
-                await client.AuthenticateAsync(new AuthenticateRequest
-                {
-                    Name = "nonexistent",
-                    Password = "wrongpassword"
-                }));
+                await client.AuthenticateAsync(
+                    new AuthenticateRequest { Name = "nonexistent", Password = "wrongpassword" }
+                )
+            );
 
             Assert.Equal(StatusCode.InvalidArgument, exception.StatusCode);
         }
@@ -327,12 +323,15 @@ public class AuthClientIntegrationTests : IDisposable
 
             // Act & Assert - Try operation without credentials
             var exception = await Assert.ThrowsAsync<RpcException>(async () =>
-                await unauthClient.PutAsync("test", "value"));
+                await unauthClient.PutAsync("test", "value")
+            );
 
             // etcd may return either Unauthenticated or InvalidArgument when no credentials provided
             Assert.True(
-                exception.StatusCode == StatusCode.Unauthenticated || exception.StatusCode == StatusCode.InvalidArgument,
-                $"Expected Unauthenticated or InvalidArgument but got {exception.StatusCode}");
+                exception.StatusCode == StatusCode.Unauthenticated
+                    || exception.StatusCode == StatusCode.InvalidArgument,
+                $"Expected Unauthenticated or InvalidArgument but got {exception.StatusCode}"
+            );
         }
         finally
         {
@@ -362,19 +361,20 @@ public class AuthClientIntegrationTests : IDisposable
 
             // Change password
             client.SetCredentials(AdminUsername, AdminPassword);
-            await client.UserChangePasswordAsync(new AuthUserChangePasswordRequest
-            {
-                Name = TestUsername,
-                Password = newPassword
-            });
+            await client.UserChangePasswordAsync(
+                new AuthUserChangePasswordRequest { Name = TestUsername, Password = newPassword }
+            );
 
             // Act & Assert - Try to authenticate with old password
             var exception = await Assert.ThrowsAsync<RpcException>(async () =>
-                await client.AuthenticateAsync(new AuthenticateRequest
-                {
-                    Name = TestUsername,
-                    Password = TestPassword // Old password
-                }));
+                await client.AuthenticateAsync(
+                    new AuthenticateRequest
+                    {
+                        Name = TestUsername,
+                        Password = TestPassword, // Old password
+                    }
+                )
+            );
 
             Assert.Equal(StatusCode.InvalidArgument, exception.StatusCode);
         }
@@ -407,29 +407,27 @@ public class AuthClientIntegrationTests : IDisposable
             // Create a role with read-only permission
             await client.RoleAddAsync(new AuthRoleAddRequest { Name = roleName });
 
-            await client.RoleGrantPermissionAsync(new AuthRoleGrantPermissionRequest
-            {
-                Name = roleName,
-                Perm = new Permission
+            await client.RoleGrantPermissionAsync(
+                new AuthRoleGrantPermissionRequest
                 {
-                    PermType = Permission.Types.Type.Read,
-                    Key = ByteString.CopyFromUtf8(keyPrefix),
-                    RangeEnd = ByteString.CopyFromUtf8(EtcdClient.GetRangeEnd(keyPrefix))
+                    Name = roleName,
+                    Perm = new Permission
+                    {
+                        PermType = Permission.Types.Type.Read,
+                        Key = ByteString.CopyFromUtf8(keyPrefix),
+                        RangeEnd = ByteString.CopyFromUtf8(EtcdClient.GetRangeEnd(keyPrefix)),
+                    },
                 }
-            });
+            );
 
             // Create user and grant role
-            await client.UserAddAsync(new AuthUserAddRequest
-            {
-                Name = TestUsername,
-                Password = TestPassword
-            });
+            await client.UserAddAsync(
+                new AuthUserAddRequest { Name = TestUsername, Password = TestPassword }
+            );
 
-            await client.UserGrantRoleAsync(new AuthUserGrantRoleRequest
-            {
-                User = TestUsername,
-                Role = roleName
-            });
+            await client.UserGrantRoleAsync(
+                new AuthUserGrantRoleRequest { User = TestUsername, Role = roleName }
+            );
 
             // Act - Try to read with test user (should succeed)
             client.SetCredentials(TestUsername, TestPassword);
@@ -447,7 +445,8 @@ public class AuthClientIntegrationTests : IDisposable
 
             // Try to write (should fail - permission denied)
             var exception = await Assert.ThrowsAsync<RpcException>(async () =>
-                await client.PutAsync(keyPrefix + "newkey", "newvalue"));
+                await client.PutAsync(keyPrefix + "newkey", "newvalue")
+            );
 
             Assert.Equal(StatusCode.PermissionDenied, exception.StatusCode);
         }
@@ -481,11 +480,10 @@ public class AuthClientIntegrationTests : IDisposable
 
             // Try to authenticate with deleted user credentials
             var exception = await Assert.ThrowsAsync<RpcException>(async () =>
-                await client.AuthenticateAsync(new AuthenticateRequest
-                {
-                    Name = TestUsername,
-                    Password = TestPassword
-                }));
+                await client.AuthenticateAsync(
+                    new AuthenticateRequest { Name = TestUsername, Password = TestPassword }
+                )
+            );
 
             // Assert
             Assert.Equal(StatusCode.InvalidArgument, exception.StatusCode);
@@ -511,9 +509,15 @@ public class AuthClientIntegrationTests : IDisposable
             client.SetCredentials(AdminUsername, AdminPassword);
 
             // Create multiple users
-            await client.UserAddAsync(new AuthUserAddRequest { Name = "user1", Password = "pass1" });
-            await client.UserAddAsync(new AuthUserAddRequest { Name = "user2", Password = "pass2" });
-            await client.UserAddAsync(new AuthUserAddRequest { Name = "user3", Password = "pass3" });
+            await client.UserAddAsync(
+                new AuthUserAddRequest { Name = "user1", Password = "pass1" }
+            );
+            await client.UserAddAsync(
+                new AuthUserAddRequest { Name = "user2", Password = "pass2" }
+            );
+            await client.UserAddAsync(
+                new AuthUserAddRequest { Name = "user3", Password = "pass3" }
+            );
 
             // Act
             var listResponse = await client.UserListAsync(new AuthUserListRequest());
@@ -548,20 +552,26 @@ public class AuthClientIntegrationTests : IDisposable
 
             // Create role with root permission
             await client.RoleAddAsync(new AuthRoleAddRequest { Name = roleName });
-            await client.RoleGrantPermissionAsync(new AuthRoleGrantPermissionRequest
-            {
-                Name = roleName,
-                Perm = new Permission
+            await client.RoleGrantPermissionAsync(
+                new AuthRoleGrantPermissionRequest
                 {
-                    PermType = Permission.Types.Type.Readwrite,
-                    Key = ByteString.CopyFromUtf8("\0"),
-                    RangeEnd = ByteString.CopyFromUtf8("\0")
+                    Name = roleName,
+                    Perm = new Permission
+                    {
+                        PermType = Permission.Types.Type.Readwrite,
+                        Key = ByteString.CopyFromUtf8("\0"),
+                        RangeEnd = ByteString.CopyFromUtf8("\0"),
+                    },
                 }
-            });
+            );
 
             // Create user with role
-            await client.UserAddAsync(new AuthUserAddRequest { Name = TestUsername, Password = TestPassword });
-            await client.UserGrantRoleAsync(new AuthUserGrantRoleRequest { User = TestUsername, Role = roleName });
+            await client.UserAddAsync(
+                new AuthUserAddRequest { Name = TestUsername, Password = TestPassword }
+            );
+            await client.UserGrantRoleAsync(
+                new AuthUserGrantRoleRequest { User = TestUsername, Role = roleName }
+            );
 
             // Verify user can perform operations
             client.SetCredentials(TestUsername, TestPassword);
@@ -570,16 +580,15 @@ public class AuthClientIntegrationTests : IDisposable
 
             // Act - Revoke role from user
             client.SetCredentials(AdminUsername, AdminPassword);
-            await client.UserRevokeRoleAsync(new AuthUserRevokeRoleRequest
-            {
-                Name = TestUsername,
-                Role = roleName
-            });
+            await client.UserRevokeRoleAsync(
+                new AuthUserRevokeRoleRequest { Name = TestUsername, Role = roleName }
+            );
 
             // Try to perform operation without role
             client.SetCredentials(TestUsername, TestPassword);
             var exception = await Assert.ThrowsAsync<RpcException>(async () =>
-                await client.PutAsync("test2", "value2"));
+                await client.PutAsync("test2", "value2")
+            );
 
             // Assert
             Assert.Equal(StatusCode.PermissionDenied, exception.StatusCode);
@@ -645,19 +654,19 @@ public class AuthClientIntegrationTests : IDisposable
         try
         {
             // Create root user
-            await client.UserAddAsync(new AuthUserAddRequest
-            {
-                Name = "root",
-                Password = "root",
-                Options = new UserAddOptions { NoPassword = false }
-            });
+            await client.UserAddAsync(
+                new AuthUserAddRequest
+                {
+                    Name = "root",
+                    Password = "root",
+                    Options = new UserAddOptions { NoPassword = false },
+                }
+            );
 
             // Grant root role to root user
-            await client.UserGrantRoleAsync(new AuthUserGrantRoleRequest
-            {
-                User = "root",
-                Role = "root"
-            });
+            await client.UserGrantRoleAsync(
+                new AuthUserGrantRoleRequest { User = "root", Role = "root" }
+            );
         }
         catch (RpcException ex) when (ex.StatusCode == StatusCode.FailedPrecondition)
         {
@@ -677,6 +686,10 @@ public class AuthClientIntegrationTests : IDisposable
         {
             // Ignore errors (auth might already be disabled)
         }
+        finally
+        {
+            client.ClearCredentials();
+        }
 
         // Create root user if needed
         await CreateRootUser(client);
@@ -684,17 +697,13 @@ public class AuthClientIntegrationTests : IDisposable
         // Create admin user
         try
         {
-            await client.UserAddAsync(new AuthUserAddRequest
-            {
-                Name = AdminUsername,
-                Password = AdminPassword
-            });
+            await client.UserAddAsync(
+                new AuthUserAddRequest { Name = AdminUsername, Password = AdminPassword }
+            );
 
-            await client.UserGrantRoleAsync(new AuthUserGrantRoleRequest
-            {
-                User = AdminUsername,
-                Role = "root"
-            });
+            await client.UserGrantRoleAsync(
+                new AuthUserGrantRoleRequest { User = AdminUsername, Role = "root" }
+            );
         }
         catch (RpcException ex) when (ex.StatusCode == StatusCode.FailedPrecondition)
         {
@@ -711,17 +720,13 @@ public class AuthClientIntegrationTests : IDisposable
 
         try
         {
-            await client.UserAddAsync(new AuthUserAddRequest
-            {
-                Name = TestUsername,
-                Password = TestPassword
-            });
+            await client.UserAddAsync(
+                new AuthUserAddRequest { Name = TestUsername, Password = TestPassword }
+            );
 
-            await client.UserGrantRoleAsync(new AuthUserGrantRoleRequest
-            {
-                User = TestUsername,
-                Role = "root"
-            });
+            await client.UserGrantRoleAsync(
+                new AuthUserGrantRoleRequest { User = TestUsername, Role = "root" }
+            );
         }
         catch (RpcException ex) when (ex.StatusCode == StatusCode.FailedPrecondition)
         {
@@ -745,7 +750,7 @@ public class AuthClientIntegrationTests : IDisposable
                 {
                     (AdminUsername, AdminPassword),
                     ("root", "root"),
-                    (TestUsername, TestPassword)
+                    (TestUsername, TestPassword),
                 };
 
                 foreach (var (username, password) in credentialSets)
