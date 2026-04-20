@@ -8,9 +8,7 @@ using Etcdserverpb;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
-using Grpc.Net.Client.Balancer;
 using Grpc.Net.Client.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace dotnet_etcd;
 
@@ -369,6 +367,15 @@ public partial class EtcdClient : IDisposable, IEtcdClient
         _credentials = (username, password);
 
         // Purge any token cached under the previous credentials so the next request re-auths.
+        _authHttpHandler?.InvalidateToken();
+    }
+
+    /// <summary>
+    ///     Clears the current credentials if set and invalidates any cached token.
+    /// </summary>
+    public void ClearCredentials()
+    {
+        _credentials = null;
         _authHttpHandler?.InvalidateToken();
     }
 
