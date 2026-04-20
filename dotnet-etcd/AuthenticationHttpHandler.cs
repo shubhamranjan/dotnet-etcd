@@ -18,21 +18,39 @@ internal sealed class AuthenticationHttpHandler : DelegatingHandler
     private const string AuthenticatePath = "/etcdserverpb.Auth/Authenticate";
 
     private readonly SemaphoreSlim _semaphore = new(1, 1);
-    private readonly Func<CancellationToken, Task<string?>> _tokenProvider;
-    private readonly TimeSpan _tokenCacheDuration;
+    private readonly Func<
+        CancellationToken,
+        Task<(string token, TimeSpan cacheDuration)?>
+    > _tokenProvider;
 
     private string? _cachedToken;
     private DateTime _tokenExpiresAtUtc;
 
     public AuthenticationHttpHandler(
-        Func<CancellationToken, Task<string?>> tokenProvider,
-        TimeSpan tokenCacheDuration,
+        Func<CancellationToken, Task<(string token, TimeSpan cacheDuration)?>> tokenProvider,
         HttpMessageHandler innerHandler
     )
         : base(innerHandler)
     {
         _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
-        _tokenCacheDuration = tokenCacheDuration;
+    }
+
+    /// <summary>
+    ///     Clears any cached token so the next request re-fetches via the token provider.
+    ///     Call this after credentials change so in-flight cached tokens don't outlive the change.
+    /// </summary>
+    public void InvalidateToken()
+    {
+        _semaphore.Wait();
+        try
+        {
+            _cachedToken = null;
+            _tokenExpiresAtUtc = DateTime.MinValue;
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
     }
 
     protected override async Task<HttpResponseMessage> SendAsync(
@@ -55,7 +73,7 @@ internal sealed class AuthenticationHttpHandler : DelegatingHandler
 
     private async Task<string?> GetValidTokenAsync(CancellationToken cancellationToken)
     {
-        if (_cachedToken is not null && DateTime.UtcNow < _tokenExpiresAtUtc)
+        if (DateTime.UtcNow < _tokenExpiresAtUtc)
             return _cachedToken;
 
         await _semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
@@ -64,9 +82,20 @@ internal sealed class AuthenticationHttpHandler : DelegatingHandler
             if (_cachedToken is not null && DateTime.UtcNow < _tokenExpiresAtUtc)
                 return _cachedToken;
 
-            _cachedToken = await _tokenProvider(cancellationToken).ConfigureAwait(false);
-            _tokenExpiresAtUtc = DateTime.UtcNow + _tokenCacheDuration;
-            return _cachedToken;
+            (string token, TimeSpan cacheDuration)? result = await _tokenProvider(cancellationToken)
+                .ConfigureAwait(false);
+
+            if (!result.HasValue)
+            {
+                // Client needs no authentication, cache null token value until the next invalidate call
+                _cachedToken = null;
+                _tokenExpiresAtUtc = DateTime.MaxValue;
+                return null;
+            }
+
+            _tokenExpiresAtUtc = DateTime.UtcNow + result.Value.cacheDuration;
+            _cachedToken = result.Value.token;
+            return result.Value.token;
         }
         finally
         {

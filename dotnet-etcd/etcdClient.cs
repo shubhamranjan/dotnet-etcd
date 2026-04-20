@@ -67,6 +67,7 @@ public partial class EtcdClient : IDisposable, IEtcdClient
     private readonly AsyncStreamCallFactory<WatchRequest, WatchResponse> _watchCallFactory;
 
     private (string username, string password)? _credentials;
+    private AuthenticationHttpHandler _authHttpHandler;
 
     // ETCD Tokens are valid for 5 min per default, so we cache them for the 5 min - 1 min safety margin.
     private TimeSpan _tokenCacheDuration = TimeSpan.FromMinutes(4);
@@ -156,11 +157,11 @@ public partial class EtcdClient : IDisposable, IEtcdClient
             ChannelCredentials.Insecure, // Default to insecure for backward compatibility
             options =>
             {
-                options.HttpHandler = new AuthenticationHttpHandler(
+                _authHttpHandler = new AuthenticationHttpHandler(
                     RequestTokenAsync,
-                    TimeSpan.FromMinutes(4),
                     options.HttpHandler!
                 );
+                options.HttpHandler = _authHttpHandler;
                 configureChannelOptions?.Invoke(options);
             },
             configureSslOptions: null // No custom SSL by default
@@ -229,16 +230,15 @@ public partial class EtcdClient : IDisposable, IEtcdClient
             credentials,
             options =>
             {
-                options.HttpHandler = new AuthenticationHttpHandler(
+                _authHttpHandler = new AuthenticationHttpHandler(
                     RequestTokenAsync,
-                    TimeSpan.FromMinutes(4),
                     options.HttpHandler!
                 );
+                options.HttpHandler = _authHttpHandler;
                 configureChannelOptions?.Invoke(options);
             },
             configureSslOptions
         );
-
         CallInvoker callInvoker =
             interceptors.Length > 0
                 ? _channel.Intercept(interceptors)
@@ -367,11 +367,16 @@ public partial class EtcdClient : IDisposable, IEtcdClient
             _tokenCacheDuration = tokenCacheDuration.Value;
 
         _credentials = (username, password);
+
+        // Purge any token cached under the previous credentials so the next request re-auths.
+        _authHttpHandler?.InvalidateToken();
     }
 
-    private async Task<string> RequestTokenAsync(CancellationToken cancellationToken)
+    private async Task<(string token, TimeSpan cacheDuration)?> RequestTokenAsync(
+        CancellationToken cancellationToken
+    )
     {
-        var cred = _credentials;
+        (string username, string password)? cred = _credentials;
         if (!cred.HasValue)
             return null;
 
@@ -386,7 +391,7 @@ public partial class EtcdClient : IDisposable, IEtcdClient
             )
             .ConfigureAwait(false);
 
-        return response.Token;
+        return (response.Token, _tokenCacheDuration);
     }
 
     #endregion

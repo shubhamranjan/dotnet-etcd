@@ -10,15 +10,15 @@ public class AuthenticationHttpHandlerTests
     private const string AuthenticatePath = "/etcdserverpb.Auth/Authenticate";
     private const string NonAuthPath = "/etcdserverpb.KV/Range";
 
+    private static readonly TimeSpan DefaultCacheDuration = TimeSpan.FromMinutes(4);
+
     #region Constructor
 
     [Fact]
     public void Constructor_WithNullTokenProvider_Throws()
     {
         using var inner = new CapturingHandler();
-        Assert.Throws<ArgumentNullException>(() =>
-            new AuthenticationHttpHandler(null!, TimeSpan.FromMinutes(4), inner)
-        );
+        Assert.Throws<ArgumentNullException>(() => new AuthenticationHttpHandler(null!, inner));
     }
 
     #endregion
@@ -29,7 +29,7 @@ public class AuthenticationHttpHandlerTests
     public async Task SendAsync_AddsAuthorizationHeader_WhenTokenProvided()
     {
         using var inner = new CapturingHandler();
-        using var invoker = BuildInvoker(inner, _ => Task.FromResult<string?>(TestToken));
+        using var invoker = BuildInvoker(inner, _ => FromToken(TestToken));
 
         await invoker.SendAsync(Request(NonAuthPath), default);
 
@@ -39,10 +39,10 @@ public class AuthenticationHttpHandlerTests
     }
 
     [Fact]
-    public async Task SendAsync_DoesNotAddHeader_WhenTokenIsNull()
+    public async Task SendAsync_DoesNotAddHeader_WhenProviderReturnsNull()
     {
         using var inner = new CapturingHandler();
-        using var invoker = BuildInvoker(inner, _ => Task.FromResult<string?>(null));
+        using var invoker = BuildInvoker(inner, _ => FromNull());
 
         await invoker.SendAsync(Request(NonAuthPath), default);
 
@@ -53,7 +53,7 @@ public class AuthenticationHttpHandlerTests
     public async Task SendAsync_DoesNotAddHeader_WhenTokenIsWhitespace()
     {
         using var inner = new CapturingHandler();
-        using var invoker = BuildInvoker(inner, _ => Task.FromResult<string?>("   "));
+        using var invoker = BuildInvoker(inner, _ => FromToken("   "));
 
         await invoker.SendAsync(Request(NonAuthPath), default);
 
@@ -74,7 +74,7 @@ public class AuthenticationHttpHandlerTests
             _ =>
             {
                 Interlocked.Increment(ref providerCalls);
-                return Task.FromResult<string?>(TestToken);
+                return FromToken(TestToken);
             }
         );
 
@@ -98,7 +98,7 @@ public class AuthenticationHttpHandlerTests
             _ =>
             {
                 Interlocked.Increment(ref providerCalls);
-                return Task.FromResult<string?>(TestToken);
+                return FromToken(TestToken);
             }
         );
 
@@ -123,9 +123,8 @@ public class AuthenticationHttpHandlerTests
             _ =>
             {
                 int n = Interlocked.Increment(ref providerCalls);
-                return Task.FromResult<string?>($"token-{n}");
-            },
-            cacheDuration: TimeSpan.Zero
+                return FromToken($"token-{n}", TimeSpan.Zero);
+            }
         );
 
         await invoker.SendAsync(Request(NonAuthPath), default);
@@ -137,11 +136,31 @@ public class AuthenticationHttpHandlerTests
     }
 
     [Fact]
+    public async Task SendAsync_UsesCacheDurationFromProvider()
+    {
+        using var inner = new CapturingHandler();
+        int providerCalls = 0;
+        using var invoker = BuildInvoker(
+            inner,
+            _ =>
+            {
+                Interlocked.Increment(ref providerCalls);
+                return FromToken(TestToken, TimeSpan.FromHours(1));
+            }
+        );
+
+        await invoker.SendAsync(Request(NonAuthPath), default);
+        await invoker.SendAsync(Request(NonAuthPath), default);
+
+        Assert.Equal(1, providerCalls);
+    }
+
+    [Fact]
     public async Task SendAsync_ConcurrentRequests_FetchTokenOnce()
     {
         using var inner = new CapturingHandler();
         int providerCalls = 0;
-        var gate = new TaskCompletionSource<string?>(
+        var gate = new TaskCompletionSource<(string token, TimeSpan cacheDuration)?>(
             TaskCreationOptions.RunContinuationsAsynchronously
         );
         using var invoker = BuildInvoker(
@@ -157,7 +176,7 @@ public class AuthenticationHttpHandlerTests
         Task send2 = invoker.SendAsync(Request(NonAuthPath), default);
         Task send3 = invoker.SendAsync(Request(NonAuthPath), default);
 
-        gate.SetResult(TestToken);
+        gate.SetResult((TestToken, DefaultCacheDuration));
         await Task.WhenAll(send1, send2, send3);
 
         Assert.Equal(1, providerCalls);
@@ -170,6 +189,34 @@ public class AuthenticationHttpHandlerTests
 
     #endregion
 
+    #region Invalidation
+
+    [Fact]
+    public async Task InvalidateToken_CausesNextRequestToRefetch()
+    {
+        using var inner = new CapturingHandler();
+        int providerCalls = 0;
+        var handler = new AuthenticationHttpHandler(
+            _ =>
+            {
+                int n = Interlocked.Increment(ref providerCalls);
+                return FromToken($"token-{n}");
+            },
+            inner
+        );
+        using var invoker = new HttpMessageInvoker(handler, disposeHandler: true);
+
+        await invoker.SendAsync(Request(NonAuthPath), default);
+        handler.InvalidateToken();
+        await invoker.SendAsync(Request(NonAuthPath), default);
+
+        Assert.Equal(2, providerCalls);
+        Assert.Equal("token-1", inner.Requests[0].Headers.GetValues(AuthorizationHeader).Single());
+        Assert.Equal("token-2", inner.Requests[1].Headers.GetValues(AuthorizationHeader).Single());
+    }
+
+    #endregion
+
     #region Error and cancellation
 
     [Fact]
@@ -178,7 +225,10 @@ public class AuthenticationHttpHandlerTests
         using var inner = new CapturingHandler();
         using var invoker = BuildInvoker(
             inner,
-            _ => Task.FromException<string?>(new InvalidOperationException("boom"))
+            _ =>
+                Task.FromException<(string token, TimeSpan cacheDuration)?>(
+                    new InvalidOperationException("boom")
+                )
         );
 
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
@@ -199,7 +249,7 @@ public class AuthenticationHttpHandlerTests
             ct =>
             {
                 observed = ct;
-                return Task.FromResult<string?>(TestToken);
+                return FromToken(TestToken);
             }
         );
 
@@ -213,33 +263,45 @@ public class AuthenticationHttpHandlerTests
 
     #region Helpers
 
-    private static HttpMessageInvoker BuildInvoker(
-        HttpMessageHandler inner,
-        Func<CancellationToken, Task<string?>> tokenProvider,
+    private static Task<(string token, TimeSpan cacheDuration)?> FromToken(
+        string token,
         TimeSpan? cacheDuration = null
     ) =>
-        new(
-            new AuthenticationHttpHandler(
-                tokenProvider,
-                cacheDuration ?? TimeSpan.FromMinutes(4),
-                inner
-            ),
-            disposeHandler: true
+        Task.FromResult<(string token, TimeSpan cacheDuration)?>(
+            (token, cacheDuration ?? DefaultCacheDuration)
         );
+
+    private static Task<(string token, TimeSpan cacheDuration)?> FromNull() =>
+        Task.FromResult<(string token, TimeSpan cacheDuration)?>(null);
+
+    private static HttpMessageInvoker BuildInvoker(
+        HttpMessageHandler inner,
+        Func<CancellationToken, Task<(string token, TimeSpan cacheDuration)?>> tokenProvider
+    ) => new(new AuthenticationHttpHandler(tokenProvider, inner), disposeHandler: true);
 
     private static HttpRequestMessage Request(string path) =>
         new(HttpMethod.Post, new Uri("http://localhost" + path));
 
     private sealed class CapturingHandler : HttpMessageHandler
     {
-        public List<HttpRequestMessage> Requests { get; } = new();
+        private readonly List<HttpRequestMessage> _requests = new();
+
+        public IReadOnlyList<HttpRequestMessage> Requests
+        {
+            get
+            {
+                lock (_requests)
+                    return _requests.ToArray();
+            }
+        }
 
         protected override Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request,
             CancellationToken cancellationToken
         )
         {
-            Requests.Add(request);
+            lock (_requests)
+                _requests.Add(request);
             return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
         }
     }

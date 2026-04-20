@@ -64,7 +64,7 @@ client.SetCredentials("root", "rootpwd");
 
 - When credentials are set, the client automatically obtains and caches an authentication token
 - The token is included in all subsequent requests via the `authorization` header
-- Calling `SetCredentials` again will will update the cached credentials and obtain new tokens with the new credentials
+- Calling `SetCredentials` again will will update the cached credentials and obtain a new token on the next request
 - Tokens are automatically refreshed when they expire, so the client will continue to function without interruption as long as valid credentials are set
 
 ## User Management Methods
