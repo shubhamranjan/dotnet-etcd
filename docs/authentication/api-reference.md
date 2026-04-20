@@ -15,7 +15,8 @@ public EtcdClient(
     string password,
     int port = 2379,
     string serverName = "my-etcd-server",
-    Action<GrpcChannelOptions> configureChannelOptions = null)
+    Action<GrpcChannelOptions> configureChannelOptions = null,
+    TimeSpan tokenCacheDuration = null)
 ```
 
 #### Parameters
@@ -26,6 +27,7 @@ public EtcdClient(
 - `port`: The port to connect to (default: 2379)
 - `serverName`: The server name for the connection (default: "my-etcd-server")
 - `configureChannelOptions`: Optional function to configure channel options
+- `tokenCacheDuration`: The duration to cache the authentication token (defaults to 4 minutes if not specified, since etcd tokens typically have a TTL of 5 minutes)
 
 #### Example
 
@@ -41,13 +43,14 @@ var client = new EtcdClient("localhost:2379", "root", "rootpwd");
 Sets or updates the authentication credentials for the client. All subsequent requests will automatically include the authentication token.
 
 ```csharp
-public void SetCredentials(string username, string password)
+public void SetCredentials(string username, string password, TimeSpan? tokenCacheDuration = null)
 ```
 
 #### Parameters
 
 - `username`: The username to authenticate with
 - `password`: The password to authenticate with
+- `tokenCacheDuration`: The duration to cache the authentication token (optional, defaults to 4 minutes if not specified)
 
 #### Example
 
@@ -61,7 +64,8 @@ client.SetCredentials("root", "rootpwd");
 
 - When credentials are set, the client automatically obtains and caches an authentication token
 - The token is included in all subsequent requests via the `authorization` header
-- Calling `SetCredentials` again will clear the cached token and re-authenticate with new credentials
+- Calling `SetCredentials` again will will update the cached credentials and obtain new tokens with the new credentials
+- Tokens are automatically refreshed when they expire, so the client will continue to function without interruption as long as valid credentials are set
 
 ## User Management Methods
 
