@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Net.Http;
 using System.Net.Security;
+using System.Threading;
+using System.Threading.Tasks;
 using dotnet_etcd.interfaces;
 using dotnet_etcd.multiplexer;
 using Etcdserverpb;
@@ -68,10 +66,10 @@ public partial class EtcdClient : IDisposable, IEtcdClient
     private readonly IWatchManager _watchManager;
     private readonly AsyncStreamCallFactory<WatchRequest, WatchResponse> _watchCallFactory;
 
-    private string _username;
-    private string _password;
-    private string _authToken;
-    private readonly object _authLock = new object();
+    private (string username, string password)? _credentials;
+
+    // ETCD Tokens are valid for 5 min per default, so we cache them for the 5 min - 1 min safety margin.
+    private TimeSpan _tokenCacheDuration = TimeSpan.FromMinutes(4);
 
     // https://learn.microsoft.com/en-us/aspnet/core/grpc/retries?view=aspnetcore-6.0#configure-a-grpc-retry-policy
     private static readonly MethodConfig _defaultGrpcMethodConfig = new()
@@ -83,14 +81,15 @@ public partial class EtcdClient : IDisposable, IEtcdClient
             InitialBackoff = TimeSpan.FromSeconds(1),
             MaxBackoff = TimeSpan.FromSeconds(5),
             BackoffMultiplier = 1.5,
-            RetryableStatusCodes = { StatusCode.Unavailable }
-        }
+            RetryableStatusCodes = { StatusCode.Unavailable },
+        },
     };
 
     // https://github.com/grpc/proposal/blob/master/A6-client-retries.md#throttling-retry-attempts-and-hedged-rpcs
     private static readonly RetryThrottlingPolicy _defaultRetryThrottlingPolicy = new()
     {
-        MaxTokens = 10, TokenRatio = 0.1
+        MaxTokens = 10,
+        TokenRatio = 0.1,
     };
 
     #endregion
@@ -99,6 +98,8 @@ public partial class EtcdClient : IDisposable, IEtcdClient
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="EtcdClient" /> class with a CallInvoker.
+    ///     Automatic authentication is not configured for this overload — the caller is responsible
+    ///     for attaching any auth credentials to the supplied CallInvoker.
     /// </summary>
     /// <param name="callInvoker">The call invoker to use for gRPC calls</param>
     /// <exception cref="ArgumentNullException">Thrown if callInvoker is null</exception>
@@ -106,20 +107,19 @@ public partial class EtcdClient : IDisposable, IEtcdClient
     {
         ArgumentNullException.ThrowIfNull(callInvoker);
 
-        // Add authentication interceptor - it passively reads the cached token
-        var authInterceptor = new AuthenticationInterceptor(() => _authToken);
-        var interceptedCallInvoker = callInvoker.Intercept(authInterceptor);
-
-        _connection = new Connection(interceptedCallInvoker);
+        _connection = new Connection(callInvoker);
 
         // Create the watch call factory
         _watchCallFactory = new AsyncStreamCallFactory<WatchRequest, WatchResponse>(
             (headers, deadline, cancellationToken) =>
-                _connection.WatchClient.Watch(headers, deadline, cancellationToken));
+                _connection.WatchClient.Watch(headers, deadline, cancellationToken)
+        );
 
         // Initialize the watch manager
-        _watchManager = new WatchManager((headers, deadline, cancellationToken) =>
-            _watchCallFactory.CreateDuplexStreamingCall(headers, deadline, cancellationToken));
+        _watchManager = new WatchManager(
+            (headers, deadline, cancellationToken) =>
+                _watchCallFactory.CreateDuplexStreamingCall(headers, deadline, cancellationToken)
+        );
     }
 
     /// <summary>
@@ -131,8 +131,13 @@ public partial class EtcdClient : IDisposable, IEtcdClient
     /// <param name="configureChannelOptions">Function to configure channel options</param>
     /// <param name="interceptors">Interceptors to apply to calls</param>
     /// <exception cref="ArgumentNullException">Thrown if connectionString is null or empty</exception>
-    public EtcdClient(string connectionString, int port = 2379, string serverName = DefaultServerName,
-        Action<GrpcChannelOptions> configureChannelOptions = null, Interceptor[] interceptors = null)
+    public EtcdClient(
+        string connectionString,
+        int port = 2379,
+        string serverName = DefaultServerName,
+        Action<GrpcChannelOptions> configureChannelOptions = null,
+        Interceptor[] interceptors = null
+    )
     {
         // Param check
         if (string.IsNullOrWhiteSpace(connectionString))
@@ -149,16 +154,22 @@ public partial class EtcdClient : IDisposable, IEtcdClient
             port,
             serverName,
             ChannelCredentials.Insecure, // Default to insecure for backward compatibility
-            configureChannelOptions,
-            configureSslOptions: null); // No custom SSL by default
+            options =>
+            {
+                options.HttpHandler = new AuthenticationHttpHandler(
+                    RequestTokenAsync,
+                    TimeSpan.FromMinutes(4),
+                    options.HttpHandler!
+                );
+                configureChannelOptions?.Invoke(options);
+            },
+            configureSslOptions: null // No custom SSL by default
+        );
 
-        // Always add authentication interceptor first (it will be a no-op if credentials aren't set)
-        var authInterceptor = new AuthenticationInterceptor(() => _authToken);
-        var allInterceptors = new[] { authInterceptor }.Concat(interceptors).ToArray();
-
-        CallInvoker callInvoker = allInterceptors.Length > 0
-            ? _channel.Intercept(allInterceptors)
-            : _channel.CreateCallInvoker();
+        CallInvoker callInvoker =
+            interceptors.Length > 0
+                ? _channel.Intercept(interceptors)
+                : _channel.CreateCallInvoker();
 
         // Setup Connection
         _connection = new Connection(callInvoker);
@@ -166,11 +177,14 @@ public partial class EtcdClient : IDisposable, IEtcdClient
         // Create the watch call factory
         _watchCallFactory = new AsyncStreamCallFactory<WatchRequest, WatchResponse>(
             (headers, deadline, cancellationToken) =>
-                _connection.WatchClient.Watch(headers, deadline, cancellationToken));
+                _connection.WatchClient.Watch(headers, deadline, cancellationToken)
+        );
 
         // Initialize the watch manager
-        _watchManager = new WatchManager((headers, deadline, cancellationToken) =>
-            _watchCallFactory.CreateDuplexStreamingCall(headers, deadline, cancellationToken));
+        _watchManager = new WatchManager(
+            (headers, deadline, cancellationToken) =>
+                _watchCallFactory.CreateDuplexStreamingCall(headers, deadline, cancellationToken)
+        );
     }
 
     /// <summary>
@@ -184,12 +198,17 @@ public partial class EtcdClient : IDisposable, IEtcdClient
     /// <param name="configureChannelOptions">Function to configure channel options</param>
     /// <param name="interceptors">Interceptors to apply to calls</param>
     /// <exception cref="ArgumentNullException">Thrown if connectionString is null or empty</exception>
-    public EtcdClient(string connectionString, Action<SslClientAuthenticationOptions> configureSslOptions, int port = 2379, 
-       string serverName = DefaultServerName, Action<GrpcChannelOptions> configureChannelOptions = null, 
-        Interceptor[] interceptors = null)
+    public EtcdClient(
+        string connectionString,
+        Action<SslClientAuthenticationOptions> configureSslOptions,
+        int port = 2379,
+        string serverName = DefaultServerName,
+        Action<GrpcChannelOptions> configureChannelOptions = null,
+        Interceptor[] interceptors = null
+    )
     {
         // Param check
-       if (string.IsNullOrWhiteSpace(connectionString))
+        if (string.IsNullOrWhiteSpace(connectionString))
         {
             throw new ArgumentNullException(nameof(connectionString));
         }
@@ -198,27 +217,32 @@ public partial class EtcdClient : IDisposable, IEtcdClient
         interceptors ??= Array.Empty<Interceptor>();
 
         var channelFactory = new GrpcChannelFactory();
-        
+
         // Use SSL credentials when SSL options configuration is provided
-        var credentials = configureSslOptions != null 
-            ? new SslCredentials() 
-            : ChannelCredentials.Insecure;
-        
+        var credentials =
+            configureSslOptions != null ? new SslCredentials() : ChannelCredentials.Insecure;
+
         _channel = channelFactory.CreateChannel(
             connectionString,
             port,
             serverName,
             credentials,
-            configureChannelOptions,
-            configureSslOptions);
+            options =>
+            {
+                options.HttpHandler = new AuthenticationHttpHandler(
+                    RequestTokenAsync,
+                    TimeSpan.FromMinutes(4),
+                    options.HttpHandler!
+                );
+                configureChannelOptions?.Invoke(options);
+            },
+            configureSslOptions
+        );
 
-        // Always add authentication interceptor first (it will be a no-op if credentials aren't set)
-        var authInterceptor = new AuthenticationInterceptor(() => _authToken);
-        var allInterceptors = new[] { authInterceptor }.Concat(interceptors).ToArray();
-
-        CallInvoker callInvoker = allInterceptors.Length > 0
-            ? _channel.Intercept(allInterceptors)
-            : _channel.CreateCallInvoker();
+        CallInvoker callInvoker =
+            interceptors.Length > 0
+                ? _channel.Intercept(interceptors)
+                : _channel.CreateCallInvoker();
 
         // Setup Connection
         _connection = new Connection(callInvoker);
@@ -226,11 +250,14 @@ public partial class EtcdClient : IDisposable, IEtcdClient
         // Create the watch call factory
         _watchCallFactory = new AsyncStreamCallFactory<WatchRequest, WatchResponse>(
             (headers, deadline, cancellationToken) =>
-                _connection.WatchClient.Watch(headers, deadline, cancellationToken));
+                _connection.WatchClient.Watch(headers, deadline, cancellationToken)
+        );
 
         // Initialize the watch manager
-        _watchManager = new WatchManager((headers, deadline, cancellationToken) =>
-            _watchCallFactory.CreateDuplexStreamingCall(headers, deadline, cancellationToken));
+        _watchManager = new WatchManager(
+            (headers, deadline, cancellationToken) =>
+                _watchCallFactory.CreateDuplexStreamingCall(headers, deadline, cancellationToken)
+        );
     }
 
     /// <summary>
@@ -242,9 +269,17 @@ public partial class EtcdClient : IDisposable, IEtcdClient
     /// <param name="port">The port to connect to</param>
     /// <param name="serverName">The server name</param>
     /// <param name="configureChannelOptions">Function to configure channel options</param>
+    /// <param name="tokenCacheDuration">The duration to cache requested tokens from etcd</param>
     /// <exception cref="ArgumentNullException">Thrown if connectionString is null or empty</exception>
-    public EtcdClient(string connectionString, string username, string password, int port = 2379,
-        string serverName = DefaultServerName, Action<GrpcChannelOptions> configureChannelOptions = null)
+    public EtcdClient(
+        string connectionString,
+        string username,
+        string password,
+        int port = 2379,
+        string serverName = DefaultServerName,
+        Action<GrpcChannelOptions> configureChannelOptions = null,
+        TimeSpan? tokenCacheDuration = null
+    )
         : this(connectionString, port, serverName, configureChannelOptions)
     {
         // Validate and set credentials
@@ -258,11 +293,10 @@ public partial class EtcdClient : IDisposable, IEtcdClient
             throw new ArgumentNullException(nameof(password));
         }
 
-        _username = username;
-        _password = password;
-        
-        // Authenticate immediately with the provided credentials
-        AuthenticateAndCacheToken();
+        if (tokenCacheDuration.HasValue)
+            _tokenCacheDuration = tokenCacheDuration.Value;
+
+        _credentials = (username, password);
     }
 
     /// <summary>
@@ -286,11 +320,18 @@ public partial class EtcdClient : IDisposable, IEtcdClient
             // Create the watch call factory
             _watchCallFactory = new AsyncStreamCallFactory<WatchRequest, WatchResponse>(
                 (headers, deadline, cancellationToken) =>
-                    _connection.WatchClient.Watch(headers, deadline, cancellationToken));
+                    _connection.WatchClient.Watch(headers, deadline, cancellationToken)
+            );
 
             // Initialize the watch manager with default implementation
-            _watchManager = new WatchManager((headers, deadline, cancellationToken) =>
-                _watchCallFactory.CreateDuplexStreamingCall(headers, deadline, cancellationToken));
+            _watchManager = new WatchManager(
+                (headers, deadline, cancellationToken) =>
+                    _watchCallFactory.CreateDuplexStreamingCall(
+                        headers,
+                        deadline,
+                        cancellationToken
+                    )
+            );
         }
     }
 
@@ -304,8 +345,13 @@ public partial class EtcdClient : IDisposable, IEtcdClient
     /// </summary>
     /// <param name="username">The username for authentication</param>
     /// <param name="password">The password for authentication</param>
+    /// <param name="tokenCacheDuration">The duration to cache requested tokens from etcd</param>
     /// <exception cref="ArgumentNullException">Thrown if username or password is null or empty</exception>
-    public void SetCredentials(string username, string password)
+    public void SetCredentials(
+        string username,
+        string password,
+        TimeSpan? tokenCacheDuration = null
+    )
     {
         if (string.IsNullOrWhiteSpace(username))
         {
@@ -317,50 +363,30 @@ public partial class EtcdClient : IDisposable, IEtcdClient
             throw new ArgumentNullException(nameof(password));
         }
 
-        lock (_authLock)
-        {
-            _username = username;
-            _password = password;
-            _authToken = null; // Reset token to force re-authentication on next request
-        }
-        
-        // Authenticate immediately with the new credentials
-        AuthenticateAndCacheToken();
+        if (tokenCacheDuration.HasValue)
+            _tokenCacheDuration = tokenCacheDuration.Value;
+
+        _credentials = (username, password);
     }
 
-    /// <summary>
-    ///     Authenticates with etcd and caches the token.
-    ///     This method is called immediately when credentials are set (constructor or SetCredentials).
-    /// </summary>
-    private void AuthenticateAndCacheToken()
+    private async Task<string> RequestTokenAsync(CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(_username) || string.IsNullOrWhiteSpace(_password))
-        {
-            return;
-        }
+        var cred = _credentials;
+        if (!cred.HasValue)
+            return null;
 
-        lock (_authLock)
-        {
-            try
-            {
-                var authRequest = new AuthenticateRequest
+        AuthenticateResponse response = await _connection
+            .AuthClient.AuthenticateAsync(
+                new AuthenticateRequest
                 {
-                    Name = _username,
-                    Password = _password
-                };
+                    Name = cred.Value.username,
+                    Password = cred.Value.password,
+                },
+                cancellationToken: cancellationToken
+            )
+            .ConfigureAwait(false);
 
-                // Call authenticate directly on the connection's auth client
-                // The interceptor won't interfere because it only reads the cached token
-                var authResponse = _connection.AuthClient.Authenticate(authRequest, null, null, default);
-                _authToken = authResponse.Token;
-            }
-            catch
-            {
-                // Clear token on failure
-                _authToken = null;
-                throw;
-            }
-        }
+        return response.Token;
     }
 
     #endregion
