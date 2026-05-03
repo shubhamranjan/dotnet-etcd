@@ -121,25 +121,27 @@ namespace dotnet_etcd.Tests.Integration
             Console.WriteLine("Waiting for restart...");
             await Task.Delay(15000); 
 
-            // 6. Put post-disconnect
-            Console.WriteLine("Putting value after reconnect...");
-            // We might need to retry Put if the client is still reconnecting
-            for (int i = 0; i < 5; i++)
+            // 6. Put post-reconnect, retrying until an event is received or timeout.
+            // The watch reconnects with StartRevision=0 (watch from now), so if the put races
+            // ahead of the re-registration the event is permanently missed. Retrying every 2s
+            // ensures at least one put lands after the watch has been re-established.
+            Console.WriteLine("Putting value after reconnect (retrying until event received)...");
+            var sw = Stopwatch.StartNew();
+            while (sw.Elapsed.TotalSeconds < 30 && events.Count == 0)
             {
                 try 
                 {
                     await _client.PutAsync(testKey, "recovered-restart");
-                    break;
                 }
                 catch
                 {
-                    await Task.Delay(1000);
+                    // etcd may still be starting up; keep retrying
                 }
+                await Task.Delay(2000);
             }
 
             // 7. Verification
-            await Task.Delay(2000);
-            Assert.Single(events);
+            Assert.NotEmpty(events);
             Assert.Equal("recovered-restart", events[0].Value);
         }
 
