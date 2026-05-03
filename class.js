@@ -208,3 +208,80 @@ var charts = document.getElementsByClassName('historychart');
 for (i = 0, l = charts.length; i < l; i++) {
     renderChart(charts[i]);
 }
+
+/* History diff charts */
+var renderDiffChart = function (chart) {
+    // Remove current children (e.g. PNG placeholder)
+    while (chart.firstChild) {
+        chart.firstChild.remove();
+    }
+
+    var chartData = window[chart.getAttribute('data-data')];
+    var options = {
+        low: -chartData.minMaxValue,
+        high: chartData.minMaxValue,
+        axisY: {
+            onlyInteger: true
+        }
+    };
+    var barChart = new Chartist.Bar(chart, {
+        series: chartData.series
+    }, options);
+
+    var tooltip = document.createElement("div");
+    tooltip.className = "tooltip";
+    tooltip.innerHTML = chartData.tooltip;
+
+    chart.appendChild(tooltip);
+
+    /* Tooltips */
+    /* Tooltips */
+    var showToolTip = function () {
+        var index = this.getAttribute('ct:meta');
+
+        tooltip.innerHTML = chartData.tooltips[index];
+        tooltip.style.display = 'block';
+    };
+
+    var moveToolTip = function (event) {
+        var box = chart.getBoundingClientRect();
+        var left = event.pageX - box.left - window.pageXOffset;
+        var top = event.pageY - box.top - window.pageYOffset;
+
+        left = left + 20;
+        top = top - tooltip.offsetHeight / 2;
+
+        if (left + tooltip.offsetWidth > box.width) {
+            left -= tooltip.offsetWidth + 40;
+        }
+
+        if (top < 0) {
+            top = 0;
+        }
+
+        if (top + tooltip.offsetHeight > box.height) {
+            top = box.height - tooltip.offsetHeight;
+        }
+
+        tooltip.style.left = left + 'px';
+        tooltip.style.top = top + 'px';
+    };
+
+    var hideToolTip = function () {
+        tooltip.style.display = 'none';
+    };
+    chart.addEventListener('mousemove', moveToolTip);
+
+    barChart.on('created', function () {
+        var chartBars = chart.getElementsByClassName('ct-bar');
+        for (i = 0, l = chartBars.length; i < l; i++) {
+            chartBars[i].addEventListener('mousemove', showToolTip);
+            chartBars[i].addEventListener('mouseout', hideToolTip);
+        }
+    });
+};
+
+var charts = document.getElementsByClassName('historydiffchart');
+for (i = 0, l = charts.length; i < l; i++) {
+    renderDiffChart(charts[i]);
+}

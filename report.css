@@ -169,10 +169,10 @@ code { font-family: Consolas, monospace; font-size: 0.9em; }
 .ct-chart .ct-line { stroke-width: 2px !important; }
 .ct-chart .ct-point { stroke-width: 6px !important; transition: stroke-width .2s; }
 .ct-chart .ct-point:hover { stroke-width: 10px !important; }
-.ct-chart .ct-series.ct-series-a .ct-line, .ct-chart .ct-series.ct-series-a .ct-point { stroke: #c00 !important;}
-.ct-chart .ct-series.ct-series-b .ct-line, .ct-chart .ct-series.ct-series-b .ct-point { stroke: #1c2298 !important;}
-.ct-chart .ct-series.ct-series-c .ct-line, .ct-chart .ct-series.ct-series-c .ct-point { stroke: #0aad0a !important;}
-.ct-chart .ct-series.ct-series-d .ct-line, .ct-chart .ct-series.ct-series-d .ct-point { stroke: #FF6A00 !important;}
+.ct-chart .ct-series.ct-series-a .ct-line, .ct-chart .ct-series.ct-series-a .ct-point, .ct-chart .ct-series.ct-series-a .ct-bar { stroke: #c00 !important;}
+.ct-chart .ct-series.ct-series-b .ct-line, .ct-chart .ct-series.ct-series-b .ct-point, .ct-chart .ct-series.ct-series-b .ct-bar { stroke: #1c2298 !important;}
+.ct-chart .ct-series.ct-series-c .ct-line, .ct-chart .ct-series.ct-series-c .ct-point, .ct-chart .ct-series.ct-series-c .ct-bar { stroke: #0aad0a !important;}
+.ct-chart .ct-series.ct-series-d .ct-line, .ct-chart .ct-series.ct-series-d .ct-point, .ct-chart .ct-series.ct-series-d .ct-bar { stroke: #FF6A00 !important;}
 
 .tinylinecoveragechart, .tinybranchcoveragechart, .tinymethodcoveragechart, .tinyfullmethodcoveragechart { background-color: #fff; margin-left: -3px; float: left; border: 1px solid #c1c1c1; width: 30px; height: 18px; }
 .historiccoverageoffset { margin-top: 7px; }
@@ -743,19 +743,19 @@ code { font-family: Consolas, monospace; font-size: 0.9em; }
             stroke: #fff !important;
         }
 
-        .ct-chart .ct-series.ct-series-a .ct-line, .ct-chart .ct-series.ct-series-a .ct-point {
+        .ct-chart .ct-series.ct-series-a .ct-line, .ct-chart .ct-series.ct-series-a .ct-point, .ct-chart .ct-series.ct-series-a .ct-bar {
             stroke: #0078D4 !important;
         }
 
-        .ct-chart .ct-series.ct-series-b .ct-line, .ct-chart .ct-series.ct-series-b .ct-point {
+        .ct-chart .ct-series.ct-series-b .ct-line, .ct-chart .ct-series.ct-series-b .ct-point, .ct-chart .ct-series.ct-series-b .ct-bar {
             stroke: #6dc428 !important;
         }
 
-        .ct-chart .ct-series.ct-series-c .ct-line, .ct-chart .ct-series.ct-series-c .ct-point {
+        .ct-chart .ct-series.ct-series-c .ct-line, .ct-chart .ct-series.ct-series-c .ct-point, .ct-chart .ct-series.ct-series-c .ct-bar {
             stroke: #e58f1d !important;
         }
 
-        .ct-chart .ct-series.ct-series-d .ct-line, .ct-chart .ct-series.ct-series-d .ct-point {
+        .ct-chart .ct-series.ct-series-d .ct-line, .ct-chart .ct-series.ct-series-d .ct-point, .ct-chart .ct-series.ct-series-d .ct-bar {
             stroke: #c71bca !important;
         }
 
