@@ -155,12 +155,12 @@ public partial class EtcdClient : IDisposable, IEtcdClient
             ChannelCredentials.Insecure, // Default to insecure for backward compatibility
             options =>
             {
+                configureChannelOptions?.Invoke(options);
                 _authHttpHandler = new AuthenticationHttpHandler(
                     RequestTokenAsync,
                     options.HttpHandler!
                 );
                 options.HttpHandler = _authHttpHandler;
-                configureChannelOptions?.Invoke(options);
             },
             configureSslOptions: null // No custom SSL by default
         );
@@ -228,12 +228,12 @@ public partial class EtcdClient : IDisposable, IEtcdClient
             credentials,
             options =>
             {
+                configureChannelOptions?.Invoke(options);
                 _authHttpHandler = new AuthenticationHttpHandler(
                     RequestTokenAsync,
                     options.HttpHandler!
                 );
                 options.HttpHandler = _authHttpHandler;
-                configureChannelOptions?.Invoke(options);
             },
             configureSslOptions
         );
