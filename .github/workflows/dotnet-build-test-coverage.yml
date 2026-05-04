@@ -7,6 +7,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  pull-requests: write
+  contents: write
+
 jobs:
   build-test-coverage:
     runs-on: ubuntu-latest
@@ -58,14 +62,14 @@ jobs:
         cat ./coveragereport/Summary.txt
     
     - name: Upload Coverage Report
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: coverage-report
         path: ./coveragereport
         retention-days: 30
     
     - name: Add Coverage PR Comment
-      uses: marocchino/sticky-pull-request-comment@v2
+      uses: marocchino/sticky-pull-request-comment@v3
       if: github.event_name == 'pull_request'
       with:
         recreate: true

@@ -425,4 +425,8 @@ public interface IEtcdClient
 
     Task<long[]> WatchRangeAsync(string[] paths, Action<WatchResponse>[] methods, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
+
+    void CancelWatch(long watchId);
+
+    void CancelWatch(long[] watchIds);
 }
