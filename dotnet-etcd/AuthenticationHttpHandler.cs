@@ -23,8 +23,7 @@ internal sealed class AuthenticationHttpHandler : DelegatingHandler
         Task<(string token, TimeSpan cacheDuration)?>
     > _tokenProvider;
 
-    private string? _cachedToken;
-    private DateTime _tokenExpiresAtUtc;
+    private CachedToken? _cachedToken;
 
     public AuthenticationHttpHandler(
         Func<CancellationToken, Task<(string token, TimeSpan cacheDuration)?>> tokenProvider,
@@ -45,7 +44,6 @@ internal sealed class AuthenticationHttpHandler : DelegatingHandler
         try
         {
             _cachedToken = null;
-            _tokenExpiresAtUtc = DateTime.MinValue;
         }
         finally
         {
@@ -73,28 +71,31 @@ internal sealed class AuthenticationHttpHandler : DelegatingHandler
 
     private async Task<string?> GetValidTokenAsync(CancellationToken cancellationToken)
     {
-        if (DateTime.UtcNow < _tokenExpiresAtUtc)
-            return _cachedToken;
+        var current = _cachedToken;
+        if (current is not null && DateTime.UtcNow < current.ExpiresAtUtc)
+            return current.Token;
 
         await _semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            if (_cachedToken is not null && DateTime.UtcNow < _tokenExpiresAtUtc)
-                return _cachedToken;
+            current = _cachedToken;
+            if (current is not null && DateTime.UtcNow < current.ExpiresAtUtc)
+                return current.Token;
 
             (string token, TimeSpan cacheDuration)? result = await _tokenProvider(cancellationToken)
                 .ConfigureAwait(false);
 
             if (!result.HasValue)
             {
-                // Client needs no authentication, cache null token value until the next invalidate call
-                _cachedToken = null;
-                _tokenExpiresAtUtc = DateTime.MaxValue;
+                // Client needs no authentication, cache null token value until the next invalidated call
+                _cachedToken = new CachedToken(null, DateTime.MaxValue);
                 return null;
             }
 
-            _tokenExpiresAtUtc = DateTime.UtcNow + result.Value.cacheDuration;
-            _cachedToken = result.Value.token;
+            _cachedToken = new CachedToken(
+                result.Value.token,
+                DateTime.UtcNow + result.Value.cacheDuration
+            );
             return result.Value.token;
         }
         finally
@@ -112,4 +113,6 @@ internal sealed class AuthenticationHttpHandler : DelegatingHandler
 
         base.Dispose(disposing);
     }
+
+    private record CachedToken(string? Token, DateTime ExpiresAtUtc);
 }
