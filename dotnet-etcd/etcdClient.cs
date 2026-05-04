@@ -64,7 +64,9 @@ public partial class EtcdClient : IDisposable, IEtcdClient
     private readonly IWatchManager _watchManager;
     private readonly AsyncStreamCallFactory<WatchRequest, WatchResponse> _watchCallFactory;
 
-    private (string username, string password)? _credentials;
+    private sealed record EtcdCredentials(string Username, string Password);
+
+    private volatile EtcdCredentials _credentials;
     private AuthenticationHttpHandler _authHttpHandler;
 
     // ETCD Tokens are valid for 5 min per default, so we cache them for the 5 min - 1 min safety margin.
@@ -294,7 +296,7 @@ public partial class EtcdClient : IDisposable, IEtcdClient
         if (tokenCacheDuration.HasValue)
             _tokenCacheDuration = tokenCacheDuration.Value;
 
-        _credentials = (username, password);
+        _credentials = new EtcdCredentials(username, password);
     }
 
     /// <summary>
@@ -364,7 +366,7 @@ public partial class EtcdClient : IDisposable, IEtcdClient
         if (tokenCacheDuration.HasValue)
             _tokenCacheDuration = tokenCacheDuration.Value;
 
-        _credentials = (username, password);
+        _credentials = new EtcdCredentials(username, password);
 
         // Purge any token cached under the previous credentials so the next request re-auths.
         _authHttpHandler?.InvalidateToken();
@@ -383,16 +385,16 @@ public partial class EtcdClient : IDisposable, IEtcdClient
         CancellationToken cancellationToken
     )
     {
-        (string username, string password)? cred = _credentials;
-        if (!cred.HasValue)
+        EtcdCredentials cred = _credentials;
+        if (cred is null)
             return null;
 
         AuthenticateResponse response = await _connection
             .AuthClient.AuthenticateAsync(
                 new AuthenticateRequest
                 {
-                    Name = cred.Value.username,
-                    Password = cred.Value.password,
+                    Name = cred.Username,
+                    Password = cred.Password,
                 },
                 cancellationToken: cancellationToken
             )
