@@ -63,7 +63,7 @@ internal sealed class AuthenticationHttpHandler : DelegatingHandler
         string? token = await GetValidTokenAsync(cancellationToken).ConfigureAwait(false);
         if (!string.IsNullOrWhiteSpace(token))
         {
-            request.Headers.TryAddWithoutValidation(AuthorizationHeader, token);
+            request.Headers.Add(AuthorizationHeader, token);
         }
 
         return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
