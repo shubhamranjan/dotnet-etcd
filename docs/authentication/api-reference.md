@@ -16,7 +16,7 @@ public EtcdClient(
     int port = 2379,
     string serverName = "my-etcd-server",
     Action<GrpcChannelOptions> configureChannelOptions = null,
-    TimeSpan tokenCacheDuration = null)
+    TimeSpan? tokenCacheDuration = null)
 ```
 
 #### Parameters
@@ -65,7 +65,7 @@ client.SetCredentials("root", "rootpwd");
 - When credentials are set, the client automatically obtains and caches an authentication token
 - The token is included in all subsequent requests via the `authorization` header
 - Calling `SetCredentials` again will will update the cached credentials and obtain a new token on the next request
-- Tokens are automatically refreshed when they expire, so the client will continue to function without interruption as long as valid credentials are set
+- Tokens are refreshed on-demand when they expire, so the client will continue to function without interruption as long as valid credentials are set
 - Configured credentials can be cleared by calling `ClearCredentials()`, which will remove the cached token and stop including authentication headers in requests
 
 ## User Management Methods
