@@ -15,9 +15,10 @@ namespace dotnet_etcd.Tests.Integration
         public SslIntegrationTests(Xunit.Abstractions.ITestOutputHelper output)
         {
             _output = output;
-            // Load the CA certificate
-            // Ensure certs are copied to output directory via csproj
-            var caCertPath = System.IO.Path.Combine(AppContext.BaseDirectory, "certs", "ca.pem");
+            // Load the CA certificate. The csproj copies certs to the output dir, but the certs are
+            // generated (generate-certs.sh) and gitignored, so a build that predates generation won't
+            // have them in the output dir. Resolve robustly by also falling back to the source tree.
+            var caCertPath = ResolveCaCertPath();
             var caCert = X509CertificateLoader.LoadCertificateFromFile(caCertPath);
 
             // Connect to the SSL-enabled etcd instance exposed on port 2389
@@ -98,6 +99,41 @@ namespace dotnet_etcd.Tests.Integration
             await _client.DeleteAsync(key);
             getVal = await _client.GetValAsync(key);
             Assert.Equal(string.Empty, getVal);
+        }
+
+        /// <summary>
+        ///     Locates certs/ca.pem. Prefers the build output copy, then walks up the directory tree
+        ///     to find the source certs directory (so a stale build that predates cert generation still
+        ///     works). Throws a clear, actionable error if certs were never generated.
+        /// </summary>
+        private static string ResolveCaCertPath()
+        {
+            const string relativePath = "certs/ca.pem";
+
+            var outputPath = System.IO.Path.Combine(AppContext.BaseDirectory, "certs", "ca.pem");
+            if (System.IO.File.Exists(outputPath))
+            {
+                return outputPath;
+            }
+
+            for (
+                var dir = new System.IO.DirectoryInfo(AppContext.BaseDirectory);
+                dir is not null;
+                dir = dir.Parent
+            )
+            {
+                var candidate = System.IO.Path.Combine(dir.FullName, relativePath);
+                if (System.IO.File.Exists(candidate))
+                {
+                    return candidate;
+                }
+            }
+
+            throw new System.IO.FileNotFoundException(
+                "Could not find certs/ca.pem. Run dotnet-etcd.Tests/generate-certs.sh to generate the "
+                    + "TLS certificates before running the SSL integration tests.",
+                outputPath
+            );
         }
 
         public void Dispose()

@@ -309,3 +309,5 @@ build.out
 test.out
 
 certs/
+dotnet-etcd.Tests/cluster-type.txt
+.omc/

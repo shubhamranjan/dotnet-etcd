@@ -140,21 +140,20 @@ When adding new tests:
 
 ### Starting the etcd Cluster
 
-You can start either a single-node or a 3-node etcd cluster for testing:
+A single `docker-compose.yml` defines the full test topology:
 
-#### Single-node Cluster
+| Container      | Endpoint                 | Purpose                                                  |
+|----------------|--------------------------|----------------------------------------------------------|
+| `etcd1/2/3`    | `2379` / `22379` / `32379` | 3-node cluster                                          |
+| `etcd-ssl`     | `https://localhost:2389` | TLS-enabled node for SSL tests                           |
+| `etcd-authttl` | `2399`                   | Short `--auth-token-ttl=2` node for token-renewal tests  |
 
 ```bash
 ./start-etcd.sh
-# or explicitly specify single-node
-./start-etcd.sh single
 ```
 
-#### 3-node Cluster
-
-```bash
-./start-etcd.sh 3nodes
-```
+The fixture reads `cluster-type.txt` to choose its connection string. It defaults to `single`
+(connecting on `2379`); pass `./start-etcd.sh 3nodes` to exercise all three cluster endpoints.
 
 ### Running the Tests
 
@@ -182,10 +181,10 @@ For convenience, you can use the `run-integration-tests.sh` script to start the 
 stop the cluster:
 
 ```bash
-# Run with single-node cluster (default)
+# Start the containers, run the integration tests, then tear down (default: single)
 ./run-integration-tests.sh
 
-# Run with 3-node cluster
+# Use all three cluster endpoints
 ./run-integration-tests.sh 3nodes
 ```
 
@@ -212,7 +211,7 @@ To stop the etcd cluster:
 
 ## Cluster Configuration
 
-- `docker-compose-single.yml`: Configuration for a single-node etcd cluster
-- `docker-compose-3nodes.yml`: Configuration for a 3-node etcd cluster
-- `start-etcd.sh`: Script to start the etcd cluster
-- `stop-etcd.sh`: Script to stop the etcd cluster 
+- `docker-compose.yml`: Full test topology (3-node cluster, TLS node, short-TTL auth node)
+- `generate-certs.sh`: Generates the gitignored TLS certificates the `etcd-ssl` node mounts
+- `start-etcd.sh`: Script to start the etcd containers (generates certs if missing)
+- `stop-etcd.sh`: Script to stop the etcd containers
