@@ -1,7 +1,9 @@
 #nullable enable
 
 using System;
+using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,6 +18,8 @@ internal sealed class AuthenticationHttpHandler : DelegatingHandler
 {
     private const string AuthorizationHeader = "authorization";
     private const string AuthenticatePath = "/etcdserverpb.Auth/Authenticate";
+    private const string GrpcStatusHeader = "grpc-status";
+    private const string GrpcStatusUnauthenticated = "16"; // StatusCode.Unauthenticated
 
     private readonly SemaphoreSlim _semaphore = new(1, 1);
     private readonly Func<
@@ -24,6 +28,7 @@ internal sealed class AuthenticationHttpHandler : DelegatingHandler
     > _tokenProvider;
 
     private CachedToken? _cachedToken;
+    private volatile bool _disposed;
 
     public AuthenticationHttpHandler(
         Func<CancellationToken, Task<(string token, TimeSpan cacheDuration)?>> tokenProvider,
@@ -40,7 +45,19 @@ internal sealed class AuthenticationHttpHandler : DelegatingHandler
     /// </summary>
     public void InvalidateToken()
     {
-        _semaphore.Wait();
+        if (_disposed)
+            return;
+
+        try
+        {
+            _semaphore.Wait();
+        }
+        catch (ObjectDisposedException)
+        {
+            // Lost a race with Dispose() — nothing to invalidate on a disposed handler.
+            return;
+        }
+
         try
         {
             _cachedToken = null;
@@ -61,12 +78,41 @@ internal sealed class AuthenticationHttpHandler : DelegatingHandler
             return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
         string? token = await GetValidTokenAsync(cancellationToken).ConfigureAwait(false);
-        if (!string.IsNullOrWhiteSpace(token))
+        bool tokenAttached = !string.IsNullOrWhiteSpace(token);
+        if (tokenAttached)
         {
-            request.Headers.Add(AuthorizationHeader, token);
+            // Replace any existing authorization header. Use TryAddWithoutValidation so opaque
+            // etcd tokens (JWT/base64 containing '+', '/', '=') aren't rejected by the typed
+            // Authorization header parser, which would otherwise throw FormatException.
+            request.Headers.Remove(AuthorizationHeader);
+            request.Headers.TryAddWithoutValidation(AuthorizationHeader, token);
         }
 
-        return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        HttpResponseMessage response = await base.SendAsync(request, cancellationToken)
+            .ConfigureAwait(false);
+
+        // If etcd rejected the token we attached, purge the cache so the next attempt (e.g. a
+        // watch/lease stream re-establishing) fetches a fresh token instead of replaying the
+        // rejected one. See issue #283.
+        if (tokenAttached && IsUnauthenticated(response))
+            InvalidateToken();
+
+        return response;
+    }
+
+    private static bool IsUnauthenticated(HttpResponseMessage response)
+    {
+        // A gRPC error surfaces grpc-status either in the initial headers (a "trailers-only"
+        // response, which is how etcd fast-fails an invalid/expired token) or in the trailing
+        // headers. Check both so we catch the rejection wherever it lands.
+        return HasUnauthenticatedStatus(response.Headers)
+            || HasUnauthenticatedStatus(response.TrailingHeaders);
+    }
+
+    private static bool HasUnauthenticatedStatus(HttpResponseHeaders headers)
+    {
+        return headers.TryGetValues(GrpcStatusHeader, out var values)
+            && values.Contains(GrpcStatusUnauthenticated);
     }
 
     private async Task<string?> GetValidTokenAsync(CancellationToken cancellationToken)
@@ -108,6 +154,7 @@ internal sealed class AuthenticationHttpHandler : DelegatingHandler
     {
         if (disposing)
         {
+            _disposed = true;
             _semaphore.Dispose();
         }
 

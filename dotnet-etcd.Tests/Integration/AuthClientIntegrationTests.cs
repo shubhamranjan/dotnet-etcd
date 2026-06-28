@@ -277,6 +277,92 @@ public class AuthClientIntegrationTests : IDisposable
         }
     }
 
+    [Fact]
+    public async Task ClearCredentials_AfterAuthentication_StopsSendingToken()
+    {
+        // Arrange
+        var client = new EtcdClient("127.0.0.1:2379");
+        _clientsToDispose.Add(client);
+
+        try
+        {
+            await SetupAuth(client);
+            await CreateTestUserWithRootRole(client);
+
+            client.SetCredentials(TestUsername, TestPassword);
+
+            // Authenticated operation succeeds.
+            var authed = await client.PutAsync("clear-cred-test", "value");
+            Assert.NotNull(authed);
+
+            // Act - drop credentials and purge the cached token.
+            client.ClearCredentials();
+
+            // Assert - subsequent operations now go out unauthenticated and are rejected.
+            var exception = await Assert.ThrowsAsync<RpcException>(async () =>
+                await client.GetAsync("clear-cred-test")
+            );
+            Assert.True(
+                exception.StatusCode == StatusCode.Unauthenticated
+                    || exception.StatusCode == StatusCode.InvalidArgument,
+                $"Unexpected status code: {exception.StatusCode}"
+            );
+        }
+        finally
+        {
+            await CleanupAuth(client);
+            client.Dispose();
+        }
+    }
+
+    [Fact]
+    public async Task AuthenticatedWatch_ShouldReceiveEvents()
+    {
+        // Guards the issue #283 path: the auth token must be attached to the long-lived watch
+        // stream (which is opened through the AuthenticationHttpHandler), not just unary calls.
+        var client = new EtcdClient("127.0.0.1:2379");
+        _clientsToDispose.Add(client);
+        var testKey = $"auth-watch-{Guid.NewGuid():N}";
+        var received = new List<string>();
+
+        try
+        {
+            await SetupAuth(client);
+            await CreateTestUserWithRootRole(client);
+            client.SetCredentials(TestUsername, TestPassword);
+
+            client.Watch(
+                testKey,
+                response =>
+                {
+                    lock (received)
+                    {
+                        foreach (var evt in response.Events)
+                            received.Add(evt.Kv.Value.ToStringUtf8());
+                    }
+                }
+            );
+
+            // Give the authenticated watch stream time to establish.
+            await Task.Delay(1000);
+
+            await client.PutAsync(testKey, "watched-value");
+
+            // Wait for the event to propagate over the stream.
+            await Task.Delay(1000);
+
+            lock (received)
+            {
+                Assert.Contains("watched-value", received);
+            }
+        }
+        finally
+        {
+            await CleanupAuth(client);
+            client.Dispose();
+        }
+    }
+
     #endregion
 
     #region Error Handling Tests
