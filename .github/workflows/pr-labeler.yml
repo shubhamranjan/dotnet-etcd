@@ -1,0 +1,79 @@
+name: PR Auto-Labeler
+
+# Applies labels from the PR's conventional-commit title prefix so the
+# auto-generated release notes (.github/release.yml) group it correctly,
+# without anyone having to remember to label by hand. Re-runs on title edits.
+on:
+  pull_request_target:
+    types: [opened, edited, reopened]
+
+# Only needs to add labels. We never check out or execute PR code — the title is
+# treated as data and only regex-matched — so pull_request_target is safe here.
+permissions:
+  pull-requests: write
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label from conventional-commit title
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const title = pr.title || "";
+
+            // Conventional-commit type -> label used by .github/release.yml categories.
+            const typeToLabel = {
+              feat: "enhancement", feature: "enhancement",
+              fix: "bug", bugfix: "bug", hotfix: "bug",
+              deps: "dependencies",
+              docs: "documentation", doc: "documentation",
+              ci: "ci", cd: "ci",
+              test: "tests", tests: "tests",
+              chore: "chore", refactor: "chore", perf: "chore",
+              style: "chore", build: "chore",
+            };
+            const colors = {
+              enhancement: "a2eeef", bug: "d73a4a", dependencies: "0366d6",
+              documentation: "0075ca", ci: "ededed", tests: "c5def5",
+              chore: "fef2c0", "breaking-change": "b60205",
+            };
+
+            // e.g. "feat(auth)!: ..." -> type=feat, scope=(auth), breaking=!
+            const m = title.match(/^([a-zA-Z]+)(\([^)]*\))?(!)?:/);
+            const wanted = new Set();
+            if (m) {
+              const label = typeToLabel[m[1].toLowerCase()];
+              if (label) wanted.add(label);
+              if (m[3] === "!") wanted.add("breaking-change");
+            }
+            if (/breaking[ -]change/i.test(title) || /breaking[ -]change/i.test(pr.body || "")) {
+              wanted.add("breaking-change");
+            }
+
+            if (wanted.size === 0) {
+              core.info(`No conventional-commit prefix in title: "${title}". Leaving it for the "Other Changes" bucket.`);
+              return;
+            }
+
+            const { owner, repo } = context.repo;
+            // Ensure each label exists (create on first use) before applying.
+            for (const name of wanted) {
+              try {
+                await github.rest.issues.getLabel({ owner, repo, name });
+              } catch (e) {
+                if (e.status === 404) {
+                  await github.rest.issues.createLabel({ owner, repo, name, color: colors[name] || "ededed" });
+                  core.info(`Created missing label: ${name}`);
+                } else {
+                  throw e;
+                }
+              }
+            }
+
+            // Additive only — never removes labels a maintainer set by hand.
+            await github.rest.issues.addLabels({
+              owner, repo, issue_number: pr.number, labels: [...wanted],
+            });
+            core.info(`Applied labels: ${[...wanted].join(", ")}`);
