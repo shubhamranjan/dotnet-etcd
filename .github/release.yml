@@ -1,0 +1,36 @@
+# Configuration for GitHub's automatically generated release notes.
+# Used by the "Create GitHub Release" step (gh release create --generate-notes).
+# Notes are built from pull requests merged since the previous tag and grouped
+# into the categories below by PR label. No manual changelog to maintain.
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+  categories:
+    - title: ⚠️ Breaking Changes
+      labels:
+        - breaking-change
+        - breaking
+    - title: 🚀 Features
+      labels:
+        - enhancement
+        - feature
+    - title: 🐛 Bug Fixes
+      labels:
+        - bug
+        - fix
+    - title: 📦 Dependencies
+      labels:
+        - dependencies
+    - title: 📝 Documentation
+      labels:
+        - documentation
+    - title: 🔧 Maintenance & CI
+      labels:
+        - ci
+        - chore
+        - tests
+    # Catch-all so every other merged PR still appears in the notes.
+    - title: Other Changes
+      labels:
+        - "*"
