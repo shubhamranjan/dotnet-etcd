@@ -3,9 +3,16 @@ name: Publish to NuGet
 on:
   push:
     tags:
-      # Only publish on version tags (e.g. 8.1.0 or v8.1.0), not arbitrary tags.
+      # Only publish on version tags, not arbitrary tags. Covers stable (8.1.0)
+      # and pre-release (8.2.0-beta) tags, with or without a leading 'v'.
       - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+-*'
       - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-*'
+
+# Needed for the Create GitHub Release step to create a release and upload assets.
+permissions:
+  contents: write
 
 jobs:
   publish:
@@ -38,3 +45,20 @@ jobs:
 
     - name: Push to NuGet
       run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+
+    - name: Create GitHub Release
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        # Auto-generate notes from PRs merged since the previous tag (grouped per
+        # .github/release.yml). Mark pre-release tags (those with a '-' suffix).
+        PRERELEASE=""
+        case "$VERSION" in
+          *-*) PRERELEASE="--prerelease" ;;
+        esac
+        gh release create "$GITHUB_REF_NAME" \
+          --title "$GITHUB_REF_NAME" \
+          --generate-notes \
+          --verify-tag \
+          $PRERELEASE \
+          ./artifacts/*.nupkg
