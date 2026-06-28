@@ -21,6 +21,25 @@ updates:
       prefix: "deps"
       include: "scope"
 
+  # NuGet dependencies (test project)
+  - package-ecosystem: "nuget"
+    directory: "/dotnet-etcd.Tests"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    reviewers:
+      - "shubhamranjan"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "nuget"
+      - "tests"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+
   # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
