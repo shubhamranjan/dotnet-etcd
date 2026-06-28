@@ -292,12 +292,12 @@ var assemblies = [
     "classes": [
       { "name": "dotnet_etcd.AsyncDuplexStreamingCallAdapter\u003CT1, T2\u003E", "rp": "dotnet_etcd_AsyncDuplexStreamingCallAdapter_2.html", "cl": 0, "ucl": 11, "cal": 11, "tl": 49, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.AsyncStreamCallFactory\u003CT1, T2\u003E", "rp": "dotnet_etcd_AsyncStreamCallFactory_2.html", "cl": 3, "ucl": 4, "cal": 7, "tl": 39, "cb": 1, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "dotnet_etcd.AuthenticationHttpHandler", "rp": "dotnet_etcd_AuthenticationHttpHandler.html", "cl": 56, "ucl": 0, "cal": 56, "tl": 118, "cb": 19, "tb": 20, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "dotnet_etcd.AuthenticationHttpHandler", "rp": "dotnet_etcd_AuthenticationHttpHandler.html", "cl": 75, "ucl": 3, "cal": 78, "tl": 165, "cb": 29, "tb": 30, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.ConnectionStringParser", "rp": "dotnet_etcd_ConnectionStringParser.html", "cl": 34, "ucl": 0, "cal": 34, "tl": 73, "cb": 19, "tb": 20, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.DependencyInjection.EtcdClientOptions", "rp": "dotnet_etcd_EtcdClientOptions.html", "cl": 16, "ucl": 5, "cal": 21, "tl": 84, "cb": 4, "tb": 6, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.DependencyInjection.EtcdClientOptionsValidator", "rp": "dotnet_etcd_EtcdClientOptionsValidator.html", "cl": 14, "ucl": 0, "cal": 14, "tl": 42, "cb": 12, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.DependencyInjection.ServiceCollectionExtensions", "rp": "dotnet_etcd_ServiceCollectionExtensions.html", "cl": 83, "ucl": 14, "cal": 97, "tl": 208, "cb": 3, "tb": 10, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "dotnet_etcd.EtcdClient", "rp": "dotnet_etcd_EtcdClient.html", "cl": 272, "ucl": 933, "cal": 1205, "tl": 3537, "cb": 28, "tb": 180, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "dotnet_etcd.EtcdClient", "rp": "dotnet_etcd_EtcdClient.html", "cl": 286, "ucl": 930, "cal": 1216, "tl": 3567, "cb": 31, "tb": 178, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.GrpcChannelFactory", "rp": "dotnet_etcd_GrpcChannelFactory.html", "cl": 55, "ucl": 0, "cal": 55, "tl": 103, "cb": 6, "tb": 6, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.helper.AsyncHelper", "rp": "dotnet_etcd_AsyncHelper.html", "cl": 0, "ucl": 12, "cal": 12, "tl": 47, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.multiplexer.Connection", "rp": "dotnet_etcd_Connection.html", "cl": 13, "ucl": 4, "cal": 17, "tl": 63, "cb": 6, "tb": 16, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
@@ -322,12 +322,6 @@ var riskHotspots = [
     "metrics": [
       { "value": 110, "exceeded": true },
       { "value": 10, "exceeded": false },
-    ]},
-  {
-    "assembly": "dotnet-etcd", "class": "dotnet_etcd.EtcdClient", "reportPath": "dotnet_etcd_EtcdClient.html", "methodName": "SetCredentials(System.String,System.String,System.Nullable\u00601\u003CSystem.TimeSpan\u003E)", "methodShortName": "SetCredentials(...)", "fileIndex": 3, "line": 355,
-    "metrics": [
-      { "value": 72, "exceeded": true },
-      { "value": 8, "exceeded": false },
     ]},
   {
     "assembly": "dotnet-etcd", "class": "dotnet_etcd.EtcdClient", "reportPath": "dotnet_etcd_EtcdClient.html", "methodName": ".ctor(System.String,System.String,System.String,System.Int32,System.String,System.Action\u00601\u003CGrpc.Net.Client.GrpcChannelOptions\u003E,System.Nullable\u00601\u003CSystem.TimeSpan\u003E)", "methodShortName": ".ctor(...)", "fileIndex": 3, "line": 283,

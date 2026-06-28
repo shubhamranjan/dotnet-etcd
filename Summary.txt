@@ -1,33 +1,33 @@
 Summary
-  Generated on: 06/28/2026 - 17:53:15
-  Coverage date: 06/28/2026 - 17:53:14
+  Generated on: 06/28/2026 - 18:14:49
+  Coverage date: 06/28/2026 - 18:13:35
   Parser: Cobertura
   Assemblies: 1
   Classes: 14
   Files: 23
-  Line coverage: 28.4%
-  Covered lines: 562
+  Line coverage: 29.6%
+  Covered lines: 595
   Uncovered lines: 1412
-  Coverable lines: 1974
-  Total lines: 5212
-  Branch coverage: 29.4% (102 of 346)
-  Covered branches: 102
-  Total branches: 346
-  Method coverage: 36.9% (100 of 271)
-  Full method coverage: 33.5% (91 of 271)
-  Covered methods: 100
-  Fully covered methods: 91
-  Total methods: 271
+  Coverable lines: 2007
+  Total lines: 5289
+  Branch coverage: 32.4% (115 of 354)
+  Covered branches: 115
+  Total branches: 354
+  Method coverage: 38.3% (105 of 274)
+  Full method coverage: 33.5% (92 of 274)
+  Covered methods: 105
+  Fully covered methods: 92
+  Total methods: 274
 
-dotnet-etcd                                                     28.4%
+dotnet-etcd                                                     29.6%
   dotnet_etcd.AsyncDuplexStreamingCallAdapter<T1, T2>              0%
   dotnet_etcd.AsyncStreamCallFactory<T1, T2>                    42.8%
-  dotnet_etcd.AuthenticationHttpHandler                          100%
+  dotnet_etcd.AuthenticationHttpHandler                         96.1%
   dotnet_etcd.ConnectionStringParser                             100%
   dotnet_etcd.DependencyInjection.EtcdClientOptions             76.1%
   dotnet_etcd.DependencyInjection.EtcdClientOptionsValidator     100%
   dotnet_etcd.DependencyInjection.ServiceCollectionExtensions   85.5%
-  dotnet_etcd.EtcdClient                                        22.5%
+  dotnet_etcd.EtcdClient                                        23.5%
   dotnet_etcd.GrpcChannelFactory                                 100%
   dotnet_etcd.helper.AsyncHelper                                   0%
   dotnet_etcd.multiplexer.Connection                            76.4%
