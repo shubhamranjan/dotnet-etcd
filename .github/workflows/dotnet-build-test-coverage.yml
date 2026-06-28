@@ -47,8 +47,10 @@ jobs:
     - name: Run Unit Tests with Coverage
       run: dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Unit" --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
 
-    - name: Run Integration Tests
-      run: dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Integration" --no-build --verbosity normal
+    - name: Run Integration Tests with Coverage
+      # Collect coverage here too; reportgenerator globs ./coverage/** and merges both
+      # cobertura files, so the report reflects combined unit + integration coverage.
+      run: dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Integration" --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
     
     - name: Generate Coverage Report
       run: |
