@@ -47,6 +47,25 @@ public class EtcdClientUnitTests
     }
 
     [Fact]
+    public void SetCredentials_OnCallInvokerClient_Throws()
+    {
+        // The CallInvoker overload does not own a channel, so there is no AuthenticationHttpHandler
+        // to attach tokens. SetCredentials previously no-op'd silently here; it must fail loudly.
+        var client = new EtcdClient(new Mock<CallInvoker>().Object);
+
+        var ex = Assert.Throws<InvalidOperationException>(() => client.SetCredentials("user", "pass"));
+        Assert.Contains("CallInvoker", ex.Message);
+    }
+
+    [Fact]
+    public void ClearCredentials_OnCallInvokerClient_Throws()
+    {
+        var client = new EtcdClient(new Mock<CallInvoker>().Object);
+
+        Assert.Throws<InvalidOperationException>(() => client.ClearCredentials());
+    }
+
+    [Fact]
     public void Dispose_ShouldDisposeCorrectly()
     {
         // Arrange

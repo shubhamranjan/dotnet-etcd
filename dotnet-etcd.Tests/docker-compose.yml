@@ -75,6 +75,26 @@ services:
     networks:
       - etcd-net
 
+  # Single-node etcd with a very short auth-token TTL, used to verify the client renews its token
+  # after the server expires it (issue #283). Isolated on its own port so the short TTL does not
+  # affect the other auth tests running against the main cluster.
+  etcd-authttl:
+    image: quay.io/coreos/etcd:v3.5.21
+    container_name: etcd-authttl
+    ports:
+      - "2399:2379"
+    command:
+      - /usr/local/bin/etcd
+      - --name=etcd-authttl
+      - --data-dir=/etcd-data
+      - --listen-client-urls=http://0.0.0.0:2379
+      - --advertise-client-urls=http://localhost:2399
+      - --auth-token=simple
+      - --auth-token-ttl=2
+    restart: always
+    networks:
+      - etcd-net
+
 networks:
   etcd-net:
     driver: bridge

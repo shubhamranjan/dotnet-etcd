@@ -347,6 +347,11 @@ public partial class EtcdClient : IDisposable, IEtcdClient
     /// <param name="password">The password for authentication</param>
     /// <param name="tokenCacheDuration">The duration to cache requested tokens from etcd</param>
     /// <exception cref="ArgumentNullException">Thrown if username or password is null or empty</exception>
+    /// <exception cref="InvalidOperationException">
+    ///     Thrown when the client was created from a <see cref="CallInvoker" />, which has no
+    ///     channel for the library to attach authentication to. Supply credentials on that path
+    ///     yourself via the CallInvoker.
+    /// </exception>
     public void SetCredentials(
         string username,
         string password,
@@ -363,22 +368,47 @@ public partial class EtcdClient : IDisposable, IEtcdClient
             throw new ArgumentNullException(nameof(password));
         }
 
+        EnsureAuthenticationSupported();
+
         if (tokenCacheDuration.HasValue)
             _tokenCacheDuration = tokenCacheDuration.Value;
 
         _credentials = new EtcdCredentials(username, password);
 
         // Purge any token cached under the previous credentials so the next request re-auths.
-        _authHttpHandler?.InvalidateToken();
+        _authHttpHandler.InvalidateToken();
     }
 
     /// <summary>
     ///     Clears the current credentials if set and invalidates any cached token.
     /// </summary>
+    /// <exception cref="InvalidOperationException">
+    ///     Thrown when the client was created from a <see cref="CallInvoker" /> and therefore
+    ///     does not manage authentication.
+    /// </exception>
     public void ClearCredentials()
     {
+        EnsureAuthenticationSupported();
+
         _credentials = null;
-        _authHttpHandler?.InvalidateToken();
+        _authHttpHandler.InvalidateToken();
+    }
+
+    /// <summary>
+    ///     Guards the credential APIs against the CallInvoker overload, where no channel — and thus
+    ///     no <see cref="AuthenticationHttpHandler" /> — exists to carry the auth token. Failing
+    ///     here turns a silent no-op (requests going out unauthenticated) into an explicit error.
+    /// </summary>
+    private void EnsureAuthenticationSupported()
+    {
+        if (_authHttpHandler is null)
+        {
+            throw new InvalidOperationException(
+                "This EtcdClient was created from a CallInvoker, which the library cannot attach "
+                    + "authentication to. Construct the client with a connection string to use "
+                    + "SetCredentials/ClearCredentials, or attach credentials to the CallInvoker yourself."
+            );
+        }
     }
 
     private async Task<(string token, TimeSpan cacheDuration)?> RequestTokenAsync(

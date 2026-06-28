@@ -26,13 +26,12 @@ jobs:
           9.0.x
           8.0.x
     
-    - name: Setup test etcd containers
+    - name: Start test etcd containers
       run: |
-        chmod +x dotnet-etcd.Tests/generate-certs.sh
-        cd dotnet-etcd.Tests
-        ./generate-certs.sh
-        docker compose up -d
-        cd ..
+        chmod +x dotnet-etcd.Tests/*.sh
+        # start-etcd.sh generates the TLS certs if missing and waits until etcd is actually
+        # serving, so the integration tests below don't race container startup.
+        dotnet-etcd.Tests/start-etcd.sh
     
     - name: Restore dependencies
       run: dotnet restore
@@ -45,15 +44,11 @@ jobs:
         dotnet tool install --global dotnet-reportgenerator-globaltool
         dotnet tool install --global dotnet-coverage
     
-    - name: Run Unit Tests
-      run: dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Unit" --no-build --verbosity normal
-    
+    - name: Run Unit Tests with Coverage
+      run: dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Unit" --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
+
     - name: Run Integration Tests
       run: dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Integration" --no-build --verbosity normal
-    
-    - name: Run Tests with Coverage
-      run: |
-        dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Unit" --no-build --collect:"XPlat Code Coverage" --results-directory ./coverage
     
     - name: Generate Coverage Report
       run: |

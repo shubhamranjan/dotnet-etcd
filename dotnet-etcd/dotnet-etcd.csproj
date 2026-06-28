@@ -5,7 +5,9 @@
     <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
     <RootNamespace>dotnet_etcd</RootNamespace>
     <IncludeGoogleApiCommonProtos>True</IncludeGoogleApiCommonProtos>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <!-- Packaging is done explicitly via `dotnet pack` in the nuget-publish workflow, so we don't
+         emit a throwaway .nupkg on every build (including CI Debug builds). -->
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryUrl>https://github.com/shubhamranjan/dotnet-etcd</RepositoryUrl>
     <PackageProjectUrl>https://github.com/shubhamranjan/dotnet-etcd</PackageProjectUrl>
