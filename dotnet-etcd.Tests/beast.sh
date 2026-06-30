@@ -43,7 +43,10 @@ case "$FILTER" in
 esac
 
 PROJECT="dotnet-etcd.Tests.csproj"
-LOG_DIR="$(mktemp -d)"
+# Honor BEAST_LOG_DIR so CI can point logs at a known path and upload them as an artifact;
+# default to an ephemeral temp dir for local runs.
+LOG_DIR="${BEAST_LOG_DIR:-$(mktemp -d)}"
+mkdir -p "$LOG_DIR"
 
 # Integration tests need etcd; bring it up if it isn't already serving.
 if [ "$FILTER" != "Unit" ]; then

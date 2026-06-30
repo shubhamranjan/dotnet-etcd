@@ -50,9 +50,20 @@ jobs:
           # into the shell. Defaults apply on the nightly schedule where inputs are null.
           ITER: ${{ github.event.inputs.iterations || '20' }}
           CAT: ${{ github.event.inputs.category || 'All' }}
+          # Capture per-iteration logs at a known path so a nightly flake is diagnosable.
+          BEAST_LOG_DIR: ${{ github.workspace }}/beast-logs
         run: |
           # Validate inputs defensively before use.
           case "$ITER" in (*[!0-9]*|'') echo "iterations must be a positive integer" >&2; exit 2 ;; esac
           case "$CAT" in (All|Unit|Integration) ;; (*) echo "category must be All|Unit|Integration" >&2; exit 2 ;; esac
           # -k: run every iteration and report totals rather than stopping on the first failure.
           dotnet-etcd.Tests/beast.sh -n "$ITER" -f "$CAT" -k
+
+      - name: Upload beast logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: beast-logs
+          path: ${{ github.workspace }}/beast-logs
+          retention-days: 14
+          if-no-files-found: ignore
