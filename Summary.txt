@@ -1,36 +1,36 @@
 Summary
-  Generated on: 06/28/2026 - 18:32:18
-  Coverage date: 06/28/2026 - 18:31:03
-  Parser: Cobertura
+  Generated on: 06/30/2026 - 18:51:27
+  Coverage date: 06/30/2026 - 18:50:09 - 06/30/2026 - 18:51:26
+  Parser: MultiReport (2x Cobertura)
   Assemblies: 1
   Classes: 14
   Files: 23
-  Line coverage: 29.6%
-  Covered lines: 595
-  Uncovered lines: 1412
-  Coverable lines: 2007
-  Total lines: 5289
-  Branch coverage: 31% (110 of 354)
-  Covered branches: 110
+  Line coverage: 94.4%
+  Covered lines: 1897
+  Uncovered lines: 112
+  Coverable lines: 2009
+  Total lines: 5299
+  Branch coverage: 79% (280 of 354)
+  Covered branches: 280
   Total branches: 354
-  Method coverage: 38.3% (105 of 274)
-  Full method coverage: 33.5% (92 of 274)
-  Covered methods: 105
-  Fully covered methods: 92
+  Method coverage: 96.7% (265 of 274)
+  Full method coverage: 85.7% (235 of 274)
+  Covered methods: 265
+  Fully covered methods: 235
   Total methods: 274
 
-dotnet-etcd                                                     29.6%
-  dotnet_etcd.AsyncDuplexStreamingCallAdapter<T1, T2>              0%
-  dotnet_etcd.AsyncStreamCallFactory<T1, T2>                    42.8%
+dotnet-etcd                                                     94.4%
+  dotnet_etcd.AsyncDuplexStreamingCallAdapter<T1, T2>            100%
+  dotnet_etcd.AsyncStreamCallFactory<T1, T2>                     100%
   dotnet_etcd.AuthenticationHttpHandler                         96.1%
   dotnet_etcd.ConnectionStringParser                             100%
   dotnet_etcd.DependencyInjection.EtcdClientOptions             76.1%
   dotnet_etcd.DependencyInjection.EtcdClientOptionsValidator     100%
   dotnet_etcd.DependencyInjection.ServiceCollectionExtensions   85.5%
-  dotnet_etcd.EtcdClient                                        23.5%
+  dotnet_etcd.EtcdClient                                        95.5%
   dotnet_etcd.GrpcChannelFactory                                 100%
-  dotnet_etcd.helper.AsyncHelper                                   0%
-  dotnet_etcd.multiplexer.Connection                            76.4%
-  dotnet_etcd.Watcher                                              0%
-  dotnet_etcd.WatchEvent                                           0%
-  dotnet_etcd.WatchManager                                       4.1%
+  dotnet_etcd.helper.AsyncHelper                                 100%
+  dotnet_etcd.multiplexer.Connection                             100%
+  dotnet_etcd.Watcher                                           85.7%
+  dotnet_etcd.WatchEvent                                         100%
+  dotnet_etcd.WatchManager                                      92.7%
