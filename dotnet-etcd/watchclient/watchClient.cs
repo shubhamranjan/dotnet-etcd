@@ -34,6 +34,11 @@ public partial class EtcdClient
 
         for (int i = 0; i < requests.Length; i++)
         {
+            // Capture the loop index per iteration; otherwise the closure below would read the
+            // shared loop variable (== requests.Length when an event later arrives) and throw
+            // IndexOutOfRangeException, silently dropping every event.
+            int index = i;
+
             // Create a wrapper that converts WatchResponse to WatchEvent[]
             Action<WatchResponse> wrapper = response =>
             {
@@ -42,7 +47,7 @@ public partial class EtcdClient
                     Key = e.Kv.Key.ToStringUtf8(), Value = e.Kv.Value.ToStringUtf8(), Type = e.Type
                 }).ToArray();
 
-                methods[i](events);
+                methods[index](events);
             };
 
             watchIds[i] = await _watchManager.WatchAsync(requests[i], wrapper, headers, deadline, cancellationToken)
@@ -119,6 +124,11 @@ public partial class EtcdClient
 
         for (int i = 0; i < requests.Length; i++)
         {
+            // Capture the loop index per iteration; otherwise the closure below would read the
+            // shared loop variable (== requests.Length when an event later arrives) and throw
+            // IndexOutOfRangeException, silently dropping every event.
+            int index = i;
+
             // Create a wrapper that converts WatchResponse to WatchEvent[]
             Action<WatchResponse> wrapper = response =>
             {
@@ -127,7 +137,7 @@ public partial class EtcdClient
                     Key = e.Kv.Key.ToStringUtf8(), Value = e.Kv.Value.ToStringUtf8(), Type = e.Type
                 })];
 
-                methods[i](events);
+                methods[index](events);
             };
 
             _watchManager.Watch(requests[i], wrapper, headers, deadline, cancellationToken);
