@@ -1,0 +1,69 @@
+name: Beast Tests (flakiness)
+
+# Repeatedly runs the suite to surface flaky / timing-dependent failures that a
+# single green run hides (races in the watch / auth / lease streaming paths).
+# Opt-in only: run manually, or nightly.
+on:
+  workflow_dispatch:
+    inputs:
+      iterations:
+        description: "Number of times to run the suite"
+        required: false
+        default: "20"
+      category:
+        description: "Which tests to beast"
+        required: false
+        default: "All"
+        type: choice
+        options:
+          - All
+          - Unit
+          - Integration
+  schedule:
+    - cron: '0 4 * * *'  # nightly at 04:00 UTC
+
+permissions:
+  contents: read
+
+jobs:
+  beast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            10.0.x
+            9.0.x
+            8.0.x
+
+      - name: Start test etcd containers
+        run: |
+          chmod +x dotnet-etcd.Tests/*.sh
+          dotnet-etcd.Tests/start-etcd.sh
+
+      - name: Beast the tests
+        env:
+          # Passed via env (not inline ${{ }}) so the values are never interpolated
+          # into the shell. Defaults apply on the nightly schedule where inputs are null.
+          ITER: ${{ github.event.inputs.iterations || '20' }}
+          CAT: ${{ github.event.inputs.category || 'All' }}
+          # Capture per-iteration logs at a known path so a nightly flake is diagnosable.
+          BEAST_LOG_DIR: ${{ github.workspace }}/beast-logs
+        run: |
+          # Validate inputs defensively before use.
+          case "$ITER" in (*[!0-9]*|'') echo "iterations must be a positive integer" >&2; exit 2 ;; esac
+          case "$CAT" in (All|Unit|Integration) ;; (*) echo "category must be All|Unit|Integration" >&2; exit 2 ;; esac
+          # -k: run every iteration and report totals rather than stopping on the first failure.
+          dotnet-etcd.Tests/beast.sh -n "$ITER" -f "$CAT" -k
+
+      - name: Upload beast logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: beast-logs
+          path: ${{ github.workspace }}/beast-logs
+          retention-days: 14
+          if-no-files-found: ignore
