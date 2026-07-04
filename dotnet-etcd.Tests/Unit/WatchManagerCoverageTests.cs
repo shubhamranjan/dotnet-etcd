@@ -70,6 +70,121 @@ public class WatchManagerCoverageTests
     }
 
     // ---------------------------------------------------------------------
+    // Reconnect / revision resume (issue: events lost across a reconnect)
+    // ---------------------------------------------------------------------
+
+    private static WatchResponse EventAtRevision(long watchId, long revision, string key = "k", string value = "v")
+    {
+        WatchResponse response = EventResponse(watchId, key, value);
+        response.Header = new ResponseHeader { Revision = revision };
+        response.Events[0].Kv.ModRevision = revision;
+        return response;
+    }
+
+    [Fact]
+    public void Reconnect_ResumesWatchFromLastObservedRevisionPlusOne()
+    {
+        var fakes = new Queue<FakeDuplexStreamingCall<WatchRequest, WatchResponse>>();
+        var fake1 = new FakeDuplexStreamingCall<WatchRequest, WatchResponse>();
+        var fake2 = new FakeDuplexStreamingCall<WatchRequest, WatchResponse>();
+        fakes.Enqueue(fake1);
+        fakes.Enqueue(fake2);
+        // Return the next fake for the initial stream and the reconnect; keep returning fake2 after.
+        using var manager = new WatchManager((_, _, _) => fakes.Count > 1 ? fakes.Dequeue() : fakes.Peek());
+
+        long observedRevision = 0;
+        manager.Watch(KeyRequest("k"), (WatchResponse r) =>
+        {
+            if (r.Header != null && r.Header.Revision > 0)
+            {
+                observedRevision = r.Header.Revision;
+            }
+        });
+
+        // Server delivers an event at revision 10; the manager must remember it.
+        fake1.Enqueue(EventAtRevision(FirstWatchId, 10));
+        Assert.True(WaitFor(() => observedRevision == 10), "initial event was not delivered");
+
+        // Break the stream -> HandleConnectionFailure reconnects on fake2.
+        fake1.Responses.ThrowOnMoveNext = new RpcException(new Status(StatusCode.Unavailable, "connection dropped"));
+        fake1.Enqueue(new WatchResponse()); // unblock the receive loop so it re-enters MoveNext and throws
+
+        // The watch must be re-registered on the new stream resuming from revision 11 (10 + 1),
+        // otherwise events written during the reconnect gap are permanently lost.
+        Assert.True(
+            WaitFor(() => fake2.Requests.Written.Any(r => r.CreateRequest != null), 5000),
+            "watch was not re-registered on the reconnected stream");
+
+        WatchRequest reRegistered = fake2.Requests.Written.First(r => r.CreateRequest != null);
+        Assert.Equal(11, reRegistered.CreateRequest.StartRevision);
+    }
+
+    [Fact]
+    public void Reconnect_AfterProgressNotification_ResumesFromHeaderRevisionPlusOne()
+    {
+        var fakes = new Queue<FakeDuplexStreamingCall<WatchRequest, WatchResponse>>();
+        var fake1 = new FakeDuplexStreamingCall<WatchRequest, WatchResponse>();
+        var fake2 = new FakeDuplexStreamingCall<WatchRequest, WatchResponse>();
+        fakes.Enqueue(fake1);
+        fakes.Enqueue(fake2);
+        using var manager = new WatchManager((_, _, _) => fakes.Count > 1 ? fakes.Dequeue() : fakes.Peek());
+
+        long observedRevision = 0;
+        manager.Watch(KeyRequest("k"), (WatchResponse r) =>
+        {
+            if (r.Header != null && r.Header.Revision > observedRevision)
+            {
+                observedRevision = r.Header.Revision;
+            }
+        });
+
+        // A progress notification carries the current revision but no events.
+        fake1.Enqueue(new WatchResponse { WatchId = FirstWatchId, Header = new ResponseHeader { Revision = 20 } });
+        Assert.True(WaitFor(() => observedRevision == 20), "progress notification was not delivered");
+
+        fake1.Responses.ThrowOnMoveNext = new RpcException(new Status(StatusCode.Unavailable, "connection dropped"));
+        fake1.Enqueue(new WatchResponse());
+
+        Assert.True(
+            WaitFor(() => fake2.Requests.Written.Any(r => r.CreateRequest != null), 5000),
+            "watch was not re-registered on the reconnected stream");
+        Assert.Equal(21, fake2.Requests.Written.First(r => r.CreateRequest != null).CreateRequest.StartRevision);
+    }
+
+    [Fact]
+    public void Reconnect_AfterCompactionCancel_ResumesFromCompactRevision()
+    {
+        var fakes = new Queue<FakeDuplexStreamingCall<WatchRequest, WatchResponse>>();
+        var fake1 = new FakeDuplexStreamingCall<WatchRequest, WatchResponse>();
+        var fake2 = new FakeDuplexStreamingCall<WatchRequest, WatchResponse>();
+        fakes.Enqueue(fake1);
+        fakes.Enqueue(fake2);
+        using var manager = new WatchManager((_, _, _) => fakes.Count > 1 ? fakes.Dequeue() : fakes.Peek());
+
+        bool canceledSeen = false;
+        manager.Watch(KeyRequest("k"), (WatchResponse r) =>
+        {
+            if (r.Canceled)
+            {
+                canceledSeen = true;
+            }
+        });
+
+        // The server cancels the watch because our resume point was compacted away.
+        fake1.Enqueue(new WatchResponse { WatchId = FirstWatchId, Canceled = true, CompactRevision = 50 });
+        Assert.True(WaitFor(() => canceledSeen), "cancel response was not delivered");
+
+        fake1.Responses.ThrowOnMoveNext = new RpcException(new Status(StatusCode.Unavailable, "connection dropped"));
+        fake1.Enqueue(new WatchResponse());
+
+        Assert.True(
+            WaitFor(() => fake2.Requests.Written.Any(r => r.CreateRequest != null), 5000),
+            "watch was not re-registered on the reconnected stream");
+        // Cannot resume from before the compaction revision; resume from CompactRevision.
+        Assert.Equal(50, fake2.Requests.Written.First(r => r.CreateRequest != null).CreateRequest.StartRevision);
+    }
+
+    // ---------------------------------------------------------------------
     // WatchAsync(WatchRequest, Action<WatchResponse>) - core path
     // ---------------------------------------------------------------------
 

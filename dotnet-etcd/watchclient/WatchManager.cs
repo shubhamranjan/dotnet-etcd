@@ -99,8 +99,53 @@ public class WatchManager : IWatchManager
                 _watchIdMapping[response.WatchId] = watchId;
             }
 
+            // Track the revision to resume from on reconnect so no events are missed in the gap.
+            TrackResumeRevision(watchId, response);
+
             callback(response);
         }
+    }
+
+    /// <summary>
+    ///     Advances the stored resume revision for a watch based on a received response, mirroring the
+    ///     etcd clientv3 "nextRev" logic: after an event batch resume from lastEvent.ModRevision + 1;
+    ///     for a created/progress notification with no events, advance to the header revision. A
+    ///     compaction cancel resets the resume point to the compact revision. Only ever moves forward.
+    /// </summary>
+    private void TrackResumeRevision(long clientWatchId, WatchResponse response)
+    {
+        if (!_watches.TryGetValue(clientWatchId, out WatchCancellation? watch))
+        {
+            return;
+        }
+
+        long candidate = watch.NextRevision;
+
+        if (response.Canceled && response.CompactRevision > 0)
+        {
+            // Our resume point was compacted away; the earliest we can resume from is CompactRevision.
+            candidate = response.CompactRevision;
+        }
+        else if (response.Events != null && response.Events.Count > 0)
+        {
+            long lastModRevision = response.Events[^1].Kv.ModRevision;
+            if (lastModRevision + 1 > candidate)
+            {
+                candidate = lastModRevision + 1;
+            }
+        }
+        else if (response.Header != null && response.Header.Revision > 0)
+        {
+            // Created response or progress notification (no events): everything up to the header
+            // revision has been observed, so the next start revision is header.Revision + 1.
+            long boundary = response.Header.Revision + 1;
+            if (boundary > candidate)
+            {
+                candidate = boundary;
+            }
+        }
+
+        watch.NextRevision = candidate;
     }
 
     /// <summary>
@@ -674,6 +719,14 @@ public class WatchManager : IWatchManager
 
                 foreach (var watch in _watches.Values)
                 {
+                    // Resume from the revision after the last observed event so events written while
+                    // the stream was down are replayed instead of lost. Falls back to "from now"
+                    // (StartRevision 0) only when nothing has been observed yet.
+                    if (watch.NextRevision > 0 && watch.Request.CreateRequest != null)
+                    {
+                        watch.Request.CreateRequest.StartRevision = watch.NextRevision;
+                    }
+
                     await _watchStream!.CreateWatchAsync(watch.Request, watch.Callback).ConfigureAwait(false);
                 }
             }
@@ -692,5 +745,12 @@ public class WatchManager : IWatchManager
         public required CancellationTokenSource CancellationTokenSource { get; set; }
         public required WatchRequest Request { get; set; }
         public required Action<WatchResponse> Callback { get; set; }
+
+        /// <summary>
+        ///     The revision to resume this watch from if the stream is re-established. Tracks the
+        ///     revision after the last event/notification observed, so a reconnect does not miss
+        ///     events written during the gap (mirrors the etcd clientv3 nextRev behavior).
+        /// </summary>
+        public long NextRevision { get; set; }
     }
 }
