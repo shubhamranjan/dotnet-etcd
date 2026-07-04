@@ -117,19 +117,32 @@ namespace dotnet_etcd.Tests.Integration
             Console.WriteLine($"Restarting {ContainerName}...");
             RunDockerCommand($"restart {ContainerName}");
 
-            // 4. Wait for restart to complete
-            Console.WriteLine("Waiting for restart...");
-            await Task.Delay(15000); 
+            // 4. Poll until etcd is serving again instead of a fixed sleep (restart time varies,
+            //    especially on loaded CI runners).
+            Console.WriteLine("Waiting for etcd to become ready...");
+            var readySw = Stopwatch.StartNew();
+            while (readySw.Elapsed.TotalSeconds < 60)
+            {
+                try
+                {
+                    await _client.GetAsync("watch-resilience-health-probe");
+                    break; // etcd responded
+                }
+                catch
+                {
+                    await Task.Delay(1000);
+                }
+            }
 
-            // 6. Put post-reconnect, retrying until an event is received or timeout.
-            // The watch reconnects with StartRevision=0 (watch from now), so if the put races
-            // ahead of the re-registration the event is permanently missed. Retrying every 2s
-            // ensures at least one put lands after the watch has been re-established.
+            // 5. Put post-reconnect, retrying until an event is received or timeout.
+            //    The watch resumes from the last observed revision + 1, so even if a put races ahead
+            //    of the watch re-registration the event is replayed rather than missed. The retry
+            //    loop also absorbs the brief window where etcd is up but the stream is mid-reconnect.
             Console.WriteLine("Putting value after reconnect (retrying until event received)...");
             var sw = Stopwatch.StartNew();
             while (sw.Elapsed.TotalSeconds < 30 && events.Count == 0)
             {
-                try 
+                try
                 {
                     await _client.PutAsync(testKey, "recovered-restart");
                 }
