@@ -95,6 +95,23 @@ services:
     networks:
       - etcd-net
 
+  # Dedicated single-node etcd for WatchResilienceTests, which pause/restart their server.
+  # Isolated on its own port so that disruption never affects the shared etcd1 cluster tests.
+  etcd-resilience:
+    image: quay.io/coreos/etcd:v3.5.21
+    container_name: etcd-resilience
+    ports:
+      - "2409:2379"
+    command:
+      - /usr/local/bin/etcd
+      - --name=etcd-resilience
+      - --data-dir=/etcd-data
+      - --listen-client-urls=http://0.0.0.0:2379
+      - --advertise-client-urls=http://localhost:2409
+    restart: always
+    networks:
+      - etcd-net
+
 networks:
   etcd-net:
     driver: bridge

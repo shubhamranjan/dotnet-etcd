@@ -41,6 +41,10 @@
         <Content Include="certs\**">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
+        <!-- Serialize test collections: the integration tests share a single etcd instance and
+             mutate global state (auth enable/disable, server restart), so running collections in
+             parallel causes cross-test interference and flakiness. -->
+        <None Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 
 </Project>
