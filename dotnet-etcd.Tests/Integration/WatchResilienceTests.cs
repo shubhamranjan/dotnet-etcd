@@ -16,9 +16,10 @@ namespace dotnet_etcd.Tests.Integration
         private readonly EtcdClient _client;
         private readonly string _testKeyPrefix = "watch-resilience-";
         
-        // Use etcd1 (port 2379) as per standard test env
-        private const string EtcdUrl = "http://localhost:2379";
-        private const string ContainerName = "etcd1";
+        // Dedicated single-node etcd (port 2409) so pausing/restarting the server here never
+        // disrupts the shared etcd1 cluster used by the other integration tests.
+        private const string EtcdUrl = "http://localhost:2409";
+        private const string ContainerName = "etcd-resilience";
 
         public WatchResilienceTests()
         {
