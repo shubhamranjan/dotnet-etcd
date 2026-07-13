@@ -301,9 +301,9 @@ var assemblies = [
       { "name": "dotnet_etcd.GrpcChannelFactory", "rp": "dotnet_etcd_GrpcChannelFactory.html", "cl": 55, "ucl": 0, "cal": 55, "tl": 103, "cb": 6, "tb": 6, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.helper.AsyncHelper", "rp": "dotnet_etcd_AsyncHelper.html", "cl": 12, "ucl": 0, "cal": 12, "tl": 47, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.multiplexer.Connection", "rp": "dotnet_etcd_Connection.html", "cl": 17, "ucl": 0, "cal": 17, "tl": 63, "cb": 15, "tb": 16, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "dotnet_etcd.Watcher", "rp": "dotnet_etcd_Watcher.html", "cl": 50, "ucl": 6, "cal": 56, "tl": 128, "cb": 8, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "dotnet_etcd.Watcher", "rp": "dotnet_etcd_Watcher.html", "cl": 63, "ucl": 10, "cal": 73, "tl": 166, "cb": 8, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.WatchEvent", "rp": "dotnet_etcd_WatchEvent.html", "cl": 3, "ucl": 0, "cal": 3, "tl": 25, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "dotnet_etcd.WatchManager", "rp": "dotnet_etcd_WatchManager.html", "cl": 393, "ucl": 30, "cal": 423, "tl": 756, "cb": 60, "tb": 78, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "dotnet_etcd.WatchManager", "rp": "dotnet_etcd_WatchManager.html", "cl": 477, "ucl": 64, "cal": 541, "tl": 972, "cb": 82, "tb": 110, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
     ]},
 ];
 
@@ -318,16 +318,16 @@ var riskHotspotMetrics = [
 
 var riskHotspots = [
   {
+    "assembly": "dotnet-etcd", "class": "dotnet_etcd.WatchManager", "reportPath": "dotnet_etcd_WatchManager.html", "methodName": "TrackResumeRevision(System.Int64,Etcdserverpb.WatchResponse)", "methodShortName": "TrackResumeRevision(...)", "fileIndex": 0, "line": 282,
+    "metrics": [
+      { "value": 26, "exceeded": false },
+      { "value": 26, "exceeded": true },
+    ]},
+  {
     "assembly": "dotnet-etcd", "class": "dotnet_etcd.ConnectionStringParser", "reportPath": "dotnet_etcd_ConnectionStringParser.html", "methodName": "ParseConnectionString(System.String,System.Int32,Grpc.Core.ChannelCredentials)", "methodShortName": "ParseConnectionString(...)", "fileIndex": 0, "line": 28,
     "metrics": [
       { "value": 20, "exceeded": false },
       { "value": 20, "exceeded": true },
-    ]},
-  {
-    "assembly": "dotnet-etcd", "class": "dotnet_etcd.WatchManager", "reportPath": "dotnet_etcd_WatchManager.html", "methodName": "TrackResumeRevision(System.Int64,Etcdserverpb.WatchResponse)", "methodShortName": "TrackResumeRevision(...)", "fileIndex": 0, "line": 116,
-    "metrics": [
-      { "value": 18, "exceeded": false },
-      { "value": 18, "exceeded": true },
     ]},
 ];
 
