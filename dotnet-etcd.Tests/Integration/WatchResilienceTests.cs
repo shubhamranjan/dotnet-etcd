@@ -1,105 +1,141 @@
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using dotnet_etcd;
-using Etcdserverpb;
-using System.Collections.Generic;
 
 namespace dotnet_etcd.Tests.Integration
 {
     // Use the isolated collection for resilience tests to prevent parallel execution interference
-    [Collection("WatchResilienceTests")] 
+    [Collection("WatchResilienceTests")]
     [Trait("Category", "Integration")]
     public class WatchResilienceTests : IDisposable
     {
         private readonly EtcdClient _client;
         private readonly string _testKeyPrefix = "watch-resilience-";
-        
+
         // Dedicated single-node etcd (port 2409) so pausing/restarting the server here never
         // disrupts the shared etcd1 cluster used by the other integration tests.
         private const string EtcdUrl = "http://localhost:2409";
         private const string ContainerName = "etcd-resilience";
 
-        public WatchResilienceTests()
-        {
-            _client = new EtcdClient(EtcdUrl);
-        }
+        // Watch delivery is asynchronous and its latency is unbounded in practice: on a loaded CI
+        // runner the receive loop can be starved for far longer than any sleep we would care to
+        // hardcode. Every wait below therefore polls up to this budget and returns as soon as the
+        // condition holds, so the test is fast when things are fast and only slow when it must be.
+        private static readonly TimeSpan EventTimeout = TimeSpan.FromSeconds(20);
+
+        // Diagnostics captured from the watch stream. If this test ever fails again, the assertion
+        // message carries the Created ack and the revisions, which is what distinguishes "the event
+        // was never delivered" from "the watch was never registered".
+        private readonly List<string> _trace = [];
+        private readonly Stopwatch _sw = Stopwatch.StartNew();
+
+        public WatchResilienceTests() => _client = new EtcdClient(EtcdUrl);
 
         public void Dispose()
         {
             _client.Dispose();
-            // Ensure container is unpaused in case test failed mid-way
+            // Ensure container is unpaused in case the test failed mid-way.
             RunDockerCommand($"unpause {ContainerName}");
-            // Ensure container is running (if restart failed or left it in weird state)
-            // But 'unpause' handles pause. 'restart' handles restart.
-            // If restart was pending, it should be fine.
         }
 
         [Fact]
         public async Task Watch_ShouldRecover_AfterNetworkPause()
         {
-            var testKey = $"{_testKeyPrefix}pause";
-            var events = new List<WatchEvent>();
+            string testKey = $"{_testKeyPrefix}pause";
+            ConcurrentQueue<WatchEvent> events = StartWatch(testKey);
 
-            // 1. Start Watch
-            _client.Watch(testKey, (response) =>
-            {
-                foreach (var evt in response.Events)
-                {
-                    events.Add(new WatchEvent
-                    {
-                        Type = evt.Type,
-                        Key = evt.Kv.Key.ToStringUtf8(),
-                        Value = evt.Kv.Value.ToStringUtf8()
-                    });
-                }
-            });
-
-            // 2. Initial Put
-            await _client.PutAsync(testKey, "initial");
-            await Task.Delay(1000); 
-            Assert.NotEmpty(events);
+            // 1. Establish the watch by observing the first event.
+            long putRev = (await _client.PutAsync(testKey, "initial")).Header.Revision;
+            Trace($"PUT initial rev={putRev}");
+            await WaitForEvents(events, 1, "initial watch establishment");
             events.Clear();
 
-            // 3. Simulate Network Disconnect (Pause Container)
-            Console.WriteLine($"Pausing {ContainerName}...");
+            // 2. Simulate a network partition by pausing the container.
+            Trace($"pausing {ContainerName}");
             RunDockerCommand($"pause {ContainerName}");
 
-            // 4. Wait for > 10s (simulating standard timeout/keepalive expiry)
-            Console.WriteLine("Waiting 12s...");
+            // Stay paused past the keepalive timeout so the client really sees the connection die.
             await Task.Delay(12000);
 
-            // 5. Resume Network
-            Console.WriteLine($"Unpausing {ContainerName}...");
+            Trace($"unpausing {ContainerName}");
             RunDockerCommand($"unpause {ContainerName}");
-            
-            // Allow client to attempt reconnection
-            await Task.Delay(3000);
 
-            // 6. Put post-disconnect
-            Console.WriteLine("Putting value after reconnect...");
-            await _client.PutAsync(testKey, "recovered-pause");
+            // 3. Write through the recovered connection. The put is retried because the client may
+            //    still be re-establishing the stream, and the watch resumes from the revision after
+            //    the last one it saw, so the event is delivered even if it lands mid-reconnect.
+            await PutUntilSucceeds(testKey, "recovered-pause");
 
-            // 7. Verification
-            await Task.Delay(2000);
-            
-            Assert.Single(events);
-            Assert.Equal("recovered-pause", events[0].Value);
+            // 4. The watch must deliver the post-partition event.
+            await WaitForEvents(events, 1, "event after network pause");
+            Assert.Equal("recovered-pause", events.First().Value);
         }
 
         [Fact]
         public async Task Watch_ShouldRecover_AfterServerRestart()
         {
-            var testKey = $"{_testKeyPrefix}restart";
-            var events = new List<WatchEvent>();
+            string testKey = $"{_testKeyPrefix}restart";
+            ConcurrentQueue<WatchEvent> events = StartWatch(testKey);
 
-            // 1. Start Watch
-            _client.Watch(testKey, (response) =>
+            // 1. Establish the watch by observing the first event.
+            long putRev = (await _client.PutAsync(testKey, "initial")).Header.Revision;
+            Trace($"PUT initial rev={putRev}");
+            await WaitForEvents(events, 1, "initial watch establishment");
+            events.Clear();
+
+            // 2. Restart the server, which forces the stream to drop.
+            Trace($"restarting {ContainerName}");
+            RunDockerCommand($"restart {ContainerName}");
+
+            // 3. Wait for etcd to serve again (restart time varies wildly on loaded CI runners).
+            await WaitUntil(async () =>
             {
-                foreach (var evt in response.Events)
+                try
                 {
-                    events.Add(new WatchEvent
+                    await _client.GetAsync("watch-resilience-health-probe");
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }, TimeSpan.FromSeconds(60), "etcd to become ready after restart");
+
+            // 4. Write through the recovered connection and require the watch to deliver it.
+            await PutUntilSucceeds(testKey, "recovered-restart");
+            await WaitForEvents(events, 1, "event after server restart");
+            Assert.Equal("recovered-restart", events.First().Value);
+        }
+
+        /// <summary>
+        ///     Registers the watch and returns the (thread-safe) collection its events land in. The
+        ///     callback runs on the gRPC receive loop, so the collection must not be a plain List that
+        ///     the test thread reads concurrently.
+        /// </summary>
+        private ConcurrentQueue<WatchEvent> StartWatch(string testKey)
+        {
+            ConcurrentQueue<WatchEvent> events = new();
+
+            _client.Watch(testKey, response =>
+            {
+                if (response.Created)
+                {
+                    Trace($"CREATED watchId={response.WatchId} rev={response.Header?.Revision}");
+                }
+
+                if (response.Events == null)
+                {
+                    return;
+                }
+
+                foreach (Mvccpb.Event evt in response.Events)
+                {
+                    Trace($"EVENT {evt.Type} rev={evt.Kv.ModRevision} value={evt.Kv.Value.ToStringUtf8()}");
+                    events.Enqueue(new WatchEvent
                     {
                         Type = evt.Type,
                         Key = evt.Kv.Key.ToStringUtf8(),
@@ -108,60 +144,82 @@ namespace dotnet_etcd.Tests.Integration
                 }
             });
 
-            // 2. Initial Put
-            await _client.PutAsync(testKey, "initial");
-            await Task.Delay(1000); 
-            Assert.NotEmpty(events);
-            events.Clear();
+            Trace("Watch() returned");
+            return events;
+        }
 
-            // 3. Simulate Server Restart (Forces Connection Drop)
-            Console.WriteLine($"Restarting {ContainerName}...");
-            RunDockerCommand($"restart {ContainerName}");
-
-            // 4. Poll until etcd is serving again instead of a fixed sleep (restart time varies,
-            //    especially on loaded CI runners).
-            Console.WriteLine("Waiting for etcd to become ready...");
-            var readySw = Stopwatch.StartNew();
-            while (readySw.Elapsed.TotalSeconds < 60)
+        /// <summary>
+        ///     Puts until the write is accepted — etcd may still be coming back up — so that a
+        ///     transient write failure is not misreported as the watch losing the event.
+        /// </summary>
+        private async Task PutUntilSucceeds(string key, string value)
+        {
+            Exception? last = null;
+            await WaitUntil(async () =>
             {
                 try
                 {
-                    await _client.GetAsync("watch-resilience-health-probe");
-                    break; // etcd responded
+                    long rev = (await _client.PutAsync(key, value)).Header.Revision;
+                    Trace($"PUT {value} rev={rev}");
+                    return true;
                 }
-                catch
+                catch (Exception ex)
                 {
-                    await Task.Delay(1000);
+                    last = ex;
+                    return false;
                 }
-            }
+            }, TimeSpan.FromSeconds(30), $"put '{value}' to succeed (last error: {last?.Message})");
+        }
 
-            // 5. Put post-reconnect, retrying until an event is received or timeout.
-            //    The watch resumes from the last observed revision + 1, so even if a put races ahead
-            //    of the watch re-registration the event is replayed rather than missed. The retry
-            //    loop also absorbs the brief window where etcd is up but the stream is mid-reconnect.
-            Console.WriteLine("Putting value after reconnect (retrying until event received)...");
-            var sw = Stopwatch.StartNew();
-            while (sw.Elapsed.TotalSeconds < 30 && events.Count == 0)
+        private async Task WaitForEvents(ConcurrentQueue<WatchEvent> events, int expected, string what) =>
+            await WaitUntil(() => Task.FromResult(events.Count >= expected), EventTimeout,
+                $"{what}: expected >= {expected} watch event(s), got {events.Count}");
+
+        /// <summary>
+        ///     Polls until the condition holds, failing with the captured watch-stream trace so a
+        ///     timeout says why it timed out rather than just "collection was empty".
+        /// </summary>
+        private async Task WaitUntil(Func<Task<bool>> condition, TimeSpan timeout, string what)
+        {
+            Stopwatch sw = Stopwatch.StartNew();
+            while (sw.Elapsed < timeout)
             {
-                try
+                if (await condition())
                 {
-                    await _client.PutAsync(testKey, "recovered-restart");
+                    return;
                 }
-                catch
-                {
-                    // etcd may still be starting up; keep retrying
-                }
-                await Task.Delay(2000);
+
+                await Task.Delay(200);
             }
 
-            // 7. Verification
-            Assert.NotEmpty(events);
-            Assert.Equal("recovered-restart", events[0].Value);
+            if (await condition())
+            {
+                return;
+            }
+
+            Assert.Fail($"Timed out after {timeout.TotalSeconds:0}s waiting for {what}.\nWatch stream trace:\n  " +
+                        string.Join("\n  ", GetTrace()));
+        }
+
+        private void Trace(string message)
+        {
+            lock (_trace)
+            {
+                _trace.Add($"[{_sw.ElapsedMilliseconds,6}ms] {message}");
+            }
+        }
+
+        private string[] GetTrace()
+        {
+            lock (_trace)
+            {
+                return _trace.Count == 0 ? ["(no watch responses received at all)"] : [.. _trace];
+            }
         }
 
         private void RunDockerCommand(string args)
         {
-            var psi = new ProcessStartInfo
+            ProcessStartInfo psi = new()
             {
                 FileName = "docker",
                 Arguments = args,
@@ -171,17 +229,18 @@ namespace dotnet_etcd.Tests.Integration
                 CreateNoWindow = true
             };
 
-            using var process = Process.Start(psi);
+            using Process? process = Process.Start(psi);
             if (process == null)
             {
-                 Console.WriteLine("Failed to start docker process");
-                 return;
+                Console.WriteLine("Failed to start docker process");
+                return;
             }
+
             process.WaitForExit();
             if (process.ExitCode != 0)
             {
-                var error = process.StandardError.ReadToEnd();
-                // Don't throw for unpause in Dispose if already unpaused
+                string error = process.StandardError.ReadToEnd();
+                // Don't complain when Dispose unpauses a container that was never paused.
                 if (!args.Contains("unpause") || !error.Contains("is not paused"))
                 {
                     Console.WriteLine($"Docker command failed: {error}");

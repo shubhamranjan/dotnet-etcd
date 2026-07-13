@@ -68,7 +68,13 @@ failed_iterations=()
 
 for i in $(seq 1 "$ITERATIONS"); do
     log="$LOG_DIR/run-$i.log"
-    if dotnet test "$PROJECT" -c Debug --no-build "${FILTER_ARG[@]}" >"$log" 2>&1; then
+    # verbosity=detailed so the tests' own Console output lands in the log. Without it a failing
+    # iteration gives only the assertion message, which is not enough to diagnose a flake after the
+    # fact from a CI artifact.
+    # ${arr[@]+"${arr[@]}"} because `set -u` treats an empty array as unbound on bash 3.2 (macOS),
+    # which is exactly the -f All case.
+    if dotnet test "$PROJECT" -c Debug --no-build ${FILTER_ARG[@]+"${FILTER_ARG[@]}"} \
+        --logger "console;verbosity=detailed" >"$log" 2>&1; then
         passes=$((passes + 1))
         echo "  [$i/$ITERATIONS] PASS"
     else

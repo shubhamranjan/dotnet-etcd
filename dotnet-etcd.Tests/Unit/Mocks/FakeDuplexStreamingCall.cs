@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Threading.Channels;
 using dotnet_etcd.interfaces;
+using Etcdserverpb;
 using Grpc.Core;
 
 namespace dotnet_etcd.Tests.Unit.Mocks;
@@ -19,11 +20,20 @@ public class RecordingClientStreamWriter<T> : IClientStreamWriter<T>
     /// <summary>True once <see cref="CompleteAsync" /> has been called.</summary>
     public bool IsCompleted { get; private set; }
 
+    /// <summary>
+    ///     Invoked synchronously from inside <see cref="WriteAsync(T)" />, before it returns. Lets a
+    ///     test model a server that responds while the write is still in flight — the window in which
+    ///     a real etcd can deliver the Created response before the client has finished registering the
+    ///     watch.
+    /// </summary>
+    public Action<T>? OnWrite { get; set; }
+
     public WriteOptions? WriteOptions { get; set; }
 
     public Task WriteAsync(T message)
     {
         _written.Enqueue(message);
+        OnWrite?.Invoke(message);
         return Task.CompletedTask;
     }
 
@@ -31,6 +41,7 @@ public class RecordingClientStreamWriter<T> : IClientStreamWriter<T>
     {
         cancellationToken.ThrowIfCancellationRequested();
         _written.Enqueue(message);
+        OnWrite?.Invoke(message);
         return Task.CompletedTask;
     }
 
@@ -86,14 +97,42 @@ public class ChannelStreamReader<T> : IAsyncStreamReader<T>
 /// </summary>
 public class FakeDuplexStreamingCall<TRequest, TResponse> : IAsyncDuplexStreamingCall<TRequest, TResponse>
 {
+    private long _autoAckRevision;
+
+    public FakeDuplexStreamingCall() => Requests.OnWrite = AutoAck;
+
     public RecordingClientStreamWriter<TRequest> Requests { get; } = new();
     public ChannelStreamReader<TResponse> Responses { get; } = new();
+
+    /// <summary>
+    ///     Mirrors a real etcd, which answers every WatchCreateRequest with a Created response echoing
+    ///     the client-supplied watch id. On by default so that a watch stream behaves like a server;
+    ///     turn it off to drive the acknowledgement (or withhold it) by hand.
+    /// </summary>
+    public bool AutoAckWatchCreate { get; set; } = true;
 
     /// <summary>True once <see cref="Dispose" /> has been called.</summary>
     public bool IsDisposed { get; private set; }
 
     public IClientStreamWriter<TRequest> RequestStream => Requests;
     public IAsyncStreamReader<TResponse> ResponseStream => Responses;
+
+    private void AutoAck(TRequest request)
+    {
+        if (!AutoAckWatchCreate ||
+            request is not WatchRequest { CreateRequest: not null } watchRequest ||
+            this is not FakeDuplexStreamingCall<WatchRequest, WatchResponse> watchStream)
+        {
+            return;
+        }
+
+        watchStream.Enqueue(new WatchResponse
+        {
+            Created = true,
+            WatchId = watchRequest.CreateRequest.WatchId,
+            Header = new ResponseHeader { Revision = Interlocked.Increment(ref _autoAckRevision) }
+        });
+    }
 
     public Task<Metadata> GetHeadersAsync() => Task.FromResult(new Metadata());
 

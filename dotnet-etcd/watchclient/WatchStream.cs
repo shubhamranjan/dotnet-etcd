@@ -17,6 +17,14 @@ public class Watcher : IWatcher
     private readonly ConcurrentDictionary<long, Action<WatchResponse>> _callbacks = new();
     private readonly CancellationTokenSource _cts = new();
 
+    /// <summary>
+    ///     gRPC allows only one pending write per stream ("Only one write can be pending at a time").
+    ///     Creates and cancels are issued from user threads and from the reconnect loop, so the writes
+    ///     must be serialized. The lock covers the write only — never a wait for a server response, or
+    ///     a create awaiting its acknowledgement would block every cancel and reconnect behind it.
+    /// </summary>
+    private readonly SemaphoreSlim _writeLock = new(1, 1);
+
     private readonly IAsyncDuplexStreamingCall<WatchRequest, WatchResponse> _streamingCall;
     private readonly Action? _onConnectionFailure;
 
@@ -46,10 +54,22 @@ public class Watcher : IWatcher
 
         ArgumentNullException.ThrowIfNull(callback);
 
-        _callbacks[request.CreateRequest.WatchId] = callback;
+        long watchId = request.CreateRequest.WatchId;
 
-        // Send the watch request
-        await _streamingCall.RequestStream.WriteAsync(request);
+        // Register before writing: the server can answer before WriteAsync returns.
+        _callbacks[watchId] = callback;
+
+        try
+        {
+            await WriteAsync(request).ConfigureAwait(false);
+        }
+        catch
+        {
+            // The create never reached the server; don't leave a callback behind for a watch that
+            // does not exist.
+            _callbacks.TryRemove(watchId, out _);
+            throw;
+        }
     }
 
     /// <summary>
@@ -62,10 +82,23 @@ public class Watcher : IWatcher
         // Send a cancel request
         WatchRequest request = new() { CancelRequest = new WatchCancelRequest { WatchId = watchId } };
 
-        await _streamingCall.RequestStream.WriteAsync(request);
+        await WriteAsync(request).ConfigureAwait(false);
 
         // Remove the callback
         _callbacks.TryRemove(watchId, out _);
+    }
+
+    private async Task WriteAsync(WatchRequest request)
+    {
+        await _writeLock.WaitAsync(_cts.Token).ConfigureAwait(false);
+        try
+        {
+            await _streamingCall.RequestStream.WriteAsync(request).ConfigureAwait(false);
+        }
+        finally
+        {
+            _writeLock.Release();
+        }
     }
 
     private async Task ProcessWatchResponses()
@@ -122,6 +155,11 @@ public class Watcher : IWatcher
     {
         _cts.Cancel();
         _streamingCall.Dispose();
+
+        // Deliberately not disposing _writeLock/_cts: a write may be in flight, and disposing them
+        // underneath it would surface as an ObjectDisposedException from inside the semaphore instead
+        // of the stream's own cancellation. Neither holds an unmanaged resource here, so letting the
+        // GC reclaim them is safe.
 
         GC.SuppressFinalize(this);
     }
