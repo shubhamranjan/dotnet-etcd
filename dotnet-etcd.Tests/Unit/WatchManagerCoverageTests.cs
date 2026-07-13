@@ -82,6 +82,239 @@ public class WatchManagerCoverageTests
     }
 
     [Fact]
+    public void Watch_CalledFromInsideAWatchCallback_DoesNotDeadlockTheStream()
+    {
+        using WatchManager manager = CreateManager(out FakeDuplexStreamingCall<WatchRequest, WatchResponse> fake);
+
+        long nested = 0;
+        using ManualResetEventSlim done = new(false);
+
+        manager.Watch(KeyRequest("a"), (WatchResponse r) =>
+        {
+            if (r.Events.Count == 0 || Interlocked.Read(ref nested) != 0)
+            {
+                return;
+            }
+
+            // Reacting to an event by starting another watch is an ordinary thing to do. It must not
+            // wedge the stream: the callback runs on the receive loop, and a blocking watch create can
+            // only be acknowledged BY that loop.
+            Interlocked.Exchange(ref nested, manager.Watch(KeyRequest("b"), (WatchResponse _) => { }));
+            done.Set();
+        });
+
+        fake.Enqueue(EventResponse(FirstWatchId, "a", "v"));
+
+        Assert.True(done.Wait(15000),
+            "a watch created from inside a watch callback deadlocked the receive loop");
+        Assert.NotEqual(0, Interlocked.Read(ref nested));
+    }
+
+    [Fact]
+    public void Reconnect_WatchWithExplicitStartRevision_ResumesFromItRatherThanTheAckHeader()
+    {
+        var fakes = new Queue<FakeDuplexStreamingCall<WatchRequest, WatchResponse>>();
+        var fake1 = new FakeDuplexStreamingCall<WatchRequest, WatchResponse> { AutoAckWatchCreate = false };
+        var fake2 = new FakeDuplexStreamingCall<WatchRequest, WatchResponse> { AutoAckWatchCreate = false };
+        fakes.Enqueue(fake1);
+        fakes.Enqueue(fake2);
+        using var manager = new WatchManager((_, _, _) => fakes.Count > 1 ? fakes.Dequeue() : fakes.Peek());
+
+        // The "resume from a checkpoint" pattern: the caller asks to replay everything since rev 11.
+        WatchRequest request = KeyRequest("k");
+        request.CreateRequest.StartRevision = 11;
+
+        Task<long> watch = manager.WatchAsync(request, (WatchResponse _) => { });
+
+        // etcd acks at the CURRENT cluster revision (99) and will now replay 11..99.
+        fake1.Enqueue(new WatchResponse
+        {
+            Created = true,
+            WatchId = FirstWatchId,
+            Header = new ResponseHeader { Revision = 99 }
+        });
+        Assert.True(WaitFor(() => watch.IsCompleted, 5000), "watch was never acknowledged");
+
+        // Stream dies before any of the backlog is replayed. The caller asked for 11 and has seen
+        // nothing, so the resume must still be 11 — not 100, which would skip the whole backlog.
+        fake1.Responses.ThrowOnMoveNext = new RpcException(new Status(StatusCode.Unavailable, "dropped"));
+        fake1.Enqueue(new WatchResponse());
+
+        Assert.True(WaitFor(() => fake2.Requests.Written.Any(r => r.CreateRequest != null), 5000),
+            "watch was not re-registered on the reconnected stream");
+        Assert.Equal(11, fake2.Requests.Written.First(r => r.CreateRequest != null).CreateRequest.StartRevision);
+    }
+
+    [Fact]
+    public void Reconnect_ReplayCreateAck_DoesNotSkipPastEventsStillToBeReplayed()
+    {
+        var fakes = new Queue<FakeDuplexStreamingCall<WatchRequest, WatchResponse>>();
+        var fake1 = new FakeDuplexStreamingCall<WatchRequest, WatchResponse>();
+        // The reconnect stream acks by hand so we can give the ack a header revision far ahead of the
+        // watch's resume point, which is what a real etcd does: the ack carries the CURRENT cluster
+        // revision, not the watch's position.
+        var fake2 = new FakeDuplexStreamingCall<WatchRequest, WatchResponse> { AutoAckWatchCreate = false };
+        var fake3 = new FakeDuplexStreamingCall<WatchRequest, WatchResponse> { AutoAckWatchCreate = false };
+        fakes.Enqueue(fake1);
+        fakes.Enqueue(fake2);
+        fakes.Enqueue(fake3);
+        using var manager = new WatchManager((_, _, _) => fakes.Count > 1 ? fakes.Dequeue() : fakes.Peek());
+
+        long observed = 0;
+        manager.Watch(KeyRequest("k"), (WatchResponse r) =>
+        {
+            if (r.Events.Count > 0)
+            {
+                observed = r.Events[^1].Kv.ModRevision;
+            }
+        });
+
+        fake1.Enqueue(EventAtRevision(FirstWatchId, 10));
+        Assert.True(WaitFor(() => observed == 10), "initial event was not delivered");
+
+        // First disconnect: the watch must resume from 11.
+        fake1.Responses.ThrowOnMoveNext = new RpcException(new Status(StatusCode.Unavailable, "dropped"));
+        fake1.Enqueue(new WatchResponse());
+        Assert.True(WaitFor(() => fake2.Requests.Written.Any(r => r.CreateRequest != null), 5000),
+            "watch was not re-registered after the first disconnect");
+        Assert.Equal(11, fake2.Requests.Written.First(r => r.CreateRequest != null).CreateRequest.StartRevision);
+
+        // etcd acks the replay create at the current cluster revision (99) and will now replay 11..99.
+        // Nothing has been replayed yet.
+        fake2.Enqueue(new WatchResponse
+        {
+            Created = true,
+            WatchId = FirstWatchId,
+            Header = new ResponseHeader { Revision = 99 }
+        });
+        Assert.True(WaitFor(() => fake2.Requests.Written.Any()), "create was not written to the new stream");
+        Thread.Sleep(200); // let the ack be processed
+
+        // Second disconnect before any replayed event arrives. The watch still has not seen 11..99, so
+        // it must STILL resume from 11. Treating the ack's header as "observed" would resume at 100 and
+        // silently skip every one of those events.
+        fake2.Responses.ThrowOnMoveNext = new RpcException(new Status(StatusCode.Unavailable, "dropped"));
+        fake2.Enqueue(new WatchResponse());
+        Assert.True(WaitFor(() => fake3.Requests.Written.Any(r => r.CreateRequest != null), 5000),
+            "watch was not re-registered after the second disconnect");
+        Assert.Equal(11, fake3.Requests.Written.First(r => r.CreateRequest != null).CreateRequest.StartRevision);
+    }
+
+    [Fact]
+    public async Task WatchAsync_DoesNotComplete_UntilServerAcknowledgesTheWatch()
+    {
+        var fake = new FakeDuplexStreamingCall<WatchRequest, WatchResponse> { AutoAckWatchCreate = false };
+        using var manager = new WatchManager((_, _, _) => fake);
+
+        Task<long> watch = manager.WatchAsync(KeyRequest("k"), (WatchResponse _) => { });
+
+        // etcd registers a watch asynchronously: until the Created ack comes back the watch does not
+        // exist server-side. If WatchAsync completed here, a caller doing the natural
+        // `await WatchAsync(...); await PutAsync(...);` could have its put applied before the watch
+        // existed, and the event would never be delivered — silently, and forever.
+        await Task.Delay(300);
+        Assert.False(watch.IsCompleted,
+            "WatchAsync completed before etcd acknowledged the watch; a write issued now could be missed");
+
+        fake.Enqueue(new WatchResponse
+        {
+            Created = true,
+            WatchId = FirstWatchId,
+            Header = new ResponseHeader { Revision = 7 }
+        });
+
+        Assert.Equal(FirstWatchId, await watch);
+    }
+
+    [Fact]
+    public async Task WatchAsync_WhenStreamDiesBeforeAck_RetriesCreateAndCompletesOnceAcknowledged()
+    {
+        var fakes = new Queue<FakeDuplexStreamingCall<WatchRequest, WatchResponse>>();
+        var fake1 = new FakeDuplexStreamingCall<WatchRequest, WatchResponse> { AutoAckWatchCreate = false };
+        var fake2 = new FakeDuplexStreamingCall<WatchRequest, WatchResponse> { AutoAckWatchCreate = false };
+        fakes.Enqueue(fake1);
+        fakes.Enqueue(fake2);
+        using var manager = new WatchManager((_, _, _) => fakes.Count > 1 ? fakes.Dequeue() : fakes.Peek());
+
+        Task<long> watch = manager.WatchAsync(KeyRequest("k"), (WatchResponse _) => { });
+
+        // The stream dies before the server ever acknowledged the watch. This is what happens when a
+        // watch is opened against an etcd that is still coming back up.
+        fake1.Responses.ThrowOnMoveNext = new RpcException(new Status(StatusCode.Unavailable, "connection dropped"));
+        fake1.Enqueue(new WatchResponse());
+
+        // The create must be re-sent on the new stream rather than the watch being silently dropped.
+        Assert.True(
+            WaitFor(() => fake2.Requests.Written.Any(r => r.CreateRequest != null), 5000),
+            "watch create was not retried on the reconnected stream");
+        Assert.False(watch.IsCompleted, "WatchAsync completed even though the watch was never acknowledged");
+
+        fake2.Enqueue(new WatchResponse
+        {
+            Created = true,
+            WatchId = FirstWatchId,
+            Header = new ResponseHeader { Revision = 9 }
+        });
+
+        Assert.Equal(FirstWatchId, await watch);
+    }
+
+    [Fact]
+    public void Reconnect_ResumesFromCreatedRevision_WhenCreatedArrivesBeforeRegistrationCompletes()
+    {
+        var fakes = new Queue<FakeDuplexStreamingCall<WatchRequest, WatchResponse>>();
+        var fake1 = new FakeDuplexStreamingCall<WatchRequest, WatchResponse>();
+        var fake2 = new FakeDuplexStreamingCall<WatchRequest, WatchResponse>();
+        fakes.Enqueue(fake1);
+        fakes.Enqueue(fake2);
+        using var manager = new WatchManager((_, _, _) => fakes.Count > 1 ? fakes.Dequeue() : fakes.Peek());
+
+        using var createdDelivered = new ManualResetEventSlim(false);
+
+        // Model the real server: the Created response comes back while the create request write is
+        // still in flight. Holding WriteAsync open until the callback has run guarantees the response
+        // is dispatched before the manager finishes registering the watch — the exact window in which
+        // the created revision used to be dropped.
+        fake1.Requests.OnWrite = request =>
+        {
+            if (request.CreateRequest == null)
+            {
+                return;
+            }
+
+            fake1.Enqueue(new WatchResponse
+            {
+                Created = true,
+                WatchId = request.CreateRequest.WatchId,
+                Header = new ResponseHeader { Revision = 42 }
+            });
+
+            createdDelivered.Wait(5000);
+        };
+
+        manager.Watch(KeyRequest("k"), (WatchResponse r) =>
+        {
+            if (r.Created)
+            {
+                createdDelivered.Set();
+            }
+        });
+
+        // No events are ever delivered — only the Created ack. Break the stream.
+        fake1.Responses.ThrowOnMoveNext = new RpcException(new Status(StatusCode.Unavailable, "connection dropped"));
+        fake1.Enqueue(new WatchResponse()); // unblock the receive loop so it re-enters MoveNext and throws
+
+        Assert.True(
+            WaitFor(() => fake2.Requests.Written.Any(r => r.CreateRequest != null), 5000),
+            "watch was not re-registered on the reconnected stream");
+
+        // The watch observed everything up to revision 42, so it must resume at 43. Resuming at 0
+        // ("from now") would silently drop every event written during the outage.
+        WatchRequest reRegistered = fake2.Requests.Written.First(r => r.CreateRequest != null);
+        Assert.Equal(43, reRegistered.CreateRequest.StartRevision);
+    }
+
+    [Fact]
     public void Reconnect_ResumesWatchFromLastObservedRevisionPlusOne()
     {
         var fakes = new Queue<FakeDuplexStreamingCall<WatchRequest, WatchResponse>>();

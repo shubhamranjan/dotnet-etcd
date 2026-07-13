@@ -5,6 +5,7 @@ set -euo pipefail
 #   - etcd1 / etcd2 / etcd3 : 3-node cluster   (ports 2379 / 22379 / 32379)
 #   - etcd-ssl              : TLS-enabled node (port 2389)
 #   - etcd-authttl          : short auth-token-ttl node for token-renewal tests (port 2399)
+#   - etcd-resilience       : dedicated node the watch resilience tests pause/restart (port 2409)
 cd "$(dirname "$0")"
 
 # The fixture reads cluster-type.txt to pick its connection string. The cluster is reachable on
@@ -40,9 +41,13 @@ wait_for_health() {
     return 1
 }
 
-# The 3-node cluster (most integration tests) and the short-TTL auth node (token-renewal test).
+# The 3-node cluster (most integration tests), the short-TTL auth node (token-renewal test) and the
+# resilience node. etcd-resilience must be gated too: WatchResilienceTests opens a watch against it
+# as its very first action, so if it is still starting the watch is registered against a server that
+# is not serving yet and the test fails on an empty event list.
 wait_for_health etcd1 --endpoints=http://etcd1:2379,http://etcd2:2379,http://etcd3:2379
 wait_for_health etcd-authttl
+wait_for_health etcd-resilience
 
 echo "$CLUSTER_TYPE" > cluster-type.txt
 
@@ -52,3 +57,4 @@ echo "  - http://localhost:22379   (etcd2)"
 echo "  - http://localhost:32379   (etcd3)"
 echo "  - https://localhost:2389   (etcd-ssl)"
 echo "  - http://localhost:2399    (etcd-authttl, auth-token-ttl=2s)"
+echo "  - http://localhost:2409    (etcd-resilience, paused/restarted by watch resilience tests)"
