@@ -6,14 +6,36 @@ This page documents how to use leader election in etcd using the `dotnet-etcd` c
 
 etcd provides a leader election service that allows multiple clients to coordinate and elect a leader among them. The election service in etcd is built on top of the key-value store and lease system.
 
+## Leadership lasts exactly as long as your lease
+
+Winning an election does not make you the leader until you resign; it makes you the leader until
+your **lease** dies. That is what makes the election safe: if the leader crashes or is partitioned
+away, its lease stops being renewed, it expires, and leadership passes to the next candidate. It is
+also what you have to take responsibility for: the lease is yours to grant and yours to keep alive.
+
+Note that `Campaign` returns once, when you win. There is no further notification if you later lose
+leadership. Keeping the lease alive with `LeaseKeepAlive` gives you that signal, because the
+`CancellationTokenSource` you pass it is cancelled when the lease is lost, so run your leader-only
+work under that token.
+
+> **Do not call `Campaign(name, value)` without a lease.** That overload is obsolete. etcd answers
+> an unset lease by creating a session of its own with a 60 second TTL and immediately orphaning it,
+> so nothing renews it: leadership is given up about 60 seconds later, with no signal, while your
+> code goes on believing it is the leader and another candidate is promoted alongside it.
+
 ## Creating a Campaign
 
 To participate in an election, you need to create a campaign:
 
 ```csharp
 // Create a lease with a TTL of 10 seconds
-var leaseResponse = client.LeaseGrant(10);
+var leaseResponse = client.LeaseGrant(new LeaseGrantRequest { TTL = 10 });
 long leaseId = leaseResponse.ID;
+
+// Keep it alive. leadershipLost is cancelled when the lease is gone, which is the only
+// notification you get that you are no longer the leader.
+var leadershipLost = new CancellationTokenSource();
+_ = client.LeaseKeepAlive(leadershipLost, leaseId, keepAliveTimeout: 3000);
 
 // Start a campaign with the lease
 var campaignResponse = client.Campaign("my-election", leaseId, "candidate-1");
@@ -36,7 +58,7 @@ You can specify a timeout for creating a campaign:
 try
 {
     // Create a lease with a TTL of 10 seconds
-    var leaseResponse = client.LeaseGrant(10);
+    var leaseResponse = client.LeaseGrant(new LeaseGrantRequest { TTL = 10 });
     long leaseId = leaseResponse.ID;
 
     // Start a campaign with a 5-second timeout
@@ -63,7 +85,7 @@ You can create a campaign asynchronously:
 
 ```csharp
 // Create a lease with a TTL of 10 seconds
-var leaseResponse = await client.LeaseGrantAsync(10);
+var leaseResponse = await client.LeaseGrantAsync(new LeaseGrantRequest { TTL = 10 });
 long leaseId = leaseResponse.ID;
 
 // Start a campaign asynchronously
@@ -78,7 +100,7 @@ Once elected as leader, you can proclaim new values:
 
 ```csharp
 // Create a lease with a TTL of 10 seconds
-var leaseResponse = client.LeaseGrant(10);
+var leaseResponse = client.LeaseGrant(new LeaseGrantRequest { TTL = 10 });
 long leaseId = leaseResponse.ID;
 
 // Start a campaign
@@ -96,7 +118,7 @@ You can proclaim new values asynchronously:
 
 ```csharp
 // Create a lease with a TTL of 10 seconds
-var leaseResponse = await client.LeaseGrantAsync(10);
+var leaseResponse = await client.LeaseGrantAsync(new LeaseGrantRequest { TTL = 10 });
 long leaseId = leaseResponse.ID;
 
 // Start a campaign asynchronously
@@ -146,7 +168,7 @@ To resign leadership:
 
 ```csharp
 // Create a lease with a TTL of 10 seconds
-var leaseResponse = client.LeaseGrant(10);
+var leaseResponse = client.LeaseGrant(new LeaseGrantRequest { TTL = 10 });
 long leaseId = leaseResponse.ID;
 
 // Start a campaign
@@ -174,7 +196,7 @@ You can resign leadership asynchronously:
 
 ```csharp
 // Create a lease with a TTL of 10 seconds
-var leaseResponse = await client.LeaseGrantAsync(10);
+var leaseResponse = await client.LeaseGrantAsync(new LeaseGrantRequest { TTL = 10 });
 long leaseId = leaseResponse.ID;
 
 // Start a campaign asynchronously
@@ -224,7 +246,7 @@ public class EtcdLeaderElection
         try
         {
             // Create a lease
-            var leaseResponse = await _client.LeaseGrantAsync(_leaseTtl);
+            var leaseResponse = await _client.LeaseGrantAsync(new LeaseGrantRequest { TTL = _leaseTtl });
             _leaseId = leaseResponse.ID;
             
             // Start keep-alive for the lease
