@@ -12,6 +12,9 @@ namespace dotnet_etcd.Tests.Unit;
 ///     Every public UNARY Lock method + overload (string and request based) is exercised
 ///     in both sync and async form.
 /// </summary>
+// The lease-less string overloads are obsolete but still supported, so the tests that cover
+// them are exempt from CS0618 rather than deleted.
+#pragma warning disable CS0618
 [Trait("Category", "Unit")]
 public class LockClientCoverageTests
 {
@@ -391,3 +394,4 @@ public class LockClientCoverageTests
             headers, deadline, It.IsAny<CancellationToken>()), Times.Once);
     }
 }
+#pragma warning restore CS0618

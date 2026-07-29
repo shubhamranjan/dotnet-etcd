@@ -45,6 +45,17 @@ public partial class EtcdClient
     /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     /// <returns>The response received from the server.</returns>
+    /// <remarks>
+    ///     This overload sends no lease. etcd's election server responds to an unset lease by
+    ///     creating a session of its own with the default TTL of 60 seconds and immediately
+    ///     orphaning it, so nothing keeps that lease alive: leadership is released roughly 60
+    ///     seconds after it is won, while the caller is still running and with no signal that it
+    ///     is no longer the leader. Use the overload that takes an explicit lease.
+    /// </remarks>
+    [Obsolete(
+        "Campaign without an explicit lease gives up leadership after ~60 seconds with no signal " +
+        "to the caller, because etcd creates and orphans a session of its own. Grant a lease, keep " +
+        "it alive with LeaseKeepAlive, and pass its id to Campaign(name, leaseId, value, ...).")]
     public CampaignResponse Campaign(
         string name,
         string value = null,
@@ -60,6 +71,42 @@ public partial class EtcdClient
             headers,
             deadline,
             cancellationToken));
+
+    /// <summary>
+    ///     Campaign waits to acquire leadership in an election, returning a LeaderKey
+    ///     representing the leadership if successful. The LeaderKey can then be used
+    ///     to issue new values on the election, transactionally guard API requests on
+    ///     leadership still being held, and resign from the election.
+    /// </summary>
+    /// <param name="name">The name is the election's identifier for the campaign.</param>
+    /// <param name="leaseId">
+    ///     The id of the lease that leadership is attached to. Leadership lasts exactly as long as
+    ///     this lease does, so the caller is responsible for keeping it alive (see
+    ///     <see cref="LeaseKeepAlive(CancellationTokenSource, long, int, int?, Metadata, DateTime?)" />);
+    ///     when the lease expires or is revoked, leadership passes to the next campaigner.
+    /// </param>
+    /// <param name="value">The value is the initial proclaimed value set when the campaigner wins the election.</param>
+    /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="cancellationToken">An optional token for canceling the call.</param>
+    /// <returns>The response received from the server.</returns>
+    public CampaignResponse Campaign(
+        string name,
+        long leaseId,
+        string value,
+        Metadata headers = null,
+        DateTime? deadline = null,
+        CancellationToken cancellationToken = default)
+        => Campaign(
+            new CampaignRequest
+            {
+                Name = ByteString.CopyFromUtf8(name ?? throw new ArgumentNullException(nameof(name))),
+                Value = value == null ? null : ByteString.CopyFromUtf8(value),
+                Lease = leaseId
+            },
+            headers,
+            deadline,
+            cancellationToken);
 
     /// <summary>
     ///     CampaignAsync waits to acquire leadership in an election, returning a LeaderKey
@@ -95,6 +142,17 @@ public partial class EtcdClient
     /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     /// <returns>The response received from the server.</returns>
+    /// <remarks>
+    ///     This overload sends no lease. etcd's election server responds to an unset lease by
+    ///     creating a session of its own with the default TTL of 60 seconds and immediately
+    ///     orphaning it, so nothing keeps that lease alive: leadership is released roughly 60
+    ///     seconds after it is won, while the caller is still running and with no signal that it
+    ///     is no longer the leader. Use the overload that takes an explicit lease.
+    /// </remarks>
+    [Obsolete(
+        "CampaignAsync without an explicit lease gives up leadership after ~60 seconds with no " +
+        "signal to the caller, because etcd creates and orphans a session of its own. Grant a lease, " +
+        "keep it alive with LeaseKeepAlive, and pass its id to CampaignAsync(name, leaseId, value, ...).")]
     public async Task<CampaignResponse> CampaignAsync(
         string name,
         string value,
@@ -110,6 +168,42 @@ public partial class EtcdClient
             headers,
             deadline,
             cancellationToken)).ConfigureAwait(false);
+
+    /// <summary>
+    ///     CampaignAsync waits to acquire leadership in an election, returning a LeaderKey
+    ///     representing the leadership if successful. The LeaderKey can then be used
+    ///     to issue new values on the election, transactionally guard API requests on
+    ///     leadership still being held, and resign from the election.
+    /// </summary>
+    /// <param name="name">The name is the election's identifier for the campaign.</param>
+    /// <param name="leaseId">
+    ///     The id of the lease that leadership is attached to. Leadership lasts exactly as long as
+    ///     this lease does, so the caller is responsible for keeping it alive (see
+    ///     <see cref="LeaseKeepAlive(CancellationTokenSource, long, int, int?, Metadata, DateTime?)" />);
+    ///     when the lease expires or is revoked, leadership passes to the next campaigner.
+    /// </param>
+    /// <param name="value">The value is the initial proclaimed value set when the campaigner wins the election.</param>
+    /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="cancellationToken">An optional token for canceling the call.</param>
+    /// <returns>The response received from the server.</returns>
+    public async Task<CampaignResponse> CampaignAsync(
+        string name,
+        long leaseId,
+        string value,
+        Metadata headers = null,
+        DateTime? deadline = null,
+        CancellationToken cancellationToken = default)
+        => await CampaignAsync(
+            new CampaignRequest
+            {
+                Name = ByteString.CopyFromUtf8(name ?? throw new ArgumentNullException(nameof(name))),
+                Value = value == null ? null : ByteString.CopyFromUtf8(value),
+                Lease = leaseId
+            },
+            headers,
+            deadline,
+            cancellationToken).ConfigureAwait(false);
 
     /// <summary>
     ///     Proclaim updates the leader's posted value with a new value.

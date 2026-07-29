@@ -5,6 +5,9 @@ using V3Electionpb;
 
 namespace dotnet_etcd.Tests.Unit;
 
+// The lease-less string overloads are obsolete but still supported, so the tests that cover
+// them are exempt from CS0618 rather than deleted.
+#pragma warning disable CS0618
 [Trait("Category", "Unit")]
 public class ElectionClientCoverageTests
 {
@@ -424,3 +427,4 @@ public class ElectionClientCoverageTests
         ), Times.Once);
     }
 }
+#pragma warning restore CS0618
