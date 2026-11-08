@@ -890,7 +890,13 @@ public class WatchManager : IWatchManager
         return -1;
     }
 
-    /// <param name="cancellationToken">An optional token for canceling the call</param>
+    /// <summary>
+    ///     Opens the shared watch stream if it is not open yet. Called with the first Watch() and
+    ///     again by the reconnect path, which passes no headers, deadline or token.
+    /// </summary>
+    /// <param name="headers">Metadata for the stream call</param>
+    /// <param name="deadline">Deadline for the stream call (always null: see WatchAsync)</param>
+    /// <param name="cancellationToken">Token for the stream call (always default: see WatchAsync)</param>
     private void EnsureWatchStream(Metadata? headers, DateTime? deadline, CancellationToken cancellationToken)
     {
         lock (_lockObject)

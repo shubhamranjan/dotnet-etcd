@@ -85,43 +85,38 @@ public partial class EtcdClient
     }
 
     /// <summary>
-    ///     Gets the byte string for range requests
+    ///     Converts a key to the bytes sent in a range request. An empty key becomes <c>"\0"</c>,
+    ///     which etcd treats as the start of the key space (used for "all keys" ranges).
     /// </summary>
-    /// <param name="key"></param>
-    /// <returns></returns>
+    /// <param name="key">The key or prefix.</param>
+    /// <returns>The key bytes to put on the request.</returns>
     public static ByteString GetStringByteForRangeRequests(string key) =>
         key.Length == 0 ? ByteString.CopyFrom(0) : ByteString.CopyFromUtf8(key);
 
     /// <summary>
-    ///     Generic helper for performing actions an a connection.
-    ///     Gets the connection from the <seealso cref="Balancer" />
-    ///     Also implements a retry mechanism if the calling methods returns an <seealso cref="RpcException" /> with the
-    ///     <seealso cref="StatusCode" /> <seealso cref="StatusCode.Unavailable" />
+    ///     Runs <paramref name="etcdCallFunc" /> against this client's <see cref="IConnection" />.
+    ///     Retries for transient failures are configured on the gRPC channel, not here.
     /// </summary>
     /// <typeparam name="TResponse">The type of the response that is returned from the call to etcd</typeparam>
-    /// <param name="etcdCallFunc">The function to perform actions with the <seealso cref="Connection" /> object</param>
-    /// <returns>The response from the the <paramref name="etcdCallFunc" /></returns>
+    /// <param name="etcdCallFunc">The call to make with the connection's gRPC clients.</param>
+    /// <returns>Whatever <paramref name="etcdCallFunc" /> returns.</returns>
     private TResponse CallEtcd<TResponse>(Func<IConnection, TResponse> etcdCallFunc) => etcdCallFunc(_connection);
 
     /// <summary>
-    ///     Generic helper for performing actions an a connection.
-    ///     Gets the connection from the <seealso cref="Balancer" />
-    ///     Also implements a retry mechanism if the calling methods returns an <seealso cref="RpcException" /> with the
-    ///     <seealso cref="StatusCode" /> <seealso cref="StatusCode.Unavailable" />
+    ///     Runs <paramref name="etcdCallFunc" /> against this client's <see cref="IConnection" />.
+    ///     Retries for transient failures are configured on the gRPC channel, not here.
     /// </summary>
     /// <typeparam name="TResponse">The type of the response that is returned from the call to etcd</typeparam>
-    /// <param name="etcdCallFunc">The function to perform actions with the <seealso cref="Connection" /> object</param>
-    /// <returns>The response from the the <paramref name="etcdCallFunc" /></returns>
+    /// <param name="etcdCallFunc">The call to make with the connection's gRPC clients.</param>
+    /// <returns>Whatever <paramref name="etcdCallFunc" /> returns.</returns>
     private Task<TResponse> CallEtcdAsync<TResponse>(Func<IConnection, Task<TResponse>> etcdCallFunc) =>
         etcdCallFunc(_connection);
 
     /// <summary>
-    ///     Generic helper for performing actions an a connection.
-    ///     Gets the connection from the <seealso cref="Balancer" />
-    ///     Also implements a retry mechanism if the calling methods returns an <seealso cref="RpcException" /> with the
-    ///     <seealso cref="StatusCode" /> <seealso cref="StatusCode.Unavailable" />
+    ///     Runs <paramref name="etcdCallFunc" /> against this client's <see cref="IConnection" />.
+    ///     Retries for transient failures are configured on the gRPC channel, not here.
     /// </summary>
-    /// <param name="etcdCallFunc">The function to perform actions with the <seealso cref="Connection" /> object</param>
-    /// <returns>The response from the the <paramref name="etcdCallFunc" /></returns>
+    /// <param name="etcdCallFunc">The call to make with the connection's gRPC clients.</param>
+    /// <returns>Whatever <paramref name="etcdCallFunc" /> returns.</returns>
     private Task CallEtcdAsync(Func<IConnection, Task> etcdCallFunc) => etcdCallFunc(_connection);
 }

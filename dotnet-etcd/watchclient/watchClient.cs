@@ -91,6 +91,15 @@ public partial class EtcdClient
         return watchIds;
     }
 
+    /// <summary>
+    ///     Watches the specified requests and passes the watch events of every one of them to the same method.
+    /// </summary>
+    /// <param name="requests">Watch Requests containing keys to be watched</param>
+    /// <param name="method">Method to which watch events should be passed on</param>
+    /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be canceled if the deadline is hit.</param>
+    /// <param name="cancellationToken">An optional token for canceling the call.</param>
+    /// <returns>A task that completes with an array of watch IDs, in request order</returns>
     public Task<long[]> WatchAsync(WatchRequest[] requests, Action<WatchEvent[]> method, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
