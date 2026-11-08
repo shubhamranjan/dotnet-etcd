@@ -137,7 +137,7 @@ var watchRequest = new WatchRequest
     CreateRequest = new WatchCreateRequest
     {
         Key = ByteString.CopyFromUtf8("config/"),
-        RangeEnd = ByteString.CopyFromUtf8(EtcdClient.GetRangeEnd("config/")),
+        RangeEnd = EtcdClient.GetRangeEnd(ByteString.CopyFromUtf8("config/")),
         StartRevision = startRevision,
         ProgressNotify = true,
         PrevKv = true

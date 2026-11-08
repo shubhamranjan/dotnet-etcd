@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using dotnet_etcd.interfaces;
@@ -430,7 +429,7 @@ public class WatchManager : IWatchManager
             CreateRequest = new WatchCreateRequest
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
-                RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(prefixKey)),
+                RangeEnd = EtcdClient.GetRangeEnd(ByteString.CopyFromUtf8(prefixKey)),
                 ProgressNotify = true,
                 PrevKv = true
             }
@@ -528,7 +527,7 @@ public class WatchManager : IWatchManager
             CreateRequest = new WatchCreateRequest
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
-                RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(prefixKey)),
+                RangeEnd = EtcdClient.GetRangeEnd(ByteString.CopyFromUtf8(prefixKey)),
                 StartRevision = startRevision,
                 ProgressNotify = true,
                 PrevKv = true
@@ -622,7 +621,7 @@ public class WatchManager : IWatchManager
             CreateRequest = new WatchCreateRequest
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
-                RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(prefixKey)),
+                RangeEnd = EtcdClient.GetRangeEnd(ByteString.CopyFromUtf8(prefixKey)),
                 ProgressNotify = true,
                 PrevKv = true
             }
@@ -720,7 +719,7 @@ public class WatchManager : IWatchManager
             CreateRequest = new WatchCreateRequest
             {
                 Key = ByteString.CopyFromUtf8(prefixKey),
-                RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(prefixKey)),
+                RangeEnd = EtcdClient.GetRangeEnd(ByteString.CopyFromUtf8(prefixKey)),
                 StartRevision = startRevision,
                 ProgressNotify = true,
                 PrevKv = true
@@ -769,7 +768,7 @@ public class WatchManager : IWatchManager
             CreateRequest = new WatchCreateRequest
             {
                 Key = ByteString.CopyFromUtf8(path),
-                RangeEnd = ByteString.CopyFromUtf8(GetRangeEnd(path)),
+                RangeEnd = EtcdClient.GetRangeEnd(ByteString.CopyFromUtf8(path)),
                 ProgressNotify = true,
                 PrevKv = true
             }
@@ -871,25 +870,6 @@ public class WatchManager : IWatchManager
         }
 
         GC.SuppressFinalize(this);
-    }
-
-    private static string GetRangeEnd(string path)
-    {
-        // Calculate the range end for the given path
-        // This is the same logic used in EtcdClient.GetRangeEnd
-        byte[] bytes = Encoding.UTF8.GetBytes(path);
-        for (int i = bytes.Length - 1; i >= 0; i--)
-        {
-            if (bytes[i] >= 0xff)
-            {
-                continue;
-            }
-
-            bytes[i]++;
-            return Encoding.UTF8.GetString(bytes, 0, i + 1);
-        }
-
-        return string.Empty;
     }
 
     /// <summary>

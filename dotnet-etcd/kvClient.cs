@@ -103,11 +103,10 @@ public partial class EtcdClient
     public RangeResponse GetRange(string prefixKey, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default)
     {
-        string rangeEnd = GetRangeEnd(prefixKey);
         return Get(
             new RangeRequest
             {
-                Key = GetStringByteForRangeRequests(prefixKey), RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
+                Key = GetStringByteForRangeRequests(prefixKey), RangeEnd = GetRangeEnd(ByteString.CopyFromUtf8(prefixKey))
             }, headers, deadline, cancellationToken);
     }
 
@@ -123,11 +122,10 @@ public partial class EtcdClient
         DateTime? deadline = null,
         CancellationToken cancellationToken = default)
     {
-        string rangeEnd = GetRangeEnd(prefixKey);
         return await GetAsync(
             new RangeRequest
             {
-                Key = GetStringByteForRangeRequests(prefixKey), RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
+                Key = GetStringByteForRangeRequests(prefixKey), RangeEnd = GetRangeEnd(ByteString.CopyFromUtf8(prefixKey))
             }, headers, deadline, cancellationToken).ConfigureAwait(false);
     }
 
@@ -143,11 +141,10 @@ public partial class EtcdClient
         DateTime? deadline = null,
         CancellationToken cancellationToken = default)
     {
-        string rangeEnd = GetRangeEnd(prefixKey);
         return RangeRespondToDictionary(Get(
             new RangeRequest
             {
-                Key = GetStringByteForRangeRequests(prefixKey), RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
+                Key = GetStringByteForRangeRequests(prefixKey), RangeEnd = GetRangeEnd(ByteString.CopyFromUtf8(prefixKey))
             }, headers, deadline, cancellationToken));
     }
 
@@ -163,12 +160,11 @@ public partial class EtcdClient
         Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default)
     {
-        string rangeEnd = GetRangeEnd(prefixKey);
         return RangeRespondToDictionary(
             await GetAsync(
                 new RangeRequest
                 {
-                    Key = GetStringByteForRangeRequests(prefixKey), RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
+                    Key = GetStringByteForRangeRequests(prefixKey), RangeEnd = GetRangeEnd(ByteString.CopyFromUtf8(prefixKey))
                 }, headers, deadline, cancellationToken).ConfigureAwait(false));
     }
 
@@ -294,11 +290,10 @@ public partial class EtcdClient
         DateTime? deadline = null,
         CancellationToken cancellationToken = default)
     {
-        string rangeEnd = GetRangeEnd(prefixKey);
         return Delete(
             new DeleteRangeRequest
             {
-                Key = ByteString.CopyFromUtf8(prefixKey), RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
+                Key = ByteString.CopyFromUtf8(prefixKey), RangeEnd = GetRangeEnd(ByteString.CopyFromUtf8(prefixKey))
             }, headers, deadline, cancellationToken);
     }
 
@@ -314,11 +309,10 @@ public partial class EtcdClient
         DateTime? deadline = null,
         CancellationToken cancellationToken = default)
     {
-        string rangeEnd = GetRangeEnd(prefixKey);
         return await DeleteAsync(
             new DeleteRangeRequest
             {
-                Key = ByteString.CopyFromUtf8(prefixKey), RangeEnd = ByteString.CopyFromUtf8(rangeEnd)
+                Key = ByteString.CopyFromUtf8(prefixKey), RangeEnd = GetRangeEnd(ByteString.CopyFromUtf8(prefixKey))
             }, headers, deadline, cancellationToken).ConfigureAwait(false);
     }
 

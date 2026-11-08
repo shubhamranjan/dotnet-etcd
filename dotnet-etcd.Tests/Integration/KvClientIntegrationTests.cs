@@ -293,4 +293,30 @@ public class KvClientIntegrationTests
             await _client.DeleteRangeAsync(prefix);
         }
     }
+
+    [Fact]
+    public async Task GetRange_WithNonAsciiPrefix_ShouldReturnOnlyKeysUnderThatPrefix()
+    {
+        // Issue #319: the range end used to be computed on UTF-16 chars rather than bytes. A prefix
+        // ending in U+FFFF made that visible: char + 1 wraps to U+0000, giving a range end below the
+        // key itself, which etcd rejects. The byte-based range end simply works.
+        var prefix = $"range-end-{Guid.NewGuid()}\uFFFF/";
+        var sibling = $"range-end-{Guid.NewGuid()}\u0100/other";
+        try
+        {
+            await _client.PutAsync($"{prefix}1", "one");
+            await _client.PutAsync($"{prefix}2", "two");
+            await _client.PutAsync(sibling, "not-under-prefix");
+
+            var response = await _client.GetRangeAsync(prefix);
+
+            Assert.Equal(new[] { $"{prefix}1", $"{prefix}2" },
+                response.Kvs.Select(kv => kv.Key.ToStringUtf8()).OrderBy(k => k));
+        }
+        finally
+        {
+            await _client.DeleteRangeAsync(prefix);
+            await _client.DeleteAsync(sibling);
+        }
+    }
 }
