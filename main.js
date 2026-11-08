@@ -303,7 +303,7 @@ var assemblies = [
       { "name": "dotnet_etcd.multiplexer.Connection", "rp": "dotnet_etcd_Connection.html", "cl": 17, "ucl": 0, "cal": 17, "tl": 63, "cb": 15, "tb": 16, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.Watcher", "rp": "dotnet_etcd_Watcher.html", "cl": 63, "ucl": 10, "cal": 73, "tl": 166, "cb": 8, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.WatchEvent", "rp": "dotnet_etcd_WatchEvent.html", "cl": 3, "ucl": 0, "cal": 3, "tl": 25, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "dotnet_etcd.WatchManager", "rp": "dotnet_etcd_WatchManager.html", "cl": 479, "ucl": 62, "cal": 541, "tl": 972, "cb": 85, "tb": 110, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "dotnet_etcd.WatchManager", "rp": "dotnet_etcd_WatchManager.html", "cl": 498, "ucl": 67, "cal": 565, "tl": 1023, "cb": 92, "tb": 118, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
     ]},
 ];
 
@@ -318,7 +318,7 @@ var riskHotspotMetrics = [
 
 var riskHotspots = [
   {
-    "assembly": "dotnet-etcd", "class": "dotnet_etcd.WatchManager", "reportPath": "dotnet_etcd_WatchManager.html", "methodName": "TrackResumeRevision(System.Int64,Etcdserverpb.WatchResponse)", "methodShortName": "TrackResumeRevision(...)", "fileIndex": 0, "line": 282,
+    "assembly": "dotnet-etcd", "class": "dotnet_etcd.WatchManager", "reportPath": "dotnet_etcd_WatchManager.html", "methodName": "TrackResumeRevision(System.Int64,Etcdserverpb.WatchResponse)", "methodShortName": "TrackResumeRevision(...)", "fileIndex": 0, "line": 305,
     "metrics": [
       { "value": 26, "exceeded": false },
       { "value": 26, "exceeded": true },
