@@ -762,4 +762,100 @@ public class WatchManagerCoverageTests
         watcher.Dispose();
         Assert.True(fake.IsDisposed);
     }
+
+    // ---------------------------------------------------------------------
+    // Per-watch deadline / token (a deadline must end THAT watch, not the shared stream, and a
+    // reconnect must never bring an ended watch back)
+    // ---------------------------------------------------------------------
+
+    private static bool IsCancelOf(WatchRequest r, long watchId) =>
+        r.CancelRequest != null && r.CancelRequest.WatchId == watchId;
+
+    [Fact]
+    public void Watch_DoesNotBindCallerDeadlineOrTokenToTheSharedStream()
+    {
+        DateTime? streamDeadline = DateTime.MaxValue;
+        CancellationToken streamToken = new(true);
+        var fake = new FakeDuplexStreamingCall<WatchRequest, WatchResponse>();
+        using var manager = new WatchManager((_, deadline, token) =>
+        {
+            streamDeadline = deadline;
+            streamToken = token;
+            return fake;
+        });
+        using var callerCts = new CancellationTokenSource();
+
+        manager.Watch(KeyRequest("k"), (WatchResponse _) => { }, deadline: DateTime.UtcNow.AddMinutes(1),
+            cancellationToken: callerCts.Token);
+
+        Assert.Null(streamDeadline);
+        Assert.Equal(CancellationToken.None, streamToken);
+    }
+
+    [Fact]
+    public void Watch_WithDeadline_DeliversEventsUntilItPasses_ThenCancelsOnServer()
+    {
+        using WatchManager manager = CreateManager(out FakeDuplexStreamingCall<WatchRequest, WatchResponse> fake);
+        var received = new List<string>();
+
+        manager.Watch(KeyRequest("k"), (WatchResponse r) =>
+        {
+            foreach (Event e in r.Events) received.Add(e.Kv.Value.ToStringUtf8());
+        }, deadline: DateTime.UtcNow.AddMilliseconds(500));
+
+        fake.Enqueue(EventResponse(FirstWatchId, "k", "before"));
+        Assert.True(WaitFor(() => received.Count == 1), "event before the deadline was not delivered");
+
+        Assert.True(WaitFor(() => fake.Requests.Written.Any(r => IsCancelOf(r, FirstWatchId)), 3000),
+            "the watch was not cancelled on the server when its deadline passed");
+
+        fake.Enqueue(EventResponse(FirstWatchId, "k", "after"));
+        Thread.Sleep(200);
+        Assert.Equal(new[] { "before" }, received);
+    }
+
+    [Fact]
+    public void Watch_WithCallerToken_CancelsOnServerWhenTokenIsCancelled()
+    {
+        using WatchManager manager = CreateManager(out FakeDuplexStreamingCall<WatchRequest, WatchResponse> fake);
+        using var callerCts = new CancellationTokenSource();
+
+        manager.Watch(KeyRequest("k"), (WatchResponse _) => { }, cancellationToken: callerCts.Token);
+        Assert.DoesNotContain(fake.Requests.Written, r => IsCancelOf(r, FirstWatchId));
+
+        callerCts.Cancel();
+
+        Assert.True(WaitFor(() => fake.Requests.Written.Any(r => IsCancelOf(r, FirstWatchId)), 3000),
+            "the watch was not cancelled on the server when the caller's token was cancelled");
+    }
+
+    [Fact]
+    public void Reconnect_DoesNotResurrectAWatchWhoseDeadlineHasPassed()
+    {
+        var fakes = new Queue<FakeDuplexStreamingCall<WatchRequest, WatchResponse>>();
+        var fake1 = new FakeDuplexStreamingCall<WatchRequest, WatchResponse>();
+        var fake2 = new FakeDuplexStreamingCall<WatchRequest, WatchResponse>();
+        fakes.Enqueue(fake1);
+        fakes.Enqueue(fake2);
+        using var manager = new WatchManager((_, _, _) => fakes.Count > 1 ? fakes.Dequeue() : fakes.Peek());
+
+        long expiring = manager.Watch(KeyRequest("expiring"), (WatchResponse _) => { },
+            deadline: DateTime.UtcNow.AddMilliseconds(300));
+        long lasting = manager.Watch(KeyRequest("lasting"), (WatchResponse _) => { });
+
+        Assert.True(WaitFor(() => fake1.Requests.Written.Any(r => IsCancelOf(r, expiring)), 3000),
+            "expiring watch was not cancelled at its deadline");
+
+        // Stream drops; the reconnect must bring back only the watch that is still alive.
+        fake1.Responses.ThrowOnMoveNext = new RpcException(new Status(StatusCode.Unavailable, "dropped"));
+        fake1.Enqueue(new WatchResponse());
+
+        Assert.True(WaitFor(() => fake2.Requests.Written.Any(r => r.CreateRequest != null), 5000),
+            "lasting watch was not re-registered on the reconnected stream");
+        Thread.Sleep(300);
+        WatchRequest[] creates = fake2.Requests.Written.Where(r => r.CreateRequest != null).ToArray();
+        Assert.Single(creates);
+        Assert.Equal(lasting, creates[0].CreateRequest.WatchId);
+        Assert.Equal("lasting", creates[0].CreateRequest.Key.ToStringUtf8());
+    }
 }
