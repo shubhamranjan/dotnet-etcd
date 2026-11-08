@@ -33,7 +33,7 @@ public partial class EtcdClient
     [Obsolete(
         "Lock without an explicit lease releases the lock after ~60 seconds with no signal to the " +
         "caller, because etcd creates and orphans a session of its own. Grant a lease, keep it " +
-        "alive with LeaseKeepAlive, and pass its id to Lock(name, lease, ...).")]
+        "alive with LeaseKeepAlive, and pass its id to Lock(name, leaseId, ...).")]
     public LockResponse Lock(string name, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default) => Lock(new LockRequest { Name = ByteString.CopyFromUtf8(name) },
         headers, deadline, cancellationToken);
@@ -47,7 +47,7 @@ public partial class EtcdClient
     ///     lease associated with the owner expires.
     /// </summary>
     /// <param name="name">is the identifier for the distributed shared lock to be acquired.</param>
-    /// <param name="lease">
+    /// <param name="leaseId">
     ///     The id of the lease that ownership of the lock is attached to. The lock is held for
     ///     exactly as long as this lease lives, so the caller is responsible for keeping it alive
     ///     (see <see cref="LeaseKeepAlive(CancellationTokenSource, long, int, int?, Metadata, DateTime?)" />);
@@ -57,9 +57,9 @@ public partial class EtcdClient
     /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     /// <returns>The response received from the server.</returns>
-    public LockResponse Lock(string name, long lease, Metadata headers = null, DateTime? deadline = null,
+    public LockResponse Lock(string name, long leaseId, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default) => Lock(
-        new LockRequest { Name = ByteString.CopyFromUtf8(name), Lease = lease },
+        new LockRequest { Name = ByteString.CopyFromUtf8(name), Lease = leaseId },
         headers, deadline, cancellationToken);
 
     /// <summary>
@@ -103,7 +103,7 @@ public partial class EtcdClient
     [Obsolete(
         "LockAsync without an explicit lease releases the lock after ~60 seconds with no signal to " +
         "the caller, because etcd creates and orphans a session of its own. Grant a lease, keep it " +
-        "alive with LeaseKeepAlive, and pass its id to LockAsync(name, lease, ...).")]
+        "alive with LeaseKeepAlive, and pass its id to LockAsync(name, leaseId, ...).")]
     public async Task<LockResponse> LockAsync(string name, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default) =>
         await LockAsync(new LockRequest { Name = ByteString.CopyFromUtf8(name) }, headers, deadline, cancellationToken)
@@ -118,7 +118,7 @@ public partial class EtcdClient
     ///     lease associated with the owner expires.
     /// </summary>
     /// <param name="name">is the identifier for the distributed shared lock to be acquired.</param>
-    /// <param name="lease">
+    /// <param name="leaseId">
     ///     The id of the lease that ownership of the lock is attached to. The lock is held for
     ///     exactly as long as this lease lives, so the caller is responsible for keeping it alive
     ///     (see <see cref="LeaseKeepAlive(CancellationTokenSource, long, int, int?, Metadata, DateTime?)" />);
@@ -128,9 +128,9 @@ public partial class EtcdClient
     /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     /// <returns>The response received from the server.</returns>
-    public async Task<LockResponse> LockAsync(string name, long lease, Metadata headers = null,
+    public async Task<LockResponse> LockAsync(string name, long leaseId, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default) =>
-        await LockAsync(new LockRequest { Name = ByteString.CopyFromUtf8(name), Lease = lease },
+        await LockAsync(new LockRequest { Name = ByteString.CopyFromUtf8(name), Lease = leaseId },
                 headers, deadline, cancellationToken)
             .ConfigureAwait(false);
 

@@ -4,10 +4,11 @@ This document provides comprehensive guidance for running tests and generating c
 
 ## Test Categories
 
-The test suite is divided into two main categories:
+The test suite is divided into three categories:
 
 1. **Unit Tests**: Don't require a running etcd server
 2. **Integration Tests**: Require a running etcd server
+3. **Slow Tests**: Integration tests that wait out etcd's 60 second default session TTL. Excluded from CI and from `beast.sh`; run them deliberately.
 
 ## Running Tests
 
@@ -63,12 +64,20 @@ docker rm etcd-server
 ./dotnet-etcd.Tests/stop-etcd.sh
 ```
 
-### All Tests
+### Slow Tests
 
-Run both unit and integration tests:
+These take over a minute each and are not part of any CI filter:
 
 ```bash
-dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj
+dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Slow"
+```
+
+### All Tests
+
+Run both unit and integration tests (leaving out the slow ones):
+
+```bash
+dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category!=Slow"
 ```
 
 ## Code Coverage

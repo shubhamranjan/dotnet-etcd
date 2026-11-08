@@ -15,13 +15,15 @@ namespace dotnet_etcd.Tests.Integration;
 /// </summary>
 [Collection("EtcdCluster")]
 [Trait("Category", "Slow")]
-public class LeaseScopedOwnershipExpiryTests
+public class LeaseScopedOwnershipExpiryTests : IDisposable
 {
     private readonly EtcdClient _client;
 
     public LeaseScopedOwnershipExpiryTests(EtcdClusterFixture fixture) =>
         _client = new EtcdClient(fixture.ConnectionString,
             configureChannelOptions: options => { options.Credentials = ChannelCredentials.Insecure; });
+
+    public void Dispose() => _client.Dispose();
 
     [Fact(Timeout = 180_000)]
     public async Task LockAsync_WithoutLease_ShouldReleaseTheLockWhileTheHolderIsStillRunning()
