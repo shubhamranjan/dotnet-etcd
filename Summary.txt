@@ -1,22 +1,22 @@
 Summary
-  Generated on: 11/08/2026 - 06:17:41
-  Coverage date: 11/08/2026 - 06:16:42 - 11/08/2026 - 06:17:39
+  Generated on: 11/08/2026 - 06:23:35
+  Coverage date: 11/08/2026 - 06:22:37 - 11/08/2026 - 06:23:34
   Parser: MultiReport (2x Cobertura)
   Assemblies: 1
   Classes: 14
   Files: 23
   Line coverage: 93.5%
-  Covered lines: 2135
+  Covered lines: 2134
   Uncovered lines: 148
-  Coverable lines: 2283
-  Total lines: 6064
-  Branch coverage: 79.6% (341 of 428)
-  Covered branches: 341
-  Total branches: 428
+  Coverable lines: 2282
+  Total lines: 6074
+  Branch coverage: 80.2% (342 of 426)
+  Covered branches: 342
+  Total branches: 426
   Method coverage: 97% (294 of 303)
-  Full method coverage: 85.4% (259 of 303)
+  Full method coverage: 86.1% (261 of 303)
   Covered methods: 294
-  Fully covered methods: 259
+  Fully covered methods: 261
   Total methods: 303
 
 dotnet-etcd                                                     93.5%
@@ -27,10 +27,10 @@ dotnet-etcd                                                     93.5%
   dotnet_etcd.DependencyInjection.EtcdClientOptions             76.1%
   dotnet_etcd.DependencyInjection.EtcdClientOptionsValidator     100%
   dotnet_etcd.DependencyInjection.ServiceCollectionExtensions   85.5%
-  dotnet_etcd.EtcdClient                                        95.8%
+  dotnet_etcd.EtcdClient                                          96%
   dotnet_etcd.GrpcChannelFactory                                 100%
   dotnet_etcd.helper.AsyncHelper                                 100%
   dotnet_etcd.multiplexer.Connection                             100%
-  dotnet_etcd.Watcher                                           93.1%
+  dotnet_etcd.Watcher                                           86.3%
   dotnet_etcd.WatchEvent                                         100%
-  dotnet_etcd.WatchManager                                      88.1%
+  dotnet_etcd.WatchManager                                      88.4%

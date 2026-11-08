@@ -297,13 +297,13 @@ var assemblies = [
       { "name": "dotnet_etcd.DependencyInjection.EtcdClientOptions", "rp": "dotnet_etcd_EtcdClientOptions.html", "cl": 16, "ucl": 5, "cal": 21, "tl": 84, "cb": 4, "tb": 6, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.DependencyInjection.EtcdClientOptionsValidator", "rp": "dotnet_etcd_EtcdClientOptionsValidator.html", "cl": 14, "ucl": 0, "cal": 14, "tl": 42, "cb": 12, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.DependencyInjection.ServiceCollectionExtensions", "rp": "dotnet_etcd_ServiceCollectionExtensions.html", "cl": 83, "ucl": 14, "cal": 97, "tl": 208, "cb": 3, "tb": 10, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "dotnet_etcd.EtcdClient", "rp": "dotnet_etcd_EtcdClient.html", "cl": 1242, "ucl": 54, "cal": 1296, "tl": 3977, "cb": 149, "tb": 194, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "dotnet_etcd.EtcdClient", "rp": "dotnet_etcd_EtcdClient.html", "cl": 1254, "ucl": 52, "cal": 1306, "tl": 4007, "cb": 153, "tb": 196, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.GrpcChannelFactory", "rp": "dotnet_etcd_GrpcChannelFactory.html", "cl": 55, "ucl": 0, "cal": 55, "tl": 103, "cb": 6, "tb": 6, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.helper.AsyncHelper", "rp": "dotnet_etcd_AsyncHelper.html", "cl": 12, "ucl": 0, "cal": 12, "tl": 47, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.multiplexer.Connection", "rp": "dotnet_etcd_Connection.html", "cl": 17, "ucl": 0, "cal": 17, "tl": 63, "cb": 15, "tb": 16, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "dotnet_etcd.Watcher", "rp": "dotnet_etcd_Watcher.html", "cl": 68, "ucl": 5, "cal": 73, "tl": 166, "cb": 9, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "dotnet_etcd.Watcher", "rp": "dotnet_etcd_Watcher.html", "cl": 63, "ucl": 10, "cal": 73, "tl": 166, "cb": 8, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "dotnet_etcd.WatchEvent", "rp": "dotnet_etcd_WatchEvent.html", "cl": 3, "ucl": 0, "cal": 3, "tl": 25, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "dotnet_etcd.WatchManager", "rp": "dotnet_etcd_WatchManager.html", "cl": 498, "ucl": 67, "cal": 565, "tl": 1023, "cb": 92, "tb": 118, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "dotnet_etcd.WatchManager", "rp": "dotnet_etcd_WatchManager.html", "cl": 490, "ucl": 64, "cal": 554, "tl": 1003, "cb": 90, "tb": 114, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
     ]},
 ];
 
@@ -318,7 +318,7 @@ var riskHotspotMetrics = [
 
 var riskHotspots = [
   {
-    "assembly": "dotnet-etcd", "class": "dotnet_etcd.WatchManager", "reportPath": "dotnet_etcd_WatchManager.html", "methodName": "TrackResumeRevision(System.Int64,Etcdserverpb.WatchResponse)", "methodShortName": "TrackResumeRevision(...)", "fileIndex": 0, "line": 305,
+    "assembly": "dotnet-etcd", "class": "dotnet_etcd.WatchManager", "reportPath": "dotnet_etcd_WatchManager.html", "methodName": "TrackResumeRevision(System.Int64,Etcdserverpb.WatchResponse)", "methodShortName": "TrackResumeRevision(...)", "fileIndex": 0, "line": 304,
     "metrics": [
       { "value": 26, "exceeded": false },
       { "value": 26, "exceeded": true },
