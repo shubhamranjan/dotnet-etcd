@@ -32,6 +32,8 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <!-- Ship IntelliSense docs in the package. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyOriginatorKeyFile>..\dotnet-etcd.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
