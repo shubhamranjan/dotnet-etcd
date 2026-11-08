@@ -11,6 +11,7 @@ namespace dotnet_etcd.Tests.Unit;
 /// <summary>
 /// Tests for SSL certificate configuration
 /// </summary>
+[Trait("Category", "Unit")]
 public class SslConfigurationTests
 {
     [Trait("Category", "Unit")]

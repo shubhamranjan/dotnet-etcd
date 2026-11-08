@@ -1,183 +1,133 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Collections.Concurrent;
+using System.Diagnostics;
 using Etcdserverpb;
-using Google.Protobuf;
 using Mvccpb;
-using Xunit;
 
 namespace dotnet_etcd.Tests.Integration;
 
+/// <summary>
+///     End-to-end watch behaviour against a live etcd. Every wait here is for an observable
+///     condition (an event arriving on a watch), never a fixed sleep: Watch() only returns once
+///     etcd has acknowledged the watch, and a second "control" watch on the same key proves that a
+///     write has propagated when asserting that a cancelled or expired watch did NOT see it.
+/// </summary>
 [Trait("Category", "Integration")]
 public class WatchClientIntegrationTests : IDisposable
 {
-    private readonly EtcdClient _client;
-    private readonly string _testKeyPrefix = "watch-test-";
-    private readonly List<string> _keysToCleanup = new();
+    private static readonly TimeSpan WaitTimeout = TimeSpan.FromSeconds(10);
 
-    public WatchClientIntegrationTests()
-    {
-        _client = new EtcdClient("127.0.0.1:2379");
-    }
+    private readonly EtcdClient _client = new("127.0.0.1:2379");
+    private readonly string _testKeyPrefix = $"watch-test-{Guid.NewGuid()}-";
+    private readonly List<string> _keysToCleanup = new();
 
     public void Dispose()
     {
-        // Clean up all test keys
         foreach (var key in _keysToCleanup) _client.DeleteAsync(key).Wait();
         _client.Dispose();
-
         GC.SuppressFinalize(this);
+    }
+
+    private string Key(string suffix)
+    {
+        var key = _testKeyPrefix + suffix;
+        _keysToCleanup.Add(key);
+        return key;
+    }
+
+    private static async Task WaitUntilAsync(Func<bool> condition, Func<string> describe)
+    {
+        var sw = Stopwatch.StartNew();
+        while (!condition())
+        {
+            if (sw.Elapsed > WaitTimeout) throw new TimeoutException($"timed out waiting: {describe()}");
+            await Task.Delay(10);
+        }
+    }
+
+    /// <summary>Thread-safe event sink; watch callbacks run on the client's dispatch thread.</summary>
+    private sealed class Recorder
+    {
+        private readonly ConcurrentQueue<WatchEvent> _events = new();
+
+        public int Count => _events.Count;
+        public WatchEvent[] Events => _events.ToArray();
+
+        public void Record(WatchResponse response)
+        {
+            foreach (var evt in response.Events)
+                _events.Enqueue(new WatchEvent
+                {
+                    Key = evt.Kv.Key.ToStringUtf8(), Value = evt.Kv.Value.ToStringUtf8(), Type = evt.Type
+                });
+        }
+
+        public Task WaitForAsync(int count) =>
+            WaitUntilAsync(() => Count >= count, () => $"expected {count} events, have {Count}");
     }
 
     [Fact]
     public async Task WatchSingleKey_ShouldReceiveEvents()
     {
-        // Arrange
-        var testKey = $"{_testKeyPrefix}single-key";
-        _keysToCleanup.Add(testKey);
-        var events = new List<WatchEvent>();
+        var key = Key("single-key");
+        var recorder = new Recorder();
+        _client.Watch(key, recorder.Record);
 
-        // Act - Start watching
-        _client.Watch(testKey, (response) =>
-        {
-            events.AddRange(response.Events.Select(evt => new WatchEvent
-            {
-                Key = evt.Kv.Key.ToStringUtf8(),
-                Value = evt.Kv.Value.ToStringUtf8(),
-                Type = evt.Type
-            }));
-        });
+        await _client.PutAsync(key, "value1");
+        await _client.PutAsync(key, "value2");
+        await _client.DeleteAsync(key);
+        await recorder.WaitForAsync(3);
 
-        // Wait a bit to ensure watch is established
-        await Task.Delay(1000);
-
-        // Perform operations
-        await _client.PutAsync(testKey, "value1");
-        await Task.Delay(100); // Small delay to ensure event processing
-        await _client.PutAsync(testKey, "value2");
-        await Task.Delay(100);
-        await _client.DeleteAsync(testKey);
-
-        // Wait a bit for events to be processed
-        await Task.Delay(1000);
-
-        // Assert
-        Assert.Equal(3, events.Count);
-        Assert.Equal(Event.Types.EventType.Put, events[0].Type);
-        Assert.Equal("value1", events[0].Value);
-        Assert.Equal(Event.Types.EventType.Put, events[1].Type);
-        Assert.Equal("value2", events[1].Value);
+        var events = recorder.Events;
+        Assert.Equal(3, events.Length);
+        Assert.Equal((Event.Types.EventType.Put, "value1"), (events[0].Type, events[0].Value));
+        Assert.Equal((Event.Types.EventType.Put, "value2"), (events[1].Type, events[1].Value));
         Assert.Equal(Event.Types.EventType.Delete, events[2].Type);
     }
 
     [Fact]
     public async Task WatchMultipleKeys_ShouldReceiveEvents()
     {
-        // Arrange
-        var testKey1 = $"{_testKeyPrefix}multi-key-1";
-        var testKey2 = $"{_testKeyPrefix}multi-key-2";
-        _keysToCleanup.Add(testKey1);
-        _keysToCleanup.Add(testKey2);
+        var key1 = Key("multi-key-1");
+        var key2 = Key("multi-key-2");
+        var recorder1 = new Recorder();
+        var recorder2 = new Recorder();
+        _client.Watch(key1, recorder1.Record);
+        _client.Watch(key2, recorder2.Record);
 
-        var events1 = new List<WatchEvent>();
-        var events2 = new List<WatchEvent>();
+        await _client.PutAsync(key1, "value1");
+        await _client.PutAsync(key2, "value2");
+        await _client.DeleteAsync(key1);
+        await _client.DeleteAsync(key2);
+        await recorder1.WaitForAsync(2);
+        await recorder2.WaitForAsync(2);
 
-        // Act - Start watching both keys
-        _client.Watch(testKey1, (response) =>
-        {
-            foreach (var evt in response.Events)
-                events1.Add(new WatchEvent
-                {
-                    Key = evt.Kv.Key.ToStringUtf8(),
-                    Value = evt.Kv.Value.ToStringUtf8(),
-                    Type = evt.Type
-                });
-        });
-
-        _client.Watch(testKey2, (response) =>
-        {
-            foreach (var evt in response.Events)
-                events2.Add(new WatchEvent
-                {
-                    Key = evt.Kv.Key.ToStringUtf8(),
-                    Value = evt.Kv.Value.ToStringUtf8(),
-                    Type = evt.Type
-                });
-        });
-
-        // Wait a bit to ensure watches are established
-        await Task.Delay(1000);
-
-        // Perform operations
-        await _client.PutAsync(testKey1, "value1");
-        await Task.Delay(100);
-        await _client.PutAsync(testKey2, "value2");
-        await Task.Delay(100);
-        await _client.DeleteAsync(testKey1);
-        await Task.Delay(100);
-        await _client.DeleteAsync(testKey2);
-
-        // Wait a bit for events to be processed
-        await Task.Delay(1000);
-
-        // Assert
-        Assert.Equal(2, events1.Count);
-        Assert.Equal(Event.Types.EventType.Put, events1[0].Type);
-        Assert.Equal("value1", events1[0].Value);
-        Assert.Equal(Event.Types.EventType.Delete, events1[1].Type);
-
-        Assert.Equal(2, events2.Count);
-        Assert.Equal(Event.Types.EventType.Put, events2[0].Type);
-        Assert.Equal("value2", events2[0].Value);
-        Assert.Equal(Event.Types.EventType.Delete, events2[1].Type);
+        Assert.Equal(new[] { Event.Types.EventType.Put, Event.Types.EventType.Delete },
+            recorder1.Events.Select(e => e.Type));
+        Assert.Equal("value1", recorder1.Events[0].Value);
+        Assert.Equal(new[] { Event.Types.EventType.Put, Event.Types.EventType.Delete },
+            recorder2.Events.Select(e => e.Type));
+        Assert.Equal("value2", recorder2.Events[0].Value);
     }
 
     [Fact]
     public async Task WatchKeyRange_ShouldReceiveEvents()
     {
-        // Arrange
-        var prefix = $"{_testKeyPrefix}range-";
-        var testKey1 = $"{prefix}key1";
-        var testKey2 = $"{prefix}key2";
-        _keysToCleanup.Add(testKey1);
-        _keysToCleanup.Add(testKey2);
+        var prefix = _testKeyPrefix + "range-";
+        var key1 = Key("range-key1");
+        var key2 = Key("range-key2");
+        var recorder = new Recorder();
+        _client.WatchRange(prefix, recorder.Record);
 
-        var events = new List<WatchEvent>();
+        await _client.PutAsync(key1, "value1");
+        await _client.PutAsync(key2, "value2");
+        await _client.DeleteAsync(key1);
+        await _client.DeleteAsync(key2);
+        await recorder.WaitForAsync(4);
 
-        // Act - Start watching the range
-        _client.WatchRange(prefix, (response) =>
-        {
-            foreach (var evt in response.Events)
-                events.Add(new WatchEvent
-                {
-                    Key = evt.Kv.Key.ToStringUtf8(),
-                    Value = evt.Kv.Value.ToStringUtf8(),
-                    Type = evt.Type
-                });
-        });
-
-        // Wait a bit to ensure watch is established
-        await Task.Delay(1000);
-
-        // Perform operations
-        await _client.PutAsync(testKey1, "value1");
-        await Task.Delay(100);
-        await _client.PutAsync(testKey2, "value2");
-        await Task.Delay(100);
-        await _client.DeleteAsync(testKey1);
-        await Task.Delay(100);
-        await _client.DeleteAsync(testKey2);
-
-        // Wait a bit for events to be processed
-        await Task.Delay(1000);
-
-        // Assert
-        Assert.Equal(4, events.Count);
-        Assert.Equal(Event.Types.EventType.Put, events[0].Type);
-        Assert.Equal("value1", events[0].Value);
-        Assert.Equal(Event.Types.EventType.Put, events[1].Type);
-        Assert.Equal("value2", events[1].Value);
+        var events = recorder.Events;
+        Assert.Equal(4, events.Length);
+        Assert.Equal((Event.Types.EventType.Put, "value1"), (events[0].Type, events[0].Value));
+        Assert.Equal((Event.Types.EventType.Put, "value2"), (events[1].Type, events[1].Value));
         Assert.Equal(Event.Types.EventType.Delete, events[2].Type);
         Assert.Equal(Event.Types.EventType.Delete, events[3].Type);
     }
@@ -185,111 +135,49 @@ public class WatchClientIntegrationTests : IDisposable
     [Fact]
     public async Task WatchWithCancellation_ShouldStopReceivingEvents()
     {
-        // Arrange
-        var testKey = $"{_testKeyPrefix}cancel-key";
-        _keysToCleanup.Add(testKey);
-        var events = new List<WatchEvent>();
-        var cts = new CancellationTokenSource();
+        var key = Key("cancel-key");
+        var cancelled = new Recorder();
+        var control = new Recorder();
+        using var cts = new CancellationTokenSource();
+        _client.Watch(key, cancelled.Record, cancellationToken: cts.Token);
+        _client.Watch(key, control.Record);
 
-        // Act - Start watching with cancellation token
-        _client.Watch(testKey, (response) =>
-        {
-            foreach (var evt in response.Events)
-                events.Add(new WatchEvent
-                {
-                    Key = evt.Kv.Key.ToStringUtf8(),
-                    Value = evt.Kv.Value.ToStringUtf8(),
-                    Type = evt.Type
-                });
-        }, cancellationToken: cts.Token);
+        await _client.PutAsync(key, "value1");
+        await cancelled.WaitForAsync(1);
+        await control.WaitForAsync(1);
 
-        // Wait a bit to ensure watch is established
-        await Task.Delay(1000);
-
-        // Perform first operation
-        await _client.PutAsync(testKey, "value1");
-        await Task.Delay(100);
-
-        // Cancel the watch
         cts.Cancel();
-        await Task.Delay(1000);
 
-        // Perform second operation (should not be received)
-        await _client.PutAsync(testKey, "value2");
-        await Task.Delay(100);
+        // The control watch seeing value2 proves the write propagated; the cancelled one must not.
+        await _client.PutAsync(key, "value2");
+        await control.WaitForAsync(2);
 
-        // Assert
-        Assert.Single(events);
-        Assert.Equal(Event.Types.EventType.Put, events[0].Type);
-        Assert.Equal("value1", events[0].Value);
+        Assert.Equal(new[] { "value1" }, cancelled.Events.Select(e => e.Value));
+        Assert.Equal(new[] { "value1", "value2" }, control.Events.Select(e => e.Value));
     }
 
     [Fact]
-    public async Task WatchWithDeadline_ShouldStopAfterDeadline()
+    public async Task WatchWithDeadline_ShouldStopAfterDeadline_WithoutAffectingOtherWatches()
     {
-        // Arrange
-        var testKey = $"{_testKeyPrefix}deadline-key";
-        _keysToCleanup.Add(testKey);
-        var events = new List<WatchEvent>();
+        var key = Key("deadline-key");
+        var expiring = new Recorder();
+        var lasting = new Recorder();
+        var deadline = DateTime.UtcNow.AddSeconds(1);
+        _client.Watch(key, expiring.Record, deadline: deadline);
+        _client.Watch(key, lasting.Record);
 
-        // Act - Start watching with a short deadline
-        _client.Watch(testKey, (response) =>
-        {
-            foreach (var evt in response.Events)
-                events.Add(new WatchEvent
-                {
-                    Key = evt.Kv.Key.ToStringUtf8(),
-                    Value = evt.Kv.Value.ToStringUtf8(),
-                    Type = evt.Type
-                });
-        }, deadline: DateTime.UtcNow.AddSeconds(2));
+        await _client.PutAsync(key, "value1");
+        await expiring.WaitForAsync(1);
+        await lasting.WaitForAsync(1);
 
-        // Wait a bit to ensure watch is established
-        await Task.Delay(1000);
+        // The deadline itself is the only thing we have to wait for here.
+        var untilDeadline = deadline.AddMilliseconds(250) - DateTime.UtcNow;
+        if (untilDeadline > TimeSpan.Zero) await Task.Delay(untilDeadline);
 
-        // Perform first operation
-        await _client.PutAsync(testKey, "value1");
-        await Task.Delay(100);
+        await _client.PutAsync(key, "value2");
+        await lasting.WaitForAsync(2);
 
-        // Wait for deadline to pass
-        await Task.Delay(2000);
-
-        // Perform second operation (should not be received)
-        await _client.PutAsync(testKey, "value2");
-        await Task.Delay(100);
-
-        // Assert
-        Assert.Single(events);
-        Assert.Equal(Event.Types.EventType.Put, events[0].Type);
-        Assert.Equal("value1", events[0].Value);
-    }
-
-    [Fact]
-    public async Task WatchWithDeadline_ShouldNotAffectOtherWatchesOnSameClient()
-    {
-        var testKey = $"{_testKeyPrefix}deadline-isolation-key";
-        _keysToCleanup.Add(testKey);
-        var deadlineEvents = new List<string>();
-        var lastingEvents = new List<string>();
-
-        _client.Watch(testKey, (response) =>
-        {
-            foreach (var evt in response.Events) deadlineEvents.Add(evt.Kv.Value.ToStringUtf8());
-        }, deadline: DateTime.UtcNow.AddSeconds(2));
-        _client.Watch(testKey, (response) =>
-        {
-            foreach (var evt in response.Events) lastingEvents.Add(evt.Kv.Value.ToStringUtf8());
-        });
-
-        await _client.PutAsync(testKey, "value1");
-        await Task.Delay(500);
-
-        // Past the first watch's deadline: only the second watch may still see writes.
-        await Task.Delay(2500);
-        await _client.PutAsync(testKey, "value2");
-        await Task.Delay(500);
-
-        Assert.Equal(new[] { "value1" }, deadlineEvents);
-        Assert.Equal(new[] { "value1", "value2" }, lastingEvents);
+        Assert.Equal(new[] { "value1" }, expiring.Events.Select(e => e.Value));
+        Assert.Equal(new[] { "value1", "value2" }, lasting.Events.Select(e => e.Value));
     }
 }

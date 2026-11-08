@@ -4,6 +4,7 @@ using Etcdserverpb;
 namespace dotnet_etcd.Tests.Integration;
 
 [Collection("EtcdCluster")]
+[Trait("Category", "Integration")]
 public class ClusterClientIntegrationTests(EtcdClusterFixture fixture) : IDisposable
 {
     private readonly EtcdClient _client = new(fixture.ConnectionString);

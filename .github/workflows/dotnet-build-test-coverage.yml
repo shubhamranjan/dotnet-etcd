@@ -57,6 +57,18 @@ jobs:
         reportgenerator -reports:./coverage/**/coverage.cobertura.xml -targetdir:./coveragereport -reporttypes:Html,Cobertura,TextSummary,Badges -classfilters:"-Authpb.*;-Etcdserverpb.*;-Mvccpb.*;-V3Electionpb.*;-V3Lockpb.*;-Versionpb.*;-Gogoproto.*"
         touch ./coveragereport/.nojekyll
         cat ./coveragereport/Summary.txt
+
+    - name: Enforce coverage floor
+      # Coverage is reported but was never gated, which is how ten tests without a Category trait
+      # silently dropped out of CI. Fail the build if line coverage regresses below the floor;
+      # raise the floor when coverage goes up.
+      env:
+        MIN_LINE_COVERAGE: "95"
+      run: |
+        LINE=$(sed -nE 's/^ *Line coverage: ([0-9]+(\.[0-9]+)?)%.*/\1/p' ./coveragereport/Summary.txt)
+        echo "line coverage: ${LINE}% (floor ${MIN_LINE_COVERAGE}%)"
+        awk -v c="$LINE" -v m="$MIN_LINE_COVERAGE" 'BEGIN { exit (c+0 >= m+0) ? 0 : 1 }' \
+          || { echo "::error::line coverage ${LINE}% is below the ${MIN_LINE_COVERAGE}% floor" >&2; exit 1; }
     
     - name: Upload Coverage Report
       uses: actions/upload-artifact@v7

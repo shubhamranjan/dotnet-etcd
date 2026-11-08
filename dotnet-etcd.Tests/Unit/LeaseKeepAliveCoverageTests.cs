@@ -210,4 +210,63 @@ public class LeaseKeepAliveCoverageTests
         using var cts = new CancellationTokenSource();
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => client.LeaseKeepAlive(cts, 1, 1000, 0));
     }
+
+    // ---------------------------------------------------------------------
+    // Multi-iteration behaviour: the loops used to be covered for one round only
+    // ---------------------------------------------------------------------
+
+    [Fact]
+    public async Task LeaseKeepAlive_Cts_RenewsRepeatedlyUntilTheLeaseExpires()
+    {
+        var writer = new RecordingClientStreamWriter<LeaseKeepAliveRequest>();
+        // Two healthy renewals, then the server reports TTL 0: the lease is gone.
+        var call = BuildCall(writer, new[] { Response(1, 5), Response(1, 5), Response(1, 0) });
+        var client = CreateClient(call, out _);
+        using var cts = new CancellationTokenSource();
+
+        await client.LeaseKeepAlive(cts, 1, keepAliveTimeout: 20);
+
+        Assert.Equal(3, writer.Written.Count);
+        Assert.True(cts.IsCancellationRequested, "expiry must cancel the caller's token source");
+        Assert.True(writer.IsCompleted);
+    }
+
+    [Fact]
+    public async Task LeaseKeepAlive_Cts_WhenTheStreamEnds_CancelsSourceAndCompletesRequestStream()
+    {
+        var writer = new RecordingClientStreamWriter<LeaseKeepAliveRequest>();
+        var call = BuildCall(writer, new[] { Response(1, 5) });
+        var client = CreateClient(call, out _);
+        using var cts = new CancellationTokenSource();
+
+        await client.LeaseKeepAlive(cts, 1, keepAliveTimeout: 20);
+
+        Assert.Equal(2, writer.Written.Count);
+        Assert.True(cts.IsCancellationRequested);
+        Assert.True(writer.IsCompleted);
+    }
+
+    [Fact]
+    public async Task LeaseKeepAlive_Cts_WithNonPositiveCommunicationTimeout_Throws()
+    {
+        var client = CreateClient(BuildCall(new RecordingClientStreamWriter<LeaseKeepAliveRequest>(), []), out _);
+        using var cts = new CancellationTokenSource();
+
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
+            client.LeaseKeepAlive(cts, 1, keepAliveTimeout: 1000, communicationTimeout: 0));
+    }
+
+    [Fact]
+    public async Task LeaseKeepAlive_Id_RenewsRepeatedlyUntilTheStreamEnds()
+    {
+        var writer = new RecordingClientStreamWriter<LeaseKeepAliveRequest>();
+        // TTL 1 keeps the between-renewal delay (TTL/3) short.
+        var call = BuildCall(writer, new[] { Response(1, 1), Response(1, 1) });
+        var client = CreateClient(call, out _);
+
+        await Assert.ThrowsAsync<EndOfStreamException>(() => client.LeaseKeepAlive(1, CancellationToken.None));
+
+        Assert.Equal(3, writer.Written.Count);
+        Assert.True(writer.IsCompleted);
+    }
 }

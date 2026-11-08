@@ -858,4 +858,125 @@ public class WatchManagerCoverageTests
         Assert.Equal(lasting, creates[0].CreateRequest.WatchId);
         Assert.Equal("lasting", creates[0].CreateRequest.Key.ToStringUtf8());
     }
+
+    // ---------------------------------------------------------------------
+    // Create failure paths (#313): rejection by etcd, ack timeout, and the cleanup after either
+    // ---------------------------------------------------------------------
+
+    [Fact]
+    public async Task WatchAsync_WhenEtcdRejectsTheWatch_ThrowsFailedPrecondition_AndDoesNotResurrectIt()
+    {
+        var fakes = new Queue<FakeDuplexStreamingCall<WatchRequest, WatchResponse>>();
+        var fake1 = new FakeDuplexStreamingCall<WatchRequest, WatchResponse> { AutoAckWatchCreate = false };
+        var fake2 = new FakeDuplexStreamingCall<WatchRequest, WatchResponse> { AutoAckWatchCreate = false };
+        fakes.Enqueue(fake1);
+        fakes.Enqueue(fake2);
+        using var manager = new WatchManager((_, _, _) => fakes.Count > 1 ? fakes.Dequeue() : fakes.Peek());
+
+        Task<long> watch = manager.WatchAsync(KeyRequest("forbidden"), (WatchResponse _) => { });
+        Assert.True(WaitFor(() => fake1.Requests.Written.Any(r => r.CreateRequest != null)), "create never sent");
+
+        // etcd answers a create it will not honour with a Canceled response instead of Created.
+        fake1.Enqueue(new WatchResponse
+        {
+            WatchId = FirstWatchId, Canceled = true, CancelReason = "etcdserver: permission denied"
+        });
+
+        var ex = await Assert.ThrowsAsync<RpcException>(() => watch);
+        Assert.Equal(StatusCode.FailedPrecondition, ex.StatusCode);
+        Assert.Contains("permission denied", ex.Status.Detail);
+
+        // Best-effort teardown of whatever the server may have registered.
+        Assert.True(WaitFor(() => fake1.Requests.Written.Any(r => IsCancelOf(r, FirstWatchId))),
+            "no cancel was sent for the rejected watch");
+
+        // The caller was told the watch failed, so a reconnect must not quietly re-create it.
+        fake1.Responses.ThrowOnMoveNext = new RpcException(new Status(StatusCode.Unavailable, "dropped"));
+        fake1.Enqueue(new WatchResponse());
+        Assert.True(WaitFor(() => fake2.IsDisposed == false && fakes.Count == 1, 3000));
+        Thread.Sleep(1000); // reconnect delay is 500ms; give the re-register loop time to (not) run
+        Assert.DoesNotContain(fake2.Requests.Written, r => r.CreateRequest != null);
+    }
+
+    [Fact]
+    public async Task WatchAsync_WhenAckNeverArrives_ThrowsDeadlineExceededAtTheCallersDeadline()
+    {
+        var fake = new FakeDuplexStreamingCall<WatchRequest, WatchResponse> { AutoAckWatchCreate = false };
+        using var manager = new WatchManager((_, _, _) => fake);
+        var sw = Stopwatch.StartNew();
+
+        var ex = await Assert.ThrowsAsync<RpcException>(() =>
+            manager.WatchAsync(KeyRequest("k"), (WatchResponse _) => { }, deadline: DateTime.UtcNow.AddMilliseconds(400)));
+
+        Assert.Equal(StatusCode.DeadlineExceeded, ex.StatusCode);
+        Assert.Contains("did not acknowledge", ex.Status.Detail);
+        // The caller's deadline bounds the wait; the 30s default must not apply.
+        Assert.True(sw.ElapsedMilliseconds < 10000, $"waited {sw.ElapsedMilliseconds}ms for the ack");
+        Assert.True(WaitFor(() => fake.Requests.Written.Any(r => IsCancelOf(r, FirstWatchId))),
+            "no cancel was sent for the unacknowledged watch");
+    }
+
+    [Fact]
+    public void Dispatch_WhenCallbackThrows_LaterEventsAreStillDelivered()
+    {
+        using WatchManager manager = CreateManager(out FakeDuplexStreamingCall<WatchRequest, WatchResponse> fake);
+        var delivered = new List<string>();
+
+        manager.Watch(KeyRequest("k"), (WatchResponse r) =>
+        {
+            if (r.Events.Count == 0)
+            {
+                return;
+            }
+
+            string value = r.Events[0].Kv.Value.ToStringUtf8();
+            delivered.Add(value);
+            if (value == "boom")
+            {
+                throw new InvalidOperationException("callback failed");
+            }
+        });
+
+        fake.Enqueue(EventResponse(FirstWatchId, "k", "boom"));
+        fake.Enqueue(EventResponse(FirstWatchId, "k", "after"));
+
+        Assert.True(WaitFor(() => delivered.Count == 2, 3000), "delivery stopped after the callback threw");
+        Assert.Equal(new[] { "boom", "after" }, delivered);
+    }
+
+    // ---------------------------------------------------------------------
+    // Watcher (the per-stream layer under WatchManager)
+    // ---------------------------------------------------------------------
+
+    [Fact]
+    public async Task Watcher_CreateWatchAsync_WhenTheWriteFails_RethrowsAndDropsTheCallback()
+    {
+        var fake = new FakeDuplexStreamingCall<WatchRequest, WatchResponse>();
+        fake.Requests.OnWrite = _ => throw new IOException("socket closed");
+        using var watcher = new Watcher(fake);
+        var invoked = 0;
+        WatchRequest request = KeyRequest("k");
+        request.CreateRequest.WatchId = 7;
+
+        await Assert.ThrowsAsync<IOException>(() => watcher.CreateWatchAsync(request, _ => invoked++));
+
+        // A response for the watch that never reached the server must find no callback.
+        fake.Enqueue(EventResponse(7, "k", "v"));
+        Thread.Sleep(300);
+        Assert.Equal(0, invoked);
+    }
+
+    [Fact]
+    public void Watcher_ReceiveLoop_WhenMoveNextThrowsANonGrpcException_SignalsConnectionFailure()
+    {
+        var fake = new FakeDuplexStreamingCall<WatchRequest, WatchResponse>();
+        using var signaled = new ManualResetEventSlim(false);
+        using var watcher = new Watcher(fake, () => signaled.Set());
+
+        fake.Responses.ThrowOnMoveNext = new InvalidOperationException("reader broke");
+        fake.Enqueue(new WatchResponse());
+
+        Assert.True(signaled.Wait(3000),
+            "a non-gRPC failure of the receive loop was not reported as a connection failure");
+    }
 }

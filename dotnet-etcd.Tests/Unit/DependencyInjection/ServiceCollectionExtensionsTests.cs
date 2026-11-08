@@ -1,3 +1,4 @@
+using dotnet_etcd.Tests.Unit.Mocks;
 using dotnet_etcd.DependencyInjection;
 using dotnet_etcd.interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -172,5 +173,74 @@ public class ServiceCollectionExtensionsTests
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() => services.AddEtcdClient(nullAction));
+    }
+
+    // ----- IWatchManager registration (previously never resolved by any test) -----
+
+    [Fact]
+    public void AddEtcdClient_WithConnectionString_ShouldResolveIWatchManager()
+    {
+        var services = new ServiceCollection();
+        services.AddEtcdClient("localhost:2379");
+        using var provider = services.BuildServiceProvider();
+
+        var watchManager = provider.GetService<IWatchManager>();
+
+        Assert.NotNull(watchManager);
+        Assert.Same(((EtcdClient)provider.GetRequiredService<IEtcdClient>()).GetWatchManager(), watchManager);
+    }
+
+    [Fact]
+    public void AddEtcdClient_WithOptionsAction_ShouldResolveIWatchManager()
+    {
+        var services = new ServiceCollection();
+        services.AddEtcdClient(options =>
+        {
+            options.ConnectionString = "localhost:2379";
+            options.UseInsecureChannel = true;
+        });
+        using var provider = services.BuildServiceProvider();
+
+        Assert.NotNull(provider.GetService<IWatchManager>());
+    }
+
+    [Fact]
+    public void AddEtcdClient_WithConnectionFactory_WithoutWatchManagerFactory_ShouldResolveClientsWatchManager()
+    {
+        var services = new ServiceCollection();
+        services.AddEtcdClient(_ => MockConnection.Create().Object);
+        using var provider = services.BuildServiceProvider();
+
+        var client = provider.GetRequiredService<IEtcdClient>();
+        var watchManager = provider.GetService<IWatchManager>();
+
+        Assert.IsType<EtcdClient>(client);
+        Assert.NotNull(watchManager);
+        Assert.Same(((EtcdClient)client).GetWatchManager(), watchManager);
+    }
+
+    [Fact]
+    public void AddEtcdClient_WithConnectionFactory_AndWatchManagerFactory_ShouldUseTheSuppliedWatchManager()
+    {
+        var services = new ServiceCollection();
+        var suppliedWatchManager = new Mock<IWatchManager>().Object;
+        services.AddEtcdClient(_ => MockConnection.Create().Object, _ => suppliedWatchManager);
+        using var provider = services.BuildServiceProvider();
+
+        var client = provider.GetRequiredService<IEtcdClient>();
+
+        Assert.Same(suppliedWatchManager, provider.GetService<IWatchManager>());
+        Assert.Same(suppliedWatchManager, ((EtcdClient)client).GetWatchManager());
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void AddEtcdClient_WithBlankConnectionString_ShouldThrow(string? connectionString)
+    {
+        var services = new ServiceCollection();
+
+        Assert.Throws<ArgumentNullException>(() => services.AddEtcdClient(connectionString!));
     }
 }
