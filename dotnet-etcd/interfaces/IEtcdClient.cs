@@ -9,7 +9,7 @@ using V3Lockpb;
 
 namespace dotnet_etcd.interfaces;
 
-public interface IEtcdClient
+public interface IEtcdClient : IDisposable
 {
     AlarmResponse Alarm(AlarmRequest request, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
@@ -90,8 +90,6 @@ public interface IEtcdClient
 
     Task<DeleteRangeResponse> DeleteRangeAsync(string prefixKey, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
-
-    void Dispose();
 
     RangeResponse Get(RangeRequest request, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);

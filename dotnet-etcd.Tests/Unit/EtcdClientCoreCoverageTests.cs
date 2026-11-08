@@ -1,3 +1,4 @@
+using dotnet_etcd.Tests.Infrastructure;
 using dotnet_etcd.interfaces;
 using Moq;
 
@@ -117,5 +118,20 @@ public class EtcdClientCoreCoverageTests
 
         // Assert - the guard (_disposed) ensures the watch manager is disposed only once
         mockWatchManager.Verify(m => m.Dispose(), Times.Once);
+    }
+
+    // ----- IEtcdClient : IDisposable (#343) -----
+
+    [Fact]
+    public void IEtcdClient_IsDisposable_SoItWorksInUsingStatements()
+    {
+        IEtcdClient client = TestHelper.CreateEtcdClientWithMockCallInvoker();
+
+        Assert.IsAssignableFrom<IDisposable>(client);
+
+        // The whole point of the issue: no cast needed.
+        using (client)
+        {
+        }
     }
 }
