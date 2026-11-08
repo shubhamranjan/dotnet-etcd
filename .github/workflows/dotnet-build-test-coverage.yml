@@ -16,10 +16,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v7
-
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     - name: Setup .NET
-      uses: actions/setup-dotnet@v6
+      uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
       with:
         dotnet-version: |
           10.0.x
@@ -71,14 +70,14 @@ jobs:
           || { echo "::error::line coverage ${LINE}% is below the ${MIN_LINE_COVERAGE}% floor" >&2; exit 1; }
     
     - name: Upload Coverage Report
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
       with:
         name: coverage-report
         path: ./coveragereport
         retention-days: 30
     
     - name: Add Coverage PR Comment
-      uses: marocchino/sticky-pull-request-comment@v3
+      uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
       if: github.event_name == 'pull_request'
       with:
         recreate: true
@@ -86,7 +85,7 @@ jobs:
     
     - name: Publish Coverage Report to GitHub Pages
       if: github.ref == 'refs/heads/main'
-      uses: JamesIves/github-pages-deploy-action@v4.9.0
+      uses: JamesIves/github-pages-deploy-action@fa24774553152dd7873cd16ebd8d959b010c5445 # v4.9.0
       with:
         folder: ./coveragereport
         branch: gh-pages
