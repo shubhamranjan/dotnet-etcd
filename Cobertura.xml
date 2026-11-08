@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.9329406434073403" branch-rate="0.7912621359223301" lines-covered="2059" lines-valid="2207" branches-covered="326" branches-valid="412" complexity="579" version="0" timestamp="1794117952">
+<coverage line-rate="0.9329406434073403" branch-rate="0.7912621359223301" lines-covered="2059" lines-valid="2207" branches-covered="326" branches-valid="412" complexity="579" version="0" timestamp="1794117970">
   <sources>
     <source>/home/runner/work/dotnet-etcd/dotnet-etcd/dotnet-etcd/</source>
   </sources>
@@ -4618,14 +4618,14 @@
                 <line number="220" hits="145" branch="false" />
                 <line number="221" hits="145" branch="false" />
                 <line number="222" hits="145" branch="true" condition-coverage="100% (2/2)" />
-                <line number="223" hits="2" branch="false" />
-                <line number="224" hits="2" branch="false" />
+                <line number="223" hits="1" branch="false" />
+                <line number="224" hits="1" branch="false" />
                 <line number="225" hits="145" branch="false" />
                 <line number="226" hits="145" branch="false" />
                 <line number="227" hits="145" branch="false" />
-                <line number="228" hits="143" branch="false" />
-                <line number="229" hits="143" branch="false" />
-                <line number="230" hits="143" branch="false" />
+                <line number="228" hits="144" branch="false" />
+                <line number="229" hits="144" branch="false" />
+                <line number="230" hits="144" branch="false" />
                 <line number="231" hits="0" branch="false" />
                 <line number="232" hits="0" branch="false" />
                 <line number="233" hits="145" branch="false" />
@@ -5387,14 +5387,14 @@
             <line number="220" hits="145" branch="false" />
             <line number="221" hits="145" branch="false" />
             <line number="222" hits="145" branch="true" condition-coverage="100% (2/2)" />
-            <line number="223" hits="2" branch="false" />
-            <line number="224" hits="2" branch="false" />
+            <line number="223" hits="1" branch="false" />
+            <line number="224" hits="1" branch="false" />
             <line number="225" hits="145" branch="false" />
             <line number="226" hits="145" branch="false" />
             <line number="227" hits="145" branch="false" />
-            <line number="228" hits="143" branch="false" />
-            <line number="229" hits="143" branch="false" />
-            <line number="230" hits="143" branch="false" />
+            <line number="228" hits="144" branch="false" />
+            <line number="229" hits="144" branch="false" />
+            <line number="230" hits="144" branch="false" />
             <line number="231" hits="0" branch="false" />
             <line number="232" hits="0" branch="false" />
             <line number="233" hits="145" branch="false" />
