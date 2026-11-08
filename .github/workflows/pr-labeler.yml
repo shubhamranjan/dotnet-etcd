@@ -48,7 +48,9 @@ jobs:
               if (label) wanted.add(label);
               if (m[3] === "!") wanted.add("breaking-change");
             }
-            if (/breaking[ -]change/i.test(title) || /breaking[ -]change/i.test(pr.body || "")) {
+            // Only an explicit conventional-commit footer counts ("BREAKING CHANGE: ..." on its own
+            // line). Matching the phrase anywhere labelled a PR whose body said "no breaking changes".
+            if (/^BREAKING[ -]CHANGE:/m.test(pr.body || "")) {
               wanted.add("breaking-change");
             }
 

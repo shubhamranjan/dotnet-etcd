@@ -12,6 +12,43 @@ namespace dotnet_etcd;
 public partial class EtcdClient
 {
     /// <summary>
+    ///     Pairs watch requests with callbacks. Three shapes are accepted: one callback per request
+    ///     (paired by index), a single callback shared by every request, or every callback attached
+    ///     to a single request. The last two are what the key-based overloads produce, e.g.
+    ///     <c>Watch(key, methods)</c> and <c>Watch(keys, method)</c>, which used to be rejected here.
+    /// </summary>
+    private static Action<T>[] PairCallbacks<T>(int requestCount, Action<T>[] methods)
+    {
+        ArgumentNullException.ThrowIfNull(methods);
+
+        if (methods.Length == requestCount)
+        {
+            return methods;
+        }
+
+        if (methods.Length == 1)
+        {
+            return Enumerable.Repeat(methods[0], requestCount).ToArray();
+        }
+
+        if (requestCount == 1)
+        {
+            Action<T>[] all = methods;
+            return [value =>
+            {
+                foreach (Action<T> method in all)
+                {
+                    method(value);
+                }
+            }];
+        }
+
+        throw new ArgumentException(
+            $"Expected one callback per request ({requestCount}), a single callback for all requests, " +
+            $"or all callbacks for a single request; got {methods.Length} callbacks.", nameof(methods));
+    }
+
+    /// <summary>
     ///     Watches the specified requests and passes the watch events to the methods provided asynchronously.
     /// </summary>
     /// <param name="requests">Watch Requests containing keys to be watched</param>
@@ -25,10 +62,7 @@ public partial class EtcdClient
         DateTime? deadline = null,
         CancellationToken cancellationToken = default)
     {
-        if (requests.Length != methods.Length)
-        {
-            throw new ArgumentException("The number of requests must match the number of methods");
-        }
+        methods = PairCallbacks(requests.Length, methods);
 
         long[] watchIds = new long[requests.Length];
 
@@ -94,10 +128,7 @@ public partial class EtcdClient
         DateTime? deadline = null,
         CancellationToken cancellationToken = default)
     {
-        if (requests.Length != methods.Length)
-        {
-            throw new ArgumentException("The number of requests must match the number of methods");
-        }
+        methods = PairCallbacks(requests.Length, methods);
 
         for (int i = 0; i < requests.Length; i++)
         {
@@ -117,10 +148,7 @@ public partial class EtcdClient
         DateTime? deadline = null,
         CancellationToken cancellationToken = default)
     {
-        if (requests.Length != methods.Length)
-        {
-            throw new ArgumentException("The number of requests must match the number of methods");
-        }
+        methods = PairCallbacks(requests.Length, methods);
 
         for (int i = 0; i < requests.Length; i++)
         {
@@ -227,10 +255,7 @@ public partial class EtcdClient
         DateTime? deadline = null,
         CancellationToken cancellationToken = default)
     {
-        if (requests.Length != methods.Length)
-        {
-            throw new ArgumentException("The number of requests must match the number of methods");
-        }
+        methods = PairCallbacks(requests.Length, methods);
 
         long[] watchIds = new long[requests.Length];
 

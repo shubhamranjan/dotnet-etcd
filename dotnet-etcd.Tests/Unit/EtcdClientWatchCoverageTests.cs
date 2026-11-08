@@ -257,9 +257,11 @@ public class EtcdClientWatchCoverageTests
     public async Task WatchAsync_RequestArray_LengthMismatch_Throws()
     {
         var client = CreateClient(out _);
+        // One request with several callbacks, or several requests with one callback, are both
+        // valid shapes now; only a genuine mismatch (2 requests, 3 callbacks) is rejected.
         await Assert.ThrowsAsync<ArgumentException>(() => client.WatchAsync(
-            new[] { KeyRequest("a") },
-            new Action<WatchEvent[]>[] { _ => { }, _ => { } }));
+            new[] { KeyRequest("a"), KeyRequest("b") },
+            new Action<WatchEvent[]>[] { _ => { }, _ => { }, _ => { } }));
     }
 
     [Fact]
@@ -267,8 +269,8 @@ public class EtcdClientWatchCoverageTests
     {
         var client = CreateClient(out _);
         Assert.Throws<ArgumentException>(() => client.Watch(
-            new[] { KeyRequest("a") },
-            new Action<WatchResponse>[] { _ => { }, _ => { } }));
+            new[] { KeyRequest("a"), KeyRequest("b") },
+            new Action<WatchResponse>[] { _ => { }, _ => { }, _ => { } }));
     }
 
     // ---------------------------------------------------------------------
@@ -433,5 +435,118 @@ public class EtcdClientWatchCoverageTests
         var client = CreateClient(out _);
         await Assert.ThrowsAsync<ArgumentException>(() => client.WatchRangeAsync(
             new[] { "p" }, new Action<WatchResponse>[] { _ => { }, _ => { } }));
+    }
+
+    // ---------------------------------------------------------------------
+    // Delegating overloads: single key + many callbacks, many keys + one callback, in both the
+    // WatchResponse and WatchEvent[] shapes, sync and async. None of these had ever been called.
+    // ---------------------------------------------------------------------
+
+    [Fact]
+    public void Watch_SingleKey_ManyResponseCallbacks_InvokesEveryCallback()
+    {
+        var client = CreateClient(out var fake);
+        int a = 0, b = 0;
+
+        client.Watch("k", new Action<WatchResponse>[] { r => a += r.Events.Count, r => b += r.Events.Count });
+        fake.Enqueue(EventResponse(FirstWatchId));
+
+        Assert.True(WaitFor(() => a == 1 && b == 1));
+    }
+
+    [Fact]
+    public void Watch_ManyKeys_OneResponseCallback_InvokedForEachKey()
+    {
+        var client = CreateClient(out var fake);
+        var seen = new List<string>();
+
+        client.Watch(new[] { "a", "b" }, (WatchResponse r) =>
+        {
+            if (r.Events.Count > 0) seen.Add(r.Events[0].Kv.Key.ToStringUtf8());
+        });
+        fake.Enqueue(EventResponse(FirstWatchId, "a"));
+        fake.Enqueue(EventResponse(FirstWatchId + 1, "b"));
+
+        Assert.True(WaitFor(() => seen.Count == 2));
+        Assert.Equal(new[] { "a", "b" }, seen);
+    }
+
+    [Fact]
+    public void Watch_SingleKey_ManyEventCallbacks_InvokesEveryCallback()
+    {
+        var client = CreateClient(out var fake);
+        int a = 0, b = 0;
+
+        client.Watch("k", new Action<WatchEvent[]>[] { e => a += e.Length, e => b += e.Length });
+        fake.Enqueue(EventResponse(FirstWatchId));
+
+        Assert.True(WaitFor(() => a == 1 && b == 1));
+    }
+
+    [Fact]
+    public void Watch_ManyKeys_OneEventCallback_InvokedForEachKey()
+    {
+        var client = CreateClient(out var fake);
+        var seen = new List<string>();
+
+        client.Watch(new[] { "a", "b" }, (WatchEvent[] events) => seen.AddRange(events.Select(e => e.Key)));
+        fake.Enqueue(EventResponse(FirstWatchId, "a"));
+        fake.Enqueue(EventResponse(FirstWatchId + 1, "b"));
+
+        Assert.True(WaitFor(() => seen.Count == 2));
+        Assert.Equal(new[] { "a", "b" }, seen);
+    }
+
+    [Fact]
+    public async Task WatchAsync_SingleKey_ManyResponseCallbacks_InvokesEveryCallback()
+    {
+        var client = CreateClient(out var fake);
+        int a = 0, b = 0;
+
+        await client.WatchAsync("k", new Action<WatchResponse>[] { r => a += r.Events.Count, r => b += r.Events.Count });
+        fake.Enqueue(EventResponse(FirstWatchId));
+
+        Assert.True(WaitFor(() => a == 1 && b == 1));
+    }
+
+    [Fact]
+    public async Task WatchAsync_ManyKeys_OneResponseCallback_InvokedForEachKey()
+    {
+        var client = CreateClient(out var fake);
+        var seen = new List<string>();
+
+        await client.WatchAsync(new[] { "a", "b" }, (WatchResponse r) =>
+        {
+            if (r.Events.Count > 0) seen.Add(r.Events[0].Kv.Key.ToStringUtf8());
+        });
+        fake.Enqueue(EventResponse(FirstWatchId, "a"));
+        fake.Enqueue(EventResponse(FirstWatchId + 1, "b"));
+
+        Assert.True(WaitFor(() => seen.Count == 2));
+    }
+
+    [Fact]
+    public async Task WatchAsync_SingleKey_ManyEventCallbacks_InvokesEveryCallback()
+    {
+        var client = CreateClient(out var fake);
+        int a = 0, b = 0;
+
+        await client.WatchAsync("k", new Action<WatchEvent[]>[] { e => a += e.Length, e => b += e.Length });
+        fake.Enqueue(EventResponse(FirstWatchId));
+
+        Assert.True(WaitFor(() => a == 1 && b == 1));
+    }
+
+    [Fact]
+    public async Task WatchAsync_ManyKeys_OneEventCallback_InvokedForEachKey()
+    {
+        var client = CreateClient(out var fake);
+        var seen = new List<string>();
+
+        await client.WatchAsync(new[] { "a", "b" }, (WatchEvent[] events) => seen.AddRange(events.Select(e => e.Key)));
+        fake.Enqueue(EventResponse(FirstWatchId, "a"));
+        fake.Enqueue(EventResponse(FirstWatchId + 1, "b"));
+
+        Assert.True(WaitFor(() => seen.Count == 2));
     }
 }

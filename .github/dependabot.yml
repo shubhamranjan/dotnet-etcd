@@ -24,6 +24,10 @@ updates:
     commit-message:
       prefix: "deps"
       include: "scope"
+    # Wait a week before proposing a freshly published version: gives upstream time to pull a
+    # bad or compromised release before it reaches us.
+    cooldown:
+      default-days: 7
     groups:
       nuget-minor-patch:
         update-types:
@@ -48,6 +52,8 @@ updates:
     commit-message:
       prefix: "ci"
       include: "scope"
+    cooldown:
+      default-days: 7
     groups:
       actions:
         patterns:

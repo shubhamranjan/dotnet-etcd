@@ -5,6 +5,7 @@ using Moq;
 
 namespace dotnet_etcd.Tests.Unit;
 
+[Trait("Category", "Unit")]
 public class ClusterClientUnitTests
 {
     [Fact]
