@@ -263,4 +263,33 @@ public class WatchClientIntegrationTests : IDisposable
         Assert.Equal(Event.Types.EventType.Put, events[0].Type);
         Assert.Equal("value1", events[0].Value);
     }
+
+    [Fact]
+    public async Task WatchWithDeadline_ShouldNotAffectOtherWatchesOnSameClient()
+    {
+        var testKey = $"{_testKeyPrefix}deadline-isolation-key";
+        _keysToCleanup.Add(testKey);
+        var deadlineEvents = new List<string>();
+        var lastingEvents = new List<string>();
+
+        _client.Watch(testKey, (response) =>
+        {
+            foreach (var evt in response.Events) deadlineEvents.Add(evt.Kv.Value.ToStringUtf8());
+        }, deadline: DateTime.UtcNow.AddSeconds(2));
+        _client.Watch(testKey, (response) =>
+        {
+            foreach (var evt in response.Events) lastingEvents.Add(evt.Kv.Value.ToStringUtf8());
+        });
+
+        await _client.PutAsync(testKey, "value1");
+        await Task.Delay(500);
+
+        // Past the first watch's deadline: only the second watch may still see writes.
+        await Task.Delay(2500);
+        await _client.PutAsync(testKey, "value2");
+        await Task.Delay(500);
+
+        Assert.Equal(new[] { "value1" }, deadlineEvents);
+        Assert.Equal(new[] { "value1", "value2" }, lastingEvents);
+    }
 }

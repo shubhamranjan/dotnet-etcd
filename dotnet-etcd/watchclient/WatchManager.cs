@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -64,16 +64,27 @@ public class WatchManager : IWatchManager
     /// <param name="request">The watch requests to create</param>
     /// <param name="callback">The callback to invoke when a watch event is received</param>
     /// <param name="headers">The initial metadata to send with the call</param>
-    /// <param name="deadline">An optional deadline for the call</param>
-    /// <param name="cancellationToken">An optional token for canceling the call</param>
+    /// <param name="deadline">
+    ///     An optional deadline for THIS watch. Until it passes it bounds the wait for etcd's
+    ///     acknowledgement; once it passes the watch is cancelled on the server and no further events
+    ///     are delivered. Other watches on the same client are unaffected.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     An optional token for THIS watch. Cancelling it cancels the watch on the server, exactly
+    ///     like <see cref="CancelWatch" />. Other watches on the same client are unaffected.
+    /// </param>
     /// <returns>A watch ID that can be used to cancel the watch</returns>
     public async Task<long> WatchAsync(WatchRequest request, Action<WatchResponse> callback, Metadata? headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
 
-        // Create a new watch stream if needed
-        EnsureWatchStream(headers, deadline, cancellationToken);
+        // Create a new watch stream if needed. The stream is shared by every watch on this client, so
+        // the caller's deadline and token must NOT be attached to it: they would tear the stream down
+        // for everyone, and the reconnect that follows would re-register this watch with no deadline
+        // at all, resurrecting a watch the caller believes has ended. Both are bound to the watch
+        // itself below instead.
+        EnsureWatchStream(headers, null, default);
 
         // Generate a new watch ID
         long watchId = Interlocked.Increment(ref _nextWatchId);
@@ -163,6 +174,18 @@ public class WatchManager : IWatchManager
         {
             _pendingCreates.TryRemove(watchId, out _);
         }
+
+        // The watch is live. Bind its lifetime to the caller's deadline and token: when either fires,
+        // cancel it on the server and forget it, so a later reconnect cannot bring it back.
+        if (deadline.HasValue)
+        {
+            TimeSpan remaining = deadline.Value.ToUniversalTime() - DateTime.UtcNow;
+            cts.CancelAfter(remaining > TimeSpan.Zero ? remaining : TimeSpan.Zero);
+        }
+
+        // Off the token's callback: CancelWatch disposes this very source, and the caller's token may
+        // be cancelled from a context that must not block on our stream write.
+        cts.Token.Register(() => _ = Task.Run(() => CancelWatchQuietly(watchId)));
 
         return watchId;
 
@@ -790,6 +813,27 @@ public class WatchManager : IWatchManager
     }
 
     /// <summary>
+    ///     CancelWatch for the deadline/token path: a watch that has already been removed, or a manager
+    ///     that has already been disposed, is not an error there.
+    /// </summary>
+    private void CancelWatchQuietly(long watchId)
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        try
+        {
+            CancelWatch(watchId);
+        }
+        catch (ObjectDisposedException)
+        {
+            // Disposed between the check and the call; nothing left to cancel.
+        }
+    }
+
+    /// <summary>
     ///     Disposes the watch manager
     /// </summary>
     public void Dispose()
@@ -917,6 +961,13 @@ public class WatchManager : IWatchManager
 
                 foreach (var watch in _watches.Values)
                 {
+                    // A watch whose deadline or token fired while the stream was down is on its way out
+                    // of _watches; re-registering it would resurrect it on the new stream.
+                    if (watch.CancellationTokenSource.IsCancellationRequested)
+                    {
+                        continue;
+                    }
+
                     // Resume from the revision after the last observed event so events written while
                     // the stream was down are replayed instead of lost. A watch whose create was never
                     // acknowledged has nothing to resume from, but nothing can have been missed either:
