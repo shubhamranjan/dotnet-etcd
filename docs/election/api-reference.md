@@ -20,11 +20,17 @@ public CampaignResponse Campaign(
     DateTime? deadline = null,
     CancellationToken cancellationToken = default)
 
-// Create a campaign with a lease ID and ByteString value
+// Create a campaign from a fully specified request
+public CampaignResponse Campaign(
+    CampaignRequest request,
+    Grpc.Core.Metadata headers = null,
+    DateTime? deadline = null,
+    CancellationToken cancellationToken = default)
+
+// Obsolete: campaigns without a lease
 public CampaignResponse Campaign(
     string name,
-    long leaseId,
-    ByteString value,
+    string value = null,
     Grpc.Core.Metadata headers = null,
     DateTime? deadline = null,
     CancellationToken cancellationToken = default)
@@ -33,11 +39,18 @@ public CampaignResponse Campaign(
 #### Campaign Parameters
 
 - `name`: The name of the election.
-- `leaseId`: The ID of the lease to associate with the campaign.
+- `leaseId`: The ID of the lease to associate with the campaign. Leadership lasts exactly as long
+  as this lease lives, so the caller must keep it alive with `LeaseKeepAlive`.
 - `value`: The value to associate with the candidate.
+- `request`: A `CampaignRequest` with `Name`, `Value` and `Lease` set.
 - `headers`: The initial metadata to send with the call. This parameter is optional.
 - `deadline`: An optional deadline for the call. The call will be cancelled if deadline is hit.
 - `cancellationToken`: An optional token for canceling the call.
+
+> **The lease-less overload is obsolete.** etcd's election server answers an unset lease by creating
+> a session of its own with a 60 second TTL and immediately orphaning it, so nothing keeps that
+> lease alive. Leadership is given up about 60 seconds after it is won, with no signal to the
+> caller, which goes on believing it is the leader. Always pass a lease you control.
 
 #### Campaign Returns
 

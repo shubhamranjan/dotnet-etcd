@@ -22,8 +22,44 @@ public partial class EtcdClient
     /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     /// <returns>The response received from the server.</returns>
+    /// <remarks>
+    ///     This overload sends no lease. etcd's lock server responds to an unset lease by creating a
+    ///     session of its own with the default TTL of 60 seconds and immediately orphaning it, so
+    ///     nothing keeps that lease alive: the lock is released roughly 60 seconds after it is
+    ///     acquired, while the caller is still running and still believes it holds the lock. A
+    ///     caller waiting on the same lock fails after the same interval with
+    ///     "mutex: session is expired". Use the overload that takes an explicit lease.
+    /// </remarks>
+    [Obsolete(
+        "Lock without an explicit lease releases the lock after ~60 seconds with no signal to the " +
+        "caller, because etcd creates and orphans a session of its own. Grant a lease, keep it " +
+        "alive with LeaseKeepAlive, and pass its id to Lock(name, lease, ...).")]
     public LockResponse Lock(string name, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default) => Lock(new LockRequest { Name = ByteString.CopyFromUtf8(name) },
+        headers, deadline, cancellationToken);
+
+    /// <summary>
+    ///     Lock acquires a distributed shared lock on a given named lock.
+    ///     On success, it will return a unique key that exists so long as the
+    ///     lock is held by the caller. This key can be used in conjunction with
+    ///     transactions to safely ensure updates to etcd only occur while holding
+    ///     lock ownership. The lock is held until Unlock is called on the key or the
+    ///     lease associated with the owner expires.
+    /// </summary>
+    /// <param name="name">is the identifier for the distributed shared lock to be acquired.</param>
+    /// <param name="lease">
+    ///     The id of the lease that ownership of the lock is attached to. The lock is held for
+    ///     exactly as long as this lease lives, so the caller is responsible for keeping it alive
+    ///     (see <see cref="LeaseKeepAlive(CancellationTokenSource, long, int, int?, Metadata, DateTime?)" />);
+    ///     when the lease expires or is revoked the lock is released automatically.
+    /// </param>
+    /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="cancellationToken">An optional token for canceling the call.</param>
+    /// <returns>The response received from the server.</returns>
+    public LockResponse Lock(string name, long lease, Metadata headers = null, DateTime? deadline = null,
+        CancellationToken cancellationToken = default) => Lock(
+        new LockRequest { Name = ByteString.CopyFromUtf8(name), Lease = lease },
         headers, deadline, cancellationToken);
 
     /// <summary>
@@ -56,9 +92,46 @@ public partial class EtcdClient
     /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
     /// <param name="cancellationToken">An optional token for canceling the call.</param>
     /// <returns>The response received from the server.</returns>
+    /// <remarks>
+    ///     This overload sends no lease. etcd's lock server responds to an unset lease by creating a
+    ///     session of its own with the default TTL of 60 seconds and immediately orphaning it, so
+    ///     nothing keeps that lease alive: the lock is released roughly 60 seconds after it is
+    ///     acquired, while the caller is still running and still believes it holds the lock. A
+    ///     caller waiting on the same lock fails after the same interval with
+    ///     "mutex: session is expired". Use the overload that takes an explicit lease.
+    /// </remarks>
+    [Obsolete(
+        "LockAsync without an explicit lease releases the lock after ~60 seconds with no signal to " +
+        "the caller, because etcd creates and orphans a session of its own. Grant a lease, keep it " +
+        "alive with LeaseKeepAlive, and pass its id to LockAsync(name, lease, ...).")]
     public async Task<LockResponse> LockAsync(string name, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default) =>
         await LockAsync(new LockRequest { Name = ByteString.CopyFromUtf8(name) }, headers, deadline, cancellationToken)
+            .ConfigureAwait(false);
+
+    /// <summary>
+    ///     LockAsync acquires a distributed shared lock on a given named lock.
+    ///     On success, it will return a unique key that exists so long as the
+    ///     lock is held by the caller. This key can be used in conjunction with
+    ///     transactions to safely ensure updates to etcd only occur while holding
+    ///     lock ownership. The lock is held until Unlock is called on the key or the
+    ///     lease associated with the owner expires.
+    /// </summary>
+    /// <param name="name">is the identifier for the distributed shared lock to be acquired.</param>
+    /// <param name="lease">
+    ///     The id of the lease that ownership of the lock is attached to. The lock is held for
+    ///     exactly as long as this lease lives, so the caller is responsible for keeping it alive
+    ///     (see <see cref="LeaseKeepAlive(CancellationTokenSource, long, int, int?, Metadata, DateTime?)" />);
+    ///     when the lease expires or is revoked the lock is released automatically.
+    /// </param>
+    /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="cancellationToken">An optional token for canceling the call.</param>
+    /// <returns>The response received from the server.</returns>
+    public async Task<LockResponse> LockAsync(string name, long lease, Metadata headers = null,
+        DateTime? deadline = null, CancellationToken cancellationToken = default) =>
+        await LockAsync(new LockRequest { Name = ByteString.CopyFromUtf8(name), Lease = lease },
+                headers, deadline, cancellationToken)
             .ConfigureAwait(false);
 
     /// <summary>

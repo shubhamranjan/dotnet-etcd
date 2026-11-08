@@ -44,14 +44,28 @@ public interface IEtcdClient
     CampaignResponse Campaign(CampaignRequest request, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
 
+    [Obsolete(
+        "Campaign without an explicit lease gives up leadership after ~60 seconds with no signal " +
+        "to the caller, because etcd creates and orphans a session of its own. Grant a lease, keep " +
+        "it alive with LeaseKeepAlive, and pass its id to Campaign(name, leaseId, value, ...).")]
     CampaignResponse Campaign(string name, string value, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
+
+    CampaignResponse Campaign(string name, long leaseId, string value, Metadata headers = null,
+        DateTime? deadline = null, CancellationToken cancellationToken = default);
 
     Task<CampaignResponse> CampaignAsync(CampaignRequest request, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
 
+    [Obsolete(
+        "CampaignAsync without an explicit lease gives up leadership after ~60 seconds with no " +
+        "signal to the caller, because etcd creates and orphans a session of its own. Grant a lease, " +
+        "keep it alive with LeaseKeepAlive, and pass its id to CampaignAsync(name, leaseId, value, ...).")]
     Task<CampaignResponse> CampaignAsync(string name, string value, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
+
+    Task<CampaignResponse> CampaignAsync(string name, long leaseId, string value, Metadata headers = null,
+        DateTime? deadline = null, CancellationToken cancellationToken = default);
 
     DefragmentResponse Defragment(DefragmentRequest request, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
@@ -159,13 +173,27 @@ public interface IEtcdClient
     LockResponse Lock(LockRequest request, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
 
+    [Obsolete(
+        "Lock without an explicit lease releases the lock after ~60 seconds with no signal to the " +
+        "caller, because etcd creates and orphans a session of its own. Grant a lease, keep it " +
+        "alive with LeaseKeepAlive, and pass its id to Lock(name, lease, ...).")]
     LockResponse Lock(string name, Metadata headers = null, DateTime? deadline = null,
+        CancellationToken cancellationToken = default);
+
+    LockResponse Lock(string name, long lease, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
 
     Task<LockResponse> LockAsync(LockRequest request, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
 
+    [Obsolete(
+        "LockAsync without an explicit lease releases the lock after ~60 seconds with no signal to " +
+        "the caller, because etcd creates and orphans a session of its own. Grant a lease, keep it " +
+        "alive with LeaseKeepAlive, and pass its id to LockAsync(name, lease, ...).")]
     Task<LockResponse> LockAsync(string name, Metadata headers = null, DateTime? deadline = null,
+        CancellationToken cancellationToken = default);
+
+    Task<LockResponse> LockAsync(string name, long lease, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
 
     LeaderResponse Leader(LeaderRequest request, Metadata headers = null, DateTime? deadline = null,

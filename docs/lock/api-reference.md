@@ -11,18 +11,24 @@ Acquires a lock with a lease.
 #### Lock Overloads
 
 ```csharp
-// Acquire a lock with a lease TTL
-public LockResponse Lock(
-    string name,
-    int leaseTtl,
-    Grpc.Core.Metadata headers = null,
-    DateTime? deadline = null,
-    CancellationToken cancellationToken = default)
-
 // Acquire a lock with a lease ID
 public LockResponse Lock(
     string name,
     long leaseId,
+    Grpc.Core.Metadata headers = null,
+    DateTime? deadline = null,
+    CancellationToken cancellationToken = default)
+
+// Acquire a lock from a fully specified request
+public LockResponse Lock(
+    LockRequest request,
+    Grpc.Core.Metadata headers = null,
+    DateTime? deadline = null,
+    CancellationToken cancellationToken = default)
+
+// Obsolete: acquires the lock without a lease
+public LockResponse Lock(
+    string name,
     Grpc.Core.Metadata headers = null,
     DateTime? deadline = null,
     CancellationToken cancellationToken = default)
@@ -31,11 +37,17 @@ public LockResponse Lock(
 #### Lock Parameters
 
 - `name`: The name of the lock to acquire.
-- `leaseTtl`: The time-to-live in seconds for the lease associated with the lock.
-- `leaseId`: The ID of an existing lease to associate with the lock.
+- `leaseId`: The ID of an existing lease to associate with the lock. The lock is held for exactly
+  as long as this lease lives, so the caller must keep it alive with `LeaseKeepAlive`.
+- `request`: A `LockRequest` with `Name` and `Lease` set.
 - `headers`: The initial metadata to send with the call. This parameter is optional.
 - `deadline`: An optional deadline for the call. The call will be cancelled if deadline is hit.
 - `cancellationToken`: An optional token for canceling the call.
+
+> **The lease-less overload is obsolete.** etcd's lock server answers an unset lease by creating a
+> session of its own with a 60 second TTL and immediately orphaning it, so nothing keeps that lease
+> alive. The lock is released about 60 seconds after it is taken, while the caller is still running
+> and still holds what looks like a valid `LockResponse`. Always pass a lease you control.
 
 #### Lock Returns
 
