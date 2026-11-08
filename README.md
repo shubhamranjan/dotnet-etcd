@@ -209,13 +209,12 @@ try {
 
 ### Disposing the Client
 
-The `EtcdClient` implements `IDisposable` and should be properly disposed when no longer needed:
+Both `EtcdClient` and `IEtcdClient` implement `IDisposable`, so a client can be disposed with a `using` statement whether you hold the class or the interface:
 
 ```csharp
-using (var client = new EtcdClient("https://localhost:2379")) {
-    var response = client.Get("my-key");
-    // ...
-}
+using var client = new EtcdClient("https://localhost:2379");
+var response = client.Get("my-key");
+// ...
 ```
 
 For more details on proper client disposal, see the [documentation](docs/index.md#disposing-the-client).

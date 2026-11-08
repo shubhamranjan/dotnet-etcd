@@ -48,7 +48,7 @@ try {
 
 ### Disposing the Client
 
-The `EtcdClient` implements `IDisposable` and should be properly disposed when no longer needed to release resources:
+Both `EtcdClient` and the `IEtcdClient` interface implement `IDisposable`, so a client should be disposed when no longer needed to release resources, whichever type you hold:
 
 ```csharp
 // Using statement automatically disposes the client when done
