@@ -9,17 +9,32 @@ on:
       - '[0-9]+.[0-9]+.[0-9]+-*'
       - 'v[0-9]+.[0-9]+.[0-9]+'
       - 'v[0-9]+.[0-9]+.[0-9]+-*'
+  # Re-publish an existing tag by hand, e.g. after a failed push, without re-tagging.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing version tag to publish (e.g. 10.0.0)"
+        required: true
+        type: string
 
-# Needed for the Create GitHub Release step to create a release and upload assets.
 permissions:
+  # Create the GitHub Release and upload the .nupkg to it.
   contents: write
+  # Let the job mint an OIDC token. NuGet/login exchanges it for a one-hour nuget.org API key
+  # against the Trusted Publishing policy registered for this repo + workflow file, so no
+  # long-lived NUGET_API_KEY secret is stored or can expire.
+  id-token: write
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
     steps:
     - uses: actions/checkout@v7
-    
+      with:
+        ref: ${{ inputs.tag || github.ref }}
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v6
       with:
@@ -29,22 +44,37 @@ jobs:
             8.0.x
 
     - name: Get Version
-      id: get_version
+      # TAG comes from the pushed ref or from the workflow_dispatch input, which is free text. Only
+      # accept the same shapes the push trigger does before it reaches a shell or MSBuild property.
       run: |
-        TAG=${GITHUB_REF#refs/tags/}
-        echo "VERSION=${TAG#v}" >> $GITHUB_ENV
+        case "$TAG" in
+          v[0-9]*.[0-9]*.[0-9]*|[0-9]*.[0-9]*.[0-9]*) ;;
+          *) echo "::error::'$TAG' is not a version tag (expected 1.2.3, 1.2.3-beta or v-prefixed)" >&2; exit 1 ;;
+        esac
+        if ! printf '%s' "${TAG#v}" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+          echo "::error::'$TAG' is not a valid semantic version" >&2; exit 1
+        fi
+        echo "VERSION=${TAG#v}" >> "$GITHUB_ENV"
 
     - name: Restore dependencies
       run: dotnet restore
 
     - name: Build
-      run: dotnet build --no-restore -c Release -p:Version=${{ env.VERSION }}
+      run: dotnet build --no-restore -c Release -p:Version="$VERSION"
 
     - name: Pack
-      run: dotnet pack --no-build -c Release -p:PackageVersion=${{ env.VERSION }} -o ./artifacts
+      run: dotnet pack --no-build -c Release -p:PackageVersion="$VERSION" -o ./artifacts
+
+    # Requested right before the push: the temporary key is valid for one hour.
+    - name: NuGet login (OIDC -> temporary API key)
+      id: nuget-login
+      uses: NuGet/login@v1
+      with:
+        # nuget.org profile name that owns the package (not an email). Public information.
+        user: shubhamranjan
 
     - name: Push to NuGet
-      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
 
     - name: Create GitHub Release
       env:
@@ -56,8 +86,8 @@ jobs:
         case "$VERSION" in
           *-*) PRERELEASE="--prerelease" ;;
         esac
-        gh release create "$GITHUB_REF_NAME" \
-          --title "$GITHUB_REF_NAME" \
+        gh release create "$TAG" \
+          --title "$TAG" \
           --generate-notes \
           --verify-tag \
           $PRERELEASE \
