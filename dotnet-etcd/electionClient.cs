@@ -93,7 +93,7 @@ public partial class EtcdClient
     public CampaignResponse Campaign(
         string name,
         long leaseId,
-        string value,
+        string value = null,
         Metadata headers = null,
         DateTime? deadline = null,
         CancellationToken cancellationToken = default)
@@ -190,7 +190,7 @@ public partial class EtcdClient
     public async Task<CampaignResponse> CampaignAsync(
         string name,
         long leaseId,
-        string value,
+        string value = null,
         Metadata headers = null,
         DateTime? deadline = null,
         CancellationToken cancellationToken = default)

@@ -15,7 +15,7 @@ Creates a campaign to participate in leader election.
 public CampaignResponse Campaign(
     string name,
     long leaseId,
-    string value,
+    string value = null,
     Grpc.Core.Metadata headers = null,
     DateTime? deadline = null,
     CancellationToken cancellationToken = default)
@@ -67,16 +67,22 @@ Creates a campaign to participate in leader election asynchronously.
 public async Task<CampaignResponse> CampaignAsync(
     string name,
     long leaseId,
-    string value,
+    string value = null,
     Grpc.Core.Metadata headers = null,
     DateTime? deadline = null,
     CancellationToken cancellationToken = default)
 
-// Create a campaign with a lease ID and ByteString value asynchronously
+// Create a campaign from a fully specified request asynchronously
+public async Task<CampaignResponse> CampaignAsync(
+    CampaignRequest request,
+    Grpc.Core.Metadata headers = null,
+    DateTime? deadline = null,
+    CancellationToken cancellationToken = default)
+
+// Obsolete: campaigns without a lease
 public async Task<CampaignResponse> CampaignAsync(
     string name,
-    long leaseId,
-    ByteString value,
+    string value,
     Grpc.Core.Metadata headers = null,
     DateTime? deadline = null,
     CancellationToken cancellationToken = default)

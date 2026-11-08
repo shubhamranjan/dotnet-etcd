@@ -26,7 +26,7 @@ namespace dotnet_etcd.Tests.Integration;
 /// </summary>
 [Collection("EtcdCluster")]
 [Trait("Category", "Integration")]
-public class LeaseScopedLockElectionIntegrationTests
+public class LeaseScopedLockElectionIntegrationTests : IDisposable
 {
     /// <summary>concurrency.defaultSessionTTL in etcd's client/v3/concurrency package.</summary>
     private const long DefaultSessionTtlSeconds = 60;
@@ -36,6 +36,8 @@ public class LeaseScopedLockElectionIntegrationTests
     public LeaseScopedLockElectionIntegrationTests(EtcdClusterFixture fixture) =>
         _client = new EtcdClient(fixture.ConnectionString,
             configureChannelOptions: options => { options.Credentials = ChannelCredentials.Insecure; });
+
+    public void Dispose() => _client.Dispose();
 
     // ---------------------------------------------------------------------
     // Lock
@@ -175,7 +177,7 @@ public class LeaseScopedLockElectionIntegrationTests
     {
         var name = $"election-revoked-lease-{Guid.NewGuid()}";
         var leaderLease = await _client.LeaseGrantAsync(new LeaseGrantRequest { TTL = 30 });
-        var campaign = await _client.CampaignAsync(name, leaderLease.ID, "candidate-a");
+        await _client.CampaignAsync(name, leaderLease.ID, "candidate-a");
 
         var challengerLease = await _client.LeaseGrantAsync(new LeaseGrantRequest { TTL = 30 });
         var challenger = _client.CampaignAsync(name, challengerLease.ID, "candidate-b");
@@ -193,6 +195,5 @@ public class LeaseScopedLockElectionIntegrationTests
 
         await _client.ResignAsync(new ResignRequest { Leader = promoted.Leader });
         await _client.LeaseRevokeAsync(new LeaseRevokeRequest { ID = challengerLease.ID });
-        _ = campaign; // the incumbent's LeaderKey is already dead with its lease
     }
 }

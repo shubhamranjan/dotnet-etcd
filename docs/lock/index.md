@@ -52,6 +52,8 @@ operation times out.
 You can specify a timeout for acquiring a lock:
 
 ```csharp
+var lease = client.LeaseGrant(new LeaseGrantRequest { TTL = 10 });
+
 try
 {
     // Try to acquire a lock with a 5-second timeout
