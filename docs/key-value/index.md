@@ -106,6 +106,31 @@ RangeResponse response = client.Get(rangeRequest);
 RangeResponse allKeys = client.GetRange("");
 ```
 
+### Stream a Large Range (etcd 3.7+)
+
+A unary `Get` has to fit the whole result in one gRPC message. `RangeStream` reads the same range
+back in chunks, so very large prefixes no longer hit the message size limit.
+
+```csharp
+var request = new RangeRequest
+{
+    Key = ByteString.CopyFromUtf8("config/"),
+    RangeEnd = ByteString.CopyFromUtf8(EtcdClient.GetRangeEnd("config/"))
+};
+
+// Process chunk by chunk
+await client.RangeStream(request, chunk =>
+{
+    foreach (var kv in chunk.Kvs)
+        Console.WriteLine($"{kv.Key.ToStringUtf8()} = {kv.Value.ToStringUtf8()}");
+}, cancellationToken);
+
+// Or let the client merge the chunks into one RangeResponse
+RangeResponse all = await client.RangeStreamAsync(request);
+```
+
+Requires etcd 3.7 or later; older servers return `StatusCode.Unimplemented`.
+
 ## Delete Operations
 
 ### Delete a Single Key

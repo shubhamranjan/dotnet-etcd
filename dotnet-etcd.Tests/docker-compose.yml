@@ -1,6 +1,6 @@
 services:
   etcd1:
-    image: quay.io/coreos/etcd:v3.5.21
+    image: ${ETCD_IMAGE:-quay.io/coreos/etcd:v3.7.3}
     container_name: etcd1
     ports:
       - "2379:2379"
@@ -19,7 +19,7 @@ services:
       - etcd-net
 
   etcd2:
-    image: quay.io/coreos/etcd:v3.5.21
+    image: ${ETCD_IMAGE:-quay.io/coreos/etcd:v3.7.3}
     container_name: etcd2
     ports:
       - "22379:2379"
@@ -38,7 +38,7 @@ services:
       - etcd-net
 
   etcd3:
-    image: quay.io/coreos/etcd:v3.5.21
+    image: ${ETCD_IMAGE:-quay.io/coreos/etcd:v3.7.3}
     container_name: etcd3
     ports:
       - "32379:2379"
@@ -58,7 +58,7 @@ services:
 
   # etcd instance with SSL enabled for testing SSL certificate configuration
   etcd-ssl:
-    image: quay.io/coreos/etcd:v3.5.21
+    image: ${ETCD_IMAGE:-quay.io/coreos/etcd:v3.7.3}
     container_name: etcd-ssl
     ports:
       - "2389:2379"  # SSL-enabled client port
@@ -79,7 +79,7 @@ services:
   # after the server expires it (issue #283). Isolated on its own port so the short TTL does not
   # affect the other auth tests running against the main cluster.
   etcd-authttl:
-    image: quay.io/coreos/etcd:v3.5.21
+    image: ${ETCD_IMAGE:-quay.io/coreos/etcd:v3.7.3}
     container_name: etcd-authttl
     ports:
       - "2399:2379"
@@ -98,7 +98,7 @@ services:
   # Dedicated single-node etcd for WatchResilienceTests, which pause/restart their server.
   # Isolated on its own port so that disruption never affects the shared etcd1 cluster tests.
   etcd-resilience:
-    image: quay.io/coreos/etcd:v3.5.21
+    image: ${ETCD_IMAGE:-quay.io/coreos/etcd:v3.7.3}
     container_name: etcd-resilience
     ports:
       - "2409:2379"

@@ -473,3 +473,57 @@ public async Task<CompactionResponse> CompactAsync(
 - [Key-Value Operations](index.md) - Overview and examples of key-value operations
 - [Watch API Reference](../watch/api-reference.md) - API reference for watch operations
 - [Transaction API Reference](../transactions/api-reference.md) - API reference for transaction operations
+
+## Range Stream Operations
+
+Available from etcd 3.7. On older servers these calls fail with `StatusCode.Unimplemented`.
+
+### RangeStream
+
+Streams the keys in a range back in chunks, invoking a callback for each chunk.
+
+#### RangeStream Overloads
+
+```csharp
+// Stream a range, one callback per chunk
+public Task RangeStream(
+    RangeRequest request,
+    Action<RangeResponse> method,
+    CancellationToken cancellationToken,
+    Grpc.Core.Metadata headers = null,
+    DateTime? deadline = null)
+```
+
+#### RangeStream Parameters
+
+- `request`: The range to read. Build it exactly as for `Get(RangeRequest)`.
+- `method`: Invoked once per chunk with that chunk's partial `RangeResponse`. Each chunk carries a disjoint slice of `Kvs`; only the final chunk carries `Header`, `More` and `Count`.
+- `cancellationToken`: A token for canceling the stream.
+- `headers`: The initial metadata to send with the call. This parameter is optional.
+- `deadline`: An optional deadline for the call. The call will be cancelled if deadline is hit.
+
+### RangeStreamAsync
+
+Streams the keys in a range and merges the chunks into a single `RangeResponse`.
+
+#### RangeStreamAsync Overloads
+
+```csharp
+// Stream a range and merge the chunks
+public async Task<RangeResponse> RangeStreamAsync(
+    RangeRequest request,
+    Grpc.Core.Metadata headers = null,
+    DateTime? deadline = null,
+    CancellationToken cancellationToken = default)
+```
+
+#### RangeStreamAsync Parameters
+
+- `request`: The range to read.
+- `headers`: The initial metadata to send with the call. This parameter is optional.
+- `deadline`: An optional deadline for the call. The call will be cancelled if deadline is hit.
+- `cancellationToken`: An optional token for canceling the call.
+
+#### RangeStreamAsync Returns
+
+- `Task<RangeResponse>`: The same response `GetAsync(request)` would return, assembled from the stream. Use it when a range is large enough that a single response would exceed the gRPC message size limit.

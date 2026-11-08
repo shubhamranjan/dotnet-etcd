@@ -285,6 +285,13 @@ public MemberPromoteResponse MemberPromote(
     Grpc.Core.Metadata headers = null,
     DateTime? deadline = null,
     CancellationToken cancellationToken = default)
+
+// Promote from a request object
+public MemberPromoteResponse MemberPromote(
+    MemberPromoteRequest request,
+    Grpc.Core.Metadata headers = null,
+    DateTime? deadline = null,
+    CancellationToken cancellationToken = default)
 ```
 
 #### MemberPromote Parameters
@@ -308,6 +315,13 @@ Promotes a learner member to a voting member in the etcd cluster asynchronously.
 // Promote a learner member to a voting member asynchronously
 public async Task<MemberPromoteResponse> MemberPromoteAsync(
     ulong memberId,
+    Grpc.Core.Metadata headers = null,
+    DateTime? deadline = null,
+    CancellationToken cancellationToken = default)
+
+// Promote from a request object asynchronously
+public async Task<MemberPromoteResponse> MemberPromoteAsync(
+    MemberPromoteRequest request,
     Grpc.Core.Metadata headers = null,
     DateTime? deadline = null,
     CancellationToken cancellationToken = default)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Etcdserverpb;
@@ -439,4 +439,30 @@ public partial class EtcdClient
         CancellationToken cancellationToken = default) => await CallEtcdAsync(async connection => await connection
         .AuthClient
         .RoleRevokePermissionAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
+
+    /// <summary>
+    ///     AuthStatus reports whether authentication is enabled and the current auth revision. From etcd 3.7 this call needs no credentials.
+    /// </summary>
+    /// <param name="request">The request to send to the server.</param>
+    /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="cancellationToken">An optional token for canceling the call.</param>
+    /// <returns>The response received from the server.</returns>
+    public AuthStatusResponse AuthStatus(AuthStatusRequest request, Metadata headers = null, DateTime? deadline = null,
+        CancellationToken cancellationToken = default) => CallEtcd(connection => connection.AuthClient
+        .AuthStatus(request, headers, deadline, cancellationToken));
+
+    /// <summary>
+    ///     AuthStatusAsync reports whether authentication is enabled and the current auth revision in async. From etcd 3.7 this call needs no credentials.
+    /// </summary>
+    /// <param name="request">The request to send to the server.</param>
+    /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="cancellationToken">An optional token for canceling the call.</param>
+    /// <returns>The response received from the server.</returns>
+    public async Task<AuthStatusResponse> AuthStatusAsync(AuthStatusRequest request, Metadata headers = null,
+        DateTime? deadline = null,
+        CancellationToken cancellationToken = default) => await CallEtcdAsync(async connection => await connection
+        .AuthClient
+        .AuthStatusAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 }

@@ -278,4 +278,51 @@ public class MaintenanceClientCoverageTests
             It.Is<MoveLeaderRequest>(r => r.TargetID == 8), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
             It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    // ----- Downgrade -----
+
+    [Fact]
+    public void Downgrade_ShouldForwardActionAndVersion()
+    {
+        var mock = new Mock<Maintenance.MaintenanceClient>();
+        mock.Setup(x => x.Downgrade(It.IsAny<DowngradeRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+                It.IsAny<CancellationToken>()))
+            .Returns(new DowngradeResponse { Version = "3.7.0" });
+
+        var client = TestHelper.CreateEtcdClientWithMockCallInvoker();
+        TestHelper.SetupMockClientViaConnection(client, mock.Object, "_maintenanceClient");
+
+        var result = client.Downgrade(new DowngradeRequest
+        {
+            Action = DowngradeRequest.Types.DowngradeAction.Validate, Version = "3.6"
+        });
+
+        Assert.Equal("3.7.0", result.Version);
+        mock.Verify(x => x.Downgrade(
+            It.Is<DowngradeRequest>(r =>
+                r.Action == DowngradeRequest.Types.DowngradeAction.Validate && r.Version == "3.6"),
+            It.IsAny<Metadata>(), It.IsAny<DateTime?>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task DowngradeAsync_ShouldCallGrpcClient()
+    {
+        var mock = new Mock<Maintenance.MaintenanceClient>();
+        mock.Setup(x => x.DowngradeAsync(It.IsAny<DowngradeRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+                It.IsAny<CancellationToken>()))
+            .Returns(TestHelper.CreateAsyncUnaryCall(new DowngradeResponse { Version = "3.7.0" }));
+
+        var client = TestHelper.CreateEtcdClientWithMockCallInvoker();
+        TestHelper.SetupMockClientViaConnection(client, mock.Object, "_maintenanceClient");
+
+        var result = await client.DowngradeAsync(new DowngradeRequest
+        {
+            Action = DowngradeRequest.Types.DowngradeAction.Cancel
+        });
+
+        Assert.Equal("3.7.0", result.Version);
+        mock.Verify(x => x.DowngradeAsync(
+            It.Is<DowngradeRequest>(r => r.Action == DowngradeRequest.Types.DowngradeAction.Cancel),
+            It.IsAny<Metadata>(), It.IsAny<DateTime?>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
 }

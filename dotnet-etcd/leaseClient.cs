@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -415,4 +415,52 @@ public partial class EtcdClient
         CancellationToken cancellationToken = default) => await CallEtcdAsync(async connection => await connection
         .LeaseClient
         .LeaseTimeToLiveAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
+
+    /// <summary>
+    ///     LeaseLeases lists all existing leases.
+    /// </summary>
+    /// <param name="request">The request to send to the server.</param>
+    /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="cancellationToken">An optional token for canceling the call.</param>
+    /// <returns>The response received from the server.</returns>
+    public LeaseLeasesResponse LeaseLeases(LeaseLeasesRequest request, Metadata headers = null, DateTime? deadline = null,
+        CancellationToken cancellationToken = default) => CallEtcd(connection => connection.LeaseClient
+        .LeaseLeases(request, headers, deadline, cancellationToken));
+
+    /// <summary>
+    ///     LeaseLeasesAsync lists all existing leases in async.
+    /// </summary>
+    /// <param name="request">The request to send to the server.</param>
+    /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="cancellationToken">An optional token for canceling the call.</param>
+    /// <returns>The response received from the server.</returns>
+    public async Task<LeaseLeasesResponse> LeaseLeasesAsync(LeaseLeasesRequest request, Metadata headers = null,
+        DateTime? deadline = null,
+        CancellationToken cancellationToken = default) => await CallEtcdAsync(async connection => await connection
+        .LeaseClient
+        .LeaseLeasesAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
+
+    /// <summary>
+    ///     LeaseLeases lists all existing leases.
+    /// </summary>
+    /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="cancellationToken">An optional token for canceling the call.</param>
+    /// <returns>The response received from the server.</returns>
+    public LeaseLeasesResponse LeaseLeases(Metadata headers = null, DateTime? deadline = null,
+        CancellationToken cancellationToken = default) =>
+        LeaseLeases(new LeaseLeasesRequest(), headers, deadline, cancellationToken);
+
+    /// <summary>
+    ///     LeaseLeasesAsync lists all existing leases in async.
+    /// </summary>
+    /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="cancellationToken">An optional token for canceling the call.</param>
+    /// <returns>The response received from the server.</returns>
+    public async Task<LeaseLeasesResponse> LeaseLeasesAsync(Metadata headers = null, DateTime? deadline = null,
+        CancellationToken cancellationToken = default) =>
+        await LeaseLeasesAsync(new LeaseLeasesRequest(), headers, deadline, cancellationToken).ConfigureAwait(false);
 }

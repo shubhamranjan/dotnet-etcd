@@ -281,4 +281,75 @@ public class LeaseClientCoverageTests
         mockLeaseClient.Verify(x => x.LeaseTimeToLiveAsync(It.Is<LeaseTimeToLiveRequest>(r => r.ID == 400),
             headers, deadline, It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    // ----- LeaseLeases -----
+
+    [Fact]
+    public void LeaseLeases_WithRequest_ShouldCallGrpcClient()
+    {
+        var mock = new Mock<Lease.LeaseClient>();
+        mock.Setup(x => x.LeaseLeases(It.IsAny<LeaseLeasesRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+                It.IsAny<CancellationToken>()))
+            .Returns(new LeaseLeasesResponse { Leases = { new LeaseStatus { ID = 11 }, new LeaseStatus { ID = 22 } } });
+
+        var client = TestHelper.CreateEtcdClientWithMockCallInvoker();
+        TestHelper.SetupMockClientViaConnection(client, mock.Object, "_leaseClient");
+
+        var result = client.LeaseLeases(new LeaseLeasesRequest());
+
+        Assert.Equal(new long[] { 11, 22 }, result.Leases.Select(l => l.ID));
+        mock.Verify(x => x.LeaseLeases(It.IsAny<LeaseLeasesRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+            It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public void LeaseLeases_WithoutRequest_ShouldSendEmptyRequest()
+    {
+        var mock = new Mock<Lease.LeaseClient>();
+        mock.Setup(x => x.LeaseLeases(It.IsAny<LeaseLeasesRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+                It.IsAny<CancellationToken>()))
+            .Returns(new LeaseLeasesResponse());
+
+        var client = TestHelper.CreateEtcdClientWithMockCallInvoker();
+        TestHelper.SetupMockClientViaConnection(client, mock.Object, "_leaseClient");
+
+        var headers = new Metadata();
+        client.LeaseLeases(headers);
+
+        mock.Verify(x => x.LeaseLeases(It.IsNotNull<LeaseLeasesRequest>(), headers, It.IsAny<DateTime?>(),
+            It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task LeaseLeasesAsync_WithRequest_ShouldCallGrpcClient()
+    {
+        var mock = new Mock<Lease.LeaseClient>();
+        mock.Setup(x => x.LeaseLeasesAsync(It.IsAny<LeaseLeasesRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+                It.IsAny<CancellationToken>()))
+            .Returns(TestHelper.CreateAsyncUnaryCall(new LeaseLeasesResponse { Leases = { new LeaseStatus { ID = 5 } } }));
+
+        var client = TestHelper.CreateEtcdClientWithMockCallInvoker();
+        TestHelper.SetupMockClientViaConnection(client, mock.Object, "_leaseClient");
+
+        var result = await client.LeaseLeasesAsync(new LeaseLeasesRequest());
+
+        Assert.Equal(5, Assert.Single(result.Leases).ID);
+    }
+
+    [Fact]
+    public async Task LeaseLeasesAsync_WithoutRequest_ShouldSendEmptyRequest()
+    {
+        var mock = new Mock<Lease.LeaseClient>();
+        mock.Setup(x => x.LeaseLeasesAsync(It.IsAny<LeaseLeasesRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+                It.IsAny<CancellationToken>()))
+            .Returns(TestHelper.CreateAsyncUnaryCall(new LeaseLeasesResponse()));
+
+        var client = TestHelper.CreateEtcdClientWithMockCallInvoker();
+        TestHelper.SetupMockClientViaConnection(client, mock.Object, "_leaseClient");
+
+        await client.LeaseLeasesAsync();
+
+        mock.Verify(x => x.LeaseLeasesAsync(It.IsNotNull<LeaseLeasesRequest>(), It.IsAny<Metadata>(),
+            It.IsAny<DateTime?>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
 }

@@ -180,4 +180,83 @@ public class StreamingServerCoverageTests
         Assert.Equal(1, a);
         Assert.Equal(1, b);
     }
+
+    // ---------------------------------------------------------------------
+    // RangeStream (server-streaming, KV)
+    // ---------------------------------------------------------------------
+
+    private static EtcdClient CreateKvClient(IEnumerable<RangeStreamResponse> responses,
+        out Mock<KV.KVClient> mock)
+    {
+        mock = new Mock<KV.KVClient>();
+        mock.Setup(x => x.RangeStream(It.IsAny<RangeRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+                It.IsAny<CancellationToken>()))
+            .Returns(AsyncStreamingCallFactory.Create(responses));
+
+        var client = TestHelper.CreateEtcdClientWithMockCallInvoker();
+        TestHelper.SetupMockClientViaConnection(client, mock.Object, "_kvClient");
+        return client;
+    }
+
+    private static RangeStreamResponse Chunk(params string[] keys) => new()
+    {
+        RangeResponse = new RangeResponse { Kvs = { keys.Select(k => TestHelper.CreateKeyValue(k, "v")) } }
+    };
+
+    [Fact]
+    public async Task RangeStream_InvokesMethodOncePerChunk()
+    {
+        var last = Chunk("c");
+        last.RangeResponse.Header = new ResponseHeader { Revision = 99 };
+        last.RangeResponse.Count = 3;
+        var client = CreateKvClient(new[] { Chunk("a", "b"), last }, out var mock);
+
+        var chunks = new List<RangeResponse>();
+        await client.RangeStream(new RangeRequest(), chunks.Add, CancellationToken.None);
+
+        Assert.Equal(2, chunks.Count);
+        Assert.Equal(new[] { "a", "b" }, chunks[0].Kvs.Select(kv => kv.Key.ToStringUtf8()));
+        Assert.Equal(99, chunks[1].Header.Revision);
+        mock.Verify(x => x.RangeStream(It.IsAny<RangeRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+            It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task RangeStream_SkipsChunksWithoutRangeResponse()
+    {
+        var client = CreateKvClient(new[] { new RangeStreamResponse(), Chunk("a") }, out _);
+
+        var chunks = new List<RangeResponse>();
+        await client.RangeStream(new RangeRequest(), chunks.Add, CancellationToken.None);
+
+        Assert.Equal("a", Assert.Single(chunks).Kvs.Single().Key.ToStringUtf8());
+    }
+
+    [Fact]
+    public async Task RangeStreamAsync_MergesChunksIntoOneResponse()
+    {
+        var last = Chunk("c");
+        last.RangeResponse.Header = new ResponseHeader { Revision = 99 };
+        last.RangeResponse.Count = 3;
+        last.RangeResponse.More = true;
+        var client = CreateKvClient(new[] { Chunk("a", "b"), last }, out _);
+
+        var merged = await client.RangeStreamAsync(new RangeRequest());
+
+        Assert.Equal(new[] { "a", "b", "c" }, merged.Kvs.Select(kv => kv.Key.ToStringUtf8()));
+        Assert.Equal(99, merged.Header.Revision);
+        Assert.Equal(3, merged.Count);
+        Assert.True(merged.More);
+    }
+
+    [Fact]
+    public async Task RangeStreamAsync_EmptyStream_ReturnsEmptyResponse()
+    {
+        var client = CreateKvClient(Array.Empty<RangeStreamResponse>(), out _);
+
+        var merged = await client.RangeStreamAsync(new RangeRequest());
+
+        Assert.Empty(merged.Kvs);
+        Assert.Null(merged.Header);
+    }
 }

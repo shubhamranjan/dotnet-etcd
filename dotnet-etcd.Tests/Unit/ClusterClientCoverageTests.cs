@@ -201,4 +201,116 @@ public class ClusterClientCoverageTests
             It.IsAny<MemberListRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
             It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    // ----- MemberPromote -----
+
+    [Fact]
+    public void MemberPromote_WithRequest_ShouldCallGrpcClient()
+    {
+        var mock = new Mock<Cluster.ClusterClient>();
+        mock.Setup(x => x.MemberPromote(It.IsAny<MemberPromoteRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+                It.IsAny<CancellationToken>()))
+            .Returns(new MemberPromoteResponse { Members = { new Member { ID = 9, IsLearner = false } } });
+
+        var client = CreateClientWith(mock);
+
+        var result = client.MemberPromote(new MemberPromoteRequest { ID = 9 });
+
+        Assert.False(Assert.Single(result.Members).IsLearner);
+        mock.Verify(x => x.MemberPromote(It.Is<MemberPromoteRequest>(r => r.ID == 9UL), It.IsAny<Metadata>(),
+            It.IsAny<DateTime?>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public void MemberPromote_WithMemberId_ShouldBuildRequest()
+    {
+        var mock = new Mock<Cluster.ClusterClient>();
+        mock.Setup(x => x.MemberPromote(It.IsAny<MemberPromoteRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+                It.IsAny<CancellationToken>()))
+            .Returns(new MemberPromoteResponse());
+
+        var client = CreateClientWith(mock);
+
+        client.MemberPromote(42UL);
+
+        mock.Verify(x => x.MemberPromote(It.Is<MemberPromoteRequest>(r => r.ID == 42UL), It.IsAny<Metadata>(),
+            It.IsAny<DateTime?>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task MemberPromoteAsync_WithRequest_ShouldCallGrpcClient()
+    {
+        var mock = new Mock<Cluster.ClusterClient>();
+        mock.Setup(x => x.MemberPromoteAsync(It.IsAny<MemberPromoteRequest>(), It.IsAny<Metadata>(),
+                It.IsAny<DateTime?>(), It.IsAny<CancellationToken>()))
+            .Returns(TestHelper.CreateAsyncUnaryCall(new MemberPromoteResponse()));
+
+        var client = CreateClientWith(mock);
+
+        await client.MemberPromoteAsync(new MemberPromoteRequest { ID = 9 });
+
+        mock.Verify(x => x.MemberPromoteAsync(It.Is<MemberPromoteRequest>(r => r.ID == 9UL), It.IsAny<Metadata>(),
+            It.IsAny<DateTime?>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task MemberPromoteAsync_WithMemberId_ShouldBuildRequest()
+    {
+        var mock = new Mock<Cluster.ClusterClient>();
+        mock.Setup(x => x.MemberPromoteAsync(It.IsAny<MemberPromoteRequest>(), It.IsAny<Metadata>(),
+                It.IsAny<DateTime?>(), It.IsAny<CancellationToken>()))
+            .Returns(TestHelper.CreateAsyncUnaryCall(new MemberPromoteResponse()));
+
+        var client = CreateClientWith(mock);
+
+        await client.MemberPromoteAsync(42UL);
+
+        mock.Verify(x => x.MemberPromoteAsync(It.Is<MemberPromoteRequest>(r => r.ID == 42UL), It.IsAny<Metadata>(),
+            It.IsAny<DateTime?>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    // ----- MemberAddAsLearner -----
+
+    [Fact]
+    public void MemberAddAsLearner_ShouldSendLearnerFlagAndPeerUrls()
+    {
+        var mock = new Mock<Cluster.ClusterClient>();
+        mock.Setup(x => x.MemberAdd(It.IsAny<MemberAddRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+                It.IsAny<CancellationToken>()))
+            .Returns(new MemberAddResponse { Member = new Member { ID = 3, IsLearner = true } });
+
+        var client = CreateClientWith(mock);
+
+        var result = client.MemberAddAsLearner(new[] { "http://learner:2380" });
+
+        Assert.True(result.Member.IsLearner);
+        mock.Verify(x => x.MemberAdd(
+            It.Is<MemberAddRequest>(r => r.IsLearner && r.PeerURLs.Count == 1 && r.PeerURLs[0] == "http://learner:2380"),
+            It.IsAny<Metadata>(), It.IsAny<DateTime?>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task MemberAddAsLearnerAsync_ShouldSendLearnerFlagAndPeerUrls()
+    {
+        var mock = new Mock<Cluster.ClusterClient>();
+        mock.Setup(x => x.MemberAddAsync(It.IsAny<MemberAddRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+                It.IsAny<CancellationToken>()))
+            .Returns(TestHelper.CreateAsyncUnaryCall(new MemberAddResponse()));
+
+        var client = CreateClientWith(mock);
+
+        await client.MemberAddAsLearnerAsync(new[] { "http://a:2380", "http://b:2380" });
+
+        mock.Verify(x => x.MemberAddAsync(
+            It.Is<MemberAddRequest>(r => r.IsLearner && r.PeerURLs.Count == 2),
+            It.IsAny<Metadata>(), It.IsAny<DateTime?>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public void MemberAddAsLearner_WithNullPeerUrls_ShouldThrow()
+    {
+        var client = CreateClientWith(new Mock<Cluster.ClusterClient>());
+
+        Assert.Throws<ArgumentNullException>(() => client.MemberAddAsLearner(null!));
+    }
 }

@@ -503,4 +503,43 @@ public class AuthClientCoverageTests
             It.Is<AuthRoleRevokePermissionRequest>(r => r.Role == "role"),
             It.IsAny<Metadata>(), It.IsAny<DateTime?>(), It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    // ----- AuthStatus -----
+
+    [Fact]
+    public void AuthStatus_ShouldCallGrpcClient()
+    {
+        var mock = new Mock<Auth.AuthClient>();
+        mock.Setup(x => x.AuthStatus(It.IsAny<AuthStatusRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+                It.IsAny<CancellationToken>()))
+            .Returns(new AuthStatusResponse { Enabled = true, AuthRevision = 7 });
+
+        var client = TestHelper.CreateEtcdClientWithMockCallInvoker();
+        TestHelper.SetupMockClientViaConnection(client, mock.Object, "_authClient");
+
+        var result = client.AuthStatus(new AuthStatusRequest());
+
+        Assert.True(result.Enabled);
+        Assert.Equal(7UL, result.AuthRevision);
+        mock.Verify(x => x.AuthStatus(It.IsAny<AuthStatusRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+            It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task AuthStatusAsync_ShouldCallGrpcClient()
+    {
+        var mock = new Mock<Auth.AuthClient>();
+        mock.Setup(x => x.AuthStatusAsync(It.IsAny<AuthStatusRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+                It.IsAny<CancellationToken>()))
+            .Returns(TestHelper.CreateAsyncUnaryCall(new AuthStatusResponse { Enabled = false }));
+
+        var client = TestHelper.CreateEtcdClientWithMockCallInvoker();
+        TestHelper.SetupMockClientViaConnection(client, mock.Object, "_authClient");
+
+        var result = await client.AuthStatusAsync(new AuthStatusRequest());
+
+        Assert.False(result.Enabled);
+        mock.Verify(x => x.AuthStatusAsync(It.IsAny<AuthStatusRequest>(), It.IsAny<Metadata>(), It.IsAny<DateTime?>(),
+            It.IsAny<CancellationToken>()), Times.Once);
+    }
 }

@@ -69,6 +69,13 @@ client.SetCredentials("user2", "pass2");
 client.Put("key2", "value2");  // Authenticated as user2
 ```
 
+### Checking Whether Auth Is Enabled
+
+```csharp
+var status = client.AuthStatus(new AuthStatusRequest());
+Console.WriteLine($"Auth enabled: {status.Enabled}, revision: {status.AuthRevision}");
+```
+
 ## User Management
 
 The `dotnet-etcd` client provides methods for managing users and roles.

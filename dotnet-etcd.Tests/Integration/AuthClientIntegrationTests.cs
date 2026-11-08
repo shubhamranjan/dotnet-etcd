@@ -920,4 +920,17 @@ public class AuthClientIntegrationTests : IDisposable
     }
 
     #endregion
+
+    [Fact]
+    public async Task AuthStatus_WhenAuthDisabled_ShouldReportDisabled()
+    {
+        using var client = new EtcdClient("127.0.0.1:2379");
+
+        var status = client.AuthStatus(new AuthStatusRequest());
+        Assert.False(status.Enabled);
+
+        var statusAsync = await client.AuthStatusAsync(new AuthStatusRequest());
+        Assert.False(statusAsync.Enabled);
+        Assert.NotNull(statusAsync.Header);
+    }
 }

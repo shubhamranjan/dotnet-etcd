@@ -8,6 +8,10 @@ set -euo pipefail
 #   - etcd-resilience       : dedicated node the watch resilience tests pause/restart (port 2409)
 cd "$(dirname "$0")"
 
+# ETCD_IMAGE overrides the etcd image for every container (default: see docker-compose.yml), e.g.
+#   ETCD_IMAGE=quay.io/coreos/etcd:v3.5.35 ./start-etcd.sh
+# The nightly beast workflow uses this to run the suite against more than one etcd release.
+
 # The fixture reads cluster-type.txt to pick its connection string. The cluster is reachable on
 # 2379 regardless, so default to "single"; pass "3nodes" to exercise all three endpoints.
 CLUSTER_TYPE=${1:-single}

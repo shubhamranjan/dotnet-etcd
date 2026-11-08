@@ -65,8 +65,6 @@
     <Protobuf Include="grpc\proto\etcd\lock.proto" GrpcServices="Client" />
     <Protobuf Include="grpc\proto\etcd\rpc.proto" GrpcServices="Client" />
     <Protobuf Include="grpc\proto\etcd\version.proto" GrpcServices="Client" />
-
-    <Protobuf Include="grpc\proto\gogoproto\gogo.proto" GrpcServices="Client" />
   </ItemGroup>
 
   <ItemGroup>

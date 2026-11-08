@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -384,4 +384,56 @@ public partial class EtcdClient
         CancellationToken cancellationToken = default) => await CallEtcdAsync(async connection => await connection
         .KVClient
         .CompactAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
+
+    /// <summary>
+    ///     RangeStream gets the keys in the range from the key-value store, streamed back in chunks
+    ///     instead of a single response. <paramref name="method" /> is invoked once per chunk, in order,
+    ///     with that chunk's partial <see cref="RangeResponse" />: each chunk carries a disjoint slice of
+    ///     the keys, and only the final chunk carries <c>Header</c>, <c>More</c> and <c>Count</c>.
+    ///     Requires etcd 3.7 or later; older servers fail the call with <see cref="StatusCode.Unimplemented" />.
+    /// </summary>
+    /// <param name="request">The request to send to the server.</param>
+    /// <param name="method">Invoked once per chunk with that chunk's partial range response.</param>
+    /// <param name="cancellationToken">A token for canceling the stream.</param>
+    /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    public async Task RangeStream(RangeRequest request, Action<RangeResponse> method,
+        CancellationToken cancellationToken, Metadata headers = null, DateTime? deadline = null) => await CallEtcdAsync(
+        async connection =>
+        {
+            using (AsyncServerStreamingCall<RangeStreamResponse> stream = connection
+                       .KVClient.RangeStream(request, headers, deadline, cancellationToken))
+            {
+                while (await stream.ResponseStream.MoveNext(cancellationToken).ConfigureAwait(false))
+                {
+                    RangeResponse chunk = stream.ResponseStream.Current.RangeResponse;
+                    if (chunk != null)
+                    {
+                        method(chunk);
+                    }
+                }
+            }
+        }).ConfigureAwait(false);
+
+    /// <summary>
+    ///     RangeStreamAsync gets the keys in the range from the key-value store over a stream and merges
+    ///     the chunks into one <see cref="RangeResponse" />. The result is the same as
+    ///     <see cref="GetAsync(RangeRequest, Metadata, DateTime?, CancellationToken)" /> would return, but the
+    ///     server never has to materialise the whole range in a single message, so it suits ranges that
+    ///     would otherwise exceed the gRPC message size limit. Requires etcd 3.7 or later.
+    /// </summary>
+    /// <param name="request">The request to send to the server.</param>
+    /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="cancellationToken">An optional token for canceling the call.</param>
+    /// <returns>All chunks merged into a single range response.</returns>
+    public async Task<RangeResponse> RangeStreamAsync(RangeRequest request, Metadata headers = null,
+        DateTime? deadline = null, CancellationToken cancellationToken = default)
+    {
+        RangeResponse merged = new();
+        // etcd documents the stream as "proto.Merge of all chunks == the unary RangeResponse":
+        // repeated Kvs concatenate, and Header/More/Count come from the final chunk.
+        await RangeStream(request, merged.MergeFrom, cancellationToken, headers, deadline).ConfigureAwait(false);
+        return merged;
+    }
 }

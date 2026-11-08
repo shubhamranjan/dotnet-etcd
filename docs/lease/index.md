@@ -110,6 +110,18 @@ if (leaseInfo.Keys.Count > 0)
 }
 ```
 
+## Listing Leases
+
+```csharp
+// All leases currently granted on the cluster
+var leases = client.LeaseLeases();
+foreach (var lease in leases.Leases)
+    Console.WriteLine($"Lease {lease.ID}");
+
+// Asynchronously
+var leasesAsync = await client.LeaseLeasesAsync();
+```
+
 ## Revoking a Lease
 
 To manually revoke a lease, use the `LeaseRevoke` method:

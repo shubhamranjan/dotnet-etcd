@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Etcdserverpb;
@@ -228,4 +228,30 @@ public partial class EtcdClient
         CancellationToken cancellationToken = default) => await CallEtcdAsync(async connection => await connection
         .MaintenanceClient
         .MoveLeaderAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
+
+    /// <summary>
+    ///     Downgrade validates, enables or cancels a cluster downgrade to a lower minor version (see <see cref="DowngradeRequest.Types.DowngradeAction" />).
+    /// </summary>
+    /// <param name="request">The request to send to the server.</param>
+    /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="cancellationToken">An optional token for canceling the call.</param>
+    /// <returns>The response received from the server.</returns>
+    public DowngradeResponse Downgrade(DowngradeRequest request, Metadata headers = null, DateTime? deadline = null,
+        CancellationToken cancellationToken = default) => CallEtcd(connection => connection.MaintenanceClient
+        .Downgrade(request, headers, deadline, cancellationToken));
+
+    /// <summary>
+    ///     Downgrade validates, enables or cancels a cluster downgrade to a lower minor version in async (see <see cref="DowngradeRequest.Types.DowngradeAction" />).
+    /// </summary>
+    /// <param name="request">The request to send to the server.</param>
+    /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+    /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+    /// <param name="cancellationToken">An optional token for canceling the call.</param>
+    /// <returns>The response received from the server.</returns>
+    public async Task<DowngradeResponse> DowngradeAsync(DowngradeRequest request, Metadata headers = null,
+        DateTime? deadline = null,
+        CancellationToken cancellationToken = default) => await CallEtcdAsync(async connection => await connection
+        .MaintenanceClient
+        .DowngradeAsync(request, headers, deadline, cancellationToken)).ConfigureAwait(false);
 }

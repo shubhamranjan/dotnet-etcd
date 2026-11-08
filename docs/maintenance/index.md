@@ -209,6 +209,20 @@ Console.WriteLine($"Disarmed NOSPACE alarms with header revision: {disarmRespons
 Console.WriteLine($"Number of alarms disarmed: {disarmResponse.Alarms.Count}");
 ```
 
+## Validating a Downgrade Target
+
+```csharp
+// Ask the cluster whether it can be downgraded to 3.6 (read-only check)
+var response = client.Downgrade(new DowngradeRequest
+{
+    Action = DowngradeRequest.Types.DowngradeAction.Validate,
+    Version = "3.6"
+});
+Console.WriteLine($"Cluster version: {response.Version}");
+
+// Enable and Cancel use the same call with a different Action
+```
+
 ## Implementing a Maintenance Utility
 
 You can implement a utility class to manage maintenance operations:
