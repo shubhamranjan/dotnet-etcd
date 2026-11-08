@@ -14,7 +14,7 @@ The test suite is divided into three categories:
 
 ### Prerequisites
 
-- .NET SDK (6.0 or later)
+- .NET SDK 10.0 (the test project targets `net10.0`)
 - Docker (for running integration tests)
 - ReportGenerator tool (for coverage reports)
 
@@ -37,15 +37,12 @@ dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Unit"
 1. Start an etcd server:
 
 ```bash
-# Single node
-docker run -d --name etcd-server \
-  -p 2379:2379 \
-  quay.io/coreos/etcd:v3.5.0 \
-  etcd --advertise-client-urls http://0.0.0.0:2379 \
-  --listen-client-urls http://0.0.0.0:2379
-
-# Or use the provided script
+# Use the provided script: starts the 3-node cluster plus the TLS, short-auth-TTL and
+# resilience nodes the integration tests expect, and waits until they are healthy.
 ./dotnet-etcd.Tests/start-etcd.sh
+
+# Default image is quay.io/coreos/etcd:v3.7.3; override to test another release:
+ETCD_IMAGE=quay.io/coreos/etcd:v3.5.35 ./dotnet-etcd.Tests/start-etcd.sh
 ```
 
 2. Run integration tests:
@@ -54,13 +51,9 @@ docker run -d --name etcd-server \
 dotnet test dotnet-etcd.Tests/dotnet-etcd.Tests.csproj --filter "Category=Integration"
 ```
 
-3. Stop the server:
+3. Stop the containers:
 
 ```bash
-docker stop etcd-server
-docker rm etcd-server
-
-# Or use the provided script
 ./dotnet-etcd.Tests/stop-etcd.sh
 ```
 

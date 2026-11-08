@@ -19,7 +19,6 @@ When contributing, please ensure documentation is updated:
 2. Update API documentation in the docs/ folder
 3. Add code comments for public APIs
 4. Include XML documentation comments for IntelliSense
-5. Update CHANGELOG.md with your changes
 
 ## Testing Requirements
 
@@ -31,12 +30,15 @@ When contributing, please ensure documentation is updated:
 
 ## Pull Request Process
 
-1. Update documentation to reflect changes
-2. Update CHANGELOG.md with your changes
+1. Give the PR a conventional-commit title (`feat:`, `fix:`, `deps:`, `docs:`, `ci:`, `test:`, `chore:`).
+   There is no CHANGELOG file: release notes are generated from merged PR titles, grouped by the
+   label the title prefix maps to. Mark breaking changes with `!` after the type or a
+   `BREAKING CHANGE:` footer.
+2. Update documentation to reflect changes
 3. Include test cases that cover your changes
 4. Update relevant examples in documentation
 5. Reference any related issues
-6. Wait for the CI builds to pass
+6. Wait for the CI builds to pass (unit + integration tests, CodeQL, and a 95% line-coverage floor)
 
 ## Code Style
 
@@ -65,10 +67,8 @@ We use GitHub issues to track public bugs and feature requests:
 
 ## Getting Help
 
-- Join our community discussions
-- Check existing issues and documentation
-- Ask questions on Stack Overflow
-- Create an issue for bugs
+- Check existing issues and the `docs/` folder
+- Open a GitHub issue for bugs and feature requests
 
 ## Review Process
 

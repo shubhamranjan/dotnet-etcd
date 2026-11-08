@@ -1,9 +1,20 @@
-Please ensure your pull request adheres to the following guidelines:
+<!-- Title: use a conventional-commit prefix (feat:, fix:, deps:, docs:, ci:, test:, chore:).
+     The labeler turns it into the label that groups this PR in the generated release notes.
+     Append "!" to the type (e.g. feat!:) or add a "BREAKING CHANGE:" footer below for breaking changes. -->
 
-- [ ] Use the following format: `* [owner/repo](link)`
-- [ ] Link additions should be added to the bottom of the relevant category.
-- [ ] New categories or improvements to the existing categorization are welcome.
-- [ ] Search previous suggestions before making a new one, as yours may be a duplicate.
-- [ ] Sort by alphabetical order
+## What
 
-Thanks for contributing!
+<!-- One or two sentences on what changes and why. Link the issue, e.g. "Closes #123". -->
+
+## How was it tested
+
+<!-- Unit tests added/updated? Integration tests (need etcd: `dotnet-etcd.Tests/start-etcd.sh`)?
+     Paste the relevant `dotnet test` summary line. -->
+
+## Checklist
+
+- [ ] Unit tests cover the change (`--filter "Category=Unit"`)
+- [ ] Integration tests pass locally (`--filter "Category=Integration"`), or the change needs none
+- [ ] Public API has XML doc comments
+- [ ] `docs/` and README updated for user-facing changes
+- [ ] No breaking change, or it is called out above and in the title
