@@ -13,8 +13,6 @@ namespace dotnet_etcd;
 
 public partial class EtcdClient
 {
-    private const string rangeEndString = "\x00";
-
     /// <summary>
     ///     Converts RangeResponse to Dictionary
     /// </summary>
@@ -32,20 +30,58 @@ public partial class EtcdClient
     }
 
     /// <summary>
-    ///     Gets the range end for prefix
+    ///     Gets the range end for a prefix: the smallest key greater than every key that starts with
+    ///     <paramref name="prefix" />, computed on the raw bytes exactly as etcd's own client does
+    ///     (increment the last byte below 0xFF and truncate after it). An empty prefix, or one made
+    ///     only of 0xFF bytes, has no upper bound and yields <c>"\0"</c>, which etcd reads as
+    ///     "to the end of the key space".
     /// </summary>
-    /// <returns>The range end for prefix</returns>
-    /// <param name="prefixKey">Prefix key</param>
-    public static string GetRangeEnd(string prefixKey)
+    /// <param name="prefix">The prefix, as the exact bytes that will be sent as the range key.</param>
+    /// <returns>The range end to send alongside <paramref name="prefix" />.</returns>
+    public static ByteString GetRangeEnd(ByteString prefix)
     {
-        if (prefixKey.Length == 0)
+        ArgumentNullException.ThrowIfNull(prefix);
+
+        byte[] end = prefix.ToByteArray();
+        for (int i = end.Length - 1; i >= 0; i--)
         {
-            return rangeEndString;
+            if (end[i] < 0xff)
+            {
+                end[i]++;
+                return ByteString.CopyFrom(end, 0, i + 1);
+            }
         }
 
-        StringBuilder rangeEnd = new(prefixKey);
-        rangeEnd[rangeEnd.Length - 1] = ++rangeEnd[rangeEnd.Length - 1];
-        return rangeEnd.ToString();
+        return ByteString.CopyFrom(0);
+    }
+
+    /// <summary>
+    ///     String form of <see cref="GetRangeEnd(ByteString)" />. The range end is computed on the
+    ///     prefix's UTF-8 bytes and returned as a string when those bytes are themselves valid UTF-8,
+    ///     which is always the case for ASCII prefixes. When they are not (a prefix ending in
+    ///     <c>ÿ</c>, for instance, has the range end bytes <c>C3 C0</c>) no string can carry the
+    ///     result and an <see cref="ArgumentException" /> is thrown: build the request with the
+    ///     <see cref="ByteString" /> overload instead. The prefix-based Get/Delete/Watch methods on
+    ///     this client already do.
+    /// </summary>
+    /// <param name="prefixKey">Prefix key</param>
+    /// <returns>The range end for prefix</returns>
+    public static string GetRangeEnd(string prefixKey)
+    {
+        ArgumentNullException.ThrowIfNull(prefixKey);
+
+        ByteString end = GetRangeEnd(ByteString.CopyFromUtf8(prefixKey));
+        try
+        {
+            return new UTF8Encoding(false, true).GetString(end.Span);
+        }
+        catch (DecoderFallbackException ex)
+        {
+            throw new ArgumentException(
+                $"The range end for prefix \"{prefixKey}\" is not valid UTF-8 and cannot be returned as a " +
+                "string; use GetRangeEnd(ByteString) and set RangeEnd on the request directly.",
+                nameof(prefixKey), ex);
+        }
     }
 
     /// <summary>
