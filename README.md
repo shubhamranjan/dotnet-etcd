@@ -12,6 +12,7 @@ A C# .NET (dotnet) GRPC client for etcd v3+
 ## Table of Contents
 
 - [Supported .NET Versions](#supported-net-versions)
+- [Supported etcd Versions](#supported-etcd-versions)
 - [Installing Package](#installing-package)
 - [Documentation](#documentation)
 - [Quick Start](#quick-start)
@@ -30,6 +31,13 @@ For older .NET versions:
 
 - For .NET 6/7 support, use version 7.2.0
 - For .NET versions < 6, use version < 5.x
+
+## Supported etcd Versions
+
+The client is generated from the etcd 3.7.3 API definitions and is tested in CI against etcd 3.5 and 3.7.
+Every RPC in etcd's `KV`, `Watch`, `Lease`, `Cluster`, `Maintenance`, `Auth`, `Lock` and `Election`
+services is exposed. Calls that only exist on newer servers, such as `RangeStream` (etcd 3.7+), fail with
+`StatusCode.Unimplemented` on older ones.
 
 ## Installing Package
 

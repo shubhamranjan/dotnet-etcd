@@ -29,6 +29,12 @@ public interface IEtcdClient
     Task<AuthEnableResponse> AuthEnableAsync(AuthEnableRequest request, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
+    AuthStatusResponse AuthStatus(AuthStatusRequest request, Metadata headers = null, DateTime? deadline = null,
+        CancellationToken cancellationToken = default);
+
+    Task<AuthStatusResponse> AuthStatusAsync(AuthStatusRequest request, Metadata headers = null,
+        DateTime? deadline = null, CancellationToken cancellationToken = default);
+
     AuthenticateResponse Authenticate(AuthenticateRequest request, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
 
@@ -73,6 +79,12 @@ public interface IEtcdClient
     Task<DefragmentResponse> DefragmentAsync(DefragmentRequest request, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
+    DowngradeResponse Downgrade(DowngradeRequest request, Metadata headers = null, DateTime? deadline = null,
+        CancellationToken cancellationToken = default);
+
+    Task<DowngradeResponse> DowngradeAsync(DowngradeRequest request, Metadata headers = null,
+        DateTime? deadline = null, CancellationToken cancellationToken = default);
+
     DeleteRangeResponse Delete(DeleteRangeRequest request, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
 
@@ -109,6 +121,12 @@ public interface IEtcdClient
         CancellationToken cancellationToken = default);
 
     Task<RangeResponse> GetRangeAsync(string prefixKey, Metadata headers = null, DateTime? deadline = null,
+        CancellationToken cancellationToken = default);
+
+    Task RangeStream(RangeRequest request, Action<RangeResponse> method, CancellationToken cancellationToken,
+        Metadata headers = null, DateTime? deadline = null);
+
+    Task<RangeResponse> RangeStreamAsync(RangeRequest request, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
 
     IDictionary<string, string> GetRangeVal(string prefixKey, Metadata headers = null, DateTime? deadline = null,
@@ -159,6 +177,18 @@ public interface IEtcdClient
     Task LeaseKeepAlive(long leaseId, CancellationToken cancellationToken);
 
     LeaseRevokeResponse LeaseRevoke(LeaseRevokeRequest request, Metadata headers = null, DateTime? deadline = null,
+        CancellationToken cancellationToken = default);
+
+    LeaseLeasesResponse LeaseLeases(LeaseLeasesRequest request, Metadata headers = null, DateTime? deadline = null,
+        CancellationToken cancellationToken = default);
+
+    LeaseLeasesResponse LeaseLeases(Metadata headers = null, DateTime? deadline = null,
+        CancellationToken cancellationToken = default);
+
+    Task<LeaseLeasesResponse> LeaseLeasesAsync(LeaseLeasesRequest request, Metadata headers = null,
+        DateTime? deadline = null, CancellationToken cancellationToken = default);
+
+    Task<LeaseLeasesResponse> LeaseLeasesAsync(Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
 
     Task<LeaseRevokeResponse> LeaseRevokeAsync(LeaseRevokeRequest request, Metadata headers = null,
@@ -214,10 +244,28 @@ public interface IEtcdClient
     Task<MemberAddResponse> MemberAddAsync(MemberAddRequest request, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
 
+    MemberAddResponse MemberAddAsLearner(string[] peerURLs, Metadata headers = null, DateTime? deadline = null,
+        CancellationToken cancellationToken = default);
+
+    Task<MemberAddResponse> MemberAddAsLearnerAsync(string[] peerURLs, Metadata headers = null,
+        DateTime? deadline = null, CancellationToken cancellationToken = default);
+
     MemberListResponse MemberList(MemberListRequest request, Metadata headers = null, DateTime? deadline = null,
         CancellationToken cancellationToken = default);
 
     Task<MemberListResponse> MemberListAsync(MemberListRequest request, Metadata headers = null,
+        DateTime? deadline = null, CancellationToken cancellationToken = default);
+
+    MemberPromoteResponse MemberPromote(MemberPromoteRequest request, Metadata headers = null,
+        DateTime? deadline = null, CancellationToken cancellationToken = default);
+
+    MemberPromoteResponse MemberPromote(ulong memberId, Metadata headers = null, DateTime? deadline = null,
+        CancellationToken cancellationToken = default);
+
+    Task<MemberPromoteResponse> MemberPromoteAsync(MemberPromoteRequest request, Metadata headers = null,
+        DateTime? deadline = null, CancellationToken cancellationToken = default);
+
+    Task<MemberPromoteResponse> MemberPromoteAsync(ulong memberId, Metadata headers = null,
         DateTime? deadline = null, CancellationToken cancellationToken = default);
 
     MemberRemoveResponse MemberRemove(MemberRemoveRequest request, Metadata headers = null, DateTime? deadline = null,

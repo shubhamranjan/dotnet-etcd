@@ -268,6 +268,45 @@ public async Task<AlarmResponse> AlarmAsync(
 
 - `Task<AlarmResponse>`: The etcd response for the alarm operation.
 
+## Downgrade Methods
+
+### Downgrade
+
+Validates, enables or cancels a cluster downgrade to the previous minor version. `VALIDATE` is read-only; `ENABLE` and `CANCEL` change cluster state and need the same care as any other maintenance operation.
+
+#### Downgrade Overloads
+
+```csharp
+public DowngradeResponse Downgrade(
+    DowngradeRequest request,
+    Grpc.Core.Metadata headers = null,
+    DateTime? deadline = null,
+    CancellationToken cancellationToken = default)
+```
+
+#### Downgrade Parameters
+
+- `request`: A `DowngradeRequest` with `Action` (`Validate`, `Enable` or `Cancel`) and, for `Validate` and `Enable`, the target `Version` such as `"3.6"`.
+- `headers`: The initial metadata to send with the call. This parameter is optional.
+- `deadline`: An optional deadline for the call. The call will be cancelled if deadline is hit.
+- `cancellationToken`: An optional token for canceling the call.
+
+#### Downgrade Returns
+
+- `DowngradeResponse`: Contains `Header` and `Version`, the current cluster version.
+
+### DowngradeAsync
+
+```csharp
+public async Task<DowngradeResponse> DowngradeAsync(
+    DowngradeRequest request,
+    Grpc.Core.Metadata headers = null,
+    DateTime? deadline = null,
+    CancellationToken cancellationToken = default)
+```
+
+Same parameters and return value as `Downgrade`, returned as a `Task<DowngradeResponse>`.
+
 ## Maintenance Response Types
 
 ### AlarmResponse

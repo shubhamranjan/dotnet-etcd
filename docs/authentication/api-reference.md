@@ -68,6 +68,37 @@ client.SetCredentials("root", "rootpwd");
 - Tokens are refreshed on-demand when they expire, so the client will continue to function without interruption as long as valid credentials are set
 - Configured credentials can be cleared by calling `ClearCredentials()`, which will remove the cached token and stop including authentication headers in requests
 
+### AuthStatus
+
+Reports whether authentication is enabled and the current auth revision. From etcd 3.7 this call needs no credentials; on earlier servers it requires an authenticated client once auth is enabled.
+
+#### AuthStatus Overloads
+
+```csharp
+public AuthStatusResponse AuthStatus(
+    AuthStatusRequest request,
+    Grpc.Core.Metadata headers = null,
+    DateTime? deadline = null,
+    CancellationToken cancellationToken = default)
+
+public async Task<AuthStatusResponse> AuthStatusAsync(
+    AuthStatusRequest request,
+    Grpc.Core.Metadata headers = null,
+    DateTime? deadline = null,
+    CancellationToken cancellationToken = default)
+```
+
+#### AuthStatus Parameters
+
+- `request`: An empty `AuthStatusRequest`.
+- `headers`: The initial metadata to send with the call. This parameter is optional.
+- `deadline`: An optional deadline for the call. The call will be cancelled if deadline is hit.
+- `cancellationToken`: An optional token for canceling the call.
+
+#### AuthStatus Returns
+
+- `AuthStatusResponse`: See [AuthStatusResponse](#authstatusresponse).
+
 ## User Management Methods
 
 ### UserAdd

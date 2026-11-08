@@ -242,53 +242,67 @@ public async Task<LeaseTimeToLiveResponse> LeaseTimeToLiveAsync(
 
 ## Lease List Methods
 
-### LeaseList
+### LeaseLeases
 
 Lists all active leases.
 
-#### LeaseList Overloads
+#### LeaseLeases Overloads
 
 ```csharp
 // List all active leases
-public LeaseListResponse LeaseList(
+public LeaseLeasesResponse LeaseLeases(
+    Grpc.Core.Metadata headers = null,
+    DateTime? deadline = null,
+    CancellationToken cancellationToken = default)
+
+// List all active leases from a request object
+public LeaseLeasesResponse LeaseLeases(
+    LeaseLeasesRequest request,
     Grpc.Core.Metadata headers = null,
     DateTime? deadline = null,
     CancellationToken cancellationToken = default)
 ```
 
-#### LeaseList Parameters
+#### LeaseLeases Parameters
 
 - `headers`: The initial metadata to send with the call. This parameter is optional.
 - `deadline`: An optional deadline for the call. The call will be cancelled if deadline is hit.
 - `cancellationToken`: An optional token for canceling the call.
 
-#### LeaseList Returns
+#### LeaseLeases Returns
 
-- `LeaseListResponse`: The etcd response containing the list of active lease IDs.
+- `LeaseLeasesResponse`: The etcd response containing the list of active lease IDs.
 
-### LeaseListAsync
+### LeaseLeasesAsync
 
 Lists all active leases asynchronously.
 
-#### LeaseListAsync Overloads
+#### LeaseLeasesAsync Overloads
 
 ```csharp
 // List all active leases asynchronously
-public async Task<LeaseListResponse> LeaseListAsync(
+public async Task<LeaseLeasesResponse> LeaseLeasesAsync(
+    Grpc.Core.Metadata headers = null,
+    DateTime? deadline = null,
+    CancellationToken cancellationToken = default)
+
+// List all active leases asynchronously from a request object
+public async Task<LeaseLeasesResponse> LeaseLeasesAsync(
+    LeaseLeasesRequest request,
     Grpc.Core.Metadata headers = null,
     DateTime? deadline = null,
     CancellationToken cancellationToken = default)
 ```
 
-#### LeaseListAsync Parameters
+#### LeaseLeasesAsync Parameters
 
 - `headers`: The initial metadata to send with the call. This parameter is optional.
 - `deadline`: An optional deadline for the call. The call will be cancelled if deadline is hit.
 - `cancellationToken`: An optional token for canceling the call.
 
-#### LeaseListAsync Returns
+#### LeaseLeasesAsync Returns
 
-- `Task<LeaseListResponse>`: The etcd response containing the list of active lease IDs.
+- `Task<LeaseLeasesResponse>`: The etcd response containing the list of active lease IDs.
 
 ## Key-Value with Lease Methods
 
@@ -395,11 +409,11 @@ The `LeaseTimeToLiveResponse` class represents the response from a lease time-to
 - `GrantedTTL`: The initial granted time-to-live in seconds for the lease.
 - `Keys`: The list of keys attached to the lease.
 
-### LeaseListResponse
+### LeaseLeasesResponse
 
-The `LeaseListResponse` class represents the response from a lease list operation.
+The `LeaseLeasesResponse` class represents the response from a lease list operation.
 
-#### LeaseListResponse Properties
+#### LeaseLeasesResponse Properties
 
 - `Header`: The response header.
 - `Leases`: The list of leases.

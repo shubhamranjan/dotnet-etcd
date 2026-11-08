@@ -246,4 +246,34 @@ public class MaintenanceClientIntegrationTests : IDisposable
         // Note: Defragmentation is a potentially long-running operation
         // and should be run manually in production environments
     }
+
+    [Fact]
+    public void Downgrade_Validate_ShouldAcceptPreviousMinorVersion()
+    {
+        // VALIDATE is read-only: it only checks that the target is a supported downgrade target.
+        var current = _client.Status(new StatusRequest()).Version;
+        var parts = current.Split('.');
+        var target = $"{parts[0]}.{int.Parse(parts[1]) - 1}";
+
+        var response = _client.Downgrade(new DowngradeRequest
+        {
+            Action = DowngradeRequest.Types.DowngradeAction.Validate, Version = target
+        });
+
+        Assert.NotNull(response);
+        Assert.NotNull(response.Header);
+        Assert.False(string.IsNullOrEmpty(response.Version));
+    }
+
+    [Fact]
+    public async Task DowngradeAsync_Validate_WithUnsupportedTarget_ShouldThrow()
+    {
+        // Two minors below is never a valid downgrade target.
+        var ex = await Assert.ThrowsAsync<RpcException>(() => _client.DowngradeAsync(new DowngradeRequest
+        {
+            Action = DowngradeRequest.Types.DowngradeAction.Validate, Version = "3.3"
+        }));
+
+        Assert.Equal(StatusCode.InvalidArgument, ex.StatusCode);
+    }
 }

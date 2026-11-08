@@ -27,7 +27,13 @@ permissions:
 
 jobs:
   beast:
+    name: beast (etcd ${{ matrix.etcd }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Oldest line users still run, and the latest release. docker-compose.yml reads ETCD_IMAGE.
+        etcd: ["v3.5.35", "v3.7.3"]
     steps:
       - uses: actions/checkout@v7
 
@@ -40,6 +46,8 @@ jobs:
             8.0.x
 
       - name: Start test etcd containers
+        env:
+          ETCD_IMAGE: quay.io/coreos/etcd:${{ matrix.etcd }}
         run: |
           chmod +x dotnet-etcd.Tests/*.sh
           dotnet-etcd.Tests/start-etcd.sh
@@ -63,7 +71,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: beast-logs
+          name: beast-logs-etcd-${{ matrix.etcd }}
           path: ${{ github.workspace }}/beast-logs
           retention-days: 14
           if-no-files-found: ignore

@@ -221,4 +221,76 @@ public class KvClientIntegrationTests
         Assert.NotNull(afterDelete);
         Assert.Empty(afterDelete.Kvs);
     }
+
+    // RangeStream exists from etcd 3.7. The nightly beast job also runs this suite against 3.5, so
+    // these tests pass trivially there instead of failing on Unimplemented.
+    private bool ServerSupportsRangeStream()
+    {
+        var version = _client.Status(new Etcdserverpb.StatusRequest()).Version;
+        var parts = version.Split('.');
+        var supported = int.Parse(parts[0]) > 3 || (int.Parse(parts[0]) == 3 && int.Parse(parts[1]) >= 7);
+        if (!supported) Console.WriteLine($"etcd {version} has no RangeStream; skipping");
+        return supported;
+    }
+
+    [Fact]
+    public async Task RangeStreamAsync_ShouldReturnSameResultAsGet()
+    {
+        if (!ServerSupportsRangeStream()) return;
+
+        var prefix = $"range-stream-{Guid.NewGuid()}/";
+        try
+        {
+            for (var i = 0; i < 5; i++) await _client.PutAsync($"{prefix}{i}", $"value-{i}");
+
+            var request = new Etcdserverpb.RangeRequest
+            {
+                Key = Google.Protobuf.ByteString.CopyFromUtf8(prefix),
+                RangeEnd = Google.Protobuf.ByteString.CopyFromUtf8(EtcdClient.GetRangeEnd(prefix))
+            };
+            var unary = await _client.GetAsync(request);
+            var streamed = await _client.RangeStreamAsync(request);
+
+            Assert.Equal(unary.Count, streamed.Count);
+            Assert.Equal(unary.Kvs.Select(kv => kv.Key.ToStringUtf8()), streamed.Kvs.Select(kv => kv.Key.ToStringUtf8()));
+            Assert.Equal(unary.Kvs.Select(kv => kv.Value.ToStringUtf8()), streamed.Kvs.Select(kv => kv.Value.ToStringUtf8()));
+            Assert.NotNull(streamed.Header);
+            Assert.Equal(unary.More, streamed.More);
+        }
+        finally
+        {
+            await _client.DeleteRangeAsync(prefix);
+        }
+    }
+
+    [Fact]
+    public async Task RangeStream_ShouldDeliverEveryKeyAcrossChunks()
+    {
+        if (!ServerSupportsRangeStream()) return;
+
+        var prefix = $"range-stream-cb-{Guid.NewGuid()}/";
+        try
+        {
+            for (var i = 0; i < 5; i++) await _client.PutAsync($"{prefix}{i}", $"value-{i}");
+
+            var keys = new List<string>();
+            var chunks = 0;
+            await _client.RangeStream(new Etcdserverpb.RangeRequest
+            {
+                Key = Google.Protobuf.ByteString.CopyFromUtf8(prefix),
+                RangeEnd = Google.Protobuf.ByteString.CopyFromUtf8(EtcdClient.GetRangeEnd(prefix))
+            }, chunk =>
+            {
+                chunks++;
+                keys.AddRange(chunk.Kvs.Select(kv => kv.Key.ToStringUtf8()));
+            }, CancellationToken.None);
+
+            Assert.True(chunks >= 1);
+            Assert.Equal(Enumerable.Range(0, 5).Select(i => $"{prefix}{i}"), keys);
+        }
+        finally
+        {
+            await _client.DeleteRangeAsync(prefix);
+        }
+    }
 }
