@@ -3,9 +3,13 @@
 
 version: 2
 updates:
-  # NuGet dependencies
+  # NuGet dependencies (library + test project). One entry with both directories so
+  # packages that must move together (Microsoft.Extensions.*, Grpc.*) land in one PR,
+  # and minor/patch bumps are grouped into a single weekly PR instead of one per package.
   - package-ecosystem: "nuget"
-    directory: "/dotnet-etcd"
+    directories:
+      - "/dotnet-etcd"
+      - "/dotnet-etcd.Tests"
     schedule:
       interval: "weekly"
       day: "monday"
@@ -20,25 +24,12 @@ updates:
     commit-message:
       prefix: "deps"
       include: "scope"
-
-  # NuGet dependencies (test project)
-  - package-ecosystem: "nuget"
-    directory: "/dotnet-etcd.Tests"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "UTC"
-    reviewers:
-      - "shubhamranjan"
-    open-pull-requests-limit: 10
-    labels:
-      - "dependencies"
-      - "nuget"
-      - "tests"
-    commit-message:
-      prefix: "deps"
-      include: "scope"
+    groups:
+      nuget-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+    # Major bumps still arrive as individual PRs so they can be reviewed on their own.
 
   # GitHub Actions
   - package-ecosystem: "github-actions"
@@ -57,3 +48,7 @@ updates:
     commit-message:
       prefix: "ci"
       include: "scope"
+    groups:
+      actions:
+        patterns:
+          - "*"
