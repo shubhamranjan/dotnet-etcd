@@ -21,6 +21,7 @@ A C# .NET (dotnet) GRPC client for etcd v3+
 - [Testing and Code Coverage](#testing-and-code-coverage)
 
 ## Supported .NET Versions
+- .NET 11
 - .NET 10
 - .NET 9
 - .NET 8

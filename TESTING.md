@@ -14,7 +14,7 @@ The test suite is divided into three categories:
 
 ### Prerequisites
 
-- .NET SDK 10.0 (the test project targets `net10.0`)
+- .NET SDK 11.0 (the test project targets `net11.0`)
 - Docker (for running integration tests)
 - ReportGenerator tool (for coverage reports)
 
