@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage line-rate="0.9708188153310104" branch-rate="0.8466981132075472" lines-covered="2229" lines-valid="2296" branches-covered="359" branches-valid="424" complexity="604" version="0" timestamp="1794847343">
+<coverage line-rate="0.9708188153310104" branch-rate="0.8466981132075472" lines-covered="2229" lines-valid="2296" branches-covered="359" branches-valid="424" complexity="604" version="0" timestamp="1794847902">
   <sources>
     <source>/home/runner/work/dotnet-etcd/dotnet-etcd/dotnet-etcd/</source>
   </sources>
@@ -4816,24 +4816,24 @@
           <methods>
             <method name="get_Key" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="14" hits="51" branch="false" />
+                <line number="14" hits="50" branch="false" />
               </lines>
             </method>
             <method name="get_Value" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="19" hits="60" branch="false" />
+                <line number="19" hits="59" branch="false" />
               </lines>
             </method>
             <method name="get_Type" signature="()" line-rate="1" branch-rate="1" complexity="1">
               <lines>
-                <line number="24" hits="56" branch="false" />
+                <line number="24" hits="55" branch="false" />
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="14" hits="51" branch="false" />
-            <line number="19" hits="60" branch="false" />
-            <line number="24" hits="56" branch="false" />
+            <line number="14" hits="50" branch="false" />
+            <line number="19" hits="59" branch="false" />
+            <line number="24" hits="55" branch="false" />
           </lines>
         </class>
         <class name="dotnet_etcd.WatchManager" filename="/home/runner/work/dotnet-etcd/dotnet-etcd/dotnet-etcd/watchclient/WatchManager.cs" line-rate="0.9259927797833934" branch-rate="0.8421052631578947" complexity="110">
@@ -5137,10 +5137,10 @@
                 <line number="861" hits="35" branch="false" />
                 <line number="863" hits="132" branch="false" />
                 <line number="866" hits="132" branch="true" condition-coverage="100% (2/2)" />
-                <line number="867" hits="37" branch="false" />
-                <line number="868" hits="37" branch="false" />
-                <line number="869" hits="37" branch="false" />
-                <line number="870" hits="37" branch="false" />
+                <line number="867" hits="38" branch="false" />
+                <line number="868" hits="38" branch="false" />
+                <line number="869" hits="38" branch="false" />
+                <line number="870" hits="38" branch="false" />
                 <line number="872" hits="132" branch="false" />
                 <line number="873" hits="136" branch="false" />
               </lines>
@@ -5995,10 +5995,10 @@
             <line number="861" hits="35" branch="false" />
             <line number="863" hits="132" branch="false" />
             <line number="866" hits="132" branch="true" condition-coverage="100% (2/2)" />
-            <line number="867" hits="37" branch="false" />
-            <line number="868" hits="37" branch="false" />
-            <line number="869" hits="37" branch="false" />
-            <line number="870" hits="37" branch="false" />
+            <line number="867" hits="38" branch="false" />
+            <line number="868" hits="38" branch="false" />
+            <line number="869" hits="38" branch="false" />
+            <line number="870" hits="38" branch="false" />
             <line number="872" hits="132" branch="false" />
             <line number="873" hits="136" branch="false" />
             <line number="881" hits="6" branch="false" />
