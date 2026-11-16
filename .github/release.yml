@@ -25,6 +25,9 @@ changelog:
     - title: 📝 Documentation
       labels:
         - documentation
+        # The repo's pre-existing label is capitalised; GitHub applies it case-insensitively but
+        # matches release-note categories case-sensitively, so list both spellings.
+        - Documentation
     - title: 🔧 Maintenance & CI
       labels:
         - ci
