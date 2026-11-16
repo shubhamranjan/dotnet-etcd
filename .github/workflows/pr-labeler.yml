@@ -3,12 +3,16 @@ name: PR Auto-Labeler
 # Applies labels from the PR's conventional-commit title prefix so the
 # auto-generated release notes (.github/release.yml) group it correctly,
 # without anyone having to remember to label by hand. Re-runs on title edits.
+#
+# Uses pull_request, not pull_request_target: from 2026-12-02 GitHub blocks
+# pull_request_target workflows on public repositories by default, and this job
+# never needed it (it only reads the title and adds labels). The one limitation is
+# that a PR from a fork runs with a read-only token, so labels for fork PRs are
+# applied by a maintainer; the job says so instead of failing.
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, edited, reopened]
 
-# Only needs to add labels. We never check out or execute PR code — the title is
-# treated as data and only regex-matched — so pull_request_target is safe here.
 permissions:
   pull-requests: write
 
@@ -60,14 +64,19 @@ jobs:
             }
 
             const { owner, repo } = context.repo;
-            // Ensure each label exists (create on first use) before applying.
+            // Ensure each label exists (create on first use) before applying. Creating needs a
+            // write token too, so a 403 here (fork PR) is handled the same way as below.
             for (const name of wanted) {
               try {
                 await github.rest.issues.getLabel({ owner, repo, name });
               } catch (e) {
                 if (e.status === 404) {
-                  await github.rest.issues.createLabel({ owner, repo, name, color: colors[name] || "ededed" });
-                  core.info(`Created missing label: ${name}`);
+                  try {
+                    await github.rest.issues.createLabel({ owner, repo, name, color: colors[name] || "ededed" });
+                    core.info(`Created missing label: ${name}`);
+                  } catch (ce) {
+                    if (ce.status !== 403) throw ce;
+                  }
                 } else {
                   throw e;
                 }
@@ -75,7 +84,15 @@ jobs:
             }
 
             // Additive only — never removes labels a maintainer set by hand.
-            await github.rest.issues.addLabels({
-              owner, repo, issue_number: pr.number, labels: [...wanted],
-            });
-            core.info(`Applied labels: ${[...wanted].join(", ")}`);
+            try {
+              await github.rest.issues.addLabels({
+                owner, repo, issue_number: pr.number, labels: [...wanted],
+              });
+              core.info(`Applied labels: ${[...wanted].join(", ")}`);
+            } catch (e) {
+              if (e.status === 403 && pr.head.repo.full_name !== `${owner}/${repo}`) {
+                core.warning(`PR is from a fork, so the token is read-only; a maintainer should add: ${[...wanted].join(", ")}`);
+                return;
+              }
+              throw e;
+            }
